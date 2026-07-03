@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZIP OS Preview V7.11.2</title>
+<title>ZIP OS Preview V7.11.6</title>
 <style>
 :root{
   --bg:#f4f6f8;--panel:#fff;--ink:#17202a;--muted:#667085;--line:#e5e7eb;
@@ -63,7 +63,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 <!-- GRID DA LOGO — pronto para receber a logo da Zip Filmes no futuro. Basta substituir o conteúdo de #logoBox por <img src="..."> -->
 <div id="logoBox" style="display:grid;place-items:center;padding:8px 0 4px">
  <div class="logo" style="margin:0">ZIP OS</div>
- <div class="sub" style="text-align:center;margin-top:2px">V7.11.2 • Configurações: usuários funcional + fiscal redesenhado + logo placeholder</div>
+ <div class="sub" style="text-align:center;margin-top:2px">V7.11.6 • Micro-correção: subtotal do Financeiro + salvar valida antes de gravar</div>
 </div>
 <div class="profile" style="display:none"><b>Perfil simulado</b><select id="profileSelect" onchange="applyProfile()"><option value="socio">Sócio Zip</option><option value="financeiro">Financeiro Zip</option><option value="atendimento">Atendimento Zip</option><option value="producao">Produção Zip</option><option value="edicao">Edição Zip</option><option value="admin">Administrador</option></select>
 <div id="quemSouEuDiv" style="display:none;margin-top:8px"><b style="color:#cbd5e1;font-size:12px">Quem é você?</b><select id="quemSouEu" onchange="applyProfile()" style="width:100%;margin-top:4px;padding:9px;border-radius:10px;border:0"></select></div>
@@ -776,7 +776,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 
   <div style="padding:12px 14px;background:#f0fdf4;border-radius:10px">
    <div style="font-weight:700;color:var(--green);margin-bottom:4px">🏷️ Desconto</div>
-   <p style="font-size:13px;color:#4b5563;margin:0">Valor que você retira do total para o cliente. Diferente do BV, o desconto é uma <b>perda direta para a Zip</b> — cada real de desconto reduz exatamente um real do lucro. Por isso, conceder desconto precisa de decisão consciente.</p>
+   <p style="font-size:13px;color:#4b5563;margin:0">Valor que você retira do total para o cliente. O desconto reduz o valor final — e como o imposto e o BV são recalculados sobre o valor com desconto, o impacto real no lucro é <b>menor que o desconto bruto</b> (ex: com imposto 15% e BV 10%, R$ 1.000 de desconto custam R$ 750 de lucro). Ainda assim, é perda direta de resultado — conceder desconto precisa de decisão consciente.</p>
   </div>
 
   <div style="padding:12px 14px;background:#f0f4f8;border-radius:10px">
@@ -793,7 +793,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
    <div style="font-weight:700;margin-bottom:6px">📊 O que significa cada número no resumo</div>
    <div style="font-size:13px;color:#4b5563;display:flex;flex-direction:column;gap:4px">
     <div>• <b>Valor ao cliente</b> — o total que o cliente vai pagar (inclui tudo: serviços, custos, BV, imposto, menos desconto)</div>
-    <div>• <b>Imposto</b> — Simples Nacional calculado sobre o valor total. A alíquota atual está nas Configurações (só o Administrador altera)</div>
+    <div>• <b>Imposto estimado</b> — alíquota gerencial do Simples Nacional aplicada sobre o valor final ao cliente (o valor da NF). É uma estimativa para orçamento — a alíquota efetiva real do Simples varia com o faturamento acumulado. A alíquota configurada está nas Configurações (só o Administrador altera)</div>
     <div>• <b>Lucro líquido</b> — o que sobra para a Zip depois de pagar imposto, BV, custos e descontos</div>
     <div>• <b>Margem</b> — porcentagem do lucro sobre o valor ao cliente. Verde = ótimo, amarelo = aceitável, vermelho = atenção</div>
     <div>• <b>Potencial de comissão</b> — 10% do lucro líquido. Aparece no seu placar quando a OS fechar</div>
@@ -1095,10 +1095,10 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
    </select>
   </label>
   <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:8px">Desconto (R$)
-   <input id="orcDesconto" placeholder="0" oninput="calcOrc()" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;box-sizing:border-box">
+   <input id="orcDesconto" placeholder="0" oninput="this.value=this.value.replace(/-/g,'');calcOrc()" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;box-sizing:border-box">
   </label>
   <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:8px">Custo extra pós-orçamento (R$)
-   <input id="orcCustoExtra" placeholder="0" oninput="calcOrc()" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;box-sizing:border-box">
+   <input id="orcCustoExtra" placeholder="0" oninput="this.value=this.value.replace(/-/g,'');calcOrc()" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;box-sizing:border-box">
    <span style="display:block;margin-top:5px;font-size:11px;color:var(--muted);font-weight:400">💡 Custos extras pós-orçamento (que não foram previstos no orçamento) são desembolsados pela Zip sem repassar ao cliente. Afeta diretamente o lucro líquido.</span>
   </label>
   <label style="font-size:12px;color:var(--muted);font-weight:700;display:block">Condição de pagamento
@@ -1470,7 +1470,7 @@ var metasFinanceiro={}; // {ano: {mes: valor}}
 
 // Projects: [os, cliente, agencia, titulo, tipo, status, prazo, atendimento, producao, editor, valorVendido, desconto, bv, condicao, custoReal, etapa_atual, historico_comercial, historico_operacional, historico_financeiro]
 let projects=[
- ['OS-260148','Ipecont','Direto','Conteúdo Web Junho','Conteúdo para Web','Produção','28/06/2026','Douglas','Douglas','Leo','R$ 6.800','R$ 0','0%','À vista','R$ 1.020',1,
+ ['OS-260148','Ipecont','Direto','Conteúdo Web Junho','Conteúdo para Web','Produção','28/06/2026','Douglas','Douglas','Leo','R$ 6.800','R$ 0','0%','À vista','R$ 780',1,
   [['13/06/2026','📋 Lead criado por Douglas'],['15/06/2026','💰 Orçamento enviado'],['17/06/2026','✅ Fechado'],['18/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['26/06/2026'],horarioDia1:'09:00',prazo:'28/06/2026',revisao:'27/06/2026',locacao:'Ipecont — Av. Princesa do Sul, 150 — Varginha/MG',briefing:'Produção de conteúdo mensal para web e redes sociais. Junho: foco em declaração de IR e planejamento tributário. Tom profissional e didático. 4 vídeos curtos para Instagram e 1 vídeo longo para YouTube.',terceirizados:'Nenhum',roteiro:'https://drive.google.com/roteiro-ipecont-jun',referencia:'https://instagram.com/ipecont',equipExtras:'Teleprompter',contatoExtra:'Fernanda Rocha (marketing) — (35) 99111-2233',formato:'Vertical (Instagram) e Horizontal (YouTube)',producao:'Douglas',editor:'Leo',dataCriacao:'18/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1478,7 +1478,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260150','Mercado Sul','Direto','Campanha Junho','Produção completa','Produção','30/06/2026','Ryan','Ryan','Caio','R$ 9.200','R$ 0','0%','50% no fechamento • 50% na entrega','R$ 1.380',1,
+ ['OS-260150','Mercado Sul','Direto','Campanha Junho','Produção completa','Produção','30/06/2026','Ryan','Ryan','Caio','R$ 9.200','R$ 0','0%','50% no fechamento • 50% na entrega','R$ 1.450',1,
   [['14/06/2026','📋 Lead criado por Ryan'],['16/06/2026','💰 Orçamento: R$ 9.200'],['18/06/2026','✅ Fechado'],['19/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['24/06/2026','25/06/2026'],horarioDia1:'08:00',prazo:'30/06/2026',revisao:'28/06/2026',locacao:'Mercado Sul — Rua Sete de Setembro, 980 — Varginha/MG',briefing:'Campanha de mês de junho com foco em promoções de inverno. Produtos: cobertores, sopas, queijos. Ambiente acolhedor e familiar. 2 dias de gravação nos corredores do mercado e na área de frios.',terceirizados:'Carlos Cine (câmera), Apresentadora Júlia',roteiro:'https://drive.google.com/roteiro-mercadosul',referencia:'https://youtube.com/mercado-exemplo',equipExtras:'Estabilizador DJI, iluminação LED portátil',contatoExtra:'Marcos Gerente — (35) 99222-4455',formato:'Horizontal 16:9 e Vertical 9:16',producao:'Ryan',editor:'Caio',dataCriacao:'19/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — 50% Entrada','Recebido'],['Recebimento — 50% Entrega','Pendente']],
@@ -1486,7 +1486,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',false],['Dia 2 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260143','RN Tintas','Direto','Vídeo Institucional','Vídeo Institucional','Edição','25/06/2026','Ana','Douglas','Leo','R$ 11.500','R$ 0','0%','30% • 30% • 40% na entrega','R$ 1.725',2,
+ ['OS-260143','RN Tintas','Direto','Vídeo Institucional','Vídeo Institucional','Edição','25/06/2026','Ana','Douglas','Leo','R$ 11.500','R$ 0','0%','30% • 30% • 40% na entrega','R$ 0',2,
   [['10/06/2026','📋 Lead criado por Ana'],['12/06/2026','💰 Orçamento: R$ 11.500'],['14/06/2026','✅ Fechado'],['15/06/2026','🚀 Projeto iniciado'],['20/06/2026','🎬 Captação concluída — material no Drive']],
   [{gravacoes:['18/06/2026','19/06/2026'],horarioDia1:'09:30',prazo:'25/06/2026',revisao:'23/06/2026',locacao:'RN Tintas — Av. Deputado Renato Azeredo, 500 — Varginha/MG',briefing:'Vídeo institucional para apresentar a empresa, linha de produtos e diferenciais de qualidade. Depoimentos de clientes satisfeitos e demonstração do processo de fabricação. Tom confiante e técnico.',terceirizados:'Carlos Cine, Técnico de som',roteiro:'https://drive.google.com/roteiro-rntintas',referencia:'https://youtube.com/institucional-tinta-ref',equipExtras:'Drone para área externa da fábrica',contatoExtra:'Rodrigo Nasser (dono) — (35) 99333-6677',formato:'Horizontal 16:9 (YouTube e apresentações)',producao:'Douglas',editor:'Leo',dataCriacao:'15/06/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — 30% (1ª parcela)','Recebido'],['Recebimento — 30% (2ª parcela)','Pendente'],['Recebimento — 40% (Entrega)','Pendente']],
@@ -1494,7 +1494,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Dia 2 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260145','Indústria Alfa','Agência Gamma','Motion Graphics','Motion Graphics','Edição','24/06/2026','Ryan','Ryan','Leo','R$ 7.300','R$ 0','15%','À vista','R$ 1.095',2,
+ ['OS-260145','Indústria Alfa','Agência Gamma','Motion Graphics','Motion Graphics','Edição','24/06/2026','Ryan','Ryan','Leo','R$ 7.300','R$ 0','15%','À vista','R$ 620',2,
   [['11/06/2026','📋 Lead via Agência Gamma'],['13/06/2026','💰 Orçamento: R$ 7.300'],['16/06/2026','✅ Fechado com BV 15%'],['17/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:[],prazo:'24/06/2026',locacao:'',briefing:'Motion graphics animado para apresentar a nova linha de produtos industriais da Alfa. Animações 3D simplificadas mostrando diferenciais técnicos. Tom técnico e moderno. Entrega em MP4 e também versão para projeção em evento.',terceirizados:'Nenhum — apenas animação interna',roteiro:'https://drive.google.com/roteiro-alfa-motion',referencia:'https://vimeo.com/motion-ref-industrial',equipExtras:'Plug-in After Effects: Element 3D',contatoExtra:'Márcia Pereira (Agência Gamma) — (35) 99444-8899',formato:'Horizontal 16:9 e versão evento 1920x1080',producao:'Ryan',editor:'Leo',dataCriacao:'17/06/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1502,7 +1502,7 @@ let projects=[
   /*sp*/[],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260140','Prefeitura de Verdinha','Direto','Documentário Cidade','Produção completa','Ajuste e Entrega','22/06/2026','Douglas','Douglas','Caio','R$ 24.000','R$ 0','0%','30/60/90 dias','R$ 3.600',3,
+ ['OS-260140','Prefeitura de Verdinha','Direto','Documentário Cidade','Produção completa','Ajuste e Entrega','22/06/2026','Douglas','Douglas','Caio','R$ 24.000','R$ 0','0%','30/60/90 dias','R$ 5.350',3,
   [['01/06/2026','📋 Lead criado por Douglas'],['05/06/2026','💰 Orçamento: R$ 24.000'],['08/06/2026','✅ Fechado — licitação aprovada'],['10/06/2026','🚀 Projeto iniciado'],['15/06/2026','🎬 Gravações concluídas'],['18/06/2026','✂️ Edição concluída'],['20/06/2026','🔄 Revisão: ajuste de narração e créditos']],
   [{gravacoes:['13/06/2026','14/06/2026','15/06/2026'],horarioDia1:'07:30',prazo:'22/06/2026',revisao:'21/06/2026',locacao:'Varginha/MG — Várias locações: Praça JK, Parque do Lago, Câmara Municipal',briefing:'Documentário sobre os 100 anos da cidade de Verdinha. Entrevistas com moradores antigos, imagens históricas (cedidas pela prefeitura), cobertura de eventos e paisagens naturais. Tom emotivo e histórico.',terceirizados:'Carlos Cine, Pedro Drone, Narrador Fábio Lins',roteiro:'https://drive.google.com/roteiro-verdinha-doc',referencia:'https://youtube.com/documentario-cidades-ref',equipExtras:'Drone, câmera extra Canon, estabilizador',contatoExtra:'Sec. Cultura Maria José — (35) 98555-0011',formato:'Horizontal 16:9 (exibição pública e TV)',producao:'Douglas',editor:'Caio',dataCriacao:'10/06/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — Parcela 1/3 (30 dias)','Pendente'],['Recebimento — Parcela 2/3 (60 dias)','Pendente'],['Recebimento — Parcela 3/3 (90 dias)','Pendente']],
@@ -1510,7 +1510,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Dia 2 de gravação',true],['Dia 3 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260135','Grupo Safra','Direto','Treinamento Corporativo','Vídeo Institucional','Ajuste e Entrega','20/06/2026','Ana','Douglas','Leo','R$ 18.500','R$ 0','0%','Parcelado em 3x','R$ 2.775',3,
+ ['OS-260135','Grupo Safra','Direto','Treinamento Corporativo','Vídeo Institucional','Ajuste e Entrega','20/06/2026','Ana','Douglas','Leo','R$ 18.500','R$ 0','0%','Parcelado em 3x','R$ 3.900',3,
   [['28/05/2026','📋 Lead criado por Ana'],['30/05/2026','💰 Orçamento: R$ 18.500'],['02/06/2026','✅ Fechado em 3x'],['04/06/2026','🚀 Projeto iniciado'],['10/06/2026','🎬 Gravações concluídas'],['15/06/2026','✂️ Edição ok'],['18/06/2026','🔄 Cliente aprovou com ajuste: adicionar logo no início']],
   [{gravacoes:['08/06/2026','09/06/2026'],horarioDia1:'10:00',prazo:'20/06/2026',revisao:'18/06/2026',locacao:'Grupo Safra — Av. Pres. Vargas, 1200 — Sala de treinamento — Varginha/MG',briefing:'Série de 5 vídeos de treinamento para equipe comercial do Grupo Safra. Cada vídeo aborda uma etapa do processo de vendas: prospecção, abordagem, apresentação, objeções e fechamento. Tom didático e dinâmico.',terceirizados:'Carlos Cine, Atriz (vendedora), Ator (cliente)',roteiro:'https://drive.google.com/roteiro-safra-training',referencia:'https://youtube.com/treinamento-corporativo-ref',equipExtras:'Teleprompter, fundo infinito cinza',contatoExtra:'RH Claudiana Santos — (35) 99666-2244',formato:'Horizontal 16:9 (apresentações internas)',producao:'Douglas',editor:'Leo',dataCriacao:'04/06/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento — Parcela 1/3','Recebido'],['Recebimento — Parcela 2/3','Pendente'],['Recebimento — Parcela 3/3','Pendente']],
@@ -1518,7 +1518,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Dia 2 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260128','Coopama','Direto','Vídeo Institucional','Vídeo Institucional','Financeiro','18/06/2026','Ana','Douglas','Leo','R$ 14.800','R$ 0','0%','2x','R$ 2.220',4,
+ ['OS-260128','Coopama','Direto','Vídeo Institucional','Vídeo Institucional','Financeiro','18/06/2026','Ana','Douglas','Leo','R$ 14.800','R$ 0','0%','2x','R$ 2.150',4,
   [['19/05/2026','📋 Lead criado por Ana'],['21/05/2026','💰 Orçamento: R$ 14.800'],['25/05/2026','✅ Fechado em 2x'],['26/05/2026','🚀 Projeto iniciado'],['05/06/2026','🎬 Captação concluída'],['10/06/2026','✂️ Edição aprovada'],['15/06/2026','📦 Material entregue']],
   [{gravacoes:['03/06/2026','04/06/2026'],horarioDia1:'08:30',prazo:'18/06/2026',locacao:'Coopama — Rodovia Fernão Dias, km 780 — Varginha/MG',briefing:'Vídeo institucional da cooperativa. Mostrar estrutura, produção de café, cooperados e impacto social na região. Tom acolhedor e orgulhoso.',terceirizados:'Carlos Cine, Pedro Drone',roteiro:'https://drive.google.com/roteiro-coopama',referencia:'https://youtube.com/cooperativa-ref',equipExtras:'Drone para área rural',contatoExtra:'Diretor João Paulo — (35) 99777-3355',formato:'Horizontal 16:9',producao:'Douglas',editor:'Leo',dataCriacao:'26/05/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento — Parcela 1/2','Recebido'],['Recebimento — Parcela 2/2','Pendente']],
@@ -1526,7 +1526,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Dia 2 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260119','Escola Viva','Direto','Produção completa','Produção completa','Financeiro','15/06/2026','Ana','Ryan','Caio','R$ 8.400','R$ 0','0%','À vista','R$ 1.260',4,
+ ['OS-260119','Escola Viva','Direto','Produção completa','Produção completa','Financeiro','15/06/2026','Ana','Ryan','Caio','R$ 8.400','R$ 0','0%','À vista','R$ 0',4,
   [['08/05/2026','📋 Lead criado por Ana'],['10/05/2026','💰 Orçamento: R$ 8.400'],['15/05/2026','✅ Fechado à vista'],['16/05/2026','🚀 Projeto iniciado'],['28/05/2026','🎬 Captação concluída'],['03/06/2026','✂️ Edição aprovada'],['12/06/2026','📦 Material entregue ao cliente']],
   [{gravacoes:['26/05/2026','27/05/2026'],horarioDia1:'09:00',prazo:'15/06/2026',locacao:'Escola Viva — Rua das Acácias, 300 — Varginha/MG',briefing:'Vídeo de divulgação da escola para matrículas 2027. Mostrar estrutura, metodologia, professores e alunos felizes. Tom inspirador e acolhedor.',terceirizados:'Carlos Cine',roteiro:'https://drive.google.com/roteiro-escola-viva',referencia:'https://youtube.com/escola-ref',equipExtras:'Nenhum adicional',contatoExtra:'Diretora Simone Alves — (35) 99888-5566',formato:'Horizontal e Vertical',producao:'Ryan',editor:'Caio',dataCriacao:'16/05/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento confirmado','Recebido']],
@@ -1534,7 +1534,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Dia 2 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260110','Clínica São Lucas','Direto','Vídeo Institucional','Vídeo Institucional','Encerrado','26/04/2026','Douglas','Douglas','Leo','R$ 9.800','R$ 0','0%','À vista','R$ 1.470',5,
+ ['OS-260110','Clínica São Lucas','Direto','Vídeo Institucional','Vídeo Institucional','Encerrado','26/04/2026','Douglas','Douglas','Leo','R$ 9.800','R$ 0','0%','À vista','R$ 1.780',5,
   [['26/03/2026','📋 Lead criado por Douglas'],['28/03/2026','💰 Orçamento: R$ 9.800'],['01/04/2026','✅ Fechado à vista'],['02/04/2026','🚀 Projeto iniciado'],['15/04/2026','🎬 Captação realizada'],['20/04/2026','✂️ Edição aprovada'],['24/04/2026','📦 Entrega realizada'],['26/04/2026','🏁 Projeto encerrado']],
   [{gravacoes:['13/04/2026','14/04/2026'],horarioDia1:'09:00',prazo:'26/04/2026',locacao:'Clínica São Lucas — Rua Olegário Maciel, 80 — Varginha/MG',briefing:'Vídeo institucional apresentando a clínica, especialidades médicas e equipe. Tom profissional e humanizado.',terceirizados:'Carlos Cine',roteiro:'',referencia:'',equipExtras:'',contatoExtra:'Dr. Lucas Ferreira — (35) 99000-1122',formato:'Horizontal 16:9',producao:'Douglas',editor:'Leo',dataCriacao:'02/04/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento confirmado','Recebido']],
@@ -1543,7 +1543,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
  // ── Novos projetos simulados para Operação ──
- ['OS-260155','Clínica Estética Flora','Direto','Reels Verão 2026','Conteúdo para Web','Produção','02/07/2026','Ana','Ryan','Leo','R$ 4.200','R$ 0','0%','À vista','R$ 630',1,
+ ['OS-260155','Clínica Estética Flora','Direto','Reels Verão 2026','Conteúdo para Web','Produção','02/07/2026','Ana','Ryan','Leo','R$ 4.200','R$ 0','0%','À vista','R$ 350',1,
   [['20/06/2026','📋 Lead criado por Ana'],['22/06/2026','✅ Negociação Fechada'],['23/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['01/07/2026'],horarioDia1:'10:00',prazo:'02/07/2026',revisao:'30/06/2026',locacao:'Clínica Flora — Rua das Flores, 450 — Varginha/MG',briefing:'Série de 6 reels para Instagram. Foco em procedimentos estéticos, resultados antes e depois, e ambiente premium da clínica. Tom moderno, sofisticado e confiante. Evitar imagens muito clínicas.',terceirizados:'Lívia Make (maquiagem), Carlos Cine (câmera)',roteiro:'https://drive.google.com/roteiro-flora-2026',referencia:'https://www.instagram.com/clinicaexemplo',equipExtras:'Ring light portátil, fundo infinito branco',contatoExtra:'Dra. Carla Mendes — (35) 99988-7766',formato:'Vertical 9:16 (Instagram, Shorts)',producao:'Ryan',editor:'Leo',dataCriacao:'23/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1551,7 +1551,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260157','Construtora Alves','Direto','Institucional Obras 2026','Vídeo Institucional','Produção','29/06/2026','Douglas','Douglas','Caio','R$ 15.400','R$ 0','0%','2x','R$ 2.310',1,
+ ['OS-260157','Construtora Alves','Direto','Institucional Obras 2026','Vídeo Institucional','Produção','29/06/2026','Douglas','Douglas','Caio','R$ 15.400','R$ 0','0%','2x','R$ 2.600',1,
   [['18/06/2026','📋 Lead criado por Douglas'],['20/06/2026','✅ Negociado e fechado'],['21/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['25/06/2026','26/06/2026'],horarioDia1:'07:00',prazo:'29/06/2026',revisao:'28/06/2026',locacao:'Obra Central Park — Av. Brasil, 2000 — Varginha/MG',briefing:'Vídeo institucional mostrando andamento das obras do empreendimento Central Park. Qualidade construtiva, equipe, infraestrutura e diferenciais. Tom sério, moderno e confiante. Depoimento do engenheiro e imagens aéreas são essenciais.',terceirizados:'Carlos Cine (câmera), Pedro Drone (aéreo), Técnico de som',roteiro:'https://drive.google.com/roteiro-alves-2026',referencia:'https://youtube.com/institucional-exemplo',equipExtras:'Drone DJI Mavic 3, estabilizador gimbal',contatoExtra:'Eng. Roberto Alves — (35) 99777-5544',formato:'Horizontal 16:9 (YouTube, TV)',producao:'Douglas',editor:'Caio',dataCriacao:'21/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — Parcela 1/2','Pendente'],['Recebimento — Parcela 2/2','Pendente']],
@@ -1559,7 +1559,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',false],['Dia 2 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260159','Auto Peças Irmãos','Direto','Promoção Julho','Conteúdo para Web','Edição','05/07/2026','Ryan','Ryan','Caio','R$ 3.800','R$ 0','0%','À vista','R$ 570',2,
+ ['OS-260159','Auto Peças Irmãos','Direto','Promoção Julho','Conteúdo para Web','Edição','05/07/2026','Ryan','Ryan','Caio','R$ 3.800','R$ 0','0%','À vista','R$ 0',2,
   [['21/06/2026','📋 Lead criado por Ryan'],['23/06/2026','✅ Fechado'],['24/06/2026','🚀 Projeto iniciado'],['24/06/2026','🎬 Captação realizada']],
   [{gravacoes:['22/06/2026'],horarioDia1:'13:00',prazo:'05/07/2026',revisao:'03/07/2026',locacao:'Auto Peças Irmãos — Av. Getúlio Vargas, 800 — Varginha/MG',briefing:'Vídeo promocional para campanha de julho. Mostrar produtos em promoção, preços especiais e facilidade de pagamento. Tom animado e direto. Chamada final obrigatória.',terceirizados:'Nenhum — produção interna',roteiro:'https://drive.google.com/roteiro-autopecas',referencia:'https://youtube.com/exemplo-comercial',equipExtras:'Teleprompter para apresentador',contatoExtra:'João Irmão — (35) 99666-3322',formato:'Horizontal e Vertical (TV e Instagram)',producao:'Ryan',editor:'Caio',dataCriacao:'24/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1567,7 +1567,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260161','Farmácia Saúde Total','Direto','Motion Redes Sociais','Motion Graphics','Edição','27/06/2026','Ana','Ryan','Leo','R$ 2.900','R$ 0','0%','À vista','R$ 435',2,
+ ['OS-260161','Farmácia Saúde Total','Direto','Motion Redes Sociais','Motion Graphics','Edição','27/06/2026','Ana','Ryan','Leo','R$ 2.900','R$ 0','0%','À vista','R$ 280',2,
   [['19/06/2026','📋 Lead criado por Ana'],['21/06/2026','✅ Fechado sem negociação'],['22/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:[],prazo:'27/06/2026',locacao:'',briefing:'5 animações em motion graphics para redes sociais. Cada animação apresenta uma promoção semanal da farmácia. Cores da marca: verde e branco. Estilo moderno e limpo. Duração máxima de 15 segundos cada.',terceirizados:'Nenhum — apenas edição e motion',roteiro:'',referencia:'https://www.instagram.com/farmaciasaudetotal',equipExtras:'Fonte tipográfica licenciada: Montserrat Bold',contatoExtra:'Patrícia Silva (marketing) — (35) 99555-1100',formato:'Vertical 9:16 (Instagram, Shorts)',producao:'Ryan',editor:'Leo',dataCriacao:'22/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1575,7 +1575,7 @@ let projects=[
   /*sp*/[],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260163','Supermercado Bom Preço','Direto','Campanha Volta às Aulas','Produção completa','Ajuste e Entrega','10/07/2026','Ana','Douglas','Leo','R$ 8.700','R$ 0','0%','50% no fechamento • 50% na entrega','R$ 1.305',3,
+ ['OS-260163','Supermercado Bom Preço','Direto','Campanha Volta às Aulas','Produção completa','Ajuste e Entrega','10/07/2026','Ana','Douglas','Leo','R$ 8.700','R$ 0','0%','50% no fechamento • 50% na entrega','R$ 1.150',3,
   [['15/06/2026','📋 Lead criado por Ana'],['20/06/2026','✅ Fechado'],['21/06/2026','🚀 Projeto iniciado'],['24/06/2026','🎬 Captação realizada'],['25/06/2026','✂️ Edição finalizada'],['26/06/2026','🔄 Ajuste: adicionar oferta de material escolar no final']],
   [{gravacoes:['20/06/2026'],horarioDia1:'08:00',prazo:'10/07/2026',revisao:'05/07/2026',locacao:'Supermercado Bom Preço — Rua Principal, 100 — Centro — Varginha/MG',briefing:'Campanha de volta às aulas com foco em materiais escolares e mercearia. Família com crianças, alegria, ambiente colorido. Tom acolhedor e animado. Finalizar com logo e jingle da marca.',terceirizados:'Carlos Cine, Atriz (mãe), 2 crianças atores, Lívia Make',roteiro:'https://drive.google.com/roteiro-bom-preco',referencia:'https://youtube.com/campanha-volta-aulas-exemplo',equipExtras:'Nenhum equipamento adicional',contatoExtra:'Gerente Paulo César — (35) 99444-2211',formato:'Horizontal e Vertical (TV e Instagram)',producao:'Douglas',editor:'Leo',dataCriacao:'21/06/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — 50% Entrada','Recebido'],['Recebimento — 50% Entrega','Pendente']],
@@ -1584,7 +1584,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',false],['Legenda',true],['Alterações prontas',false],['Entrega',false]]
  ]
 ,
- ['OS-260170','Loja Moda Verão','Direto','Lookbook Coleção 2026','Conteúdo para Web','Produção','08/07/2026','Ana','Ryan','Leo','R$ 5.800','R$ 0','0%','À vista','R$ 870',1,
+ ['OS-260170','Loja Moda Verão','Direto','Lookbook Coleção 2026','Conteúdo para Web','Produção','08/07/2026','Ana','Ryan','Leo','R$ 5.800','R$ 0','0%','À vista','R$ 640',1,
   [['25/06/2026','📋 Lead criado por Ana'],['26/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['05/07/2026'],horarioDia1:'10:00',prazo:'08/07/2026',locacao:'Loja Moda Verão — Rua das Palmeiras, 200 — Varginha/MG',briefing:'Lookbook da coleção verão 2026. 4 modelos, 3 ambientes diferentes. Tom sofisticado e moderno.',terceirizados:'Carlos Cine (câmera), Lívia Make (maquiagem), Sabrina (figurino)',roteiro:'',referencia:'https://instagram.com/moda-ref',equipExtras:'Rack de roupas, espelho de corpo inteiro',contatoExtra:'Luciana (proprietária) — (35) 99100-2233',formato:'Vertical 9:16',producao:'Ryan',editor:'Leo',dataCriacao:'26/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1592,7 +1592,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',false],['Dia 1 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260172','Prefeitura Regional Boa Esperança','Direto','Documentário 150 Anos','Produção completa','Produção','30/07/2026','Douglas','Douglas','Caio','R$ 48.000','R$ 0','0%','30/60/90 dias','R$ 7.200',1,
+ ['OS-260172','Prefeitura Regional Boa Esperança','Direto','Documentário 150 Anos','Produção completa','Produção','30/07/2026','Douglas','Douglas','Caio','R$ 48.000','R$ 0','0%','30/60/90 dias','R$ 11.200',1,
   [['24/06/2026','📋 Lead criado por Douglas'],['26/06/2026','🚀 Projeto iniciado']],
   [{gravacoes:['07/07/2026','08/07/2026','09/07/2026','10/07/2026','11/07/2026','14/07/2026','15/07/2026','16/07/2026','17/07/2026','18/07/2026','21/07/2026','22/07/2026','23/07/2026'],horarioDia1:'07:00',prazo:'30/07/2026',locacao:'Várias locações em Boa Esperança/MG — Centro Histórico, Igreja Matriz, Câmara Municipal, Fazendas históricas, Parque Municipal',briefing:'Documentário comemorativo dos 150 anos de Boa Esperança. 13 dias de captação cobrindo toda a história da cidade: arquivo histórico, entrevistas com personalidades, cobertura de eventos comemorativos, imagens aéreas da cidade e área rural. Narração profissional e trilha original.',terceirizados:'Carlos Cine (câmera A), Pedro Drone (aéreo), Técnico de som Marcos, Narrador Fábio Lins, Assessora histórica Profa. Ana Lúcia',roteiro:'https://drive.google.com/roteiro-boa-esperanca-150',referencia:'https://youtube.com/documentario-cidades-historicas',equipExtras:'Drone DJI Mavic 3 Pro, câmera extra Sony FX3, estabilizador DJI RS3, iluminação LED portátil completa',contatoExtra:'Sec. Cultura Dr. Renato Borges — (35) 99200-4455',formato:'Horizontal 16:9 — exibição pública, TV e streaming',producao:'Douglas',editor:'Caio',dataCriacao:'26/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento — Parcela 1/3 (30 dias)','Pendente'],['Recebimento — Parcela 2/3 (60 dias)','Pendente'],['Recebimento — Parcela 3/3 (90 dias)','Pendente']],
@@ -1600,7 +1600,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',false],['Dia 1 de gravação',false],['Dia 2 de gravação',false],['Dia 3 de gravação',false],['Dia 4 de gravação',false],['Dia 5 de gravação',false],['Dia 6 de gravação',false],['Dia 7 de gravação',false],['Dia 8 de gravação',false],['Dia 9 de gravação',false],['Dia 10 de gravação',false],['Dia 11 de gravação',false],['Dia 12 de gravação',false],['Dia 13 de gravação',false],['Material no Drive',false]],
   /*sp*/[['Briefing',false],['Montagem do vídeo',false],['Locução e trilha',false],['Animação',false],['Legenda',false],['Alterações prontas',false],['Entrega',false]]
  ],
- ['OS-260095','Farmácia Bem Estar','Direto','Vídeo Institucional','Vídeo Institucional','Encerrado','10/04/2026','Ana','Douglas','Leo','R$ 7.200','R$ 0','0%','À vista','R$ 1.080',5,
+ ['OS-260095','Farmácia Bem Estar','Direto','Vídeo Institucional','Vídeo Institucional','Encerrado','10/04/2026','Ana','Douglas','Leo','R$ 7.200','R$ 0','0%','À vista','R$ 830',5,
   [['12/03/2026','🚀 Projeto iniciado'],['25/03/2026','🎬 Captação'],['01/04/2026','✂️ Edição ok'],['10/04/2026','🏁 Encerrado']],
   [{gravacoes:['23/03/2026'],horarioDia1:'09:00',prazo:'10/04/2026',locacao:'Farmácia Bem Estar — Rua João Pinheiro, 45',briefing:'Vídeo institucional apresentando a farmácia, equipe e diferenciais.',terceirizados:'Carlos Cine',formato:'Horizontal 16:9',producao:'Douglas',editor:'Leo',dataCriacao:'12/03/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento confirmado','Recebido']],
@@ -1608,7 +1608,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260088','Colégio Criativo','Direto','Campanha Matrículas','Produção completa','Encerrado','20/03/2026','Ryan','Ryan','Caio','R$ 5.800','R$ 0','0%','À vista','R$ 870',5,
+ ['OS-260088','Colégio Criativo','Direto','Campanha Matrículas','Produção completa','Encerrado','20/03/2026','Ryan','Ryan','Caio','R$ 5.800','R$ 0','0%','À vista','R$ 490',5,
   [['22/02/2026','🚀 Projeto iniciado'],['05/03/2026','🎬 Captação'],['12/03/2026','✂️ Edição ok'],['20/03/2026','🏁 Encerrado']],
   [{gravacoes:['03/03/2026'],horarioDia1:'08:00',prazo:'20/03/2026',locacao:'Colégio Criativo — Rua das Flores, 200',briefing:'Campanha de matrículas 2027. Crianças, professores, infraestrutura. Tom alegre.',terceirizados:'Carlos Cine',formato:'Horizontal e Vertical',producao:'Ryan',editor:'Caio',dataCriacao:'22/02/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento confirmado','Recebido']],
@@ -1616,7 +1616,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260075','Auto Peças Irmãos','Direto','Institucional 2025','Vídeo Institucional','Encerrado','15/02/2026','Douglas','Douglas','Leo','R$ 8.500','R$ 0','0%','2x','R$ 1.275',5,
+ ['OS-260075','Auto Peças Irmãos','Direto','Institucional 2025','Vídeo Institucional','Encerrado','15/02/2026','Douglas','Douglas','Leo','R$ 8.500','R$ 0','0%','2x','R$ 1.370',5,
   [['18/01/2026','🚀 Projeto iniciado'],['28/01/2026','🎬 Captação'],['05/02/2026','✂️ Edição ok'],['15/02/2026','🏁 Encerrado']],
   [{gravacoes:['26/01/2026'],horarioDia1:'07:30',prazo:'15/02/2026',locacao:'Auto Peças Irmãos — Av. Getúlio Vargas, 800',briefing:'Vídeo institucional da auto peças. Equipe, produtos, estrutura.',terceirizados:'Carlos Cine',formato:'Horizontal 16:9',producao:'Douglas',editor:'Leo',dataCriacao:'18/01/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento — Parcela 1/2','Recebido'],['Recebimento — Parcela 2/2','Recebido']],
@@ -1624,7 +1624,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260062','Grupo Safra','Direto','Treinamento RH','Vídeo Institucional','Encerrado','20/01/2026','Ana','Ryan','Caio','R$ 6.200','R$ 0','0%','À vista','R$ 930',5,
+ ['OS-260062','Grupo Safra','Direto','Treinamento RH','Vídeo Institucional','Encerrado','20/01/2026','Ana','Ryan','Caio','R$ 6.200','R$ 0','0%','À vista','R$ 550',5,
   [['05/01/2026','🚀 Projeto iniciado'],['12/01/2026','🎬 Captação'],['16/01/2026','✂️ Edição ok'],['20/01/2026','🏁 Encerrado']],
   [{gravacoes:['10/01/2026'],horarioDia1:'09:00',prazo:'20/01/2026',locacao:'Grupo Safra — Av. Pres. Vargas, 1200',briefing:'Treinamento RH — integração de novos colaboradores. Tom didático.',terceirizados:'Carlos Cine',formato:'Horizontal 16:9',producao:'Ryan',editor:'Caio',dataCriacao:'05/01/2026'}],
   [['Cliente / Atendimento notificados','Sim'],['Liberação para faturamento','Sim'],['NF emitida','Sim'],['NF enviada','Sim'],['Recebimento confirmado','Recebido']],
@@ -1632,7 +1632,7 @@ let projects=[
   /*sp*/[['Briefing',true],['Agendamento de fornecedores',true],['Agendamento de locação',true],['Pré-produção',true],['Dia 1 de gravação',true],['Material no Drive',true]],
   /*sp*/[['Briefing',true],['Montagem do vídeo',true],['Locução e trilha',true],['Animação',true],['Legenda',true],['Alterações prontas',true],['Entrega',true]]
  ],
- ['OS-260199','Joalheria Brilho','Direto','Reels Coleção Ouono','Conteúdo para Web','Edição','05/07/2026','Ana','Ryan','Leo','R$ 3.600','R$ 0','0%','À vista','R$ 540',2,
+ ['OS-260199','Joalheria Brilho','Direto','Reels Coleção Ouono','Conteúdo para Web','Edição','05/07/2026','Ana','Ryan','Leo','R$ 3.600','R$ 0','0%','À vista','R$ 320',2,
   [['27/06/2026','📋 Lead criado por Ana'],['28/06/2026','✅ Fechado'],['29/06/2026','🚀 Projeto iniciado'],['29/06/2026','🎬 Captação concluída — material enviado ao Drive']],
   [{gravacoes:['28/06/2026'],horarioDia1:'09:00',prazo:'05/07/2026',locacao:'Joalheria Brilho — Rua XV de Novembro, 88 — Varginha/MG',briefing:'6 reels para Instagram mostrando coleção de outono. Peças em close, modelos e ambiente sofisticado.',terceirizados:'Carlos Cine, Lívia Make',roteiro:'',referencia:'https://instagram.com/joalheria-ref',equipExtras:'Mesa de vidro para produto, fundo preto fosco',contatoExtra:'Bianca (proprietária) — (35) 99200-3344',formato:'Vertical 9:16',producao:'Ryan',editor:'Leo',dataCriacao:'29/06/2026'}],
   [['Cliente / Atendimento notificados','Não'],['Liberação para faturamento','Pendente'],['NF emitida','Não'],['NF enviada','Não'],['Recebimento confirmado','Pendente']],
@@ -1663,9 +1663,9 @@ let leads=[
  ['OS-260140','Mercado Sul','Direto','Vídeo Institucional','Ana','Indicação','Cliente indicado pela Coopama. Quer vídeo para abertura de nova loja.','morno','R$ 12.000','12/06','','atendimento'],
  ['OS-260141','Escola Viva','Direto','Produção Completa','Ana','Instagram','Mandou DM perguntando sobre preço. Já foi cliente em 2024.','quente','R$ 8.500','14/06','','atendimento'],
  ['OS-260142','Coopama','Direto','Conteúdo para Web','Ana','Cliente antigo','Reunião feita em 15/06. Querem pacote mensal de reels.','quente','R$ 18.000','15/06','','atendimento'],
- ['OS-260143','RN Tintas','Direto','Motion Graphics','Ana','Site','Orçamento enviado com BV 10%. Cliente em análise.','quente','R$ 23.836','15/06','','orcamento'],
+ ['OS-260143','RN Tintas','Direto','Motion Graphics','Ana','Site','Orçamento enviado com BV 10%. Cliente em análise.','quente','R$ 24.000','15/06','','orcamento'],
  ['OS-260147','Agro Minas','Direto','Drone','Douglas','Indicação','Fazenda quer captação aérea. Orçamento enviado.','morno','R$ 7.200','13/06','','orcamento'],
- ['OS-260144','Prefeitura de Varginha','Direto','Produção Completa','Ryan','Licitação','Ajustando escopo final. Decisão na semana.','quente','R$ 47.925','16/06','','negociacao'],
+ ['OS-260144','Prefeitura de Varginha','Direto','Produção Completa','Ryan','Licitação','Ajustando escopo final. Decisão na semana.','quente','R$ 48.000','16/06','','negociacao'],
  ['OS-260148','Ipecont','Direto','Vídeo Institucional','Ana','Cliente antigo','Desconto de 5% solicitado. Analisando viabilidade.','morno','R$ 6.800','14/06','','negociacao'],
  ['OS-260145','Indústria Alfa','Direto','Produção Completa','Douglas','Indicação','Fechado! Aguardando briefing para iniciar projeto.','quente','R$ 31.500','16/06','','fechado'],
  ['OS-260121','Escola Viva','Direto','Pacote de Conteúdo','Ana','Instagram','Perdeu para concorrente. Cliente achou o preço alto.','frio','R$ 8.500','05/05','','perdido'],
@@ -1675,21 +1675,21 @@ let leads=[
 leads[0].timeline=[['10/06','📋 Lead criado por Ana'],['12/06','📞 Reunião de briefing agendada']];
 leads[1].timeline=[['14/06','📋 Lead criado por Ana'],['14/06','💬 Contato via Instagram']];
 leads[2].timeline=[['15/06','📋 Lead criado por Ana'],['15/06','🤝 Reunião realizada — pacote mensal discutido']];
-leads[3].timeline=[['13/06','📋 Lead criado por Ana'],['14/06','📄 Orçamento criado: R$ 23.836'],['14/06','➡️ Avançou para Orçamento']];leads[3].orcData='14/06/2026';
-leads[3].orcValorCliente=23836;leads[3].orcZipRecebe=21452;leads[3].orcBVValor=2384;leads[3].orcImposto=3218;leads[3].orcCustoProd=0;leads[3].orcCustoExtra=0;leads[3].orcLucro=18234;leads[3].orcMargem=85;leads[3].orcComissao=1823;leads[3].orcCondicao='À vista';leads[3].orcBV='0.10';
-leads[3].orcItens=[['Motion graphics e lettering','2','900',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Locução PT-BR','1','350',false],['Entrega HDTV e Web HD','1','0',false]];
+leads[3].timeline=[['13/06','📋 Lead criado por Ana'],['14/06','📄 Orçamento criado: R$ 24.000'],['14/06','➡️ Avançou para Orçamento']];leads[3].orcData='14/06/2026';
+leads[3].orcBaseProtegida=18000;leads[3].orcValorCliente=24000;leads[3].orcZipRecebe=18000;leads[3].orcBVValor=2400;leads[3].orcImposto=3600;leads[3].orcCustoProd=0;leads[3].orcCustoExtra=0;leads[3].orcLucro=18000;leads[3].orcMargem=75;leads[3].orcComissao=1800;leads[3].orcCondicao='À vista';leads[3].orcBV='0.10';
+leads[3].orcItens=[['Motion graphics e lettering','2','8000',true],['Tratamento de cor','1','1650',true],['Trilha Artlist','1','0',false],['Locução PT-BR','1','350',true],['Entrega HDTV e Web HD','1','0',false]];
 leads[4].timeline=[['11/06','📋 Lead criado por Douglas'],['13/06','📄 Orçamento criado: R$ 7.200'],['13/06','➡️ Avançou para Orçamento']];
-leads[4].orcValorCliente=7200;leads[4].orcZipRecebe=7200;leads[4].orcBVValor=0;leads[4].orcImposto=1080;leads[4].orcCustoProd=0;leads[4].orcCustoExtra=0;leads[4].orcLucro=6120;leads[4].orcMargem=85;leads[4].orcComissao=612;leads[4].orcData='13/06/2026';leads[4].orcCondicao='50% no fechamento • 50% na entrega';leads[4].orcBV='0';
-leads[4].orcItens=[['Captação com drone','1','700',true],['Meia diária de captação','1','650',true],['Fotografia publicitária','1','600',true],['Edição de filme','1','800',true],['Fotos tratadas','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
-leads[5].timeline=[['10/06','📋 Lead criado por Ryan'],['11/06','📄 Orçamento criado: R$ 47.925'],['11/06','➡️ Avançou para Orçamento'],['16/06','➡️ Avançou para Negociação']];leads[5].orcData='11/06/2026';
-leads[5].orcValorCliente=47925;leads[5].orcZipRecebe=47925;leads[5].orcBVValor=0;leads[5].orcImposto=7189;leads[5].orcCustoProd=0;leads[5].orcCustoExtra=0;leads[5].orcLucro=40736;leads[5].orcMargem=85;leads[5].orcComissao=4074;leads[5].orcCondicao='';leads[5].orcBV='0';
-leads[5].orcItens=[['Diária de captação','5','1200',true],['Câmera full frame','1','0',false],['Set de iluminação','1','0',false],['Steadycam / Ronin','1','0',false],['Microfone lapela','1','0',false],['Diretor de cena','3','800',true],['Edição de filme','3','800',true],['Motion graphics','1','900',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Locução PT-BR','1','350',true],['Transporte e alimentação','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
+leads[4].orcBaseProtegida=6120;leads[4].orcValorCliente=7200;leads[4].orcZipRecebe=6120;leads[4].orcBVValor=0;leads[4].orcImposto=1080;leads[4].orcCustoProd=0;leads[4].orcCustoExtra=0;leads[4].orcLucro=6120;leads[4].orcMargem=85;leads[4].orcComissao=612;leads[4].orcData='13/06/2026';leads[4].orcCondicao='50% no fechamento • 50% na entrega';leads[4].orcBV='0';
+leads[4].orcItens=[['Captação com drone','1','2000',true],['Meia diária de captação','1','1320',true],['Fotografia publicitária','1','1200',true],['Edição de filme','1','1600',true],['Fotos tratadas','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
+leads[5].timeline=[['10/06','📋 Lead criado por Ryan'],['11/06','📄 Orçamento criado: R$ 48.000'],['11/06','➡️ Avançou para Orçamento'],['16/06','➡️ Avançou para Negociação']];leads[5].orcData='11/06/2026';
+leads[5].orcBaseProtegida=40800;leads[5].orcValorCliente=48000;leads[5].orcZipRecebe=40800;leads[5].orcBVValor=0;leads[5].orcImposto=7200;leads[5].orcCustoProd=0;leads[5].orcCustoExtra=0;leads[5].orcLucro=40800;leads[5].orcMargem=85;leads[5].orcComissao=4080;leads[5].orcCondicao='';leads[5].orcBV='0';
+leads[5].orcItens=[['Diária de captação','5','4000',true],['Câmera full frame','1','0',false],['Set de iluminação','1','0',false],['Steadycam / Ronin','1','0',false],['Microfone lapela','1','0',false],['Diretor de cena','3','2500',true],['Edição de filme','3','2400',true],['Motion graphics','1','4750',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Locução PT-BR','1','1350',true],['Transporte e alimentação','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
 leads[6].timeline=[['12/06','📋 Lead criado por Ana'],['13/06','📄 Orçamento criado: R$ 6.800'],['14/06','➡️ Avançou para Orçamento'],['14/06','➡️ Avançou para Negociação']];
-leads[6].orcValorCliente=6800;leads[6].orcZipRecebe=6800;leads[6].orcBVValor=0;leads[6].orcImposto=1020;leads[6].orcCustoProd=0;leads[6].orcCustoExtra=0;leads[6].orcLucro=5780;leads[6].orcMargem=85;leads[6].orcComissao=578;leads[6].orcData='13/06/2026';leads[6].orcCondicao='À vista';leads[6].orcBV='0';
-leads[6].orcItens=[['Diária de captação','1','1200',true],['Câmera full frame','1','0',false],['Edição de filme','1','800',true],['Motion graphics','1','900',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
+leads[6].orcBaseProtegida=5780;leads[6].orcValorCliente=6800;leads[6].orcZipRecebe=5780;leads[6].orcBVValor=0;leads[6].orcImposto=1020;leads[6].orcCustoProd=0;leads[6].orcCustoExtra=0;leads[6].orcLucro=5780;leads[6].orcMargem=85;leads[6].orcComissao=578;leads[6].orcData='13/06/2026';leads[6].orcCondicao='À vista';leads[6].orcBV='0';
+leads[6].orcItens=[['Diária de captação','1','2500',true],['Câmera full frame','1','0',false],['Edição de filme','1','1800',true],['Motion graphics','1','1480',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
 leads[7].timeline=[['14/06','📋 Lead criado por Douglas'],['15/06','📄 Orçamento criado: R$ 31.500'],['15/06','➡️ Avançou para Orçamento'],['15/06','➡️ Avançou para Negociação'],['16/06','✅ Negociação Fechada']];
-leads[7].orcValorCliente=31500;leads[7].orcZipRecebe=31500;leads[7].orcBVValor=0;leads[7].orcImposto=4725;leads[7].orcCustoProd=0;leads[7].orcCustoExtra=0;leads[7].orcLucro=26775;leads[7].orcMargem=85;leads[7].orcComissao=2678;leads[7].orcData='15/06/2026';leads[7].orcCondicao='';leads[7].orcBV='0';
-leads[7].orcItens=[['Diária de captação','3','1200',true],['Câmera full frame','1','0',false],['Set de iluminação','1','0',false],['Steadycam / Ronin','1','0',false],['Diretor de cena','2','800',true],['Edição de filme','2','800',true],['Motion graphics','1','900',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Locução PT-BR','1','350',true],['Transporte e alimentação','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
+leads[7].orcBaseProtegida=26775;leads[7].orcValorCliente=31500;leads[7].orcZipRecebe=26775;leads[7].orcBVValor=0;leads[7].orcImposto=4725;leads[7].orcCustoProd=0;leads[7].orcCustoExtra=0;leads[7].orcLucro=26775;leads[7].orcMargem=85;leads[7].orcComissao=2677.5;leads[7].orcData='15/06/2026';leads[7].orcCondicao='';leads[7].orcBV='0';
+leads[7].orcItens=[['Diária de captação','3','4000',true],['Câmera full frame','1','0',false],['Set de iluminação','1','0',false],['Steadycam / Ronin','1','0',false],['Diretor de cena','2','2500',true],['Edição de filme','2','2400',true],['Motion graphics','1','3500',true],['Tratamento de cor','1','0',false],['Trilha Artlist','1','0',false],['Locução PT-BR','1','1475',true],['Transporte e alimentação','1','0',false],['Entrega HDTV e Web HD','1','0',false]];
 leads[8].timeline=[['01/05','📋 Lead criado por Ana'],['03/05','📄 Orçamento criado: R$ 8.500'],['04/05','➡️ Avançou para Negociação'],['05/05','❌ Lead marcado como perdido']];
 leads[9].timeline=[['15/04','📋 Lead criado por Douglas'],['18/04','📄 Orçamento criado: R$ 6.300'],['20/04','❌ Lead marcado como perdido']];
 function render(){
@@ -1948,45 +1948,26 @@ function openLead(os){
  const isProjetoIniciado=l[11]==='projeto_iniciado';
 
  // Recalculate live from orcItens
- const fmtR=v=>(v||v===0)?'R$ '+Math.round(Math.abs(v)).toLocaleString('pt-BR'):'-';
+ const fmtR=v=>(v||v===0)?fmtBRLSigned(v):'-';
  let valorCliente=0,zipRecebe=0,bvValor=0,imposto=0,custoProd=0,custoExtra=0,lucro=0,margem=0,comissao=0;
  const temOrc=l.orcItens&&l.orcItens.length>0;
  if(temOrc){
   const bvPct=parseFloat(l.orcBV||0);
   const desc=moneyToNumber(l.orcDesconto||'0');
-  const subtotal=l.orcItens.reduce((s,it)=>{
-   const qtd=Number(it[1])||1;
-   const unit=moneyToNumber('R$ '+(it[2]||'0'));
-   return s+qtd*unit;
-  },0);
-  custoProd=l.orcItens.reduce((s,it)=>{
-   if(!it[4])return s;
-   const qtd=Number(it[1])||1;
-   const unit=moneyToNumber('R$ '+(it[2]||'0'));
-   return s+qtd*unit;
-  },0);
   custoExtra=l.orcCustoExtra||0;
-  bvValor=Math.round(subtotal*bvPct);
-  const servicoZipOL=subtotal-custoProd;
-  const impostoZipOL=Math.round((servicoZipOL+bvValor)*ALIQUOTA);
-  const impostoCustoOL=Math.round(custoProd*ALIQUOTA);
-  const impostoTotalOL=impostoZipOL+impostoCustoOL;
-  valorCliente=subtotal+bvValor+impostoTotalOL-desc;
-  zipRecebe=subtotal;
-  imposto=impostoTotalOL;
-  const lucroRawOL=servicoZipOL-impostoZipOL-bvValor-custoExtra-desc;
-  lucro=Math.max(0,lucroRawOL);
-  margem=valorCliente>0?Math.round((lucro/valorCliente)*100):0;
-  comissao=lucro>0?Math.round(lucro*0.10):0;
-  // Keep stored values in sync
-  l.orcValorCliente=valorCliente;
-  l.orcZipRecebe=zipRecebe;
-  l.orcBVValor=bvValor;
-  l.orcImposto=imposto;
-  l.orcCustoProd=custoProd;
-  l.orcLucro=lucro;
-  l.orcMargem=margem;
-  l.orcComissao=comissao;
+  // ═══ CÁLCULO CENTRAL — mesma matemática do modal ═══
+  const finOL=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),bvPct,desc,custoExtra);
+  if(finOL){
+   valorCliente=finOL.valorCliente;
+   zipRecebe=finOL.zipLiquido;
+   bvValor=finOL.bvValor;
+   imposto=finOL.imposto;
+   custoProd=finOL.custoProd;
+   lucro=finOL.lucro;        // pode ser negativo
+   margem=finOL.margem;
+   comissao=finOL.comissao;
+   aplicarFinanceiroNoLead(l,finOL); // mantém campos salvos em sincronia
+  }
  }
  const margemCor=margem>=50?'var(--green)':margem>=30?'var(--yellow)':'var(--red)';
  const btnOrc=!isPerdido?`<button class="btn btn2" style="font-size:13px" onclick="abrirOrcamento('${os}')">📄 ${l[11]==='atendimento'?'Criar Orçamento':'Ver / Editar Orçamento'}</button>`:'';
@@ -2025,7 +2006,7 @@ function openLead(os){
    <div class="item" style="text-align:center">
     <div class="muted" style="font-size:12px">Potencial de comissão ${l[4]}</div>
     <div style="font-size:18px;font-weight:800;color:var(--accent);margin:4px 0">${fmtR(l.orcComissao)}</div>
-    <div class="muted" style="font-size:11px">10% sobre receita Zip</div>
+    <div class="muted" style="font-size:11px">10% sobre lucro líquido</div>
    </div>
    <div class="item" style="text-align:center;padding:12px 14px">
     <div class="muted" style="font-size:12px">Custo de produção</div>
@@ -2146,15 +2127,14 @@ function editarCustoLead(os){
  const novo=prompt('Custo extra pós-orçamento (R$):\n(cachês imprevistos, alimentação, deslocamento adicional...)',atual);
  if(novo===null)return;
  const val=Number(String(novo).replace('R$','').replace(/\./g,'').replace(',','.').trim())||0;
+ if(val<0){alert('⚠️ O custo extra não pode ser negativo.\n\nDigite apenas o valor gasto (ex: 500 ou 1.250,50).');return;}
  l.orcCustoExtra=val;
- // Recalcular lucro e comissão com novo custo extra
- if(l.orcZipRecebe){
-  const lucro=l.orcZipRecebe-l.orcImposto-val;
-  l.orcLucro=lucro;
-  l.orcMargem=l.orcZipRecebe>0?Math.round((lucro/l.orcZipRecebe)*100):0;
-  l.orcComissao=Math.round(lucro*0.10);
+ // Recalcular tudo com a função central — custo extra NÃO altera o valor ao cliente, só reduz lucro
+ if(l.orcItens&&l.orcItens.length){
+  const finCE=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),parseFloat(l.orcBV||0),moneyToNumber(l.orcDesconto||'0'),val);
+  if(finCE)aplicarFinanceiroNoLead(l,finCE);
  }
- const fmtR=v=>'R$ '+Math.abs(v).toLocaleString('pt-BR');
+ const fmtR=v=>fmtBRLSigned(v);
  const el=document.getElementById('custoTexto_'+os);
  if(el)el.textContent=fmtR(val);
  // Reabrir prontuário para atualizar todos os valores
@@ -3466,15 +3446,14 @@ function openProjeto(os){
  // Try to find linked lead for financial data
  const lead=leads.find(l=>l[0]===os);
  const valorCliente=lead?moneyToNumber(lead[8]||'0'):moneyToNumber(p[10]||'0');
- const lucroRaw=lead?.orcLucro||0;
- const lucro=Math.max(0,lucroRaw);
- const margem=lead?.orcMargem||(valorCliente>0?Math.round((lucro/valorCliente)*100):0);
- const imposto=lead?.orcImposto||Math.round(valorCliente*ALIQUOTA);
- const comissao=lead?.orcComissao||Math.round(lucro*0.10);
+ const lucro=lead?.orcLucro||0; // pode ser negativo — prejuízo aparece como prejuízo
+ const margem=(lead&&typeof lead.orcMargem==='number')?lead.orcMargem:(valorCliente>0?Math.round((lucro/valorCliente)*100):0);
+ const imposto=lead?.orcImposto||round2(valorCliente*ALIQUOTA);
+ const comissao=(lead&&typeof lead.orcComissao==='number')?lead.orcComissao:(lucro>0?round2(lucro*0.10):0);
  const condicao=lead?.orcCondicao||p[13]||'A definir';
  const orcItensLead=lead?.orcItens||p[19]||[];
 
- const fmtR=v=>v?'R$ '+Math.round(Math.abs(v)).toLocaleString('pt-BR'):'—';
+ const fmtR=v=>(v||v===0)?fmtBRLSigned(v):'—';
  const margemCor=margem>=40?'var(--green)':margem>=20?'var(--yellow)':'var(--red)';
 
  // Etapa trail
@@ -3692,9 +3671,9 @@ function openProjeto(os){
     <!-- Números -->
     <div>
      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Composição financeira</div>
-     <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Subtotal dos itens</span><b>${fmtR(valorCliente+imposto-(lead?.orcBVValor||0))}</b></div>
+     <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Subtotal dos itens</span><b>${fmtR(lead?.orcBaseProtegida||subtotalDeItens(orcItensLead))}</b></div>
      ${lead?.orcBVValor?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">BV agência</span><span style="color:var(--red)">− ${fmtR(lead.orcBVValor)}</span></div>`:''}
-     <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Imposto</span><span style="color:var(--red)">− ${fmtR(imposto)}</span></div>
+     <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Imposto estimado</span><span style="color:var(--red)">− ${fmtR(imposto)}</span></div>
      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid var(--ink)"><b style="font-size:14px">Valor ao cliente</b><b style="font-size:16px;color:#1e3a5f">${fmtR(valorCliente)}</b></div>
      <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Lucro líquido</span><b style="color:${lucro>0?'var(--green)':'var(--red)'}">${fmtR(lucro)}</b></div>
      <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Margem</span><b style="color:${margemCor}">${margem}%</b></div>
@@ -5047,6 +5026,16 @@ function abrirOrcamento(os){
  // restore saved conditions
  if(l.orcBV&&document.getElementById('orcBV'))orcBV.value=l.orcBV;
  if(l.orcDesconto&&document.getElementById('orcDesconto'))orcDesconto.value=l.orcDesconto;
+ // V7.11.5: custo extra — SEMPRE sobrescreve o campo (restaura do lead ou limpa),
+ // evitando apagar custo salvo ao reabrir e contaminação entre leads diferentes
+ var ceEl=document.getElementById('orcCustoExtra');
+ if(ceEl){
+  if(typeof l.orcCustoExtra==='number'&&l.orcCustoExtra>0){
+   ceEl.value=Number.isInteger(l.orcCustoExtra)?l.orcCustoExtra.toLocaleString('pt-BR'):l.orcCustoExtra.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  } else {
+   ceEl.value='';
+  }
+ }
  renderOrcItens();
  calcOrc();
  openModal('modalOrcamento');
@@ -5148,8 +5137,8 @@ function renderOrcItens(){
     <input value="${it[0]}" oninput="orcItens[${i}][0]=this.value" placeholder="Descrição" style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box">
     ${eCusto?'<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>':''}
    </div>
-   <input type="number" min="1" value="${it[1]||1}" oninput="orcItens[${i}][1]=this.value;atualizarTotalOrc()" style="padding:7px 6px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:center">
-   <input value="${it[2]||''}" oninput="orcItens[${i}][2]=this.value;atualizarTotalOrc()" placeholder="0" style="padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:right">
+   <input type="number" min="1" value="${it[1]||1}" oninput="this.value=this.value.replace(/-/g,'');orcItens[${i}][1]=this.value;atualizarTotalOrc()" style="padding:7px 6px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:center">
+   <input value="${it[2]||''}" oninput="this.value=this.value.replace(/-/g,'');orcItens[${i}][2]=this.value;atualizarTotalOrc()" placeholder="0" style="padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:right">
    <div style="text-align:center">
     <label style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:11px;color:var(--muted)">
      <input type="checkbox" ${exibir?'checked':''} onchange="orcItens[${i}][3]=this.checked;calcOrc()" style="width:14px;height:14px">
@@ -5165,11 +5154,7 @@ function renderOrcItens(){
 }
 
 function atualizarTotalOrc(){
- const totalGeral=orcItens.reduce((s,it)=>{
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
+ const totalGeral=subtotalDeItens(orcItens); // V7.11.5: mesma base protegida
  const tot=document.getElementById('orcTotalItens');
  if(tot)tot.innerHTML=totalGeral>0?`<b>Subtotal: R$ ${totalGeral.toLocaleString('pt-BR')}</b>`:'';
  calcOrc();
@@ -5184,42 +5169,83 @@ function addItemOrcManual(){
 const ORC_CONDICOES_VALIDAS=["Pagamento antecipado", "À vista", "50% no fechamento • 50% na entrega", "30% • 30% • 40% na entrega", "30/60/90 dias", "Parcelado em 2x", "Parcelado em 3x", "Parcelado em 4x", "Parcelado em 5x", "Parcelado em 6x", "Plano semestral (6 meses)", "Plano anual (12 meses)", "A combinar"];
 function condicaoValida(c){return c&&ORC_CONDICOES_VALIDAS.includes(c);}
 
+// ═══════════ FUNÇÃO CENTRAL DE CÁLCULO DO ORÇAMENTO (V7.11.3) ═══════════
+// Regras de negócio confirmadas:
+// 1. Zip emite NF do valor cheio → imposto = ALIQUOTA × valorCliente (valor final)
+// 2. BV incide sobre o valor final que o cliente vê
+// 3. Desconto reduz o valor final → imposto e BV são recalculados sobre o valor com desconto
+// Técnica: gross-up → valorBruto = subtotal / (1 − alíquota − BV%)
+function round2(v){return Math.round(v*100)/100;}
+function calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra){
+ const a=ALIQUOTA;
+ // Sanitização: entradas financeiras nunca podem ser negativas
+ // (a UI também bloqueia/avisa — isto é defesa em profundidade)
+ subtotal=Math.max(0,Number(subtotal)||0);
+ custoProd=Math.max(0,Number(custoProd)||0);
+ bvPct=Math.max(0,Number(bvPct)||0);
+ desconto=Math.max(0,Number(desconto)||0);
+ custoExtra=Math.max(0,Number(custoExtra)||0);
+ const fator=1-a-bvPct;
+ if(fator<=0)return null; // proteção: taxas somadas >= 100%
+ const valorBruto=round2(subtotal/fator);        // gross-up: garante a base protegida
+ // Desconto não pode superar o valor cheio — capa e sinaliza para a UI avisar
+ const descontoExcessivo=desconto>valorBruto;
+ const descontoAplicado=descontoExcessivo?valorBruto:desconto;
+ const valorCliente=round2(valorBruto-descontoAplicado); // desconto sobre o valor cheio
+ const imposto=round2(valorCliente*a);           // recalculado sobre o valor final (NF real)
+ const bvValor=round2(valorCliente*bvPct);       // recalculado sobre o valor final
+ const zipLiquido=round2(valorCliente-imposto-bvValor); // o que sobra após taxas
+ const lucro=round2(zipLiquido-custoProd-custoExtra);   // PODE SER NEGATIVO (prejuízo real)
+ const comissao=lucro>0?round2(lucro*0.10):0;    // comissão só sobre lucro positivo
+ const margem=valorCliente>0?Math.round((lucro/valorCliente)*100):0; // pode ser negativa
+ return {baseProtegida:round2(subtotal),valorBruto,valorCliente,imposto,bvValor,zipLiquido,custoProd:round2(custoProd),custoExtra:round2(custoExtra),lucro,comissao,margem,prejuizo:lucro<0,descontoExcessivo};
+}
+function subtotalDeItens(itens){
+ return (itens||[]).reduce((s,it)=>{const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+qtd*unit;},0);
+}
+function custoProdDeItens(itens){
+ return (itens||[]).reduce((s,it)=>{if(!it[4])return s;const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+qtd*unit;},0);
+}
+function aplicarFinanceiroNoLead(l,fin){
+ l.orcBaseProtegida=fin.baseProtegida;
+ l.orcValorCliente=fin.valorCliente;
+ l.orcZipRecebe=fin.zipLiquido; // semântica: líquido real após imposto e BV
+ l.orcBVValor=fin.bvValor;
+ l.orcImposto=fin.imposto;
+ l.orcCustoProd=fin.custoProd;
+ l.orcLucro=fin.lucro;          // pode ser negativo — prejuízo aparece como prejuízo
+ l.orcMargem=fin.margem;
+ l.orcComissao=fin.comissao;
+}
+// Formata com sinal: negativo aparece como "− R$ X"
+function fmtBRLSigned(v,dec){
+ const n=Number(v)||0;
+ const opts=dec?{minimumFractionDigits:2,maximumFractionDigits:2}:{maximumFractionDigits:2};
+ return (n<0?'− ':'')+'R$ '+Math.abs(n).toLocaleString('pt-BR',opts);
+}
+
 function calcOrc(){
  const l=leads.find(x=>x[0]===orcLeadOs);
- const subtotal=orcItens.reduce((s,it)=>{
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
+ const subtotal=subtotalDeItens(orcItens); // V7.11.5: mesma base protegida em todas as saídas
  const bvPct=parseFloat(document.getElementById('orcBV')?.value||0);
  const desconto=moneyToNumber(document.getElementById('orcDesconto')?.value||'0');
- const custoProd=orcItens.reduce((s,it)=>{
-  if(!it[4])return s;
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
+ const custoProd=custoProdDeItens(orcItens);
  const custoExtra=moneyToNumber(document.getElementById('orcCustoExtra')?.value||'0');
 
-  const bvValor=Math.round(subtotal*bvPct);
- // Serviço real da Zip (custo de repasse não é lucro da Zip)
- const servicoZip=subtotal-custoProd;
- // Imposto só sobre serviço Zip + BV — custo repasse tem imposto próprio repassado ao cliente
- const impostoZip=Math.round((servicoZip+bvValor)*ALIQUOTA);
- const impostoCusto=Math.round(custoProd*ALIQUOTA);
- const impostoTotal=impostoZip+impostoCusto;
- // Valor ao cliente = tudo embutido (subtotal + BV + impostoTotal) - desconto
- const valorCliente=subtotal+bvValor+impostoTotal-desconto;
- const zipRecebe=subtotal;
- // Lucro = serviço Zip - imposto Zip - BV - custoExtra - desconto
- // Custo de produção NÃO reduz lucro — cliente paga custo + imposto do custo
- const lucroRaw=servicoZip-impostoZip-bvValor-custoExtra-desconto;
- const lucro=Math.max(0,lucroRaw);
- const comissao=lucro>0?Math.round(lucro*0.10):0;
- const margem=valorCliente>0?Math.round((lucro/valorCliente)*100):0;
- const prejuizo=lucroRaw<0;
+ // ═══ CÁLCULO CENTRAL (gross-up) ═══
+ const fin=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra);
+ if(!fin)return;
+ const valorBruto=fin.valorBruto;
+ const valorCliente=fin.valorCliente;
+ const bvValor=fin.bvValor;
+ const impostoTotal=fin.imposto;
+ const zipLiquido=fin.zipLiquido;
+ const lucro=fin.lucro;       // pode ser negativo
+ const comissao=fin.comissao;
+ const margem=fin.margem;
+ const prejuizo=fin.prejuizo;
 
- const fmt=v=>'R$ '+Math.abs(Math.round(v)).toLocaleString('pt-BR');
+ const fmt=v=>fmtBRLSigned(v,true);
  const condicao=document.getElementById('orcCondicao')?.value||l?.orcCondicao||'';
 
  // Parcela / plano logic
@@ -5241,14 +5267,14 @@ function calcOrc(){
  const el=document.getElementById('orcResumo');
  if(el)el.innerHTML=`
   <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-   <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Composição</div>
-   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Subtotal itens</span><b>${fmt(subtotal)}</b></div>
-   ${bvValor?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">BV agência (${Math.round(bvPct*100)}%)</span><span style="color:var(--red)">− ${fmt(bvValor)}</span></div>`:''}
-   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Imposto ${Math.round(ALIQUOTA*100)}%</span><span style="color:var(--red)">− ${fmt(impostoTotal)}</span></div>
-   ${custoProd?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Custo de produção</span><span style="color:var(--red)">− ${fmt(custoProd)}</span></div>`:''}
-   ${custoExtra?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Custo extra</span><span style="color:var(--red)">− ${fmt(custoExtra)}</span></div>`:''}
-   ${desconto?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Desconto concedido</span><span style="color:var(--red)">− ${fmt(desconto)}</span></div>`:''}
-   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--muted)">Comissão atendimento</span><span style="color:var(--red)">− ${fmt(comissao)}</span></div>
+   <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Composição do valor ao cliente</div>
+   ${custoProd?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Serviços Zip</span><b>${fmt(subtotal-custoProd)}</b></div>
+   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Custos de produção (repasse)</span><b>${fmt(custoProd)}</b></div>`:''}
+   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Subtotal protegido</span><b>${fmt(subtotal)}</b></div>
+   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Imposto estimado + BV embutidos</span><span style="color:#0369a1">+ ${fmt(valorBruto-subtotal)}</span></div>
+   ${desconto?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Valor cheio</span><b>${fmt(valorBruto)}</b></div>
+   <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span style="color:var(--muted)">Desconto concedido</span><span style="color:var(--red)">− ${fmt(desconto)}</span></div>`:''}
+   <div style="font-size:11px;color:var(--muted);padding:6px 0 2px">No valor final: imposto estimado ${Math.round(ALIQUOTA*100)}% = ${fmt(impostoTotal)}${bvValor?` • BV ${Math.round(bvPct*100)}% = ${fmt(bvValor)}`:''} → sobra líquida ${fmt(zipLiquido)}</div>
   </div>
   <div style="background:#1e3a5f;color:white;border-radius:14px;padding:18px 20px;margin-bottom:16px;text-align:center">
    <div style="font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${valorLabel}</div>
@@ -5259,10 +5285,13 @@ function calcOrc(){
  
  const mEl=document.getElementById('orcMargem');
  if(mEl){
-  const cor=margem>=50?'#dcfce7':margem>=30?'#fef9c3':'#fee2e2';
-  const txt=margem>=50?'var(--green)':margem>=30?'var(--yellow)':'var(--red)';
-  const label=margem>=50?'✅ Ótima':margem>=30?'⚠️ Aceitável':'🚨 Baixa';
-  const alertaMargem=prejuizo?`
+  const cor=prejuizo?'#fee2e2':margem>=50?'#dcfce7':margem>=30?'#fef9c3':'#fee2e2';
+  const txt=prejuizo?'var(--red)':margem>=50?'var(--green)':margem>=30?'var(--yellow)':'var(--red)';
+  const label=prejuizo?'🚨 PREJUÍZO':margem>=50?'✅ Ótima':margem>=30?'⚠️ Aceitável':'🚨 Baixa';
+  const alertaMargem=fin.descontoExcessivo?`
+  <div style="background:#fff1f2;border:1px solid #fecdd3;border-left:4px solid #ef4444;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:#9f1239">
+   ⛔ <b>Desconto maior que o valor do orçamento (${fmt(valorBruto)}).</b> Corrija o desconto — não é possível salvar assim.
+  </div>`:prejuizo?`
   <div style="background:#fff1f2;border:1px solid #fecdd3;border-left:4px solid #ef4444;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:#9f1239">
    🚨 <b>Prejuízo — os custos superam a receita.</b> Revise os valores antes de salvar.
   </div>`:margem<20?`
@@ -5291,37 +5320,38 @@ function calcOrc(){
 
 function salvarOrcamento(){
  const l=leads.find(x=>x[0]===orcLeadOs);if(!l)return;
- l.orcItens=[...orcItens];
- l.orcBV=document.getElementById('orcBV')?.value||'0';
- l.orcDesconto=document.getElementById('orcDesconto')?.value||'';
- l.orcCondicao=document.getElementById('orcCondicao')?.value||'';
+ // V7.11.6: valida PRIMEIRO, grava DEPOIS — bloqueio não deixa sujeira parcial no lead
+ const novoBV=document.getElementById('orcBV')?.value||'0';
+ const novoDesconto=document.getElementById('orcDesconto')?.value||'';
+ const novaCondicao=document.getElementById('orcCondicao')?.value||'';
  const custoExtraEl=document.getElementById('orcCustoExtra');
- if(custoExtraEl)l.orcCustoExtra=moneyToNumber(custoExtraEl.value||'0');
+ const novoCustoExtra=custoExtraEl?moneyToNumber(custoExtraEl.value||'0'):(l.orcCustoExtra||0);
 
- const subtotal=orcItens.reduce((s,it)=>{
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
- const desc=moneyToNumber(l.orcDesconto);
- const bvPct=parseFloat(l.orcBV||0);
- const custoProd=orcItens.reduce((s,it)=>{
-  if(!it[4])return s;
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
- const custoExtra=l.orcCustoExtra||0;
- const bvValor=Math.round(subtotal*bvPct);
- const servicoZip=subtotal-custoProd;
- const impostoZip=Math.round((servicoZip+bvValor)*ALIQUOTA);
- const impostoCusto=Math.round(custoProd*ALIQUOTA);
- const impostoTotal=impostoZip+impostoCusto;
- const valorCliente=subtotal+bvValor+impostoTotal-desc;
- const lucroRaw=servicoZip-impostoZip-bvValor-custoExtra-desc;
- const lucro=Math.max(0,lucroRaw);
- const comissao=lucro>0?Math.round(lucro*0.10):0;
- if(valorCliente>0)l[8]='R$ '+valorCliente.toLocaleString('pt-BR');
+ const subtotal=subtotalDeItens(orcItens);
+ const desc=moneyToNumber(novoDesconto);
+ const bvPct=parseFloat(novoBV||0);
+ const custoProd=custoProdDeItens(orcItens);
+ const custoExtra=novoCustoExtra;
+ // ═══ CÁLCULO CENTRAL — mesma matemática do modal e do card ═══
+ const finSalvar=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desc,custoExtra);
+ if(!finSalvar)return;
+ if(finSalvar.descontoExcessivo){
+  alert('⛔ Não é possível salvar: o desconto (R$ '+desc.toLocaleString('pt-BR')+') é maior que o valor cheio do orçamento (R$ '+finSalvar.valorBruto.toLocaleString('pt-BR')+').\n\nCorrija o valor do desconto.');
+  return;
+ }
+ // Validação OK — agora sim grava no lead
+ l.orcItens=[...orcItens];
+ l.orcBV=novoBV;
+ l.orcDesconto=novoDesconto;
+ l.orcCondicao=novaCondicao;
+ l.orcCustoExtra=novoCustoExtra;
+ const bvValor=finSalvar.bvValor;
+ const impostoTotal=finSalvar.imposto;
+ const valorBruto=finSalvar.valorBruto;
+ const valorCliente=finSalvar.valorCliente;
+ const lucro=finSalvar.lucro;
+ const comissao=finSalvar.comissao;
+ if(valorCliente>0)l[8]='R$ '+valorCliente.toLocaleString('pt-BR',{maximumFractionDigits:2});
 
  // Timeline
  if(!l.timeline)l.timeline=[];
@@ -5345,7 +5375,7 @@ function salvarOrcamento(){
  }
  // Log desconto só quando houver e for diferente do anterior
  if(desc>0&&desc!==descontoAnterior){
-  const pctDesc=valorCliente>0?Math.round((desc/(subtotal+bvValor+impostoTotal))*100):0;
+  const pctDesc=valorBruto>0?Math.round((desc/valorBruto)*100):0;
   l.timeline.push([dataHoje,`💸 Desconto concedido: R$ ${desc.toLocaleString('pt-BR')} (${pctDesc}% do valor total)`]);
  }
  l.orcDescontoValor=desc;
@@ -5363,15 +5393,8 @@ function salvarOrcamento(){
  }
  l.orcCustoExtraAnterior=custoExtra;
 
- // Save financials
- l.orcValorCliente=valorCliente;
- l.orcZipRecebe=subtotal;
- l.orcBVValor=bvValor;
- l.orcImposto=impostoTotal;
- l.orcCustoProd=custoProd;
- l.orcLucro=lucro;
- l.orcMargem=valorCliente>0?Math.round((lucro/valorCliente)*100):0;
- l.orcComissao=comissao;
+ // Save financials — campos consistentes via função central
+ aplicarFinanceiroNoLead(l,finSalvar);
 
  // Auto-advance from atendimento to orcamento — same date as orçamento criado
  if(l[11]==='atendimento'){
@@ -5388,20 +5411,12 @@ function salvarOrcamento(){
 
 function exportarPDFOrcamento(){
  const l=leads.find(x=>x[0]===orcLeadOs);
- const subtotal=orcItens.reduce((s,it)=>{
-  const qtd=Number(it[1])||1;
-  const unit=moneyToNumber('R$ '+(it[2]||'0'));
-  return s+qtd*unit;
- },0);
+ const subtotal=subtotalDeItens(orcItens); // V7.11.5: mesma base protegida
  const bvPct=parseFloat(document.getElementById('orcBV')?.value||0);
  const desc=moneyToNumber(document.getElementById('orcDesconto')?.value||'0');
- const custoProdPDF=orcItens.reduce((s,it)=>{if(!it[4])return s;const qtd=Number(it[1])||1;const unit=moneyToNumber('R$ '+(it[2]||'0'));return s+qtd*unit;},0);
- const bvValor=Math.round(subtotal*bvPct);
- const servicoZipPDF=subtotal-custoProdPDF;
- const impostoZipPDF=Math.round((servicoZipPDF+bvValor)*ALIQUOTA);
- const impostoCustoPDF=Math.round(custoProdPDF*ALIQUOTA);
- const impostoTotal=impostoZipPDF+impostoCustoPDF;
- const valorCliente=subtotal+bvValor+impostoTotal-desc;
+ // ═══ CÁLCULO CENTRAL — mesmo valor exibido no modal ═══
+ const finPDF=calcularFinanceiroOrc(subtotal,custoProdDeItens(orcItens),bvPct,desc,0);
+ const valorCliente=finPDF?finPDF.valorCliente:0;
  const condicao=document.getElementById('orcCondicao')?.value||'A definir';
  const responsavel=l?l[4]:'—';
  const cliente=l?l[1]:'—';
@@ -5734,7 +5749,7 @@ function renderFinMetas(){
   var totalVendido=fechados.reduce(function(s,l){return s+moneyToNumber(l[8]);},0);
   var pct=d.meta>0?Math.round((totalVendido/d.meta)*100):0;
   var barCor=pct>=100?'var(--green)':pct>=50?'var(--yellow)':'var(--accent)';
-  var comissao=fechados.reduce(function(s,l){return s+(l.orcComissao||Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
+  var comissao=fechados.reduce(function(s,l){return s+((typeof l.orcComissao==='number')?l.orcComissao:Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
   var potenciais=leads.filter(function(l){return l[4]===nome&&(l[11]==='negociacao'||l[11]==='orcamento')&&(l.orcComissao||0)>0;});
   var comissaoPot=potenciais.reduce(function(s,l){return s+(l.orcComissao||0);},0);
   html+='<div class="card" style="margin:0">'
@@ -5802,7 +5817,7 @@ function renderFinMetas(){
   var vendido=fechados.reduce(function(s,l){return s+moneyToNumber(l[8]);},0);
   var potenciais=isMesAtual?leads.filter(function(l){return l[4]===nomeSel&&(l[11]==='negociacao'||l[11]==='orcamento')&&(l.orcComissao||0)>0;}):[];
   var pot=potenciais.reduce(function(s,l){return s+(l.orcComissao||0);},0);
-  var comissao=fechados.reduce(function(s,l){return s+(l.orcComissao||Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
+  var comissao=fechados.reduce(function(s,l){return s+((typeof l.orcComissao==='number')?l.orcComissao:Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
   var pct=d.meta>0?Math.round((vendido/d.meta)*100):0;
   var bateu=d.meta>0&&vendido>=d.meta;
   if(bateu)mesesBatidos++;
@@ -5850,7 +5865,7 @@ function renderFinDashPlacar(){
   var totalVendido=fechados.reduce(function(s,l){return s+moneyToNumber(l[8]);},0);
   var pct=d.meta>0?Math.round((totalVendido/d.meta)*100):0;
   var barCor=pct>=100?'var(--green)':pct>=50?'var(--yellow)':'var(--accent)';
-  var comissao=fechados.reduce(function(s,l){return s+(l.orcComissao||Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
+  var comissao=fechados.reduce(function(s,l){return s+((typeof l.orcComissao==='number')?l.orcComissao:Math.round(moneyToNumber(l[8])*(d.pct/100)));},0);
   var potenciais=leads.filter(function(l){return l[4]===nome&&(l[11]==='negociacao'||l[11]==='orcamento')&&(l.orcComissao||0)>0;});
   var comissaoPot=potenciais.reduce(function(s,l){return s+(l.orcComissao||0);},0);
   html+='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px 12px">'
@@ -6554,14 +6569,14 @@ function abrirProntuarioFin(os){
  // Resumo comercial — mesma lógica do Projetos Ativos
  var leadFin=leads.find(function(l){return l[0]===os;});
  var valorClienteFin=leadFin?moneyToNumber(leadFin[8]||'0'):moneyToNumber(p[10]||'0');
- var lucroRawFin=leadFin&&leadFin.orcLucro||0;
- var lucroFin=Math.max(0,lucroRawFin);
- var margemFin=leadFin&&leadFin.orcMargem||(valorClienteFin>0?Math.round((lucroFin/valorClienteFin)*100):0);
- var impostoFin=leadFin&&leadFin.orcImposto||Math.round(valorClienteFin*ALIQUOTA);
- var comissaoFin=leadFin&&leadFin.orcComissao||Math.round(lucroFin*0.10);
+ // Lucro pode ser negativo — prejuízo aparece como prejuízo (sem Math.max)
+ var lucroFin=(leadFin&&typeof leadFin.orcLucro==='number')?leadFin.orcLucro:0;
+ var margemFin=(leadFin&&typeof leadFin.orcMargem==='number')?leadFin.orcMargem:(valorClienteFin>0?Math.round((lucroFin/valorClienteFin)*100):0);
+ var impostoFin=(leadFin&&typeof leadFin.orcImposto==='number')?leadFin.orcImposto:round2(valorClienteFin*ALIQUOTA);
+ var comissaoFin=(leadFin&&typeof leadFin.orcComissao==='number')?leadFin.orcComissao:(lucroFin>0?round2(lucroFin*0.10):0);
  var condicaoFin=leadFin&&leadFin.orcCondicao||p[13]||'A definir';
  var orcItensFin=leadFin&&leadFin.orcItens||p[19]||[];
- var fmtRFin=function(v){return v?'R$ '+Math.round(Math.abs(v)).toLocaleString('pt-BR'):'—';};
+ var fmtRFin=function(v){return (v||v===0)?fmtBRLSigned(v):'—';};
  var margemCorFin=margemFin>=40?'var(--green)':margemFin>=20?'var(--yellow)':'var(--red)';
  var itensHTMLFin=orcItensFin.filter(function(it){return it[0];}).map(function(it){
   var qtd=Number(it[1])||1;
@@ -6662,11 +6677,11 @@ function abrirProntuarioFin(os){
 
     +'<div>'
      +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Composição financeira</div>'
-     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Subtotal dos itens</span><b>'+fmtRFin(valorClienteFin+impostoFin-((leadFin&&leadFin.orcBVValor)||0))+'</b></div>'
+     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Subtotal dos itens</span><b>'+fmtRFin((leadFin&&typeof leadFin.orcBaseProtegida==='number')?leadFin.orcBaseProtegida:subtotalDeItens(orcItensFin))+'</b></div>'
      +((leadFin&&leadFin.orcBVValor)?'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">BV agência</span><span style="color:var(--red)">− '+fmtRFin(leadFin.orcBVValor)+'</span></div>':'')
-     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Imposto</span><span style="color:var(--red)">− '+fmtRFin(impostoFin)+'</span></div>'
+     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Imposto estimado</span><span style="color:var(--red)">− '+fmtRFin(impostoFin)+'</span></div>'
      +'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid var(--ink)"><b style="font-size:14px">Valor ao cliente</b><b style="font-size:16px;color:#1e3a5f">'+fmtRFin(valorClienteFin)+'</b></div>'
-     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Lucro líquido</span><b style="color:'+(lucroFin>0?'var(--green)':'var(--red)')+'">'+fmtRFin(lucroFin)+'</b></div>'
+     +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Lucro líquido</span><b style="color:'+(lucroFin>0?'var(--green)':lucroFin<0?'var(--red)':'var(--muted)')+'">'+fmtRFin(lucroFin)+'</b></div>'
      +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)"><span class="muted">Margem</span><b style="color:'+margemCorFin+'">'+margemFin+'%</b></div>'
      +'<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span class="muted">Comissão prevista</span><b style="color:var(--accent)">'+fmtRFin(comissaoFin)+'</b></div>'
     +'</div>'
@@ -7776,51 +7791,82 @@ function renderFinProjetos(){
   if(filtroAno&&getAno(p)!==filtroAno)return false;
   return true;
  });
- projs.sort(function(a,b){
-  var vA=a[5]==='Arquivado'||a[5]==='Perda'?getValorRecebido(a):parseBRL(a[10]);
-  var vB=b[5]==='Arquivado'||b[5]==='Perda'?getValorRecebido(b):parseBRL(b[10]);
-  var mA=vA>0?((vA-parseBRL(a[14]))/vA)*100:0;
-  var mB=vB>0?((vB-parseBRL(b[14]))/vB)*100:0;
-  return mB-mA;
+ // ═══ V7.11.4: Rentabilidade com decomposição financeira real ═══
+ // Computa cada linha primeiro (permite ordenar pela margem NOVA, não pela antiga)
+ var mesAbrevs=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+ var linhas=projs.map(function(p){
+  var ehCasoEspecial=p[5]==='Arquivado'||p[5]==='Perda';
+  var leadRent=leads.find(function(l){return l[0]===p[0];});
+  var temOrcamento=leadRent&&typeof leadRent.orcValorCliente==='number'&&leadRent.orcValorCliente>0;
+  var custos=parseBRL(p[14]);
+  var valorCli,impBV,recLiq,lucro,estimado=false;
+  if(ehCasoEspecial){
+   // Regime de caixa: valor efetivamente recebido − custos (sem decomposição fiscal)
+   valorCli=getValorRecebido(p);
+   impBV=null;recLiq=null;
+   lucro=round2(valorCli-custos);
+  } else if(temOrcamento){
+   // Dados reais do orçamento vinculado
+   valorCli=leadRent.orcValorCliente;
+   impBV=round2((leadRent.orcImposto||0)+(leadRent.orcBVValor||0));
+   recLiq=(typeof leadRent.orcZipRecebe==='number')?leadRent.orcZipRecebe:round2(valorCli-impBV);
+   lucro=round2(recLiq-custos);
+  } else {
+   // Fallback sem orçamento: estimativa gerencial (imposto estimado, sem BV)
+   valorCli=parseBRL(p[10]);
+   impBV=round2(valorCli*ALIQUOTA);
+   recLiq=round2(valorCli-impBV);
+   lucro=round2(recLiq-custos);
+   estimado=true;
+  }
+  var margem=valorCli>0?Math.round((lucro/valorCli)*100):(custos>0?-100:0);
+  return {p:p,ehCaixa:ehCasoEspecial,valorCli:valorCli,impBV:impBV,recLiq:recLiq,custos:custos,lucro:lucro,margem:margem,estimado:estimado};
  });
+
+ // Ordenar pela margem NOVA (real/parcial), não pela fórmula antiga
+ linhas.sort(function(a,b){return b.margem-a.margem;});
 
  var tbl=document.createElement('table');tbl.className='table';tbl.style.cssText='width:100%';
- tbl.innerHTML='<tr><th>Projeto</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Período</th><th class="money">Receita</th><th class="money">Custos</th><th class="money">Lucro</th><th>Margem</th></tr>';
+ tbl.innerHTML='<tr><th>Projeto</th><th>Cliente</th><th>Status</th><th>Período</th><th class="money">Valor ao cliente</th><th class="money">Imposto + BV</th><th class="money">Receita líquida Zip</th><th class="money">Custos realizados</th><th class="money">Lucro realizado</th><th>Margem</th></tr>';
 
- var totReceita=0,totCusto=0;
- projs.forEach(function(p){
-  // Para projetos Arquivados/Perda, Receita = valor realmente recebido (regime de caixa)
-  // Para projetos normais, Receita = valor total do contrato (regime de competência, como já era)
-  var ehCasoEspecial=p[5]==='Arquivado'||p[5]==='Perda';
-  var v=ehCasoEspecial?getValorRecebido(p):parseBRL(p[10]);
-  var custo=parseBRL(p[14]);var lucro=v-custo;
-  var margem=v>0?Math.round((lucro/v)*100):(custo>0?-100:0);
-  var cor=margem>=70?'#065f46':margem>=50?'#d97706':'#dc2626';
-  totReceita+=v;totCusto+=custo;
-  var mesAbrevs=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+ var totValor=0,totImpBV=0,totRecLiq=0,totCusto=0,totLucro=0;
+ linhas.forEach(function(r){
+  var p=r.p;
+  var margCor=r.margem>=50?'#065f46':r.margem>=30?'#d97706':'#dc2626';
+  totValor+=r.valorCli;totCusto+=r.custos;totLucro+=r.lucro;
+  if(r.impBV!==null)totImpBV+=r.impBV;
+  if(r.recLiq!==null)totRecLiq+=r.recLiq;
   var mP=getMes(p);var aP=getAno(p);
   var periodoStr=(mP&&aP)?mesAbrevs[parseInt(mP,10)-1]+'/'+aP.substring(2):'—';
+  var encerrado=p[5]==='Encerrado';
+  var selo=encerrado
+   ?'<span style="font-size:9px;background:#dcfce7;color:#065f46;border-radius:6px;padding:1px 6px;font-weight:800;margin-left:4px">final</span>'
+   :'<span style="font-size:9px;background:#fef3c7;color:#92400e;border-radius:6px;padding:1px 6px;font-weight:800;margin-left:4px" title="Custos ainda podem entrar">parcial</span>';
   var tr=document.createElement('tr');
   tr.innerHTML='<td style="font-size:11px;font-weight:700;color:var(--muted)">'+p[0]+'</td>'
-   +'<td style="font-weight:700">'+p[1]+'</td>'
-   +'<td style="font-size:12px">'+p[4]+'</td>'
-   +'<td><span class="badge '+(p[5]==='Encerrado'?'ok':p[5]==='Financeiro'?'warn':p[5]==='Perda'?'perda':'')+(p[5]==='Arquivado'?' danger':'')+'">'+(p[5]==='Perda'?'💀 Perda':p[5])+(ehCasoEspecial?' <span style="font-size:9px;opacity:0.8">(parcial)</span>':'')+'</span></td>'
+   +'<td style="font-weight:700">'+p[1]+(r.estimado?' <span style="font-size:9px;background:#e0f2fe;color:#0369a1;border-radius:6px;padding:1px 6px;font-weight:800" title="Sem orçamento vinculado — imposto estimado, sem BV">estim.</span>':'')+'</td>'
+   +'<td><span class="badge '+(p[5]==='Encerrado'?'ok':p[5]==='Financeiro'?'warn':p[5]==='Perda'?'perda':'')+(p[5]==='Arquivado'?' danger':'')+'">'+(p[5]==='Perda'?'💀 Perda':p[5])+(r.ehCaixa?' <span style="font-size:9px;opacity:0.8">(caixa)</span>':'')+'</span></td>'
    +'<td style="font-size:12px;color:var(--muted);white-space:nowrap">'+periodoStr+'</td>'
-   +'<td class="money">'+fmtBRL(v)+'</td>'
-   +'<td class="money" style="color:#dc2626">'+fmtBRL(custo)+'</td>'
-   +'<td class="money" style="font-weight:700;color:'+cor+'">'+fmtBRL(lucro)+'</td>'
-   +'<td style="font-weight:800;color:'+cor+'">'+margem+'%</td>';
+   +'<td class="money">'+fmtBRL(r.valorCli)+'</td>'
+   +'<td class="money" style="color:#0369a1">'+(r.impBV!==null?'− '+fmtBRL(r.impBV):'—')+'</td>'
+   +'<td class="money" style="font-weight:600">'+(r.recLiq!==null?fmtBRL(r.recLiq):'—')+'</td>'
+   +'<td class="money" style="color:#dc2626">'+(r.custos>0?'− '+fmtBRL(r.custos):'R$ 0')+'</td>'
+   +'<td class="money" style="font-weight:700;color:'+(r.lucro<0?'#dc2626':margCor)+'">'+fmtBRLSigned(r.lucro)+' '+selo+'</td>'
+   +'<td style="font-weight:800;color:'+(r.margem<0?'#dc2626':margCor)+'">'+r.margem+'%</td>';
   tbl.appendChild(tr);
  });
- var totLucro=totReceita-totCusto;var totMarg=totReceita>0?Math.round((totLucro/totReceita)*100):0;
+ var totMarg=totValor>0?Math.round((totLucro/totValor)*100):0;
  var trTot=document.createElement('tr');trTot.style.cssText='background:#f8fafc;font-weight:700';
- trTot.innerHTML='<td colspan="5"><b>Total</b></td>'
-  +'<td class="money"><b>'+fmtBRL(totReceita)+'</b></td>'
-  +'<td class="money" style="color:#dc2626"><b>'+fmtBRL(totCusto)+'</b></td>'
-  +'<td class="money" style="color:'+(totLucro>=0?'#065f46':'#dc2626')+'"><b>'+fmtBRL(totLucro)+'</b></td>'
-  +'<td style="color:'+(totMarg>=60?'#065f46':totMarg>=40?'#d97706':'#dc2626')+'"><b>'+totMarg+'%</b></td>';
+ trTot.innerHTML='<td colspan="4"><b>Total</b></td>'
+  +'<td class="money"><b>'+fmtBRL(totValor)+'</b></td>'
+  +'<td class="money" style="color:#0369a1"><b>− '+fmtBRL(totImpBV)+'</b></td>'
+  +'<td class="money"><b>'+fmtBRL(totRecLiq)+'</b></td>'
+  +'<td class="money" style="color:#dc2626"><b>− '+fmtBRL(totCusto)+'</b></td>'
+  +'<td class="money" style="color:'+(totLucro>=0?'#065f46':'#dc2626')+'"><b>'+fmtBRLSigned(totLucro)+'</b></td>'
+  +'<td style="color:'+(totMarg>=50?'#065f46':totMarg>=30?'#d97706':'#dc2626')+'"><b>'+totMarg+'%</b></td>';
  tbl.appendChild(trTot);
- el.innerHTML='';el.appendChild(tbl);
+ el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid var(--line)">💡 <b>Lucro realizado até agora</b> = receita líquida (após imposto e BV do orçamento) − custos já lançados. Projetos <b>parciais</b> ainda podem receber custos. Linhas <b>estim.</b> não têm orçamento vinculado. Linhas <b>(caixa)</b> mostram apenas o valor efetivamente recebido.</div>';
+ el.appendChild(tbl);
 }
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">

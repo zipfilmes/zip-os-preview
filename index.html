@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZIP OS Preview V8.1.0</title>
+<title>ZIP OS Preview V8.1.2</title>
 <style>
 :root{
   --bg:#f4f6f8;--panel:#fff;--ink:#17202a;--muted:#667085;--line:#e5e7eb;
@@ -173,7 +173,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 <!-- GRID DA LOGO — pronto para receber a logo da Zip Filmes no futuro. Basta substituir o conteúdo de #logoBox por <img src="..."> -->
 <div id="logoBox" style="display:grid;place-items:center;padding:8px 0 4px">
  <div class="logo" style="margin:0">ZIP OS</div>
- <div class="sub" style="text-align:center;margin-top:2px">V8.1.0 • Orçamento por dedução (pré-backend)</div>
+ <div class="sub" style="text-align:center;margin-top:2px">V8.1.2 • Congelamento completo da comissão (pré-backend)</div>
 </div>
 <div class="profile" style="display:none"><b>Perfil simulado</b><select id="profileSelect" onchange="applyProfile()"><option value="socio">Sócio Zip</option><option value="financeiro">Financeiro Zip</option><option value="atendimento">Atendimento Zip</option><option value="producao">Produção Zip</option><option value="edicao">Edição Zip</option><option value="admin">Administrador</option></select>
 <div id="quemSouEuDiv" style="display:none;margin-top:8px"><b style="color:#cbd5e1;font-size:12px">Quem é você?</b><select id="quemSouEu" onchange="applyProfile()" style="width:100%;margin-top:4px;padding:9px;border-radius:10px;border:0"></select></div>
@@ -2454,21 +2454,21 @@ leads[0].timeline=[['10/06','📋 Lead criado por Ana'],['12/06','📞 Reunião 
 leads[1].timeline=[['14/06','📋 Lead criado por Ana'],['14/06','💬 Contato via Instagram']];
 leads[2].timeline=[['15/06','📋 Lead criado por Ana'],['15/06','🤝 Reunião realizada — pacote mensal discutido']];
 leads[3].timeline=[['13/06','📋 Lead criado por Ana'],['14/06','📄 Orçamento criado: R$ 18.000'],['14/06','➡️ Avançou para Orçamento']];leads[3].orcData='14/06/2026';
-// V8.1.0: demo regenerado no modo DEDUÇÃO — valor ao cliente = soma dos itens; imposto e BV são deduções internas
-leads[3].orcSubtotalItens=18000;leads[3].orcBaseProtegida=18000;leads[3].orcValorCliente=18000;leads[3].orcReceitaLiquida=13500;leads[3].orcZipRecebe=13500;leads[3].orcBVValor=1800;leads[3].orcImposto=2700;leads[3].orcAjusteImposto=0;leads[3].orcAjusteBV=0;leads[3].orcCustoProd=350;leads[3].orcCustoExtra=0;leads[3].orcResultadoAntesComissao=13150;leads[3].orcLucro=11835;leads[3].orcMargem=66;leads[3].orcComissao=1315;leads[3].orcCondicao='À vista';leads[3].orcBV='0.10';leads[3].orcMetodoCalculo='deducao';
+// V8.1.1: demo no modo DEDUÇÃO + regra de comissão real — Ana (funcionária) 10%; Douglas e Ryan (sócios) 0%
+leads[3].orcSubtotalItens=18000;leads[3].orcBaseProtegida=18000;leads[3].orcValorCliente=18000;leads[3].orcReceitaLiquida=13500;leads[3].orcZipRecebe=13500;leads[3].orcBVValor=1800;leads[3].orcImposto=2700;leads[3].orcAjusteImposto=0;leads[3].orcAjusteBV=0;leads[3].orcCustoProd=350;leads[3].orcCustoExtra=0;leads[3].orcResultadoAntesComissao=13150;leads[3].orcLucro=11835;leads[3].orcMargem=66;leads[3].orcComissao=1315;leads[3].orcComissaoPct=0.10;leads[3].orcComissaoElegivel=true;leads[3].orcComissaoResp='Ana';leads[3].orcAliquotaAplicada=0.15;leads[3].orcCondicao='À vista';leads[3].orcBV='0.10';leads[3].orcMetodoCalculo='deducao';
 leads[3].orcItens=[['Motion graphics e lettering','2','8000',true,false],['Tratamento de cor','1','1650',true,false],['Trilha Artlist','1','0',false,false],['Locução PT-BR','1','350',true,true],['Entrega HDTV e Web HD','1','0',false,false]];
 leads[4].timeline=[['11/06','📋 Lead criado por Douglas'],['13/06','📄 Orçamento criado: R$ 6.120'],['13/06','➡️ Avançou para Orçamento']];
-leads[4].orcSubtotalItens=6120;leads[4].orcBaseProtegida=6120;leads[4].orcValorCliente=6120;leads[4].orcReceitaLiquida=5202;leads[4].orcZipRecebe=5202;leads[4].orcBVValor=0;leads[4].orcImposto=918;leads[4].orcAjusteImposto=0;leads[4].orcAjusteBV=0;leads[4].orcCustoProd=0;leads[4].orcCustoExtra=0;leads[4].orcResultadoAntesComissao=5202;leads[4].orcLucro=4681.8;leads[4].orcMargem=77;leads[4].orcComissao=520.2;leads[4].orcData='13/06/2026';leads[4].orcCondicao='50% no fechamento • 50% na entrega';leads[4].orcBV='0';leads[4].orcMetodoCalculo='deducao';
+leads[4].orcSubtotalItens=6120;leads[4].orcBaseProtegida=6120;leads[4].orcValorCliente=6120;leads[4].orcReceitaLiquida=5202;leads[4].orcZipRecebe=5202;leads[4].orcBVValor=0;leads[4].orcImposto=918;leads[4].orcAjusteImposto=0;leads[4].orcAjusteBV=0;leads[4].orcCustoProd=0;leads[4].orcCustoExtra=0;leads[4].orcResultadoAntesComissao=5202;leads[4].orcLucro=5202;leads[4].orcMargem=85;leads[4].orcComissao=0;leads[4].orcComissaoPct=0;leads[4].orcComissaoElegivel=false;leads[4].orcComissaoResp='Douglas';leads[4].orcAliquotaAplicada=0.15;leads[4].orcData='13/06/2026';leads[4].orcCondicao='50% no fechamento • 50% na entrega';leads[4].orcBV='0';leads[4].orcMetodoCalculo='deducao';
 leads[4].orcItens=[['Captação com drone','1','2000',true,false],['Meia diária de captação','1','1320',true,false],['Fotografia publicitária','1','1200',true,false],['Edição de filme','1','1600',true,false],['Fotos tratadas','1','0',false,false],['Entrega HDTV e Web HD','1','0',false,false]];
 leads[5].timeline=[['10/06','📋 Lead criado por Ryan'],['11/06','📄 Orçamento criado: R$ 40.800'],['11/06','➡️ Avançou para Orçamento'],['16/06','➡️ Avançou para Negociação']];leads[5].orcData='11/06/2026';
 // V8.1.0: diretor de cena e locução agora marcados EXPLICITAMENTE como custo (eh_custo) — compõem o preço E deduzem o resultado
-leads[5].orcSubtotalItens=40800;leads[5].orcBaseProtegida=40800;leads[5].orcValorCliente=40800;leads[5].orcReceitaLiquida=34680;leads[5].orcZipRecebe=34680;leads[5].orcBVValor=0;leads[5].orcImposto=6120;leads[5].orcAjusteImposto=0;leads[5].orcAjusteBV=0;leads[5].orcCustoProd=8850;leads[5].orcCustoExtra=0;leads[5].orcResultadoAntesComissao=25830;leads[5].orcLucro=23247;leads[5].orcMargem=57;leads[5].orcComissao=2583;leads[5].orcCondicao='';leads[5].orcBV='0';leads[5].orcMetodoCalculo='deducao';
+leads[5].orcSubtotalItens=40800;leads[5].orcBaseProtegida=40800;leads[5].orcValorCliente=40800;leads[5].orcReceitaLiquida=34680;leads[5].orcZipRecebe=34680;leads[5].orcBVValor=0;leads[5].orcImposto=6120;leads[5].orcAjusteImposto=0;leads[5].orcAjusteBV=0;leads[5].orcCustoProd=8850;leads[5].orcCustoExtra=0;leads[5].orcResultadoAntesComissao=25830;leads[5].orcLucro=25830;leads[5].orcMargem=63;leads[5].orcComissao=0;leads[5].orcComissaoPct=0;leads[5].orcComissaoElegivel=false;leads[5].orcComissaoResp='Ryan';leads[5].orcAliquotaAplicada=0.15;leads[5].orcCondicao='';leads[5].orcBV='0';leads[5].orcMetodoCalculo='deducao';
 leads[5].orcItens=[['Diária de captação','5','4000',true,false],['Câmera full frame','1','0',false,false],['Set de iluminação','1','0',false,false],['Steadycam / Ronin','1','0',false,false],['Microfone lapela','1','0',false,false],['Diretor de cena','3','2500',true,true],['Edição de filme','3','2400',true,false],['Motion graphics','1','4750',true,false],['Tratamento de cor','1','0',false,false],['Trilha Artlist','1','0',false,false],['Locução PT-BR','1','1350',true,true],['Transporte e alimentação','1','0',false,false],['Entrega HDTV e Web HD','1','0',false,false]];
 leads[6].timeline=[['12/06','📋 Lead criado por Ana'],['13/06','📄 Orçamento criado: R$ 5.780'],['14/06','➡️ Avançou para Orçamento'],['14/06','➡️ Avançou para Negociação']];
-leads[6].orcSubtotalItens=5780;leads[6].orcBaseProtegida=5780;leads[6].orcValorCliente=5780;leads[6].orcReceitaLiquida=4913;leads[6].orcZipRecebe=4913;leads[6].orcBVValor=0;leads[6].orcImposto=867;leads[6].orcAjusteImposto=0;leads[6].orcAjusteBV=0;leads[6].orcCustoProd=0;leads[6].orcCustoExtra=0;leads[6].orcResultadoAntesComissao=4913;leads[6].orcLucro=4421.7;leads[6].orcMargem=77;leads[6].orcComissao=491.3;leads[6].orcData='13/06/2026';leads[6].orcCondicao='À vista';leads[6].orcBV='0';leads[6].orcMetodoCalculo='deducao';
+leads[6].orcSubtotalItens=5780;leads[6].orcBaseProtegida=5780;leads[6].orcValorCliente=5780;leads[6].orcReceitaLiquida=4913;leads[6].orcZipRecebe=4913;leads[6].orcBVValor=0;leads[6].orcImposto=867;leads[6].orcAjusteImposto=0;leads[6].orcAjusteBV=0;leads[6].orcCustoProd=0;leads[6].orcCustoExtra=0;leads[6].orcResultadoAntesComissao=4913;leads[6].orcLucro=4421.7;leads[6].orcMargem=77;leads[6].orcComissao=491.3;leads[6].orcComissaoPct=0.10;leads[6].orcComissaoElegivel=true;leads[6].orcComissaoResp='Ana';leads[6].orcAliquotaAplicada=0.15;leads[6].orcData='13/06/2026';leads[6].orcCondicao='À vista';leads[6].orcBV='0';leads[6].orcMetodoCalculo='deducao';
 leads[6].orcItens=[['Diária de captação','1','2500',true,false],['Câmera full frame','1','0',false,false],['Edição de filme','1','1800',true,false],['Motion graphics','1','1480',true,false],['Tratamento de cor','1','0',false,false],['Trilha Artlist','1','0',false,false],['Entrega HDTV e Web HD','1','0',false,false]];
 leads[7].timeline=[['14/06','📋 Lead criado por Douglas'],['15/06','📄 Orçamento criado: R$ 26.775'],['15/06','➡️ Avançou para Orçamento'],['15/06','➡️ Avançou para Negociação'],['16/06','✅ Negociação Fechada']];
-leads[7].orcSubtotalItens=26775;leads[7].orcBaseProtegida=26775;leads[7].orcValorCliente=26775;leads[7].orcReceitaLiquida=22758.75;leads[7].orcZipRecebe=22758.75;leads[7].orcBVValor=0;leads[7].orcImposto=4016.25;leads[7].orcAjusteImposto=0;leads[7].orcAjusteBV=0;leads[7].orcCustoProd=6475;leads[7].orcCustoExtra=0;leads[7].orcResultadoAntesComissao=16283.75;leads[7].orcLucro=14655.37;leads[7].orcMargem=55;leads[7].orcComissao=1628.38;leads[7].orcData='15/06/2026';leads[7].orcCondicao='';leads[7].orcBV='0';leads[7].orcMetodoCalculo='deducao';
+leads[7].orcSubtotalItens=26775;leads[7].orcBaseProtegida=26775;leads[7].orcValorCliente=26775;leads[7].orcReceitaLiquida=22758.75;leads[7].orcZipRecebe=22758.75;leads[7].orcBVValor=0;leads[7].orcImposto=4016.25;leads[7].orcAjusteImposto=0;leads[7].orcAjusteBV=0;leads[7].orcCustoProd=6475;leads[7].orcCustoExtra=0;leads[7].orcResultadoAntesComissao=16283.75;leads[7].orcLucro=16283.75;leads[7].orcMargem=61;leads[7].orcComissao=0;leads[7].orcComissaoPct=0;leads[7].orcComissaoElegivel=false;leads[7].orcComissaoResp='Douglas';leads[7].orcAliquotaAplicada=0.15;leads[7].orcData='15/06/2026';leads[7].orcCondicao='';leads[7].orcBV='0';leads[7].orcMetodoCalculo='deducao';
 leads[7].orcItens=[['Diária de captação','3','4000',true,false],['Câmera full frame','1','0',false,false],['Set de iluminação','1','0',false,false],['Steadycam / Ronin','1','0',false,false],['Diretor de cena','2','2500',true,true],['Edição de filme','2','2400',true,false],['Motion graphics','1','3500',true,false],['Tratamento de cor','1','0',false,false],['Trilha Artlist','1','0',false,false],['Locução PT-BR','1','1475',true,true],['Transporte e alimentação','1','0',false,false],['Entrega HDTV e Web HD','1','0',false,false]];
 leads[8].timeline=[['01/05','📋 Lead criado por Ana'],['03/05','📄 Orçamento criado: R$ 8.500'],['04/05','➡️ Avançou para Negociação'],['05/05','❌ Lead marcado como perdido']];
 leads[9].timeline=[['15/04','📋 Lead criado por Douglas'],['18/04','📄 Orçamento criado: R$ 6.300'],['20/04','❌ Lead marcado como perdido']];
@@ -3783,10 +3783,13 @@ function openLead(os){
    margem=(typeof l.orcMargem==='number')?l.orcMargem:0;
    comissao=l.orcComissao||0;
   } else {
-   // Lead antigo sem financeiro salvo: calcula só para EXIBIR — NÃO grava no lead
+   // Lead antigo sem financeiro salvo: calcula só para EXIBIR — NÃO grava no lead.
+   // V8.1.1: se houver alíquota histórica congelada, usa ela; comissão vem da configuração.
    const bvPct=parseFloat(l.orcBV||0);
    const desc=moneyToNumber(l.orcDesconto||'0');
-   const finOL=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),bvPct,desc,custoExtra,l.orcAjusteImposto||0,l.orcAjusteBV||0);
+   const cfgComOL=comissaoConfigPara(l[4]||'');
+   const aliqOL=(typeof l.orcAliquotaAplicada==='number')?l.orcAliquotaAplicada:ALIQUOTA;
+   const finOL=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),bvPct,desc,custoExtra,l.orcAjusteImposto||0,l.orcAjusteBV||0,cfgComOL.pct,aliqOL);
    if(finOL){
     valorCliente=finOL.valorCliente;
     zipRecebe=finOL.receitaLiquida;
@@ -3847,17 +3850,17 @@ function openLead(os){
    <div class="item" style="text-align:center">
     <div class="muted" style="font-size:12px">BV Agência</div>
     <div style="font-size:18px;font-weight:800;color:var(--yellow);margin:4px 0">${l.orcBVValor?fmtR(l.orcBVValor):'—'}</div>
-    <div class="muted" style="font-size:11px">${l.orcBVValor?Math.round((l.orcBVValor/l.orcValorCliente)*100)+'% sobre o valor':'Sem BV'}</div>
+    <div class="muted" style="font-size:11px">${l.orcBVValor?(Math.round((parseFloat(l.orcBV)||0)*100)+'% sobre o valor'+((typeof l.orcAjusteBV==='number'&&l.orcAjusteBV!==0)?' <span style="color:#0369a1">('+(l.orcAjusteBV>0?'+':'−')+' R$ '+Math.abs(l.orcAjusteBV).toLocaleString('pt-BR')+')</span>':'')):'Sem BV'}</div>
    </div>
    <div class="item" style="text-align:center">
     <div class="muted" style="font-size:12px">Imposto estimado</div>
     <div style="font-size:18px;font-weight:800;color:var(--red);margin:4px 0">${fmtR(l.orcImposto)}</div>
-    <div class="muted" style="font-size:11px">${Math.round(ALIQUOTA*100)}% Simples Nacional</div>
+    <div class="muted" style="font-size:11px">${Math.round(((typeof l.orcAliquotaAplicada==='number')?l.orcAliquotaAplicada:ALIQUOTA)*100)}% Simples Nacional</div>
    </div>
    <div class="item" style="text-align:center">
-    <div class="muted" style="font-size:12px">Potencial de comissão ${l[4]}</div>
-    <div style="font-size:18px;font-weight:800;color:var(--accent);margin:4px 0">${fmtR(l.orcComissao)}</div>
-    <div class="muted" style="font-size:11px">10% do resultado antes da comissão</div>
+    <div class="muted" style="font-size:12px">Potencial de comissão ${l.orcComissaoResp||l[4]}</div>
+    <div style="font-size:18px;font-weight:800;color:var(--accent);margin:4px 0">${(l.orcComissaoElegivel===false)?'—':fmtR(l.orcComissao)}</div>
+    <div class="muted" style="font-size:11px">${(l.orcComissaoElegivel===false)?((SOCIOS_SEM_COMISSAO.indexOf(l.orcComissaoResp||l[4])>=0)?'sócio — sem comissão':'sem comissão'):(typeof l.orcComissaoPct==='number'?Math.round(l.orcComissaoPct*100)+'% do resultado antes da comissão':'sem comissão')}</div>
    </div>
    <div class="item" style="text-align:center;padding:12px 14px">
     <div class="muted" style="font-size:12px">Custo de produção</div>
@@ -3986,7 +3989,11 @@ function editarCustoLead(os){
  // Recalcular tudo com a função central — custo extra NÃO altera o valor ao cliente, só reduz lucro
  if(l.orcItens&&l.orcItens.length){
   // V8.1.0: preserva os ajustes manuais de imposto/BV salvos no lead
-  const finCE=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),parseFloat(l.orcBV||0),moneyToNumber(l.orcDesconto||'0'),val,l.orcAjusteImposto||0,l.orcAjusteBV||0);
+  // V8.1.1: preserva TAMBÉM a alíquota e o % de comissão congelados — editar custo extra
+  // não pode converter o orçamento para a configuração atual
+  const aliqCE=(typeof l.orcAliquotaAplicada==='number')?l.orcAliquotaAplicada:ALIQUOTA;
+  const pctCE=(typeof l.orcComissaoPct==='number')?l.orcComissaoPct:comissaoConfigPara(l[4]||'').pct;
+  const finCE=calcularFinanceiroOrc(subtotalDeItens(l.orcItens),custoProdDeItens(l.orcItens),parseFloat(l.orcBV||0),moneyToNumber(l.orcDesconto||'0'),val,l.orcAjusteImposto||0,l.orcAjusteBV||0,pctCE,aliqCE);
   if(finCE)aplicarFinanceiroNoLead(l,finCE);
  }
  const fmtR=v=>fmtBRLSigned(v);
@@ -4222,7 +4229,7 @@ function renderPlacar(){
   // Potencial: só OS com orçamento gerado (orcComissao > 0) em orçamento ou negociação
   const potenciais=leads.filter(l=>l[4]===nome&&(l[11]==='negociacao'||l[11]==='orcamento')&&(l.orcComissao||0)>0);
 
-  // Comissão prevista = soma orcComissao das fechadas (10% do lucro líquido de cada OS)
+  // Comissão prevista = soma orcComissao das fechadas (% congelado por orçamento; sócio = 0)
   const comissaoPrevista=fechados.reduce((s,l)=>s+(l.orcComissao||0),0);
   // Comissão potencial em aberto = soma orcComissao das em andamento com orçamento
   const comissaoPotencial=potenciais.reduce((s,l)=>s+(l.orcComissao||0),0);
@@ -8262,21 +8269,52 @@ function addItemOrcManual(){
 const ORC_CONDICOES_VALIDAS=["Pagamento antecipado", "À vista", "50% no fechamento • 50% na entrega", "30% • 30% • 40% na entrega", "30/60/90 dias", "Parcelado em 2x", "Parcelado em 3x", "Parcelado em 4x", "Parcelado em 5x", "Parcelado em 6x", "Plano semestral (6 meses)", "Plano anual (12 meses)", "A combinar"];
 function condicaoValida(c){return c&&ORC_CONDICOES_VALIDAS.includes(c);}
 
-// ═══════════ FUNÇÃO CENTRAL DE CÁLCULO DO ORÇAMENTO (V8.1.0 — modo DEDUÇÃO) ═══════════
+// ═══════════ FUNÇÃO CENTRAL DE CÁLCULO DO ORÇAMENTO (V8.1.1 — modo DEDUÇÃO) ═══════════
 // Regras de negócio confirmadas (Douglas + Ryan, 11/07/2026):
 // 1. A soma de TODOS os itens com valor (exibidos OU "Incluso") é o preço vendido.
 //    O campo "Exibir valor" é só apresentação no PDF — NUNCA critério de composição do total.
 // 2. Valor ao Cliente = subtotal dos itens − desconto. É o valor da NF, do PDF e do fechamento.
-// 3. Imposto = ALIQUOTA × Valor ao Cliente (dedução, nunca acréscimo) ± ajuste manual.
+// 3. Imposto = alíquota × Valor ao Cliente (dedução, nunca acréscimo) ± ajuste manual.
 // 4. BV = percentual × Valor ao Cliente CHEIO (mesma base do imposto) ± ajuste manual.
 //    Ajustes manuais absorvem diferenças reais de apuração (ex.: imposto gerado pelo próprio BV).
 // 5. Itens marcados como custo COMPÕEM o preço vendido E são deduzidos como custo interno.
-// 6. Comissão (10% do resultado positivo antes da comissão) é DEDUZIDA → lucro líquido REAL.
+// 6. Comissão (V8.1.1): APENAS funcionário do atendimento elegível recebe — sócio NUNCA.
+//    O percentual vem da configuração existente de Metas (fonte única, por atendente/mês)
+//    e é CONGELADO no orçamento junto com a alíquota. Deduzida → lucro líquido REAL.
+// 7. Alíquota e percentual de comissão são congelados por orçamento e entram na assinatura
+//    de versão: mudar a configuração global NUNCA reescreve orçamento salvo — só afeta
+//    novas versões salvas explicitamente.
 // O gross-up (V7.11.3–V8.0.1) foi DESCONTINUADO como padrão. Se voltar um dia, será um modo
 // explícito e separado ('gross_up' em metodoCalculo) — nunca comportamento silencioso.
-function round2(v){return Math.round(v*100)/100;}
-function calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajusteImposto,ajusteBV){
- const a=ALIQUOTA;
+
+// V8.1.1: arredondamento monetário half-up estável (corrige 10,075 → 10,07 do float binário)
+function round2(v){
+ const n=Number(v)||0;
+ const c=Math.round(parseFloat((Math.abs(n)*100).toPrecision(12)));
+ return (n<0?-c:c)/100;
+}
+
+// ═══ V8.1.1: REGRA DE COMISSÃO — FONTE ÚNICA ═══
+// Regra Zip: comissão é exclusiva de FUNCIONÁRIO do atendimento. Sócio não recebe.
+// O percentual por atendente já existe na configuração de Metas Comercial
+// (metasComercial[mês][nome].pct) — esta função só a consulta; nada é duplicado.
+var SOCIOS_SEM_COMISSAO=['Douglas','Ryan']; // sócios da Zip — sempre 0%, independente da configuração
+function comissaoConfigPara(nome){
+ if(!nome||SOCIOS_SEM_COMISSAO.indexOf(nome)>=0)return {elegivel:false,pct:0};
+ var mm=(typeof getMetasPorMes==='function')?getMetasPorMes(finMetasMesAtual):null;
+ var d=mm?mm[nome]:null;
+ if(!d)return {elegivel:false,pct:0}; // não está na configuração de atendimento → sem comissão
+ var pct=Math.max(0,Number(d.pct)||0)/100;
+ return {elegivel:pct>0,pct:pct};
+}
+
+function calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajusteImposto,ajusteBV,comissaoPct,aliquota){
+ // V8.1.1: alíquota agora é PARÂMETRO congelável — ausente, usa a configuração vigente
+ const a=(typeof aliquota==='number'&&aliquota>=0&&aliquota<1)?aliquota:ALIQUOTA;
+ // V8.1.2: percentual de comissão do responsável — AUSENTE = 0% (fail-safe).
+ // Antes o default era 10% (fail-open): esquecer de passar o pct pagava comissão indevida.
+ // Todos os caminhos reais passam o pct explícito; ausência agora significa "sem comissão".
+ const cpct=(typeof comissaoPct==='number')?Math.max(0,Math.min(1,comissaoPct)):0;
  // Sanitização: entradas financeiras nunca podem ser negativas
  // (EXCEÇÃO: ajusteImposto/ajusteBV são correções manuais e podem ser ±,
  //  mas o imposto e o BV finais nunca ficam abaixo de zero — dedução não vira acréscimo de receita)
@@ -8296,7 +8334,7 @@ function calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajus
  const bvValor=Math.max(0,round2(round2(valorCliente*bvPct)+ajusteBV));  // base: valor cheio ao cliente
  const receitaLiquida=round2(valorCliente-imposto-bvValor);         // sobra após imposto e BV
  const resultadoAntesComissao=round2(receitaLiquida-custoProd-custoExtra); // PODE SER NEGATIVO (prejuízo real)
- const comissao=resultadoAntesComissao>0?round2(resultadoAntesComissao*0.10):0; // só sobre resultado positivo
+ const comissao=(cpct>0&&resultadoAntesComissao>0)?round2(resultadoAntesComissao*cpct):0; // só elegível, só resultado positivo
  const lucro=round2(resultadoAntesComissao-comissao);               // lucro líquido REAL (após comissão)
  const margem=valorCliente>0?Math.round((lucro/valorCliente)*100):0; // pode ser negativa
  return {subtotalItens:round2(subtotal),
@@ -8306,13 +8344,16 @@ function calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajus
   receitaLiquida,zipLiquido:receitaLiquida, // retrocompat: leitores antigos de zipLiquido
   custoProd:round2(custoProd),custoExtra:round2(custoExtra),
   resultadoAntesComissao,lucro,comissao,margem,
+  comissaoPct:cpct,comissaoElegivel:cpct>0,       // V8.1.1: congelados junto
+  aliquotaAplicada:a,                             // V8.1.1: congelada junto
   prejuizo:lucro<0,descontoExcessivo,metodoCalculo:'deducao'};
 }
 function subtotalDeItens(itens){
- return (itens||[]).reduce((s,it)=>{const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+qtd*unit;},0);
+ // V8.1.1: cada linha é arredondada ANTES da soma — os componentes exibidos fecham centavo a centavo
+ return round2((itens||[]).reduce((s,it)=>{const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+round2(qtd*unit);},0));
 }
 function custoProdDeItens(itens){
- return (itens||[]).reduce((s,it)=>{if(!it[4])return s;const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+qtd*unit;},0);
+ return round2((itens||[]).reduce((s,it)=>{if(!it[4])return s;const qtd=Math.max(0,Number(it[1])||1);const unit=Math.max(0,moneyToNumber('R$ '+(it[2]||'0')));return s+round2(qtd*unit);},0));
 }
 function aplicarFinanceiroNoLead(l,fin){
  l.orcSubtotalItens=fin.subtotalItens;   // V8.1.0: nome correto — soma de todos os itens
@@ -8329,6 +8370,10 @@ function aplicarFinanceiroNoLead(l,fin){
  l.orcLucro=fin.lucro;          // V8.1.0: lucro líquido APÓS comissão — pode ser negativo
  l.orcMargem=fin.margem;
  l.orcComissao=fin.comissao;
+ l.orcComissaoPct=fin.comissaoPct;           // V8.1.1: % congelado (da configuração de Metas)
+ l.orcComissaoElegivel=fin.comissaoElegivel; // V8.1.1: sócio/não configurado = false
+ l.orcComissaoResp=l[4]||'';                 // V8.1.1: quem era o responsável no salvamento
+ l.orcAliquotaAplicada=fin.aliquotaAplicada; // V8.1.1: alíquota da época — nunca reescrita
  l.orcMetodoCalculo='deducao';  // V8.1.0: auditoria — congela a metodologia da época
 }
 // Formata com sinal: negativo aparece como "− R$ X"
@@ -8347,9 +8392,12 @@ function calcOrc(){
  const custoExtra=moneyToNumber(document.getElementById('orcCustoExtra')?.value||'0');
  const ajusteImposto=moneyToNumber(document.getElementById('orcAjusteImposto')?.value||'0');
  const ajusteBV=moneyToNumber(document.getElementById('orcAjusteBV')?.value||'0');
+ // V8.1.1: comissão do RESPONSÁVEL pelo lead, vinda da configuração de Metas (fonte única)
+ const respLead=l?(l[4]||''):'';
+ const cfgCom=comissaoConfigPara(respLead);
 
- // ═══ CÁLCULO CENTRAL (V8.1.0 — dedução) ═══
- const fin=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajusteImposto,ajusteBV);
+ // ═══ CÁLCULO CENTRAL (V8.1.1 — dedução) ═══
+ const fin=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desconto,custoExtra,ajusteImposto,ajusteBV,cfgCom.pct,ALIQUOTA);
  if(!fin)return;
  const valorCliente=fin.valorCliente;
  const bvValor=fin.bvValor;
@@ -8405,8 +8453,9 @@ function calcOrc(){
    ${linha('Receita líquida da Zip',receitaLiquida,{bold:true})}
    ${custoProd?linha('Custos diretos (itens de custo)',custoProd,{neg:true}):''}
    ${custoExtra?linha('Custo extra pós-orçamento',custoExtra,{neg:true}):''}
-   ${comissao?linha('Resultado antes da comissão',resultadoAC,{bold:true})+linha('Comissão prevista (10%)',comissao,{neg:true}):''}
+   ${comissao?linha('Resultado antes da comissão',resultadoAC,{bold:true})+linha('Comissão prevista ('+Math.round(fin.comissaoPct*100)+'% — '+(respLead||'—')+')',comissao,{neg:true}):''}
    <div style="font-size:11px;color:var(--muted);padding:6px 0 2px">Imposto e BV incidem sobre o valor ao cliente (${fmt(valorCliente)}) — são deduções internas, nunca acréscimos ao preço.</div>
+   ${(l&&typeof l.orcAliquotaAplicada==='number'&&Math.abs(l.orcAliquotaAplicada-ALIQUOTA)>0.00001)?`<div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:11px;color:#92400e">⚠️ A alíquota atual (${Math.round(ALIQUOTA*10000)/100}%) difere da aplicada na versão salva (${Math.round(l.orcAliquotaAplicada*10000)/100}%). Salvar criará uma nova versão com a alíquota atual — a versão antiga permanece intacta no histórico.</div>`:''}
   </div>
 `;
  
@@ -8438,8 +8487,8 @@ function calcOrc(){
    <!-- Comissão — separado, natural -->
    <div style="background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:14px;text-align:center">
     <div style="font-size:11px;color:#0369a1;font-weight:700;opacity:.8;margin-bottom:4px">POTENCIAL DE COMISSÃO</div>
-    <div style="font-size:22px;font-weight:900;color:#0369a1">${fmt(comissao)}</div>
-    <div style="font-size:11px;color:#0369a1;opacity:.6;margin-top:4px">10% do resultado antes da comissão</div>
+    <div style="font-size:22px;font-weight:900;color:#0369a1">${fin.comissaoElegivel?fmt(comissao):'—'}</div>
+    <div style="font-size:11px;color:#0369a1;opacity:.6;margin-top:4px">${fin.comissaoElegivel?Math.round(fin.comissaoPct*100)+'% do resultado antes da comissão ('+(respLead||'—')+')':(respLead?respLead+' — sem comissão'+(SOCIOS_SEM_COMISSAO.indexOf(respLead)>=0?' (sócio)':' (não configurado)'):'sem responsável definido')}</div>
    </div>
   </div>${alertaMargem}`;
  }
@@ -8448,13 +8497,16 @@ function calcOrc(){
 
 // ═══════════ VERSIONAMENTO DE ORÇAMENTO (V7.12.0) ═══════════
 // Gera uma "assinatura" dos campos que definem uma versão. Se mudou, é nova versão.
-function assinaturaOrc(itens,bvPct,desconto,custoExtra,condicao,ajusteImposto,ajusteBV){
+function assinaturaOrc(itens,bvPct,desconto,custoExtra,condicao,ajusteImposto,ajusteBV,aliquota,comissaoPct,comissaoElegivel,responsavelComissao){
  const itensStr=(itens||[]).map(it=>[it[0],it[1],it[2],it[3]?1:0,it[4]?1:0].join('~')).join('|');
  // V8.1.0: ajustes manuais entram na assinatura — mudar ajuste = nova versão.
- // Efeito colateral DESEJADO da mudança de fórmula: a primeira gravação pós-V8.1.0
- // de um orçamento antigo gera versão nova (a assinatura antiga não bate), preservando
- // no histórico os números da era gross-up.
- return itensStr+'#bv:'+(bvPct||0)+'#desc:'+(desconto||0)+'#ce:'+(custoExtra||0)+'#cond:'+(condicao||'')+'#aji:'+(ajusteImposto||0)+'#ajb:'+(ajusteBV||0);
+ // V8.1.1: alíquota, método e % de comissão TAMBÉM entram — mudar a configuração global
+ // e resalvar gera versão nova (fecha a brecha de reescrever orçamento sem versão).
+ // V8.1.2: elegibilidade e RESPONSÁVEL da comissão entram — trocar o responsável do lead
+ // (mesmo que o novo tenha o mesmo %) agora gera versão nova, congelando quem gerou a comissão.
+ // Efeito colateral DESEJADO: a primeira gravação pós-atualização de um orçamento antigo
+ // gera versão nova, preservando no histórico os números da era anterior.
+ return itensStr+'#bv:'+(bvPct||0)+'#desc:'+(desconto||0)+'#ce:'+(custoExtra||0)+'#cond:'+(condicao||'')+'#aji:'+(ajusteImposto||0)+'#ajb:'+(ajusteBV||0)+'#aliq:'+(aliquota||0)+'#met:deducao#cpct:'+(comissaoPct||0)+'#celeg:'+(comissaoElegivel?1:0)+'#cresp:'+(responsavelComissao||'');
 }
 
 function salvarOrcamento(){
@@ -8473,8 +8525,10 @@ function salvarOrcamento(){
  const custoExtra=novoCustoExtra;
  const ajusteImposto=moneyToNumber(document.getElementById('orcAjusteImposto')?.value||'0');
  const ajusteBV=moneyToNumber(document.getElementById('orcAjusteBV')?.value||'0');
- // ═══ CÁLCULO CENTRAL (V8.1.0 — dedução) — mesma matemática do modal e do card ═══
- const finSalvar=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desc,custoExtra,ajusteImposto,ajusteBV);
+ // V8.1.1: comissão do responsável (fonte única: Metas) e alíquota vigente — ambas CONGELADAS ao salvar
+ const cfgComSalvar=comissaoConfigPara(l[4]||'');
+ // ═══ CÁLCULO CENTRAL (V8.1.1 — dedução) — mesma matemática do modal e do card ═══
+ const finSalvar=calcularFinanceiroOrc(subtotal,custoProd,bvPct,desc,custoExtra,ajusteImposto,ajusteBV,cfgComSalvar.pct,ALIQUOTA);
  if(!finSalvar)return;
  if(finSalvar.descontoExcessivo){
   alert('⛔ Não é possível salvar: o desconto (R$ '+desc.toLocaleString('pt-BR')+') é maior que o subtotal dos itens (R$ '+finSalvar.subtotalItens.toLocaleString('pt-BR')+').\n\nCorrija o valor do desconto.');
@@ -8482,7 +8536,7 @@ function salvarOrcamento(){
  }
  // Validação OK — agora sim grava no lead
  // ═══ VERSIONAMENTO (V7.12.0): detecta mudança real ANTES de sobrescrever os campos ═══
- const assinaturaNova=assinaturaOrc(orcItens,bvPct,desc,custoExtra,novaCondicao,ajusteImposto,ajusteBV);
+ const assinaturaNova=assinaturaOrc(orcItens,bvPct,desc,custoExtra,novaCondicao,ajusteImposto,ajusteBV,finSalvar.aliquotaAplicada,finSalvar.comissaoPct,finSalvar.comissaoElegivel,l[4]||'');
  const assinaturaAntiga=l.orcAssinatura||null;
  // V7.13.1: detecta mudança APENAS de fornecedor (it[5]) — persiste sem nova versão
  const assinaturaFornAntiga=(l.orcItens||[]).map(function(it){return (it&&it[5])?(it[5].supplierId||('manual:'+(it[5].nome||''))):'-';}).join('|');
@@ -8504,6 +8558,10 @@ function salvarOrcamento(){
    custoExtra:custoExtra,
    condicao:novaCondicao,
    metodo:'deducao', // V8.1.0: audita a metodologia da época — versões antigas eram gross-up
+   aliquotaAplicada:finSalvar.aliquotaAplicada,   // V8.1.1: alíquota da época, congelada na versão
+   comissaoPct:finSalvar.comissaoPct,             // V8.1.1: % de comissão da época
+   comissaoElegivel:finSalvar.comissaoElegivel,   // V8.1.1: sócio/não configurado = false
+   responsavel:l[4]||'',                          // V8.1.1: responsável no momento do salvamento
    ajusteImposto:finSalvar.ajusteImposto,
    ajusteBV:finSalvar.ajusteBV,
    subtotalItens:finSalvar.subtotalItens,
@@ -8607,7 +8665,8 @@ function exportarPDFOrcamento(){
  const condicaoAtual=document.getElementById('orcCondicao')?.value||'';
  const ajusteImpostoAtual=moneyToNumber(document.getElementById('orcAjusteImposto')?.value||'0');
  const ajusteBVAtual=moneyToNumber(document.getElementById('orcAjusteBV')?.value||'0');
- const assinaturaAtual=assinaturaOrc(orcItens,bvPctAtual,descAtual,custoExtraAtual,condicaoAtual,ajusteImpostoAtual,ajusteBVAtual);
+ const cfgComPDF=comissaoConfigPara(l?(l[4]||''):'');
+ const assinaturaAtual=assinaturaOrc(orcItens,bvPctAtual,descAtual,custoExtraAtual,condicaoAtual,ajusteImpostoAtual,ajusteBVAtual,ALIQUOTA,cfgComPDF.pct,cfgComPDF.elegivel,l?(l[4]||''):'');
  if(l&&l.orcAssinatura&&assinaturaAtual!==l.orcAssinatura){
   alert('⚠️ Existem alterações não salvas neste orçamento.\n\nSalve primeiro para gerar uma nova versão antes de exportar o PDF.');
   return;
@@ -8630,7 +8689,7 @@ function exportarPDFOrcamento(){
  // ═══ CÁLCULO CENTRAL (V8.1.0 — dedução) — mesmo valor exibido no modal ═══
  // Fechamento matemático do PDF: soma dos itens exibidos + "Inclusos" = subtotal;
  // total = subtotal − desconto. Imposto e BV são deduções INTERNAS — não aparecem ao cliente.
- const finPDF=calcularFinanceiroOrc(subtotal,custoProdDeItens(orcItens),bvPct,desc,0,ajusteImpostoAtual,ajusteBVAtual);
+ const finPDF=calcularFinanceiroOrc(subtotal,custoProdDeItens(orcItens),bvPct,desc,0,ajusteImpostoAtual,ajusteBVAtual,cfgComPDF.pct,ALIQUOTA);
  const valorCliente=finPDF?finPDF.valorCliente:0;
  const condicao=document.getElementById('orcCondicao')?.value||'A definir';
  const responsavel=l?l[4]:'—';
@@ -8898,31 +8957,31 @@ function restaurarItensPadrao(){
 // ── METAS COMERCIAL ──
 var metasComercial={
  // 2025
- '2025-01':{Ana:{meta:18000,pct:10},Ryan:{meta:15000,pct:10},Douglas:{meta:20000,pct:10}},
- '2025-02':{Ana:{meta:18000,pct:10},Ryan:{meta:15000,pct:10},Douglas:{meta:20000,pct:10}},
- '2025-03':{Ana:{meta:25000,pct:10},Ryan:{meta:20000,pct:10},Douglas:{meta:25000,pct:10}},
- '2025-04':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:10},Douglas:{meta:35000,pct:10}},
- '2025-05':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:10},Douglas:{meta:35000,pct:10}},
- '2025-06':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:10},Douglas:{meta:30000,pct:10}},
- '2025-07':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:10},Douglas:{meta:28000,pct:10}},
- '2025-08':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:10},Douglas:{meta:28000,pct:10}},
- '2025-09':{Ana:{meta:32000,pct:10},Ryan:{meta:26000,pct:10},Douglas:{meta:32000,pct:10}},
- '2025-10':{Ana:{meta:40000,pct:10},Ryan:{meta:32000,pct:10},Douglas:{meta:40000,pct:10}},
- '2025-11':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:10},Douglas:{meta:38000,pct:10}},
- '2025-12':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:10},Douglas:{meta:35000,pct:10}},
+ '2025-01':{Ana:{meta:18000,pct:10},Ryan:{meta:15000,pct:0},Douglas:{meta:20000,pct:0}},
+ '2025-02':{Ana:{meta:18000,pct:10},Ryan:{meta:15000,pct:0},Douglas:{meta:20000,pct:0}},
+ '2025-03':{Ana:{meta:25000,pct:10},Ryan:{meta:20000,pct:0},Douglas:{meta:25000,pct:0}},
+ '2025-04':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:0},Douglas:{meta:35000,pct:0}},
+ '2025-05':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:0},Douglas:{meta:35000,pct:0}},
+ '2025-06':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:0},Douglas:{meta:30000,pct:0}},
+ '2025-07':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:0},Douglas:{meta:28000,pct:0}},
+ '2025-08':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:0},Douglas:{meta:28000,pct:0}},
+ '2025-09':{Ana:{meta:32000,pct:10},Ryan:{meta:26000,pct:0},Douglas:{meta:32000,pct:0}},
+ '2025-10':{Ana:{meta:40000,pct:10},Ryan:{meta:32000,pct:0},Douglas:{meta:40000,pct:0}},
+ '2025-11':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:0},Douglas:{meta:38000,pct:0}},
+ '2025-12':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:0},Douglas:{meta:35000,pct:0}},
  // 2026
- '2026-01':{Ana:{meta:20000,pct:10},Ryan:{meta:16000,pct:10},Douglas:{meta:20000,pct:10}},
- '2026-02':{Ana:{meta:20000,pct:10},Ryan:{meta:16000,pct:10},Douglas:{meta:20000,pct:10}},
- '2026-03':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:10},Douglas:{meta:28000,pct:10}},
- '2026-04':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:10},Douglas:{meta:38000,pct:10}},
- '2026-05':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:10},Douglas:{meta:38000,pct:10}},
- '2026-06':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:10},Douglas:{meta:20000,pct:10}},
- '2026-07':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:10},Douglas:{meta:25000,pct:10}},
- '2026-08':{Ana:{meta:32000,pct:10},Ryan:{meta:26000,pct:10},Douglas:{meta:30000,pct:10}},
- '2026-09':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:10},Douglas:{meta:32000,pct:10}},
- '2026-10':{Ana:{meta:42000,pct:10},Ryan:{meta:34000,pct:10},Douglas:{meta:42000,pct:10}},
- '2026-11':{Ana:{meta:40000,pct:10},Ryan:{meta:32000,pct:10},Douglas:{meta:40000,pct:10}},
- '2026-12':{Ana:{meta:36000,pct:10},Ryan:{meta:28000,pct:10},Douglas:{meta:36000,pct:10}}
+ '2026-01':{Ana:{meta:20000,pct:10},Ryan:{meta:16000,pct:0},Douglas:{meta:20000,pct:0}},
+ '2026-02':{Ana:{meta:20000,pct:10},Ryan:{meta:16000,pct:0},Douglas:{meta:20000,pct:0}},
+ '2026-03':{Ana:{meta:28000,pct:10},Ryan:{meta:22000,pct:0},Douglas:{meta:28000,pct:0}},
+ '2026-04':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:0},Douglas:{meta:38000,pct:0}},
+ '2026-05':{Ana:{meta:38000,pct:10},Ryan:{meta:30000,pct:0},Douglas:{meta:38000,pct:0}},
+ '2026-06':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:0},Douglas:{meta:20000,pct:0}},
+ '2026-07':{Ana:{meta:30000,pct:10},Ryan:{meta:25000,pct:0},Douglas:{meta:25000,pct:0}},
+ '2026-08':{Ana:{meta:32000,pct:10},Ryan:{meta:26000,pct:0},Douglas:{meta:30000,pct:0}},
+ '2026-09':{Ana:{meta:35000,pct:10},Ryan:{meta:28000,pct:0},Douglas:{meta:32000,pct:0}},
+ '2026-10':{Ana:{meta:42000,pct:10},Ryan:{meta:34000,pct:0},Douglas:{meta:42000,pct:0}},
+ '2026-11':{Ana:{meta:40000,pct:10},Ryan:{meta:32000,pct:0},Douglas:{meta:40000,pct:0}},
+ '2026-12':{Ana:{meta:36000,pct:10},Ryan:{meta:28000,pct:0},Douglas:{meta:36000,pct:0}}
 };
 var ATENDENTES_METAS=['Ana','Ryan','Douglas'];
 var finMetasMesAtual=(function(){var d=new Date();return d.getFullYear()+'-'+(String(d.getMonth()+1).padStart(2,'0'));})();
@@ -8935,7 +8994,8 @@ function getMesLabel(ym){
 function getMetasPorMes(ym){
  if(!metasComercial[ym]){
   metasComercial[ym]={};
-  ATENDENTES_METAS.forEach(function(n){metasComercial[ym][n]={meta:0,pct:10};});
+  // V8.1.1: mês novo nasce com a regra aplicada — sócio 0%, funcionário 10% (editável)
+  ATENDENTES_METAS.forEach(function(n){metasComercial[ym][n]={meta:0,pct:SOCIOS_SEM_COMISSAO.includes(n)?0:10};});
  }
  return metasComercial[ym];
 }
@@ -8949,8 +9009,10 @@ function _metasInputChange(){
  var nome=this.getAttribute('data-nome');
  var campo=this.getAttribute('data-campo');
  var val=parseFloat(this.value)||0;
+ // V8.1.1: defesa em profundidade — sócio não recebe comissão, mesmo se o campo for manipulado
+ if(campo==='pct'&&SOCIOS_SEM_COMISSAO.indexOf(nome)>=0)val=0;
  var dados=getMetasPorMes(finMetasMesRef);
- if(!dados[nome])dados[nome]={meta:30000,pct:10};
+ if(!dados[nome])dados[nome]={meta:30000,pct:SOCIOS_SEM_COMISSAO.indexOf(nome)>=0?0:10};
  dados[nome][campo]=val;
  renderFinDashPlacar();
  renderPlacar();
@@ -8974,8 +9036,11 @@ function renderFinMetas(){
    +'<div style="font-size:15px;font-weight:800;margin-bottom:12px">&#128100; '+nome+'</div>'
    +'<label>Meta do m&#234;s (R$)</label>'
    +'<input type="number" class="finMeta-input" data-nome="'+nome+'" data-campo="meta" style="margin-bottom:10px" value="'+d.meta+'">'
-   +'<label>% de comiss&#227;o sobre lucro l&#237;quido</label>'
-   +'<input type="number" step="0.5" class="finMeta-input" data-nome="'+nome+'" data-campo="pct" style="margin-bottom:12px" value="'+d.pct+'">'
+   +'<label>% de comiss&#227;o sobre resultado antes da comiss&#227;o</label>'
+   +(SOCIOS_SEM_COMISSAO.indexOf(nome)>=0
+     ?'<input type="number" class="finMeta-input" data-nome="'+nome+'" data-campo="pct" style="margin-bottom:4px;background:#f1f5f9;color:var(--muted);cursor:not-allowed" value="0" disabled>'
+      +'<div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:6px 10px;margin-bottom:12px">&#128274; S&#243;cio &#8212; n&#227;o recebe comiss&#227;o (regra Zip). Metas de venda continuam valendo.</div>'
+     :'<input type="number" step="0.5" class="finMeta-input" data-nome="'+nome+'" data-campo="pct" style="margin-bottom:12px" value="'+d.pct+'">')
    +'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Vendido: <b>R$ '+totalVendido.toLocaleString('pt-BR')+'</b> / R$ '+d.meta.toLocaleString('pt-BR')+'</div>'
    +'<div style="height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:6px">'
    +'<div style="height:100%;width:'+pct+'%;background:'+barCor+';border-radius:999px"></div></div>'
@@ -11656,43 +11721,47 @@ function renderFinProjetos(){
   var leadRent=leads.find(function(l){return l[0]===p[0];});
   var temOrcamento=leadRent&&typeof leadRent.orcValorCliente==='number'&&leadRent.orcValorCliente>0;
   var custos=parseBRL(p[14]);
-  var valorCli,impBV,recLiq,lucro,estimado=false;
+  var valorCli,impBV,recLiq,comissao,lucro,estimado=false;
   if(ehCasoEspecial){
    // Regime de caixa: valor efetivamente recebido − custos (sem decomposição fiscal)
    valorCli=getValorRecebido(p);
-   impBV=null;recLiq=null;
+   impBV=null;recLiq=null;comissao=null;
    lucro=round2(valorCli-custos);
   } else if(temOrcamento){
-   // Dados reais do orçamento vinculado
+   // Dados reais do orçamento vinculado — V8.1.1: comissão congelada TAMBÉM é deduzida,
+   // fechando com o "Lucro líquido" do orçamento (um nome, um conceito)
    valorCli=leadRent.orcValorCliente;
    impBV=round2((leadRent.orcImposto||0)+(leadRent.orcBVValor||0));
    recLiq=(typeof leadRent.orcZipRecebe==='number')?leadRent.orcZipRecebe:round2(valorCli-impBV);
-   lucro=round2(recLiq-custos);
+   comissao=leadRent.orcComissao||0;
+   lucro=round2(recLiq-custos-comissao);
   } else {
-   // Fallback sem orçamento: estimativa gerencial (imposto estimado, sem BV)
+   // Fallback sem orçamento: estimativa gerencial (imposto estimado, sem BV, sem comissão)
    valorCli=parseBRL(p[10]);
    impBV=round2(valorCli*ALIQUOTA);
    recLiq=round2(valorCli-impBV);
+   comissao=0;
    lucro=round2(recLiq-custos);
    estimado=true;
   }
   var margem=valorCli>0?Math.round((lucro/valorCli)*100):(custos>0?-100:0);
-  return {p:p,ehCaixa:ehCasoEspecial,valorCli:valorCli,impBV:impBV,recLiq:recLiq,custos:custos,lucro:lucro,margem:margem,estimado:estimado};
+  return {p:p,ehCaixa:ehCasoEspecial,valorCli:valorCli,impBV:impBV,recLiq:recLiq,custos:custos,comissao:comissao,lucro:lucro,margem:margem,estimado:estimado};
  });
 
  // Ordenar pela margem NOVA (real/parcial), não pela fórmula antiga
  linhas.sort(function(a,b){return b.margem-a.margem;});
 
  var tbl=document.createElement('table');tbl.className='table';tbl.style.cssText='width:100%';
- tbl.innerHTML='<tr><th>Projeto</th><th>Cliente</th><th>Status</th><th>Período</th><th class="money">Valor ao cliente</th><th class="money">Imposto + BV</th><th class="money">Receita líquida Zip</th><th class="money">Custos realizados</th><th class="money">Lucro realizado</th><th>Margem</th></tr>';
+ tbl.innerHTML='<tr><th>Projeto</th><th>Cliente</th><th>Status</th><th>Período</th><th class="money">Valor ao cliente</th><th class="money">Imposto + BV</th><th class="money">Receita líquida Zip</th><th class="money">Custos realizados</th><th class="money">Comissão</th><th class="money">Lucro realizado</th><th>Margem</th></tr>';
 
- var totValor=0,totImpBV=0,totRecLiq=0,totCusto=0,totLucro=0;
+ var totValor=0,totImpBV=0,totRecLiq=0,totCusto=0,totComissao=0,totLucro=0;
  linhas.forEach(function(r){
   var p=r.p;
   var margCor=r.margem>=50?'#065f46':r.margem>=30?'#d97706':'#dc2626';
   totValor+=r.valorCli;totCusto+=r.custos;totLucro+=r.lucro;
   if(r.impBV!==null)totImpBV+=r.impBV;
   if(r.recLiq!==null)totRecLiq+=r.recLiq;
+  if(r.comissao!==null)totComissao+=r.comissao;
   var mP=getMes(p);var aP=getAno(p);
   var periodoStr=(mP&&aP)?mesAbrevs[parseInt(mP,10)-1]+'/'+aP.substring(2):'—';
   var encerrado=p[5]==='Encerrado';
@@ -11708,6 +11777,7 @@ function renderFinProjetos(){
    +'<td class="money" style="color:#0369a1">'+(r.impBV!==null?'− '+fmtBRL(r.impBV):'—')+'</td>'
    +'<td class="money" style="font-weight:600">'+(r.recLiq!==null?fmtBRL(r.recLiq):'—')+'</td>'
    +'<td class="money" style="color:#dc2626">'+(r.custos>0?'− '+fmtBRL(r.custos):'R$ 0')+'</td>'
+   +'<td class="money" style="color:#7c3aed">'+(r.comissao===null?'—':(r.comissao>0?'− '+fmtBRL(r.comissao):'R$ 0'))+'</td>'
    +'<td class="money" style="font-weight:700;color:'+(r.lucro<0?'#dc2626':margCor)+'">'+fmtBRLSigned(r.lucro)+' '+selo+'</td>'
    +'<td style="font-weight:800;color:'+(r.margem<0?'#dc2626':margCor)+'">'+r.margem+'%</td>';
   tbl.appendChild(tr);
@@ -11719,10 +11789,11 @@ function renderFinProjetos(){
   +'<td class="money" style="color:#0369a1"><b>− '+fmtBRL(totImpBV)+'</b></td>'
   +'<td class="money"><b>'+fmtBRL(totRecLiq)+'</b></td>'
   +'<td class="money" style="color:#dc2626"><b>− '+fmtBRL(totCusto)+'</b></td>'
+  +'<td class="money" style="color:#7c3aed"><b>− '+fmtBRL(totComissao)+'</b></td>'
   +'<td class="money" style="color:'+(totLucro>=0?'#065f46':'#dc2626')+'"><b>'+fmtBRLSigned(totLucro)+'</b></td>'
   +'<td style="color:'+(totMarg>=50?'#065f46':totMarg>=30?'#d97706':'#dc2626')+'"><b>'+totMarg+'%</b></td>';
  tbl.appendChild(trTot);
- el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid var(--line)">💡 <b>Lucro realizado até agora</b> = receita líquida (após imposto e BV do orçamento) − custos já lançados. Projetos <b>parciais</b> ainda podem receber custos. Linhas <b>estim.</b> não têm orçamento vinculado. Linhas <b>(caixa)</b> mostram apenas o valor efetivamente recebido.</div>';
+ el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid var(--line)">💡 <b>Lucro realizado até agora</b> = receita líquida (após imposto e BV do orçamento) − custos já lançados − comissão prevista. É o mesmo conceito do "Lucro líquido" do orçamento. Projetos <b>parciais</b> ainda podem receber custos. Linhas <b>estim.</b> não têm orçamento vinculado (sem BV nem comissão). Linhas <b>(caixa)</b> mostram apenas o valor efetivamente recebido.</div>';
  el.appendChild(tbl);
 }
 

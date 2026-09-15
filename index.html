@@ -1686,9 +1686,11 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
  <div id="listaServicosFormForn" style="margin-top:10px"></div>
  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
   <input id="svFormNome" type="text" placeholder="Novo serviço" style="flex:2 1 160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px">
-  <input id="svFormValor" type="text" placeholder="Valor (opcional)" style="flex:1 1 110px;padding:6px 8px;border:1px solid var(--line);border-radius:6px">
+  <input id="svFormValor" type="text" inputmode="decimal" placeholder="Valor (ex.: 1.000,50)" style="flex:1 1 110px;padding:6px 8px;border:1px solid var(--line);border-radius:6px">
   <button type="button" id="btnAddServicoFormForn" style="background:#dbeafe;color:#1e3a5f;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">+ Adicionar</button>
  </div>
+ <!-- C18: erro visível de validação do valor/nome ao incluir — nunca silencioso. -->
+ <div id="svFormErro" style="display:none;color:#dc2626;font-size:12px;margin-top:6px;background:#fee2e2;padding:6px 8px;border-radius:6px"></div>
 </div>
 <div id="cardGaleriaFormularioForn" style="background:#f9fafb;border-radius:14px;padding:16px;margin-bottom:14px">
  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -18166,6 +18168,117 @@ function _urlSeguraForn(v){
   if(u.protocol !== 'http:' && u.protocol !== 'https:') return null;
   return u.href;
 }
+// C18: parser de valores monetários em formato brasileiro, RESTRITO aos
+// campos de serviços de fornecedores (inclusão e edição). Não é usado por
+// nenhum conversor de orçamento/financeiro compartilhado — aqueles
+// (_valorBRLCom e afins) continuam intocados.
+//
+// Contrato: retorna {ok:true, valor:<number|null>} em sucesso, ou
+// {ok:false} em entrada inválida — nunca converte silenciosamente uma
+// entrada inválida em null ou zero. Vazio é sempre {ok:true, valor:null}
+// (campo opcional). "0" e "0,00" são {ok:true, valor:0} — zero é distinto
+// de vazio.
+//
+// Regra para o ponto (".") — a ambiguidade central pedida para ser definida
+// com clareza:
+//   - COM vírgula presente também: o separador mais à DIREITA é o decimal;
+//     todo ponto que sobrar é separador de milhar e é removido.
+//     "1.000,50" -> remove o ponto (milhar), vírgula vira decimal -> 1000.50
+//   - SÓ ponto(s), sem vírgula:
+//     - exatamente 1 ponto seguido de EXATAMENTE 3 dígitos até o fim
+//       ("1.000") -> separador de milhar (nenhum valor de serviço real tem
+//       3 casas decimais) -> remove o ponto -> 1000
+//     - mais de 1 ponto ("1.000.000") -> todos são de milhar -> remove todos
+//     - exatamente 1 ponto seguido de 1 ou 2 dígitos ("10.5", "10.50") ->
+//       decimal (digitação alternativa comum em teclado numérico) -> mantém
+//     - qualquer outro formato de ponto (0 ou 4+ dígitos após o único ponto,
+//       ou combinações não previstas acima) -> INVÁLIDO
+//   - só vírgula: sempre decimal.
+//   - vírgula com 3+ dígitos depois (ambíguo, não é convenção brasileira
+//     usual) -> INVÁLIDO, não adivinha.
+function _parseValorServicoForn(texto){
+ if(texto === null || texto === undefined) return { ok:true, valor:null };
+ var s = String(texto).trim();
+ if(s === '') return { ok:true, valor:null };
+ // aceita colar com prefixo "R$" (com ou sem espaço), remove e retrima.
+ // C19: o "vazio -> opcional" JA foi tratado acima, antes de mexer no prefixo.
+ // Se chegar aqui vazio, so pode ser porque o texto era SO o prefixo (\"R$\",
+ // \"R$ \"...) sem nenhum digito — isso e invalido, nunca um campo em branco.
+ s = s.replace(/^R\$\s*/i, '').trim();
+ if(s === '') return { ok:false };
+ // so digitos, ponto e virgula (e um sinal de menos opcional na frente).
+ if(!/^-?[0-9.,]+$/.test(s)) return { ok:false };
+ var negativo = s.charAt(0) === '-';
+ if(negativo) s = s.slice(1);
+ var temVirgula = s.indexOf(',') >= 0;
+ var temPonto = s.indexOf('.') >= 0;
+ var normalizado;
+ if(temVirgula && temPonto){
+  var posVirgula = s.lastIndexOf(',');
+  var posPonto = s.lastIndexOf('.');
+  if(posVirgula > posPonto){
+   // virgula e o decimal; pontos antes dela DEVEM formar agrupamento de
+   // milhar valido para serem removidos — C19: antes disto, qualquer ponto
+   // era removido as cegas (\"1..000,50\" -> 1000.50, \"12.34,56\" -> 1234.56),
+   // aceitando pontuacao malformada. Mesma regra de agrupamento ja usada no
+   // ramo \"so ponto\" abaixo: primeiro grupo 1-3 digitos, os demais EXATAMENTE 3.
+   var inteiroV = s.slice(0, posVirgula);
+   var gruposV = inteiroV.split('.');
+   var milharValidoV = /^[0-9]{1,3}$/.test(gruposV[0])
+     && gruposV.slice(1).every(function(g){ return /^[0-9]{3}$/.test(g); });
+   if(!milharValidoV) return { ok:false };
+   normalizado = gruposV.join('') + '.' + s.slice(posVirgula+1);
+  } else {
+   // ponto e o decimal (raro, mas tratado); virgulas antes DEVEM formar
+   // agrupamento de milhar valido para serem removidas — C20: a auditoria
+   // externa do C19 mostrou que este ramo continuava eliminando virgulas as
+   // cegas ("1,,000.50" -> 1000.5, "12,34.56" -> 1234.56), a mesma falha ja
+   // corrigida no ramo espelhado (virgula-decimal) na rodada anterior. Nao
+   // e um formato novo: "1,000.50" ja era aceito e continua sendo — so
+   // passa a EXIGIR que o agrupamento seja valido antes de aceitar.
+   var inteiroP2 = s.slice(0, posPonto);
+   var gruposP2 = inteiroP2.split(',');
+   var milharValidoP2 = /^[0-9]{1,3}$/.test(gruposP2[0])
+     && gruposP2.slice(1).every(function(g){ return /^[0-9]{3}$/.test(g); });
+   if(!milharValidoP2) return { ok:false };
+   normalizado = gruposP2.join('') + '.' + s.slice(posPonto+1);
+  }
+  if(!/^[0-9]+\.[0-9]{1,2}$/.test(normalizado)) return { ok:false };
+ } else if(temVirgula){
+  var partesV = s.split(',');
+  if(partesV.length !== 2) return { ok:false };            // mais de uma virgula: ambiguo
+  if(!/^[0-9]{1,2}$/.test(partesV[1])) return { ok:false }; // centavos: 1 ou 2 digitos
+  if(partesV[0] === '') return { ok:false };
+  normalizado = partesV[0] + '.' + partesV[1];
+ } else if(temPonto){
+  var partesP = s.split('.');
+  if(partesP.length > 2){
+   // mais de um ponto: só é milhar se TODOS os grupos depois do primeiro
+   // tiverem exatamente 3 dígitos (padrão real de milhar). "1000.5.5" não
+   // se encaixa nisso e é rejeitado, em vez de virar "100055" por engano.
+   var todosGruposDeMilhar = partesP.slice(1).every(function(g){ return /^[0-9]{3}$/.test(g); })
+     && /^[0-9]{1,3}$/.test(partesP[0]);
+   if(!todosGruposDeMilhar) return { ok:false };
+   normalizado = partesP.join('');
+  } else {
+   var frac = partesP[1];
+   if(frac.length === 3){
+    normalizado = partesP[0] + frac;                       // milhar
+   } else if(frac.length === 1 || frac.length === 2){
+    normalizado = partesP[0] + '.' + frac;                 // decimal
+   } else {
+    return { ok:false };                                   // 0 ou 4+ digitos: invalido
+   }
+  }
+ } else {
+  normalizado = s;                                         // so digitos
+ }
+ if(!/^[0-9]+(\.[0-9]{1,2})?$/.test(normalizado)) return { ok:false };
+ var n = Number(normalizado);
+ if(!isFinite(n)) return { ok:false };
+ return { ok:true, valor: negativo ? -n : n };
+}
+
 function _moedaForn(v){
   if(v === null || v === undefined || v === '') return '—';
   var n = Number(v);
@@ -19256,7 +19369,12 @@ function _iniciarOperacaoServico(uuid){
   e.perfil = _perfilAtivoFornecedores();
   return { token:e.requestId, uuid:uuid, ownerUserId:e.ownerUserId, epoch:e.epoch, perfil:e.perfil };
 }
-function _rpcServicoForn(nome, args, uuid, aoOk){
+// C18: "aoFalhar" opcional, ao lado do "aoOk" ja existente — quem chama a
+// partir do modal (edição inline de serviço já cadastrado) precisa saber
+// da falha para manter a edição recuperável e mostrar mensagem DENTRO do
+// modal; o comportamento antigo (_estadoServicosUI('error', uuid), que
+// atualiza o PRONTUÁRIO) é preservado sem alteração — aoFalhar é aditivo.
+function _rpcServicoForn(nome, args, uuid, aoOk, aoFalhar){
   if(estadoServicosAdminForn.salvando) return;         // duplo clique: uma RPC
   if(!perfilAtualPodeGerenciarServicosForn()) return;
   if(!_uuidValidoForn(uuid)) return;
@@ -19265,6 +19383,7 @@ function _rpcServicoForn(nome, args, uuid, aoOk){
     if(!_ctxServicoValido(ctx)) return;
     estadoServicosAdminForn.salvando = false;
     _estadoServicosUI('error', uuid);
+    if(typeof aoFalhar === 'function') aoFalhar(err);
   }
   try {
     if(typeof supabaseClient === 'undefined' || !supabaseClient) throw new Error('sem cliente');
@@ -19279,30 +19398,39 @@ function _rpcServicoForn(nome, args, uuid, aoOk){
     }, falhou);
   } catch(err){ falhou(err); }
 }
-function cadastrarServicoFornecedorReal(uuid, servico, valor){
+// C18: aceita formato brasileiro (_parseValorServicoForn) e um "aoOk"
+// opcional — repassado a _rpcServicoForn — para quem chama a partir do
+// modal de edição poder atualizar a lista local (estadoServicosFormForn.
+// existentes) além do prontuário, que _rpcServicoForn já atualiza sozinho.
+// Retorna true/false: indica se a chamada foi de fato disparada, para a
+// interface distinguir "RPC em andamento" de "validação recusou".
+function cadastrarServicoFornecedorReal(uuid, servico, valor, aoOk){
   var nome = String(servico === null || servico === undefined ? '' : servico).trim();
-  if(nome === '') return;                               // nome obrigatorio
-  var v = (valor === null || valor === undefined || String(valor).trim() === '') ? null : Number(valor);
-  if(v !== null && !isFinite(v)) return;
+  if(nome === '') return false;                          // nome obrigatorio
+  var pv = _parseValorServicoForn(valor);
+  if(!pv.ok) return false;                                // valor invalido: nunca vira null/zero
   _rpcServicoForn('cadastrar_servico_fornecedor',
-    { p_fornecedor_id: uuid, p_servico: nome, p_valor: v }, uuid);
+    { p_fornecedor_id: uuid, p_servico: nome, p_valor: pv.valor }, uuid, aoOk);
+  return true;
 }
-function atualizarServicoFornecedorReal(uuid, servicoId, servico, valor){
-  if(!_uuidValidoForn(servicoId)) return;               // sempre por UUID, nunca por indice
+function atualizarServicoFornecedorReal(uuid, servicoId, servico, valor, aoOk, aoFalhar){
+  if(!_uuidValidoForn(servicoId)) return false;          // sempre por UUID, nunca por indice
   var nome = String(servico === null || servico === undefined ? '' : servico).trim();
-  if(nome === '') return;
-  var v = (valor === null || valor === undefined || String(valor).trim() === '') ? null : Number(valor);
-  if(v !== null && !isFinite(v)) return;
+  if(nome === '') return false;
+  var pv = _parseValorServicoForn(valor);
+  if(!pv.ok) return false;                                // valor invalido: nunca vira null/zero
   _rpcServicoForn('atualizar_servico_fornecedor',
-    { p_servico_id: servicoId, p_servico: nome, p_valor: v }, uuid);
+    { p_servico_id: servicoId, p_servico: nome, p_valor: pv.valor }, uuid, aoOk, aoFalhar);
+  return true;
 }
 // Inativa/reativa. NUNCA exclui fisicamente. Motivo obrigatorio ao inativar.
-function definirAtividadeServicoFornecedorReal(uuid, servicoId, ativo, motivo){
-  if(!_uuidValidoForn(servicoId)) return;
+function definirAtividadeServicoFornecedorReal(uuid, servicoId, ativo, motivo, aoOk, aoFalhar){
+  if(!_uuidValidoForn(servicoId)) return false;
   var m = String(motivo === null || motivo === undefined ? '' : motivo).trim();
-  if(ativo !== true && m === '') return;                // inativar exige motivo
+  if(ativo !== true && m === '') return false;           // inativar exige motivo
   _rpcServicoForn('definir_atividade_servico_fornecedor',
-    { p_servico_id: servicoId, p_ativo: ativo === true, p_motivo: m }, uuid);
+    { p_servico_id: servicoId, p_ativo: ativo === true, p_motivo: m }, uuid, aoOk, aoFalhar);
+  return true;
 }
 // ============================================================================
 // C5 — GALERIA REAL (Storage privado + listar/registrar/remover)
@@ -20143,7 +20271,23 @@ function salvarModalBancarioForn(){
 // confirmados no servidor ("existentes") e os novos pendentes ("itens") — e um
 // contexto IMUTAVEL de operacao. Toda gravacao revalida o contexto antes de
 // emitir a proxima chamada e ao consumir a resposta.
-var estadoServicosFormForn = { itens:[], seq:0, existentes:[], existentesStatus:'idle', fornecedorId:'', execucao:0 };
+var estadoServicosFormForn = { itens:[], seq:0, existentes:[], existentesStatus:'idle', fornecedorId:'', execucao:0,
+  // C18: estado da gestão de serviços JÁ CADASTRADOS, agora dentro do modal.
+  // (histórico: nas rodadas C18/C19 este comentário descrevia
+  // rascunhoFalhaEdicaoServico; ver nota C20 abaixo pelo campo atual.)
+  editandoServicoId:null, erroGestaoServicoId:null, erroGestaoTexto:'',
+  // C20: rascunhoEdicaoServico substitui os DOIS campos separados do C19
+  // (rascunhoFalhaEdicaoServico + rascunhoEdicaoEmAndamento). A auditoria
+  // externa do C19 apontou exatamente o problema de manter dois objetos
+  // com prioridade fixa: apos uma falha, o render sempre preferia o
+  // rascunho DA FALHA, entao uma correcao digitada em seguida (antes de um
+  // novo Salvar) ficava mascarada ate a proxima tentativa. Com um UNICO
+  // campo, atualizado tanto a cada tecla (input) quanto no INICIO de cada
+  // tentativa de salvar, "o mais recente" e sempre, por construcao, o que
+  // esta no campo — sem comparar timestamps nem escolher entre dois
+  // objetos. null, ou {servicoId,nome,valorTexto}. Presenca decidida pelo
+  // objeto e pelo servicoId, nunca pela veracidade do conteudo.
+  rascunhoEdicaoServico:null };
 // Contexto imutavel de uma operacao de gravacao. Capturado no inicio e
 // revalidado item a item; nunca reconstruido a partir do usuario atual.
 // C12 (EXT03/EXT04): o NOME do fornecedor viaja no contexto IMUTAVEL da
@@ -20208,18 +20352,38 @@ function limparServicosFormForn(){
   estadoServicosFormForn.existentes = [];
   estadoServicosFormForn.existentesStatus = 'idle';
   estadoServicosFormForn.fornecedorId = '';
+  // C18: chamada em toda abertura de edição (abrirEdicaoFornecedorReal) —
+  // sem isto, um modo de edição/erro/rascunho de um fornecedor ANTERIOR
+  // vazaria para a sessão de edição do fornecedor seguinte.
+  estadoServicosFormForn.editandoServicoId = null;
+  estadoServicosFormForn.erroGestaoServicoId = null; estadoServicosFormForn.erroGestaoTexto = '';
+  estadoServicosFormForn.rascunhoEdicaoServico = null;   // C20
   _renderServicosFormForn();
 }
 function _novoIdLocalServicoForn(){
   estadoServicosFormForn.seq += 1;
   return 'loc-' + estadoServicosFormForn.seq;            // ID local estavel, nunca indice
 }
+// C18: retorna o item criado em sucesso, ou null em QUALQUER falha —
+// incluindo agora a validação do valor. Nome vazio e valor com formato
+// inválido são distinguidos pelo chamador via _ultimoErroServicoFormForn
+// (setada aqui, lida e limpa por quem exibe a mensagem), porque esta função
+// já era usada como um booleano simples ("if(adicionarServicoFormForn(...))")
+// em todos os chamadores existentes — preservado sem quebrar esse contrato.
+var _ultimoErroServicoFormForn = '';
 function adicionarServicoFormForn(nome, valor){
+  _ultimoErroServicoFormForn = '';
   var n = String(nome === null || nome === undefined ? '' : nome).trim();
-  if(n === '') return null;
-  var v = (valor === null || valor === undefined || String(valor).trim() === '') ? null : Number(valor);
-  if(v !== null && !isFinite(v)) v = null;
-  var it = { idLocal:_novoIdLocalServicoForn(), nome:n, valor:v, situacao:'pendente', servicoId:'', erro:'' };
+  if(n === ''){ _ultimoErroServicoFormForn = 'Informe o nome do serviço.'; return null; }
+  var pv = _parseValorServicoForn(valor);
+  if(!pv.ok){
+   // C18: entrada inválida NUNCA vira null/zero silenciosamente — a
+   // inclusão é impedida e o texto digitado permanece no campo (o
+   // chamador só limpa o campo quando esta função retorna um item).
+   _ultimoErroServicoFormForn = 'Valor inválido. Use um formato como 1000, 1000,50 ou 1.000,50.';
+   return null;
+  }
+  var it = { idLocal:_novoIdLocalServicoForn(), nome:n, valor:pv.valor, situacao:'pendente', servicoId:'', erro:'' };
   estadoServicosFormForn.itens.push(it);
   _renderServicosFormForn();
   return it;
@@ -20342,16 +20506,99 @@ function _renderServicosFormForn(){
     box.appendChild(er);
   } else if(e.existentes.length){
     box.appendChild(_secaoFormForn('JÁ CADASTRADOS'));
+    // C18: gestão completa concentrada aqui — editar (campos reais, nunca
+    // prompt()), inativar/reativar (motivo continua por prompt(), igual já
+    // era) e a situação de cada serviço. Só aparece para quem já pode
+    // gerenciar (o cartão inteiro já é condicionado a isso).
+    var podeGerir = (typeof perfilAtualPodeGerenciarServicosForn === 'function') && perfilAtualPodeGerenciarServicosForn();
+    var uuidGestao = e.fornecedorId || estadoFornecedoresReais.detalheIdAberto || estadoCadastroFornecedor.editandoUuid;
+    var travado = (typeof estadoServicosAdminForn !== 'undefined') && estadoServicosAdminForn.salvando === true;
     e.existentes.forEach(function(sv){
-      var l = document.createElement('div');
-      l.style.display='flex'; l.style.gap='8px'; l.style.alignItems='center'; l.style.padding='3px 0';
-      var n = document.createElement('span'); n.style.flex='2 1 150px'; n.textContent = String(sv.servico||'');
-      var v = document.createElement('span'); v.style.flex='1 1 80px'; v.style.textAlign='right';
-      v.textContent = (sv.valor === null || sv.valor === undefined) ? '—' : _moedaForn(sv.valor);
-      var b = document.createElement('span'); b.className = 'badge ' + (sv.ativo ? 'ok' : 'danger');
-      b.textContent = sv.ativo ? 'ativo' : 'inativo';
-      l.appendChild(n); l.appendChild(v); l.appendChild(b);
-      box.appendChild(l);
+      var linha = document.createElement('div');
+      linha.style.padding='4px 0'; linha.style.borderBottom='1px solid #eef0f2';
+      if(podeGerir && e.editandoServicoId === sv.servicoId){
+        // ---- modo de edição inline: campos reais, sem prompt() ----
+        var lEd = document.createElement('div');
+        lEd.style.display='flex'; lEd.style.gap='6px'; lEd.style.flexWrap='wrap'; lEd.style.alignItems='center';
+        // C18: se ha rascunho PARA ESTE servico, repopula com o que o
+        // usuario tinha digitado — nunca com sv.servico/sv.valor (dados
+        // antigos, ja gravados). Associacao pelo servicoId, nunca por "o
+        // objeto existe" sozinho (poderia ser o rascunho de OUTRO servico).
+        // C20: um UNICO rascunho (nao mais dois com prioridade fixa — a
+        // auditoria do C19 apontou que isso escondia uma correcao digitada
+        // apos uma falha). O mesmo campo e escrito tanto pelo listener de
+        // input abaixo quanto no inicio de _salvarEdicaoServicoExistenteForn;
+        // "o mais recente" e sempre o que esta nele, sem comparar nada aqui.
+        var rascunho = (e.rascunhoEdicaoServico && e.rascunhoEdicaoServico.servicoId === sv.servicoId)
+          ? e.rascunhoEdicaoServico : null;
+        var iN = document.createElement('input'); iN.setAttribute('type','text');
+        iN.value = rascunho ? String(rascunho.nome === null || rascunho.nome === undefined ? '' : rascunho.nome) : String(sv.servico||'');
+        iN.style.flex='2 1 150px'; iN.style.padding='5px 7px'; iN.style.border='1px solid var(--line)'; iN.style.borderRadius='6px';
+        var iV = document.createElement('input'); iV.setAttribute('type','text');
+        iV.setAttribute('inputmode','decimal');
+        iV.value = rascunho
+          ? String(rascunho.valorTexto === null || rascunho.valorTexto === undefined ? '' : rascunho.valorTexto)
+          : ((sv.valor === null || sv.valor === undefined) ? '' : String(sv.valor).replace('.', ','));
+        iV.style.flex='1 1 90px'; iV.style.padding='5px 7px'; iV.style.border='1px solid var(--line)'; iV.style.borderRadius='6px';
+        // C19/C20: captura CADA tecla no MESMO rascunho deste servico — e o
+        // que impede um re-render disparado por OUTRA acao (ex.: incluir um
+        // novo servico) de devolver estes campos aos dados antigos, e o que
+        // faz uma correcao digitada apos uma falha prevalecer sobre a
+        // tentativa anterior (mesmo campo, ultima escrita vence).
+        (function(servicoIdAtual){
+          var _atualizarRascunhoDigitandoForn = function(){
+            estadoServicosFormForn.rascunhoEdicaoServico = { servicoId: servicoIdAtual, nome: iN.value, valorTexto: iV.value };
+          };
+          iN.addEventListener('input', _atualizarRascunhoDigitandoForn);
+          iV.addEventListener('input', _atualizarRascunhoDigitandoForn);
+        })(sv.servicoId);
+        var bSalvar = document.createElement('button'); bSalvar.setAttribute('type','button'); bSalvar.textContent='Salvar';
+        bSalvar.disabled = travado;
+        bSalvar.style.border='none'; bSalvar.style.borderRadius='6px'; bSalvar.style.padding='5px 10px';
+        bSalvar.style.fontSize='11px'; bSalvar.style.fontWeight='700'; bSalvar.style.cursor='pointer';
+        bSalvar.style.background='#dbeafe'; bSalvar.style.color='#1e3a5f';
+        bSalvar.addEventListener('click', function(){ _salvarEdicaoServicoExistenteForn(uuidGestao, sv.servicoId, iN.value, iV.value); });
+        var bCancelar = document.createElement('button'); bCancelar.setAttribute('type','button'); bCancelar.textContent='Cancelar';
+        bCancelar.style.border='1px solid var(--line)'; bCancelar.style.borderRadius='6px'; bCancelar.style.padding='5px 10px';
+        bCancelar.style.fontSize='11px'; bCancelar.style.cursor='pointer'; bCancelar.style.background='#fff';
+        bCancelar.addEventListener('click', function(){ _cancelarEdicaoServicoExistenteForn(); });
+        lEd.appendChild(iN); lEd.appendChild(iV); lEd.appendChild(bSalvar); lEd.appendChild(bCancelar);
+        linha.appendChild(lEd);
+      } else {
+        var l = document.createElement('div');
+        l.style.display='flex'; l.style.gap='8px'; l.style.alignItems='center'; l.style.flexWrap='wrap';
+        var n = document.createElement('span'); n.style.flex='2 1 150px'; n.style.wordBreak='break-word'; n.textContent = String(sv.servico||'');
+        var v = document.createElement('span'); v.style.flex='1 1 80px'; v.style.textAlign='right';
+        v.textContent = (sv.valor === null || sv.valor === undefined) ? '—' : _moedaForn(sv.valor);
+        var b = document.createElement('span'); b.className = 'badge ' + (sv.ativo ? 'ok' : 'danger');
+        b.textContent = sv.ativo ? 'ativo' : 'inativo';
+        l.appendChild(n); l.appendChild(v); l.appendChild(b);
+        if(podeGerir){
+          var bEd = document.createElement('button'); bEd.setAttribute('type','button'); bEd.textContent='Editar';
+          bEd.disabled = travado;
+          bEd.style.border='none'; bEd.style.borderRadius='6px'; bEd.style.padding='3px 8px';
+          bEd.style.fontSize='11px'; bEd.style.cursor='pointer'; bEd.style.background='#dbeafe'; bEd.style.color='#1e3a5f';
+          bEd.addEventListener('click', function(){ _iniciarEdicaoServicoExistenteForn(sv.servicoId); });
+          l.appendChild(bEd);
+          var bAt = document.createElement('button'); bAt.setAttribute('type','button');
+          bAt.textContent = sv.ativo ? 'Inativar' : 'Reativar';
+          bAt.disabled = travado;
+          bAt.style.border='none'; bAt.style.borderRadius='6px'; bAt.style.padding='3px 8px';
+          bAt.style.fontSize='11px'; bAt.style.cursor='pointer';
+          bAt.style.background = sv.ativo ? '#fee2e2' : '#dcfce7';
+          bAt.style.color = sv.ativo ? '#991b1b' : '#065f46';
+          bAt.addEventListener('click', function(){ _definirAtividadeServicoExistenteForn(uuidGestao, sv.servicoId, sv.ativo); });
+          l.appendChild(bAt);
+        }
+        linha.appendChild(l);
+      }
+      if(e.erroGestaoServicoId === sv.servicoId && e.erroGestaoTexto){
+        var erroLinha = document.createElement('div');
+        erroLinha.style.color='#dc2626'; erroLinha.style.fontSize='11px'; erroLinha.style.marginTop='3px';
+        erroLinha.textContent = e.erroGestaoTexto;
+        linha.appendChild(erroLinha);
+      }
+      box.appendChild(linha);
     });
   } else if(e.existentesStatus === 'loaded'){
     box.appendChild(_secaoFormForn('JÁ CADASTRADOS'));
@@ -20972,6 +21219,13 @@ function _retryServicosFornecedorReal(ctxErro){
   carregarServicosFornecedorReal(ctxErro.fornecedorId, { forceReload: true });
 }
 
+// C18: o prontuário passa a ser SOMENTE LEITURA — Serviço e Valor, apenas
+// ativos, sem Situação, sem linha de inclusão e sem botões de gestão. A
+// gestão completa (adicionar, editar, inativar, reativar, ver inativos e
+// situação) foi concentrada no modal "Editar fornecedor"
+// (_renderServicosFormForn / cardServicosFornecedorDemo), que reaproveita as
+// mesmas RPCs. Os estados de carregamento/vazio/erro (_estadoServicosUI)
+// são preservados sem alteração.
 function _renderServicosFornecedorReal(){
   var st = estadoFornecedoresReais;
   var el = document.getElementById('listaServicosFornecedorReal');
@@ -20979,22 +21233,22 @@ function _renderServicosFornecedorReal(){
   if(st.servicosStatus==='loading'){ _estadoServicosUI('loading', st.servicosDoFornecedor); return; }
   if(st.servicosStatus==='error'){ _estadoServicosUI('error', st.servicosDoFornecedor); return; }
   if(st.servicosStatus==='empty' || !st.servicos.length){ _estadoServicosUI('empty', st.servicosDoFornecedor); return; }
+  var ativos = st.servicos.filter(function(s){ return s.ativo !== false; });
+  if(!ativos.length){ _estadoServicosUI('empty', st.servicosDoFornecedor); return; }
   el.textContent = '';
   if(typeof _atualizarContadorServicosForn === 'function') _atualizarContadorServicosForn();
-  var mostraSituacao = perfilAtualRecebeInativosForn();
-  // C2: tabela visual (Serviço / Valor), no padrao .table ja usado no ZIP OS.
   var tab = document.createElement('table'); tab.className = 'table';
   tab.style.width = '100%'; tab.style.tableLayout = 'fixed';
   var thead = document.createElement('thead');
   var trh = document.createElement('tr');
-  ['Serviço','Valor'].concat(mostraSituacao ? ['Situação'] : []).forEach(function(t){
+  ['Serviço','Valor'].forEach(function(t){
     var th = document.createElement('th'); th.textContent = t;
     th.style.textAlign = (t === 'Valor') ? 'right' : 'left';
     trh.appendChild(th);
   });
   thead.appendChild(trh); tab.appendChild(thead);
   var tbody = document.createElement('tbody');
-  st.servicos.forEach(function(s){
+  ativos.forEach(function(s){
     var tr = document.createElement('tr');
     var td1 = document.createElement('td');
     td1.style.wordBreak = 'break-word'; td1.style.overflowWrap = 'anywhere';
@@ -21004,79 +21258,10 @@ function _renderServicosFornecedorReal(){
     td2.style.textAlign = 'right'; td2.style.whiteSpace = 'nowrap';
     td2.textContent = _moedaForn(s.valor);
     tr.appendChild(td2);
-    if(mostraSituacao){
-      var td3 = document.createElement('td');
-      var sit = document.createElement('span');
-      sit.className = 'badge ' + (s.ativo ? 'ok' : 'danger');
-      sit.textContent = s.ativo ? 'ativo' : 'inativo';
-      td3.appendChild(sit);
-      tr.appendChild(td3);
-    }
     tbody.appendChild(tr);
   });
   tab.appendChild(tbody);
   el.appendChild(tab);
-  // C5: acoes reais de servico — somente Socio/Admin/Atendimento.
-  if(typeof perfilAtualPodeGerenciarServicosForn === 'function' && perfilAtualPodeGerenciarServicosForn()){
-    var uuid = estadoFornecedoresReais.detalheIdAberto;
-    var linha = document.createElement('div');
-    linha.style.display='flex'; linha.style.gap='6px'; linha.style.flexWrap='wrap'; linha.style.marginTop='10px';
-    var iNome = document.createElement('input');
-    iNome.setAttribute('type','text'); iNome.setAttribute('placeholder','Novo serviço');
-    iNome.style.flex='2 1 160px'; iNome.style.padding='6px 8px';
-    iNome.style.border='1px solid var(--line)'; iNome.style.borderRadius='6px';
-    var iVal = document.createElement('input');
-    iVal.setAttribute('type','text'); iVal.setAttribute('placeholder','Valor (opcional)');
-    iVal.style.flex='1 1 110px'; iVal.style.padding='6px 8px';
-    iVal.style.border='1px solid var(--line)'; iVal.style.borderRadius='6px';
-    var bAdd = document.createElement('button');
-    bAdd.setAttribute('type','button'); bAdd.textContent='+ Adicionar';
-    bAdd.style.border='none'; bAdd.style.borderRadius='6px'; bAdd.style.padding='6px 12px';
-    bAdd.style.background='#dbeafe'; bAdd.style.color='#1e3a5f';
-    bAdd.style.fontWeight='700'; bAdd.style.cursor='pointer';
-    bAdd.addEventListener('click', function(){
-      cadastrarServicoFornecedorReal(uuid, iNome.value, iVal.value);
-      iNome.value=''; iVal.value='';
-    });
-    linha.appendChild(iNome); linha.appendChild(iVal); linha.appendChild(bAdd);
-    el.appendChild(linha);
-    // inativar/reativar por UUID; nunca exclusao fisica
-    st.servicos.forEach(function(sv, idx){
-      var tr2 = tbody.children[idx];
-      if(!tr2) return;
-      var td = document.createElement('td');
-      var b2 = document.createElement('button');
-      b2.setAttribute('type','button');
-      b2.textContent = sv.ativo ? 'Inativar' : 'Reativar';
-      b2.style.border='none'; b2.style.borderRadius='6px'; b2.style.padding='3px 8px';
-      b2.style.fontSize='11px'; b2.style.cursor='pointer';
-      b2.style.background = sv.ativo ? '#fee2e2' : '#dcfce7';
-      b2.style.color = sv.ativo ? '#991b1b' : '#065f46';
-      b2.addEventListener('click', function(){
-        // C6: motivo REAL informado pelo usuario, nao frase fixa.
-        var motivo = sv.ativo
-          ? String((typeof prompt === 'function' ? prompt('Motivo da inativação deste serviço:') : '') || '').trim()
-          : 'Reativado pelo painel de fornecedores';
-        if(sv.ativo && motivo === ''){ return; }        // sem motivo, nao chama a RPC
-        definirAtividadeServicoFornecedorReal(uuid, sv.servicoId, !sv.ativo, motivo);
-      });
-      td.appendChild(b2);
-      // C6 (E8): a interface passa a alcancar atualizarServicoFornecedorReal.
-      var bEd = document.createElement('button');
-      bEd.setAttribute('type','button'); bEd.textContent = 'Editar';
-      bEd.style.border='none'; bEd.style.borderRadius='6px'; bEd.style.padding='3px 8px';
-      bEd.style.fontSize='11px'; bEd.style.cursor='pointer';
-      bEd.style.background='#dbeafe'; bEd.style.color='#1e3a5f'; bEd.style.marginLeft='4px';
-      bEd.addEventListener('click', function(){
-        var novoNome = String((typeof prompt === 'function' ? prompt('Novo nome do serviço:', sv.servico) : '') || '').trim();
-        if(novoNome === '') return;
-        var novoValor = (typeof prompt === 'function') ? prompt('Novo valor (vazio = sem valor):', sv.valor === null ? '' : sv.valor) : '';
-        atualizarServicoFornecedorReal(uuid, sv.servicoId, novoNome, novoValor);
-      });
-      td.appendChild(bEd);
-      tr2.appendChild(td);
-    });
-  }
 }
 function carregarServicosFornecedorReal(fornecedorId, opcoes){
   var forceReload = !!(opcoes && opcoes.forceReload);
@@ -21934,14 +22119,103 @@ function _avisoParcialCadastroForn(rs, rg, ctxOrigem){
     _limparRecuperacaoForn(uuid);
   }
 }
+// C18: entra em modo de edição inline para UM serviço já cadastrado —
+// nunca prompt(). Cancelar aqui é seguro e não desfaz nada no banco: nada
+// foi enviado ainda, só sai do modo de edição local.
+function _iniciarEdicaoServicoExistenteForn(servicoId){
+  estadoServicosFormForn.erroGestaoServicoId = null; estadoServicosFormForn.erroGestaoTexto = '';
+  estadoServicosFormForn.editandoServicoId = servicoId;
+  _renderServicosFormForn();
+}
+function _cancelarEdicaoServicoExistenteForn(){
+  estadoServicosFormForn.editandoServicoId = null;
+  estadoServicosFormForn.erroGestaoServicoId = null; estadoServicosFormForn.erroGestaoTexto = '';
+  estadoServicosFormForn.rascunhoEdicaoServico = null;   // C20
+  _renderServicosFormForn();
+}
+// C18: valida com o MESMO parser da inclusão antes de sequer tentar a RPC —
+// entrada inválida nunca chega a atualizarServicoFornecedorReal como null/
+// zero; fica um erro visível, o campo permanece preenchido com o texto
+// digitado (o modo de edição não é fechado).
+function _salvarEdicaoServicoExistenteForn(uuid, servicoId, nomeDigitado, valorDigitado){
+  // C20: grava no rascunho UNICO assim que a tentativa comeca — mesmo campo
+  // que o listener de input atualiza a cada tecla. Isso e o que elimina a
+  // prioridade fixa que a auditoria do C19 apontou: nao ha mais um objeto
+  // "da falha" e outro "em andamento" disputando qual aparece no render.
+  // Se o usuario digitar de novo DEPOIS desta linha (via input), o listener
+  // sobrescreve este mesmo campo, e a correcao mais recente passa a ser,
+  // por construcao, o que esta nele — sem comparar nada.
+  estadoServicosFormForn.rascunhoEdicaoServico = { servicoId: servicoId, nome: nomeDigitado, valorTexto: valorDigitado };
+  var nome = String(nomeDigitado === null || nomeDigitado === undefined ? '' : nomeDigitado).trim();
+  if(nome === ''){
+    estadoServicosFormForn.erroGestaoServicoId = servicoId;
+    estadoServicosFormForn.erroGestaoTexto = 'Informe o nome do serviço.';
+    _renderServicosFormForn();
+    return;
+  }
+  var pv = _parseValorServicoForn(valorDigitado);
+  if(!pv.ok){
+    estadoServicosFormForn.erroGestaoServicoId = servicoId;
+    estadoServicosFormForn.erroGestaoTexto = 'Valor inválido. Use um formato como 1000, 1000,50 ou 1.000,50.';
+    _renderServicosFormForn();
+    return;
+  }
+  var ok = atualizarServicoFornecedorReal(uuid, servicoId, nome, valorDigitado, function(){
+    // C18: atualiza a lista DENTRO do modal — carregarExistentesFormForn só
+    // toca estadoServicosFormForn.existentes/estadoGaleriaFormForn.existentes,
+    // nunca as filas de itens pendentes (nem de serviço, nem de galeria):
+    // nenhum rascunho de OUTRO serviço/imagem é apagado por este recarregamento.
+    estadoServicosFormForn.editandoServicoId = null;
+    estadoServicosFormForn.erroGestaoServicoId = null; estadoServicosFormForn.erroGestaoTexto = '';
+    estadoServicosFormForn.rascunhoEdicaoServico = null;   // C20
+    if(typeof carregarExistentesFormForn === 'function') carregarExistentesFormForn(uuid);
+  }, function(){
+    // C18: falha mantém a edição RECUPERÁVEL — editandoServicoId permanece
+    // como estava (nunca fechado por uma falha), e a mensagem aparece DENTRO
+    // do modal, associada ao serviço certo. O rascunho (gravado acima, ANTES
+    // da chamada) é o que o render usa para repopular os campos.
+    estadoServicosFormForn.erroGestaoServicoId = servicoId;
+    estadoServicosFormForn.erroGestaoTexto = 'Não foi possível salvar. Tente novamente.';
+    _renderServicosFormForn();
+  });
+  if(!ok){
+    // duplo clique ou trava concorrente: nao muda o texto, so re-renderiza
+    // para refletir o estado de botao desabilitado, se for o caso.
+    _renderServicosFormForn();
+  }
+}
+// C18: motivo continua exigido/coletado do mesmo jeito de antes (prompt()) —
+// não faz parte desta autorização mudar essa coleta, só o LOCAL da ação.
+function _definirAtividadeServicoExistenteForn(uuid, servicoId, ativoAtual){
+  var motivo = ativoAtual
+    ? String((typeof prompt === 'function' ? prompt('Motivo da inativação deste serviço:') : '') || '').trim()
+    : 'Reativado pelo painel de fornecedores';
+  if(ativoAtual && motivo === ''){ return; }
+  definirAtividadeServicoFornecedorReal(uuid, servicoId, !ativoAtual, motivo, function(){
+    if(typeof carregarExistentesFormForn === 'function') carregarExistentesFormForn(uuid);
+  }, function(){
+    estadoServicosFormForn.erroGestaoServicoId = servicoId;
+    estadoServicosFormForn.erroGestaoTexto = 'Não foi possível concluir. Tente novamente.';
+    _renderServicosFormForn();
+  });
+}
 function _ligarControlesFormularioForn(){
   var bAdd = document.getElementById('btnAddServicoFormForn');
   if(bAdd && !bAdd._c6){
     bAdd._c6 = true;
     bAdd.addEventListener('click', function(){
       var n = document.getElementById('svFormNome'), v = document.getElementById('svFormValor');
+      var erroEl = document.getElementById('svFormErro');
       if(!n) return;
-      if(adicionarServicoFormForn(n.value, v ? v.value : '')){ n.value=''; if(v) v.value=''; }
+      if(adicionarServicoFormForn(n.value, v ? v.value : '')){
+        n.value=''; if(v) v.value='';
+        if(erroEl){ erroEl.style.display='none'; erroEl.textContent=''; }
+      } else if(erroEl){
+        // C18: entrada inválida nunca é convertida silenciosamente — erro
+        // visível, e o texto digitado permanece exatamente como estava.
+        erroEl.textContent = _ultimoErroServicoFormForn || 'Não foi possível adicionar o serviço.';
+        erroEl.style.display='block';
+      }
     });
   }
   var inp = document.getElementById('inputGaleriaFormForn');

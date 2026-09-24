@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZIP OS Preview V8.3.0</title>
+<title>ZIP OS V8.4.7 · C28</title>
 <style>
 :root{
   --bg:#f4f6f8;--panel:#fff;--ink:#17202a;--muted:#667085;--line:#e5e7eb;
@@ -261,7 +261,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 <!-- GRID DA LOGO — pronto para receber a logo da Zip Filmes no futuro. Basta substituir o conteúdo de #logoBox por <img src="..."> -->
 <div id="logoBox" style="display:grid;place-items:center;padding:8px 0 4px">
  <div class="logo" style="margin:0">ZIP OS</div>
- <div class="sub" style="text-align:center;margin-top:2px">V8.3.0 • Comercial/Leads — leitura real (somente leitura)</div>
+ <div class="sub" style="text-align:center;margin-top:2px">V8.4.7 · C28 — Fornecedores: galeria de imagens</div>
 </div>
 <!-- V8.2.0: os perfis vêm exclusivamente do Supabase (usuarios_perfis). Os selects abaixo permanecem apenas como PONTE INTERNA DE COMPATIBILIDADE com funções antigas do frontend; ficam permanentemente ocultos, não representam autenticação nem autorização e não permitem simular perfil ou escolher identidade. A fonte real de acesso é currentUser.profiles / currentUser.screens. -->
 <div class="profile" style="display:none" aria-hidden="true"><select id="profileSelect" onchange="applyProfile()"><option value="socio">socio</option><option value="financeiro">financeiro</option><option value="atendimento">atendimento</option><option value="producao">producao</option><option value="edicao">edicao</option><option value="admin">admin</option></select>
@@ -1698,7 +1698,11 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
   <span class="muted" style="font-size:11px">Enviadas separadamente após criar a ficha</span>
  </div>
  <div id="listaGaleriaFormForn" style="margin-top:10px"></div>
- <input id="inputGaleriaFormForn" type="file" accept="image/jpeg,image/png" style="margin-top:10px">
+ <!-- C22 (EXT01): o seletor de arquivos ESTATICO foi removido daqui. Ele
+      convivia com outro input de MESMO id criado por _renderGaleriaFormForn,
+      dentro de #listaGaleriaFormForn — dois elementos com o mesmo id e dois
+      caminhos de preparacao distintos. Agora existe UM unico seletor, criado
+      pelo render, com multiple, ligado a adicionarImagensGaleriaFormForn. -->
 </div>
 <div id="cardCategoriasFornecedorDemo" style="border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden">
  <div onclick="toggleCatGerenciar()" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;background:#f9fafb;user-select:none">
@@ -19127,6 +19131,13 @@ function _montarArgsEdicaoFornecedor(){
 function _salvarEdicaoFornecedorReal(){
   var est = estadoCadastroFornecedor;
   if(est.salvando) return;                            // duplo clique: uma unica RPC
+  // C22 (EXT02): a mesma barreira tambem aqui. salvarFornecedorPorFonte ja
+  // bloqueia antes de despachar, mas esta funcao tambem e chamada diretamente
+  // em outros pontos — a protecao nao pode depender de por onde se entrou.
+  if(typeof _temPreparacaoPendenteGaleriaForn === 'function' && _temPreparacaoPendenteGaleriaForn()){
+    _avisarPreparacaoPendenteGaleriaForn();
+    return;
+  }
   if(est.modo !== 'edicao' || !_uuidValidoForn(est.editandoUuid)){
     _msgCadastroFornecedor('Edição inválida.', 'erro'); return;
   }
@@ -19448,6 +19459,187 @@ var GALERIA_BUCKET_FORN = 'fornecedores-galeria';
 var GALERIA_MAX_FORN = 10;
 var GALERIA_MAX_BYTES_FORN = 1048576;                   // 1 MB
 var GALERIA_MIMES_FORN = ['image/jpeg','image/png'];
+// ---------------------------------------------------------------------------
+// C21 (secao 5): COMPACTACAO LOCAL, no proprio navegador. Nenhum servico
+// externo, nenhuma API paga, nenhuma imagem enviada a terceiros.
+//
+// Decisoes explicitas (conferidas contra a documentacao das APIs usadas):
+//  - canvas.toBlob() e o caminho principal. E amplamente suportado em Chrome
+//    (Android/Windows) e Safari (macOS/iOS/iPadOS). NAO usamos APIs exclusivas
+//    de Chromium (nada de createImageBitmap como REQUISITO, nada de
+//    OffscreenCanvas como requisito): ha verificacao de disponibilidade e
+//    caminho de erro recuperavel quando faltam.
+//  - PNG e recomprimido como PNG (toBlob('image/png')), nunca convertido para
+//    JPEG — converter apagaria a transparencia, trocando-a por fundo preto.
+//    Como PNG e sem perdas, so a REDUCAO DE DIMENSAO diminui o arquivo; por
+//    isso o parametro de qualidade nao se aplica a ele.
+//  - JPEG reduz dimensao E qualidade, em passos explicitos.
+//  - O tamanho e SEMPRE conferido no blob resultante (blob.size), nunca
+//    presumido a partir da qualidade escolhida.
+// ---------------------------------------------------------------------------
+var GALERIA_ESCALAS_FORN = [1, 0.8, 0.65, 0.5, 0.35, 0.25];   // passos de dimensao
+var GALERIA_QUALIDADES_JPEG_FORN = [0.82, 0.7, 0.58, 0.45];   // passos de qualidade (JPEG)
+var GALERIA_MAX_TENTATIVAS_FORN = 8;                          // teto duro de tentativas
+// C28 (EXT16): capacidade de DECODIFICAR — o minimo para ABRIR e CONFIRMAR
+// que um arquivo e uma imagem valida. Usada tanto para imagens pequenas
+// (que nunca precisam de canvas, so de confirmacao) quanto como pre-requisito
+// da compactacao abaixo. Deliberadamente NAO inclui canvas/toBlob: a
+// auditoria mostrou que a verificacao antiga, unificada, fazia a ausencia de
+// canvas.toBlob (irrelevante para so abrir uma imagem) pular a validacao de
+// imagens pequenas inteira, aprovando um PNG truncado.
+function _galeriaSuportaDecodeForn(){
+  if(typeof Image === 'undefined') return false;
+  if(typeof URL === 'undefined' || !URL.createObjectURL) return false;
+  return true;
+}
+function _galeriaSuportaCompactacaoForn(){
+  // Verificacao de disponibilidade, nao suposicao: sem canvas/toBlob/FileReader
+  // utilizaveis, a preparacao falha de forma recuperavel em vez de enviar um
+  // arquivo acima do limite. Usada SO para imagens ACIMA do limite, que
+  // realmente precisam ser redesenhadas num canvas para reduzir de tamanho.
+  if(typeof document === 'undefined' || typeof document.createElement !== 'function') return false;
+  var c;
+  try { c = document.createElement('canvas'); } catch(_e){ return false; }
+  if(!c || typeof c.getContext !== 'function' || typeof c.toBlob !== 'function') return false;
+  return _galeriaSuportaDecodeForn();
+}
+function _galeriaDecodificarImagemForn(arquivo, aoOk, aoErro){
+  var url = '';
+  try { url = URL.createObjectURL(arquivo); } catch(_e){ aoErro('Não foi possível ler o arquivo.'); return; }
+  var img = new Image();
+  var encerrado = false;
+  function liberar(){ if(url && URL.revokeObjectURL){ try{ URL.revokeObjectURL(url); }catch(_e){} } url=''; }
+  img.onload = function(){
+    if(encerrado) return; encerrado = true;
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    if(!(w > 0 && h > 0)){ liberar(); aoErro('Arquivo de imagem inválido ou corrompido.'); return; }
+    aoOk(img, w, h, liberar);
+  };
+  img.onerror = function(){
+    if(encerrado) return; encerrado = true;
+    liberar();
+    // cobre arquivo corrompido e falha de decodificacao
+    aoErro('Não foi possível abrir a imagem. O arquivo pode estar corrompido.');
+  };
+  try { img.src = url; } catch(_e){ liberar(); aoErro('Não foi possível abrir a imagem.'); }
+}
+// Prepara UMA imagem. Nunca modifica o arquivo original do dispositivo: sempre
+// devolve um novo Blob/File. Chama aoFim(erro, arquivoPronto).
+// C27 (EXT14): confere a ASSINATURA REAL dos primeiros bytes do arquivo
+// contra o MIME declarado. MIME e tamanho nunca provam que o conteudo e uma
+// imagem valida — e exatamente essa lacuna que permitia um arquivo de
+// poucos bytes, com o MIME certo, ser aprovado sem nunca ser aberto.
+function _galeriaAssinaturaValidaForn(bytes, mime){
+  if(!bytes || bytes.length < 3) return false;
+  if(mime === 'image/jpeg') return bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+  if(mime === 'image/png'){
+    var assinaturaPng = [0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A];
+    if(bytes.length < assinaturaPng.length) return false;
+    for(var i=0;i<assinaturaPng.length;i++){ if(bytes[i] !== assinaturaPng[i]) return false; }
+    return true;
+  }
+  return true;   // outro MIME ja foi recusado antes de chegar aqui
+}
+function prepararImagemGaleriaForn(arquivo, aoFim){
+  var mime = String(arquivo && arquivo.type || '');
+  if(GALERIA_MIMES_FORN.indexOf(mime) < 0){
+    aoFim('Formato não suportado. Envie JPEG ou PNG.', null); return;
+  }
+  // Ja dentro do limite: NAO recomprime (evita perda de qualidade a toa) —
+  // mas isso nunca dispensou provar que o conteudo e uma imagem valida.
+  // C27 (EXT14): assinatura de bytes, quando disponivel, filtra descarte
+  // rapido de arquivos obviamente invalidos (MIME mentiroso, corrompido).
+  // C28 (EXT15/EXT16): a assinatura passar NUNCA basta para aprovar por si —
+  // ela so filtra o que e OBVIAMENTE invalido. A decodificacao e SEMPRE
+  // exigida a partir daqui: sem decodificador disponivel, o arquivo e
+  // recusado (antes, a falta de canvas.toBlob — irrelevante para so abrir
+  // uma imagem pequena — fazia isso ser pulado e aprovava as cegas).
+  if(Number(arquivo.size) <= GALERIA_MAX_BYTES_FORN){
+    var _decodificarOuRecusarPequenoForn = function(){
+      if(!_galeriaSuportaDecodeForn()){
+        aoFim('Não foi possível verificar esta imagem neste navegador.', null);
+        return;
+      }
+      _galeriaDecodificarImagemForn(arquivo, function(img, w0, h0, liberar){
+        liberar();                 // decodificacao so CONFIRMA validade; canvas nunca e usado aqui
+        aoFim('', arquivo);        // arquivo ORIGINAL, byte a byte, sem recompressao
+      }, function(msg){ aoFim(msg, null); });
+    };
+    if(typeof arquivo.arrayBuffer === 'function'){
+      arquivo.arrayBuffer().then(function(buf){
+        var bytes = new Uint8Array(buf);
+        if(!_galeriaAssinaturaValidaForn(bytes, mime)){
+          aoFim('Arquivo de imagem inválido ou corrompido.', null);
+          return;
+        }
+        _decodificarOuRecusarPequenoForn();
+      }).catch(function(){ aoFim('Não foi possível ler o arquivo.', null); });
+      return;
+    }
+    _decodificarOuRecusarPequenoForn();
+    return;
+  }
+  if(!_galeriaSuportaCompactacaoForn()){
+    aoFim('Esta imagem passa de 1 MB e o navegador não permitiu prepará-la aqui. Envie uma versão menor.', null); return;
+  }
+  _galeriaDecodificarImagemForn(arquivo, function(img, w0, h0, liberar){
+    var ehPng = (mime === 'image/png');
+    // PNG: so escala (sem perdas, qualidade nao se aplica). JPEG: escala x qualidade.
+    var planos = [];
+    for(var i=0;i<GALERIA_ESCALAS_FORN.length;i++){
+      if(ehPng){ planos.push({ escala:GALERIA_ESCALAS_FORN[i], qualidade:null }); }
+      else {
+        for(var j=0;j<GALERIA_QUALIDADES_JPEG_FORN.length;j++){
+          planos.push({ escala:GALERIA_ESCALAS_FORN[i], qualidade:GALERIA_QUALIDADES_JPEG_FORN[j] });
+        }
+      }
+    }
+    if(planos.length > GALERIA_MAX_TENTATIVAS_FORN) planos = planos.slice(0, GALERIA_MAX_TENTATIVAS_FORN);
+    var n = 0;
+    function tentar(){
+      if(n >= planos.length){
+        liberar();
+        aoFim('Não foi possível reduzir esta imagem para menos de 1 MB. Envie uma versão menor.', null);
+        return;
+      }
+      var p = planos[n]; n += 1;
+      var lw = Math.max(1, Math.round(w0 * p.escala));
+      var lh = Math.max(1, Math.round(h0 * p.escala));   // proporcao preservada
+      var cv, ctx;
+      try {
+        cv = document.createElement('canvas');
+        cv.width = lw; cv.height = lh;
+        ctx = cv.getContext('2d');
+      } catch(_e){ liberar(); aoFim('O navegador não conseguiu preparar esta imagem.', null); return; }
+      if(!ctx){ liberar(); aoFim('O navegador não conseguiu preparar esta imagem.', null); return; }
+      try {
+        // PNG: NAO pinta fundo — o canvas ja nasce transparente, e preencher
+        // aqui e exatamente o que transformaria transparencia em fundo preto.
+        ctx.drawImage(img, 0, 0, lw, lh);
+      } catch(_e){ liberar(); aoFim('Falha ao converter a imagem.', null); return; }
+      var saidaMime = ehPng ? 'image/png' : 'image/jpeg';
+      function receber(blob){
+        // Confere o TAMANHO REAL do resultado, nunca presume pela qualidade.
+        if(!blob || !blob.size){ tentar(); return; }
+        if(blob.size > GALERIA_MAX_BYTES_FORN){ tentar(); return; }
+        if(String(blob.type) !== saidaMime){ tentar(); return; }   // confere o tipo real
+        liberar();
+        var nome = String(arquivo.name || 'imagem');
+        var pronto = blob;
+        try {
+          if(typeof File === 'function') pronto = new File([blob], nome, { type: saidaMime });
+        } catch(_e){ pronto = blob; }
+        if(!pronto.name){ try { pronto.name = nome; } catch(_e){} }
+        aoFim('', pronto);
+      }
+      try {
+        if(p.qualidade === null) cv.toBlob(receber, saidaMime);
+        else cv.toBlob(receber, saidaMime, p.qualidade);
+      } catch(_e){ liberar(); aoFim('O navegador não conseguiu preparar esta imagem.', null); }
+    }
+    tentar();
+  }, function(msg){ aoFim(msg, null); });
+}
 var _PERFIS_GERE_GALERIA_FORN = ['socio','admin','atendimento'];
 var estadoGaleriaFornecedor = {
   status:'idle', fornecedorId:'', requestId:0, itens:[], ocupado:false,
@@ -19467,6 +19659,11 @@ function perfilAtualPodeGerenciarGaleriaForn(){
 }
 function limparGaleriaFornecedor(){
   var e = estadoGaleriaFornecedor;
+  // C21 (secao 3): fecha o visualizador ampliado e REMOVE seu listener de
+  // teclado. Sem isto, trocar de fornecedor ou encerrar a sessao deixaria o
+  // visualizador aberto sobre dados de outro contexto, e as setas continuariam
+  // capturadas pelo documento.
+  if(typeof _fecharLightboxGaleriaForn === 'function') _fecharLightboxGaleriaForn();
   e.requestId += 1; e.status='idle'; e.fornecedorId=''; e.itens=[]; e.ocupado=false;
   e.ownerUserId=''; e.epoch=0; e.perfil=''; e.fila=[];
   // orfaos NAO sao apagados: sao pendencias de limpeza do Storage.
@@ -20048,16 +20245,18 @@ function _renderGaleriaFornecedorReal(){
   var b = document.createElement('b');
   b.textContent = '🖼️ Galeria de imagens (' + e.itens.length + '/' + GALERIA_MAX_FORN + ')';
   b.style.display='block'; b.style.marginBottom='8px'; box.appendChild(b);
-  // C7 (G3): o painel de pendencias de remocao fica no proprio cartao, acessivel
-  // sem console. So aparece quando ha pendencia ELEGIVEL no contexto atual.
-  _renderPendenciasRemocaoForn(box);
+  // C21 (secao 1): o prontuario e SOMENTE VISUALIZACAO — miniaturas, contador e
+  // acesso a imagem ampliada. A gestao (upload, exclusao e recuperacao de
+  // pendencias) fica toda dentro de "Editar fornecedor". O painel de pendencias
+  // NAO foi eliminado: migrou para _renderGaleriaFormForn, onde continua
+  // acessivel para resolver uma operacao pendente.
   if(e.status === 'loading'){ _linhaEstadoForn(box,'Carregando galeria…'); return; }
   if(e.status === 'session_expired'){ _linhaEstadoForn(box,'Sua sessão expirou. Entre novamente.'); return; }
   if(e.status === 'error'){ _linhaEstadoForn(box,'Não foi possível carregar a galeria.'); return; }
   if(!e.itens.length){ _linhaEstadoForn(box,'Nenhuma imagem enviada.'); }
   var grade = document.createElement('div');
   grade.style.display='flex'; grade.style.flexWrap='wrap'; grade.style.gap='8px';
-  e.itens.forEach(function(it){
+  e.itens.forEach(function(it, idx){
     var cel = document.createElement('div');
     cel.style.position='relative'; cel.style.width='96px';
     var img = document.createElement('img');
@@ -20065,50 +20264,159 @@ function _renderGaleriaFornecedorReal(){
     img.setAttribute('alt', _txtForn(it.nome));
     img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover';
     img.style.borderRadius='8px'; img.style.cursor='zoom-in';
-    img.addEventListener('click', function(){ _abrirLightboxGaleriaForn(it); });
+    // C21 (secao 3): abre o visualizador JA posicionado neste indice, para que
+    // a navegacao anterior/proxima siga a ordem da galeria.
+    img.addEventListener('click', function(){ _abrirLightboxGaleriaForn(it, idx); });
     cel.appendChild(img);
-    if(perfilAtualPodeGerenciarGaleriaForn()){
-      var bt = document.createElement('button');
-      bt.setAttribute('type','button'); bt.textContent = '✕';
-      bt.style.position='absolute'; bt.style.top='4px'; bt.style.right='4px';
-      bt.style.border='none'; bt.style.borderRadius='6px'; bt.style.cursor='pointer';
-      bt.style.background='#fee2e2'; bt.style.color='#991b1b'; bt.style.fontWeight='700';
-      bt.addEventListener('click', function(){
-        removerImagemGaleriaFornecedorReal(estadoFornecedoresReais.detalheIdAberto, it.id, function(msg){
-          if(msg) _linhaEstadoForn(box, msg);
-        });
-      });
-      cel.appendChild(bt);
-    }
     grade.appendChild(cel);
   });
   box.appendChild(grade);
   if(perfilAtualPodeGerenciarGaleriaForn()){
-    var inp = document.createElement('input');
-    inp.setAttribute('type','file'); inp.setAttribute('accept','image/jpeg,image/png');
-    inp.setAttribute('multiple','multiple'); inp.style.marginTop='10px';
-    inp.addEventListener('change', function(){
-      var arqs = inp.files ? Array.prototype.slice.call(inp.files) : [];
-      arqs.forEach(function(a){
-        enviarImagemGaleriaFornecedorReal(estadoFornecedoresReais.detalheIdAberto, a, function(msg){
-          if(msg) _linhaEstadoForn(box, msg);
-        });
-      });
-    });
-    box.appendChild(inp);
+    // C21 (secao 2): explica onde fica a gestao, ja que os controles sairam daqui.
+    var nota = document.createElement('div');
+    nota.className='muted'; nota.style.fontSize='11px'; nota.style.marginTop='8px';
+    nota.textContent = 'Para enviar ou excluir imagens, abra “Editar fornecedor”.';
+    box.appendChild(nota);
   }
 }
-function _abrirLightboxGaleriaForn(item){
+// C21 (secao 3): estado do visualizador ampliado. indice e o item corrente na
+// ORDEM DA GALERIA; ctx guarda fornecedor/usuario/epoch/perfil da abertura, para
+// que uma troca de contexto feche o visualizador em vez de mostrar imagem de
+// outro fornecedor. handlerTeclado so existe enquanto ele esta aberto.
+var estadoLightboxGaleriaForn = { aberto:false, indice:-1, ctx:null, handlerTeclado:null };
+function _itensLightboxGaleriaForn(){
+  return (estadoGaleriaFornecedor && Array.isArray(estadoGaleriaFornecedor.itens))
+    ? estadoGaleriaFornecedor.itens : [];
+}
+function _ctxLightboxAtualForn(){
+  return {
+    uuid: estadoFornecedoresReais.detalheIdAberto || '',
+    ownerUserId: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.id : '',
+    epoch: (typeof _authContextEpoch !== 'undefined') ? _authContextEpoch : 0,
+    perfil: _perfilAtivoFornecedores()
+  };
+}
+function _ctxLightboxValidoForn(){
+  var c = estadoLightboxGaleriaForn.ctx;
+  if(!c) return false;
+  if(!perfilAtualPodeVerGaleriaForn()) return false;
+  var a = _ctxLightboxAtualForn();
+  return c.uuid === a.uuid && c.ownerUserId === a.ownerUserId && c.epoch === a.epoch && c.perfil === a.perfil;
+}
+function _abrirLightboxGaleriaForn(item, indice){
   var lb = document.getElementById('lightboxGaleriaFornecedorReal');
   if(!lb || !item || !item.url) return;
+  var itens = _itensLightboxGaleriaForn();
+  var idx = Number(indice);
+  // indice ausente/invalido: localiza o item pela identidade na propria colecao.
+  if(!(idx >= 0 && idx < itens.length) || itens[idx] !== item){
+    idx = itens.indexOf(item);
+  }
+  if(idx < 0) return;
+  estadoLightboxGaleriaForn.aberto = true;
+  estadoLightboxGaleriaForn.indice = idx;
+  estadoLightboxGaleriaForn.ctx = _ctxLightboxAtualForn();
+  // C21: o teclado so atua enquanto o visualizador esta aberto — o listener e
+  // criado aqui e removido em _fecharLightboxGaleriaForn, entao as setas nunca
+  // interferem nos campos de edicao do modal.
+  if(!estadoLightboxGaleriaForn.handlerTeclado && typeof document.addEventListener === 'function'){
+    estadoLightboxGaleriaForn.handlerTeclado = function(ev){
+      if(!estadoLightboxGaleriaForn.aberto) return;
+      var k = ev && ev.key;
+      if(k === 'ArrowLeft'){ if(ev.preventDefault) ev.preventDefault(); _navegarLightboxGaleriaForn(-1); }
+      else if(k === 'ArrowRight'){ if(ev.preventDefault) ev.preventDefault(); _navegarLightboxGaleriaForn(1); }
+      else if(k === 'Escape'){ if(ev.preventDefault) ev.preventDefault(); _fecharLightboxGaleriaForn(); }
+    };
+    document.addEventListener('keydown', estadoLightboxGaleriaForn.handlerTeclado);
+  }
+  _renderLightboxGaleriaForn();
+}
+function _navegarLightboxGaleriaForn(passo){
+  if(!estadoLightboxGaleriaForn.aberto) return;
+  if(!_ctxLightboxValidoForn()){ _fecharLightboxGaleriaForn(); return; }
+  var itens = _itensLightboxGaleriaForn();
+  var destino = estadoLightboxGaleriaForn.indice + Number(passo);
+  // C21: nas extremidades nao circula — o botao correspondente ja esta
+  // desabilitado; esta guarda cobre a chamada por teclado.
+  if(destino < 0 || destino >= itens.length) return;
+  estadoLightboxGaleriaForn.indice = destino;
+  _renderLightboxGaleriaForn();
+}
+function _renderLightboxGaleriaForn(){
+  var lb = document.getElementById('lightboxGaleriaFornecedorReal');
+  if(!lb) return;
+  if(!estadoLightboxGaleriaForn.aberto){ _fecharLightboxGaleriaForn(); return; }
+  if(!_ctxLightboxValidoForn()){ _fecharLightboxGaleriaForn(); return; }
+  var itens = _itensLightboxGaleriaForn();
+  var idx = estadoLightboxGaleriaForn.indice;
+  if(!(idx >= 0 && idx < itens.length)){ _fecharLightboxGaleriaForn(); return; }
+  var item = itens[idx];
+  if(!item || !item.url){ _fecharLightboxGaleriaForn(); return; }
   lb.textContent = '';
+  var painel = document.createElement('div');
+  painel.style.position='relative'; painel.style.display='flex';
+  painel.style.flexDirection='column'; painel.style.alignItems='center'; painel.style.gap='10px';
   var img = document.createElement('img');
   img.setAttribute('src', item.url); img.setAttribute('alt', _txtForn(item.nome));
-  img.style.maxWidth='90vw'; img.style.maxHeight='85vh'; img.style.borderRadius='10px';
-  lb.appendChild(img);
+  img.style.maxWidth='90vw'; img.style.maxHeight='72vh'; img.style.borderRadius='10px';
+  painel.appendChild(img);
+  var barra = document.createElement('div');
+  barra.style.display='flex'; barra.style.alignItems='center'; barra.style.gap='14px';
+  barra.style.justifyContent='center'; barra.style.flexWrap='wrap';
+  // C21: area de toque confortavel (44px), sem depender de hover nem de gesto
+  // de deslizar; funciona igualmente por toque e por mouse.
+  function botao(rotulo, aria){
+    var b = document.createElement('button');
+    b.setAttribute('type','button'); b.textContent = rotulo;
+    b.setAttribute('aria-label', aria);
+    b.style.minWidth='44px'; b.style.minHeight='44px';
+    b.style.border='none'; b.style.borderRadius='10px'; b.style.cursor='pointer';
+    b.style.fontSize='18px'; b.style.fontWeight='700';
+    b.style.background='#f1f5f9'; b.style.color='#0f172a';
+    return b;
+  }
+  var unica = itens.length <= 1;
+  if(!unica){
+    var bAnt = botao('‹','Imagem anterior');
+    bAnt.id = 'btnLightboxAnteriorForn';
+    bAnt.disabled = (idx <= 0);                        // extremidade: sem destino
+    if(bAnt.disabled){ bAnt.style.opacity='0.4'; bAnt.style.cursor='default'; }
+    // C21: a navegacao NAO pode acionar o fechamento — o handler de fundo so
+    // fecha quando o clique acontece no proprio fundo (ev.target === lb).
+    bAnt.addEventListener('click', function(){ _navegarLightboxGaleriaForn(-1); });
+    barra.appendChild(bAnt);
+    var ind = document.createElement('span');
+    ind.id = 'indicadorLightboxGaleriaForn';
+    ind.textContent = (idx + 1) + ' de ' + itens.length;
+    ind.style.fontSize='13px'; ind.style.fontWeight='700'; ind.style.color='#f8fafc';
+    ind.style.minWidth='64px'; ind.style.textAlign='center';
+    barra.appendChild(ind);
+    var bProx = botao('›','Próxima imagem');
+    bProx.id = 'btnLightboxProximaForn';
+    bProx.disabled = (idx >= itens.length - 1);
+    if(bProx.disabled){ bProx.style.opacity='0.4'; bProx.style.cursor='default'; }
+    bProx.addEventListener('click', function(){ _navegarLightboxGaleriaForn(1); });
+    barra.appendChild(bProx);
+  }
+  var bFechar = botao('✕','Fechar imagem ampliada');
+  bFechar.id = 'btnLightboxFecharForn';
+  bFechar.style.background='#fee2e2'; bFechar.style.color='#991b1b';
+  bFechar.addEventListener('click', function(){ _fecharLightboxGaleriaForn(); });
+  barra.appendChild(bFechar);
+  painel.appendChild(barra);
+  lb.appendChild(painel);
   lb.style.display = 'flex';
 }
 function _fecharLightboxGaleriaForn(){
+  // C21: remove o listener de teclado ao fechar — sem isso, as setas
+  // continuariam capturadas depois de sair do visualizador.
+  if(estadoLightboxGaleriaForn.handlerTeclado && typeof document.removeEventListener === 'function'){
+    try { document.removeEventListener('keydown', estadoLightboxGaleriaForn.handlerTeclado); } catch(_e){}
+  }
+  estadoLightboxGaleriaForn.handlerTeclado = null;
+  estadoLightboxGaleriaForn.aberto = false;
+  estadoLightboxGaleriaForn.indice = -1;
+  estadoLightboxGaleriaForn.ctx = null;
   var lb = document.getElementById('lightboxGaleriaFornecedorReal');
   if(lb){ lb.textContent=''; lb.style.display='none'; }
 }
@@ -20741,7 +21049,54 @@ function repetirServicosFalhosFormForn(uuid, aoFim){
 // ============================================================================
 // C6 (E3) — GALERIA NO FORMULARIO: fila LOCAL antes do UUID, Storage so depois.
 // ============================================================================
-var estadoGaleriaFormForn = { itens:[], seq:0, existentes:[], existentesStatus:'idle', fornecedorId:'', execucao:0 };
+var estadoGaleriaFormForn = { itens:[], seq:0, existentes:[], existentesStatus:'idle', fornecedorId:'', execucao:0,
+  // C21 (secao 2): gestao das imagens JA GRAVADAS, dentro de "Editar fornecedor".
+  // confirmandoExclusaoId: exclusao pede confirmacao explicita antes de agir.
+  // excluindoId: indicacao de andamento — nunca apresentamos como concluida
+  // antes da confirmacao do servidor.
+  // erroExclusaoId/Texto: erro mostrado JUNTO da imagem correspondente.
+  confirmandoExclusaoId:'', excluindoId:'', erroExclusaoId:'', erroExclusaoTexto:'' };
+// C21 (secao 2): NAO cria um fluxo de exclusao concorrente — delega ao fluxo
+// real ja existente (removerImagemGaleriaFornecedorReal), que ja trata
+// resposta tardia, {error} resolvido, orfao de Storage e retry. Aqui so
+// cuidamos da confirmacao, do andamento e de refletir o resultado no modal.
+function excluirImagemEnviadaGaleriaFormForn(uuid, arquivoId, aoFim){
+  var e = estadoGaleriaFormForn;
+  if(!perfilAtualPodeGerenciarGaleriaForn()){ if(typeof aoFim==='function') aoFim('sem permissão'); return; }
+  if(e.excluindoId){ if(typeof aoFim==='function') aoFim('ocupado'); return; }   // clique repetido
+  // C21: guarda contra clique repetido em um botao de um render ANTERIOR. Depois
+  // de excluir com sucesso, o arquivo sai de 'existentes'; sem esta verificacao,
+  // um clique remanescente repetiria a RPC sobre um arquivo que ja nao existe
+  // (defeito real detectado pelo teste EXC03).
+  var aindaExiste = (e.existentes||[]).some(function(x){ return String(x.id) === String(arquivoId); });
+  if(!aindaExiste){ if(typeof aoFim==='function') aoFim('já removido'); return; }
+  var alvo = uuid || e.fornecedorId || estadoFornecedoresReais.detalheIdAberto || estadoCadastroFornecedor.editandoUuid;
+  e.confirmandoExclusaoId = '';
+  e.excluindoId = arquivoId;
+  e.erroExclusaoId = ''; e.erroExclusaoTexto = '';
+  var execucaoNaAbertura = e.execucao;
+  var fornecedorNaAbertura = alvo;
+  _renderGaleriaFormForn();                 // mostra "excluindo…" imediatamente
+  removerImagemGaleriaFornecedorReal(alvo, arquivoId, function(msg){
+    // guarda de contexto: modal fechado ou fornecedor trocado no meio
+    if(e.execucao !== execucaoNaAbertura) return;
+    if(e.fornecedorId && e.fornecedorId !== fornecedorNaAbertura) return;
+    e.excluindoId = '';
+    if(msg){
+      // Falha (inclusive o caso parcial "registro removido, arquivo permaneceu"):
+      // NAO tratamos como concluida. O painel de pendencias, logo abaixo, e o
+      // caminho de recuperacao — a referencia do orfao ja foi guardada pelo
+      // fluxo real, entao o retry continua possivel.
+      e.erroExclusaoId = arquivoId; e.erroExclusaoTexto = msg;
+    } else {
+      // Sucesso confirmado: reflete no modal sem exigir refresh. O prontuario
+      // ja foi recarregado do servidor pelo proprio fluxo real.
+      e.existentes = (e.existentes||[]).filter(function(x){ return String(x.id) !== String(arquivoId); });
+    }
+    _renderGaleriaFormForn();
+    if(typeof aoFim==='function') aoFim(msg||'');
+  });
+}
 function limparGaleriaFormForn(){
   (estadoGaleriaFormForn.itens||[]).forEach(function(it){
     if(it.objectUrl && typeof URL !== 'undefined' && URL.revokeObjectURL){
@@ -20749,6 +21104,15 @@ function limparGaleriaFormForn(){
     }
   });
   estadoGaleriaFormForn.execucao += 1;      // invalida closures pendentes
+  estadoGaleriaFormForn.preparandoAtivo = false;   // C21: derruba a fila de preparacao
+  // C25: descarta EXPLICITAMENTE qualquer espera registrada por um ciclo
+  // anterior — nao chama nenhuma; a protecao por geracao ja impediria o
+  // disparo, mas a limpeza nao deixa a fila crescer indefinidamente entre
+  // varios ciclos abandonados.
+  estadoGaleriaFormForn._aoTerminarPreparacaoForn = [];
+  estadoGaleriaFormForn.confirmandoExclusaoId = '';   // C21 (secao 2)
+  estadoGaleriaFormForn.excluindoId = '';
+  estadoGaleriaFormForn.erroExclusaoId = ''; estadoGaleriaFormForn.erroExclusaoTexto = '';
   estadoGaleriaFormForn.execucaoAtiva = false;
   estadoGaleriaFormForn.execucaoDona = null;
   estadoGaleriaFormForn.fornecedorOrigemItens = '';
@@ -20758,6 +21122,151 @@ function limparGaleriaFormForn(){
   estadoGaleriaFormForn.existentesStatus = 'idle';
   estadoGaleriaFormForn.fornecedorId = '';
   _renderGaleriaFormForn();
+}
+// C21 (secao 4): capacidade real = ja gravadas + pendentes locais (incluindo as
+// que estao em preparacao). Uma imagem enviada e depois reconciliada aparece em
+// 'existentes' e sai da fila local, entao nao e contada duas vezes.
+function _capacidadeGaleriaFormForn(){
+  var e = estadoGaleriaFormForn;
+  var gravadas = (e.existentes && e.existentes.length) ? e.existentes.length
+    : ((estadoGaleriaFornecedor && estadoGaleriaFornecedor.itens) ? estadoGaleriaFornecedor.itens.length : 0);
+  var locais = (e.itens || []).filter(function(it){ return it.situacao !== 'enviado'; }).length;
+  var usadas = gravadas + locais;
+  return { gravadas:gravadas, locais:locais, usadas:usadas, restante: Math.max(0, GALERIA_MAX_FORN - usadas) };
+}
+// C21 (secao 4): recebe VARIOS arquivos de uma vez e pode ser chamada de novo
+// para acrescentar outra selecao. Um arquivo invalido nao derruba os demais:
+// cada um entra com seu proprio estado/erro. Nada e descartado em silencio —
+// o que passar da capacidade e informado com nome e motivo.
+function adicionarImagensGaleriaFormForn(arquivos){
+  var lista = arquivos ? Array.prototype.slice.call(arquivos) : [];
+  if(!lista.length) return { aceitos:[], recusados:[] };
+  // C23 (EXT08): recusa EXPLICITA enquanto a gravacao do fornecedor esta em
+  // andamento. Isto protege o ciclo INTEIRO, nao so o instante do clique em
+  // Salvar: cobre tanto um seletor de arquivos ja aberto ANTES de Salvar
+  // comecar (o 'change' so dispara depois, com salvando ja true) quanto um
+  // evento atrasado por qualquer outro motivo. Independe do atributo
+  // 'disabled' do elemento (que tambem e mantido em sincronia no render, mas
+  // nao e a protecao real — um dublê de teste ou um navegador podem entregar
+  // o evento mesmo com o atributo marcado).
+  if(estadoCadastroFornecedor && estadoCadastroFornecedor.salvando){
+    _msgGaleriaFormForn('A ficha está sendo salva. Aguarde para selecionar novas imagens.');
+    return { aceitos:[], recusados: lista.map(function(a){
+      return { nome:String(a && a.name ? a.name : 'arquivo'), motivo:'gravação em andamento' }; }) };
+  }
+  var aceitos = [], recusados = [];
+  lista.forEach(function(arq){
+    var cap = _capacidadeGaleriaFormForn();
+    var nome = String(arq && arq.name ? arq.name : 'arquivo');
+    if(cap.restante <= 0){
+      recusados.push({ nome:nome, motivo:'limite de ' + GALERIA_MAX_FORN + ' imagens por fornecedor já atingido' });
+      return;
+    }
+    var mime = String(arq && arq.type || '');
+    if(GALERIA_MIMES_FORN.indexOf(mime) < 0){
+      recusados.push({ nome:nome, motivo:'formato não suportado (use JPEG ou PNG)' });
+      return;
+    }
+    estadoGaleriaFormForn.seq += 1;
+    var it = { idLocal:'gal-'+estadoGaleriaFormForn.seq, arquivo:null, arquivoOriginal:arq,
+               nome:nome, objectUrl:'', situacao:'preparando', erro:'' };
+    estadoGaleriaFormForn.fornecedorOrigemItens =
+      estadoCadastroFornecedor.editandoUuid || estadoGaleriaFormForn.fornecedorId || '__rascunho_novo__';
+    estadoGaleriaFormForn.itens.push(it);
+    aceitos.push(it);
+  });
+  if(recusados.length){
+    _msgGaleriaFormForn('Não foi possível aceitar: ' + recusados.map(function(r){
+      return r.nome + ' (' + r.motivo + ')'; }).join('; ') + '.');
+  } else {
+    _msgGaleriaFormForn('');
+  }
+  _renderGaleriaFormForn();
+  _processarPreparacaoGaleriaFormForn();
+  return { aceitos:aceitos, recusados:recusados };
+}
+// C21 (secao 5): fila SERIAL de preparacao — uma imagem por vez, para nao
+// decodificar varias fotos grandes simultaneamente (limites de memoria em
+// celular/tablet). A execucao e carimbada: uma conclusao assincrona antiga,
+// de um item removido ou de outro fornecedor, e descartada.
+function _processarPreparacaoGaleriaFormForn(){
+  var e = estadoGaleriaFormForn;
+  if(e.preparandoAtivo) return;
+  var alvo = null;
+  for(var i=0;i<e.itens.length;i++){
+    if(e.itens[i].situacao === 'preparando' && !e.itens[i].emPreparo){ alvo = e.itens[i]; break; }
+  }
+  if(!alvo){
+    // C24/C25: fila de preparacao vazia — dispara as esperas registradas
+    // NESTA MESMA geracao (a recuperacao de pendencias, esperando para so
+    // entao tentar enviar). Esperas de uma geracao ANTIGA sao descartadas em
+    // silencio: a continuacao que as registrou ja nao e mais o ciclo
+    // corrente, e nao pode consumir a fila de outro fornecedor.
+    if(e._aoTerminarPreparacaoForn && e._aoTerminarPreparacaoForn.length){
+      var fila = e._aoTerminarPreparacaoForn; e._aoTerminarPreparacaoForn = [];
+      var geracaoAtual = e.execucao;
+      fila.forEach(function(item){ if(item.geracao === geracaoAtual) item.cb(); });
+    }
+    return;
+  }
+  e.preparandoAtivo = true;
+  alvo.emPreparo = true;
+  var execucaoNaAbertura = e.execucao;
+  var origemNaAbertura = e.fornecedorOrigemItens;
+  var idLocalAlvo = alvo.idLocal;
+  prepararImagemGaleriaForn(alvo.arquivoOriginal, function(erro, pronto){
+    // C22 (EXT05): a verificacao de propriedade vem ANTES de mexer em QUALQUER
+    // estado compartilhado. Na versao anterior, 'e.preparandoAtivo = false'
+    // era a primeira linha — entao a conclusao de uma geracao ANTIGA (de um
+    // formulario ja limpo) soltava a trava do ciclo NOVO, e uma terceira
+    // preparacao comecava em paralelo, quebrando a serialidade.
+    if(e.execucao !== execucaoNaAbertura || e.fornecedorOrigemItens !== origemNaAbertura){
+      // C25: a guarda de geracao continua descartando o callback antigo —
+      // nunca disparamos upload nem avancamos a fila por conta dele. Mas o
+      // ITEM em si pode ser o MESMO objeto guardado numa recuperacao pendente
+      // (recuperarPendenciasForn reinstala os objetos originais, nao copias).
+      // Sem isto, reabrir a edicao (mesmo fornecedor OU outro) interrompia a
+      // preparacao e o item ficava preso para sempre em
+      // situacao:'preparando', emPreparo:true, sem nenhuma operacao ativa —
+      // o retry seguinte nao via mais um 'erro' para reprocessar. Devolve-o a
+      // um estado RECUPERAVEL, preservando arquivoOriginal e a mensagem (nunca
+      // inventa uma nova se ja havia uma).
+      if(alvo.situacao === 'preparando'){
+        alvo.situacao = 'erro';
+        alvo.emPreparo = false;
+        alvo.falhaDePreparacao = true;
+        alvo.erro = alvo.erro || 'Preparação interrompida. Tente novamente.';
+        if(typeof _renderRecuperacaoForn === 'function') _renderRecuperacaoForn();
+      }
+      return;
+    }
+    var atual = null;
+    for(var k=0;k<e.itens.length;k++){ if(e.itens[k].idLocal === idLocalAlvo){ atual = e.itens[k]; break; } }
+    // Daqui para baixo a conclusao E do ciclo corrente: agora sim pode liberar
+    // a trava e seguir a fila.
+    e.preparandoAtivo = false;
+    if(!atual) { _processarPreparacaoGaleriaFormForn(); return; }   // item removido no meio
+    atual.emPreparo = false;
+    if(erro){
+      // C22 (EXT04): marca a NATUREZA da falha. 'arquivo' fica null porque a
+      // copia preparada nao chegou a existir — por isso o retry NAO pode
+      // despachar este item para upload (enviaria null). Ele tem de voltar
+      // para a fila de preparacao, reprocessando arquivoOriginal, que segue
+      // guardado no item.
+      atual.situacao = 'erro'; atual.erro = erro; atual.arquivo = null;
+      atual.falhaDePreparacao = true;
+    } else {
+      atual.arquivo = pronto;
+      atual.situacao = 'pendente'; atual.erro = '';
+      atual.falhaDePreparacao = false;                  // C22 (EXT04)
+      // A miniatura representa a COPIA QUE SERA ENVIADA, nao o original.
+      try {
+        if(typeof URL !== 'undefined' && URL.createObjectURL) atual.objectUrl = URL.createObjectURL(pronto);
+      } catch(_e){ atual.objectUrl = ''; }
+    }
+    _renderGaleriaFormForn();
+    _processarPreparacaoGaleriaFormForn();       // segue para a proxima, em serie
+  });
 }
 function adicionarImagemGaleriaFormForn(arquivo){
   var total = estadoGaleriaFormForn.itens.length
@@ -20791,18 +21300,56 @@ function removerImagemGaleriaFormForn(idLocal){
   _renderGaleriaFormForn();
 }
 function _msgGaleriaFormForn(txt){
-  var box = document.getElementById('listaGaleriaFormForn');
-  if(!box) return;
+  // C21 (secao 6): a mensagem passa a viver no ESTADO, nao solta no DOM. Assim
+  // um re-render (por exemplo, disparado pela preparacao de outra imagem) nao
+  // apaga inadvertidamente um aviso ainda relevante, e o render pode destaca-la
+  // em vermelho quando ha conteudo.
+  estadoGaleriaFormForn.msgTexto = String(txt||'');
   var el = document.getElementById('msgGaleriaFormForn');
-  if(!el){ el = document.createElement('div'); el.id='msgGaleriaFormForn'; el.className='muted';
-           el.style.fontSize='12px'; box.appendChild(el); }
-  el.textContent = String(txt||'');
+  if(el){
+    el.textContent = estadoGaleriaFormForn.msgTexto;
+    if(estadoGaleriaFormForn.msgTexto){
+      el.className=''; el.style.color='#b91c1c'; el.style.fontWeight='700';
+    } else { el.className='muted'; el.style.color=''; el.style.fontWeight=''; }
+  }
 }
 function _renderGaleriaFormForn(){
   var box = document.getElementById('listaGaleriaFormForn');
   if(!box) return;
   box.textContent = '';
   var e = estadoGaleriaFormForn;
+  var podeGerir = perfilAtualPodeGerenciarGaleriaForn();
+  // C21 (secao 6): erro sempre com icone + texto vermelho legivel + fundo de
+  // destaque. Nunca so cinza e nunca so a cor: ha o icone e a palavra "Erro".
+  function _erroGaleriaForn(texto, idArquivo){
+    var cx = document.createElement('div');
+    cx.className = 'erroGaleriaFormForn';
+    if(idArquivo) cx.setAttribute('data-arquivo', String(idArquivo));
+    cx.style.display='flex'; cx.style.alignItems='flex-start'; cx.style.gap='6px';
+    cx.style.marginTop='4px'; cx.style.padding='5px 7px';
+    cx.style.background='#fee2e2'; cx.style.border='1px solid #dc2626';
+    cx.style.borderRadius='6px';
+    var ic = document.createElement('span');
+    ic.textContent = '⚠'; ic.setAttribute('aria-hidden','true');
+    ic.style.color='#b91c1c'; ic.style.fontWeight='700'; ic.style.fontSize='12px';
+    cx.appendChild(ic);
+    var tx = document.createElement('span');
+    tx.textContent = 'Erro: ' + String(texto||'');
+    tx.style.color='#b91c1c'; tx.style.fontWeight='700'; tx.style.fontSize='11px';
+    tx.style.lineHeight='1.35'; tx.style.wordBreak='break-word';
+    cx.appendChild(tx);
+    return cx;
+  }
+  function _botaoForn(rotulo, fundo, cor){
+    var b = document.createElement('button');
+    b.setAttribute('type','button'); b.textContent = rotulo;
+    b.style.border='none'; b.style.borderRadius='6px'; b.style.cursor='pointer';
+    b.style.minHeight='32px'; b.style.padding='5px 9px';
+    b.style.fontSize='11px'; b.style.fontWeight='700';
+    b.style.background=fundo; b.style.color=cor;
+    return b;
+  }
+  var cap = _capacidadeGaleriaFormForn();
   // ---- A) JA ENVIADAS ----
   if(e.existentesStatus === 'loading'){
     box.appendChild(_secaoFormForn('JÁ ENVIADAS'));
@@ -20811,27 +21358,91 @@ function _renderGaleriaFormForn(){
     box.appendChild(c1);
   } else if(e.existentesStatus === 'error' || e.existentesStatus === 'session_expired'){
     box.appendChild(_secaoFormForn('JÁ ENVIADAS'));
-    var c2 = document.createElement('div'); c2.className='muted';
-    c2.textContent = (e.existentesStatus === 'session_expired')
-      ? 'Sua sessão expirou. As imagens já enviadas não puderam ser lidas.'
-      : 'Não foi possível carregar as imagens já enviadas.';
-    box.appendChild(c2);
+    box.appendChild(_erroGaleriaForn(
+      (e.existentesStatus === 'session_expired')
+        ? 'sua sessão expirou. As imagens já enviadas não puderam ser lidas.'
+        : 'não foi possível carregar as imagens já enviadas.', ''));
   } else if(e.existentes.length){
-    box.appendChild(_secaoFormForn('JÁ ENVIADAS'));
+    box.appendChild(_secaoFormForn('JÁ ENVIADAS (' + e.existentes.length + '/' + GALERIA_MAX_FORN + ')'));
+    if(podeGerir){
+      var aviso1 = document.createElement('div');
+      aviso1.id = 'avisoExclusaoImediataGaleriaFormForn';
+      aviso1.className='muted'; aviso1.style.fontSize='11px'; aviso1.style.marginBottom='6px';
+      aviso1.textContent = 'Excluir uma imagem já enviada é imediato e não depende de “Salvar alterações”.';
+      box.appendChild(aviso1);
+    }
     var gEx = document.createElement('div');
     gEx.style.display='flex'; gEx.style.flexWrap='wrap'; gEx.style.gap='8px';
     e.existentes.forEach(function(it){
-      var cel = document.createElement('div'); cel.style.width='96px';
+      var cel = document.createElement('div'); cel.style.width='132px';
       var img = document.createElement('img');
       var seg = _urlAssinadaSeguraForn(it.url);           // so URL assinada valida
       if(seg) img.setAttribute('src', seg);
       img.setAttribute('alt', String(it.nome||''));
-      img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
+      img.style.width='132px'; img.style.height='108px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
       img.style.background='#e2e8f0';
       cel.appendChild(img);
-      var lb = document.createElement('div'); lb.className='muted'; lb.style.fontSize='10px';
-      lb.textContent = seg ? 'enviada' : 'imagem indisponível';
-      cel.appendChild(lb);
+      var nm = document.createElement('div'); nm.className='muted'; nm.style.fontSize='10px';
+      nm.style.wordBreak='break-word';
+      nm.textContent = String(it.nome||'') || (seg ? 'enviada' : 'imagem indisponível');
+      cel.appendChild(nm);
+      if(podeGerir){
+        var excluindoEste = (String(e.excluindoId) === String(it.id));
+        var confirmandoEste = (String(e.confirmandoExclusaoId) === String(it.id));
+        if(excluindoEste){
+          // C21 (secao 2): andamento explicito — NUNCA "excluida" antes da
+          // confirmacao do servidor.
+          var and = document.createElement('div');
+          and.className = 'andamentoExclusaoGaleriaFormForn';
+          and.setAttribute('data-arquivo', String(it.id));
+          and.textContent = 'Excluindo…';
+          and.style.fontSize='11px'; and.style.fontWeight='700'; and.style.color='#92400e';
+          and.style.marginTop='4px';
+          cel.appendChild(and);
+        } else if(confirmandoEste){
+          var pg = document.createElement('div');
+          pg.style.fontSize='11px'; pg.style.fontWeight='700'; pg.style.color='#b91c1c';
+          pg.style.marginTop='4px';
+          pg.textContent = 'Excluir definitivamente?';
+          cel.appendChild(pg);
+          var lin = document.createElement('div');
+          lin.style.display='flex'; lin.style.gap='6px'; lin.style.marginTop='4px'; lin.style.flexWrap='wrap';
+          var bSim = _botaoForn('Sim, excluir', '#fee2e2', '#991b1b');
+          bSim.className = 'btnConfirmaExclusaoGaleriaFormForn';
+          bSim.setAttribute('data-arquivo', String(it.id));
+          bSim.disabled = !!e.excluindoId;
+          bSim.addEventListener('click', function(){
+            excluirImagemEnviadaGaleriaFormForn(
+              e.fornecedorId || estadoFornecedoresReais.detalheIdAberto || estadoCadastroFornecedor.editandoUuid,
+              it.id, function(){});
+          });
+          lin.appendChild(bSim);
+          var bNao = _botaoForn('Cancelar', '#f1f5f9', '#0f172a');
+          bNao.addEventListener('click', function(){
+            e.confirmandoExclusaoId = ''; _renderGaleriaFormForn();
+          });
+          lin.appendChild(bNao);
+          cel.appendChild(lin);
+        } else {
+          var bEx = _botaoForn('Excluir', '#fee2e2', '#991b1b');
+          bEx.className = 'btnExcluirEnviadaGaleriaFormForn';
+          bEx.setAttribute('data-arquivo', String(it.id));
+          bEx.style.marginTop='4px';
+          bEx.disabled = !!e.excluindoId;                 // sem cliques repetidos
+          bEx.addEventListener('click', function(){
+            e.confirmandoExclusaoId = String(it.id);
+            e.erroExclusaoId = ''; e.erroExclusaoTexto = '';
+            _renderGaleriaFormForn();
+          });
+          cel.appendChild(bEx);
+        }
+        // C21 (secao 6): o erro de exclusao aparece JUNTO da imagem que falhou,
+        // e sobrevive a re-render enquanto for relevante (so e limpo por uma
+        // nova tentativa sobre o mesmo arquivo, ou pela troca de contexto).
+        if(String(e.erroExclusaoId) === String(it.id) && e.erroExclusaoTexto){
+          cel.appendChild(_erroGaleriaForn(e.erroExclusaoTexto, it.id));
+        }
+      }
       gEx.appendChild(cel);
     });
     box.appendChild(gEx);
@@ -20841,49 +21452,120 @@ function _renderGaleriaFormForn(){
     v0.textContent = 'Nenhuma imagem enviada ainda.';
     box.appendChild(v0);
   }
+  // C21 (secao 1): o painel de pendencias de remocao saiu do prontuario e
+  // passou a viver AQUI, dentro da edicao. Nao foi eliminado: continua sendo o
+  // caminho para resolver uma operacao de Storage pendente.
+  if(podeGerir && typeof _renderPendenciasRemocaoForn === 'function'){
+    _renderPendenciasRemocaoForn(box);
+  }
   // ---- B) NOVAS PENDENTES ----
   box.appendChild(_secaoFormForn('NOVAS IMAGENS PENDENTES'));
+  if(podeGerir){
+    var aviso2 = document.createElement('div');
+    aviso2.id = 'avisoSalvarGaleriaFormForn';
+    aviso2.className='muted'; aviso2.style.fontSize='11px'; aviso2.style.marginBottom='6px';
+    aviso2.textContent = 'Imagens novas só são enviadas ao clicar em “Salvar alterações”. '
+      + 'Ainda cabem ' + cap.restante + ' de ' + GALERIA_MAX_FORN + '.';
+    box.appendChild(aviso2);
+  }
   var itens = e.itens;
   if(!itens.length){
     var v = document.createElement('div'); v.className='muted';
     v.textContent = 'Nenhuma imagem preparada.'; box.appendChild(v);
   }
-  var houveFalha = false, houveIncerto = false;
+  var houveFalha = false, houveIncerto = false, houvePreparando = false;
   var grade = document.createElement('div');
   grade.style.display='flex'; grade.style.flexWrap='wrap'; grade.style.gap='8px';
   itens.forEach(function(it){
     if(it.situacao === 'erro') houveFalha = true;
     if(it.situacao === 'confirmacao_pendente') houveIncerto = true;
-    var cel = document.createElement('div'); cel.style.width='96px'; cel.style.position='relative';
+    if(it.situacao === 'preparando') houvePreparando = true;
+    var cel = document.createElement('div'); cel.style.width='132px'; cel.style.position='relative';
     var img = document.createElement('img');
     var seguro = _urlObjetoSeguroForn(it.objectUrl);
     if(seguro) img.setAttribute('src', seguro);
-    img.setAttribute('alt', String(it.arquivo && it.arquivo.name ? it.arquivo.name : ''));
-    img.style.width='96px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
+    img.setAttribute('alt', String(it.nome || (it.arquivo && it.arquivo.name) || ''));
+    img.style.width='132px'; img.style.height='108px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
     img.style.background='#e2e8f0';
     cel.appendChild(img);
-    var sit = document.createElement('div'); sit.className='muted'; sit.style.fontSize='10px';
-    sit.textContent = (it.situacao === 'confirmacao_pendente') ? 'confirmação pendente' : it.situacao;
+    // C21 (secao 4): nome do arquivo sempre visivel, para o erro poder
+    // identificar de qual foto se trata.
+    var nm = document.createElement('div'); nm.className='muted'; nm.style.fontSize='10px';
+    nm.style.wordBreak='break-word';
+    nm.textContent = String(it.nome || (it.arquivo && it.arquivo.name) || 'arquivo');
+    cel.appendChild(nm);
+    // C21 (secao 4): estado compreensivel, em portugues, nao o nome interno.
+    var rotulos = { preparando:'preparando…', pendente:'pronta para enviar',
+                    enviando:'enviando…', enviado:'enviada',
+                    confirmacao_pendente:'confirmação pendente', erro:'falhou' };
+    var sit = document.createElement('div');
+    sit.className = 'situacaoGaleriaFormForn';
+    sit.setAttribute('data-situacao', String(it.situacao||''));
+    sit.textContent = rotulos[it.situacao] || String(it.situacao||'');
+    sit.style.fontSize='10px'; sit.style.fontWeight='700'; sit.style.marginTop='2px';
+    sit.style.color = (it.situacao === 'erro') ? '#b91c1c'
+                    : (it.situacao === 'enviado') ? '#166534'
+                    : (it.situacao === 'preparando' || it.situacao === 'enviando') ? '#92400e' : '#334155';
     cel.appendChild(sit);
+    if(it.situacao === 'erro' && it.erro){
+      cel.appendChild(_erroGaleriaForn(it.erro, it.idLocal));
+    }
+    // C21 (secao 2): remover da FILA cancela o item local — nao e exclusao de
+    // imagem gravada. Rotulo diferente para nao confundir as duas coisas.
     if(it.situacao !== 'enviado' && it.situacao !== 'enviando' && it.situacao !== 'confirmacao_pendente'){
-      var bt = document.createElement('button');
-      bt.setAttribute('type','button'); bt.textContent='✕';
-      bt.style.position='absolute'; bt.style.top='4px'; bt.style.right='4px';
-      bt.style.border='none'; bt.style.borderRadius='6px'; bt.style.cursor='pointer';
-      bt.style.background='#fee2e2'; bt.style.color='#991b1b'; bt.style.fontWeight='700';
+      var bt = _botaoForn('Remover da fila', '#f1f5f9', '#0f172a');
+      bt.className = 'btnRemoverDaFilaGaleriaFormForn';
+      bt.setAttribute('data-arquivo', String(it.idLocal));
+      bt.style.marginTop='4px';
       bt.addEventListener('click', function(){ removerImagemGaleriaFormForn(it.idLocal); });
       cel.appendChild(bt);
     }
     grade.appendChild(cel);
   });
   box.appendChild(grade);
+  if(podeGerir){
+    // C21 (secao 4): seletor MULTIPLO; selecoes sucessivas acrescentam.
+    // C23 (EXT08): 'disabled' reflete o estado ATUAL de gravacao a cada
+    // render — nao e a protecao real (essa esta no handler acima), mas
+    // mantem a interface honesta sobre o que esta acontecendo, e volta a
+    // habilitar sozinho assim que 'salvando' cair (falha ou novo ciclo),
+    // porque cada render le o estado de novo.
+    var travadoPorSalvar = !!(estadoCadastroFornecedor && estadoCadastroFornecedor.salvando);
+    var inp = document.createElement('input');
+    inp.setAttribute('type','file');
+    inp.setAttribute('accept','image/jpeg,image/png');
+    inp.setAttribute('multiple','multiple');
+    inp.id = 'inputGaleriaFormForn';
+    inp.disabled = travadoPorSalvar;
+    if(travadoPorSalvar) inp.setAttribute('disabled','disabled');
+    inp.style.marginTop='8px';
+    inp.addEventListener('change', function(){
+      var arqs = inp.files ? Array.prototype.slice.call(inp.files) : [];
+      adicionarImagensGaleriaFormForn(arqs);
+      try { inp.value = ''; } catch(_e){}      // permite reescolher o mesmo arquivo
+    });
+    box.appendChild(inp);
+    if(travadoPorSalvar){
+      var avSalvando = document.createElement('div');
+      avSalvando.className = 'muted'; avSalvando.style.fontSize='11px'; avSalvando.style.marginTop='4px';
+      avSalvando.textContent = 'A ficha está sendo salva — seleção de imagens temporariamente indisponível.';
+      box.appendChild(avSalvando);
+    }
+  }
+  if(houvePreparando){
+    var pr = document.createElement('div');
+    pr.id = 'avisoPreparandoGaleriaFormForn';
+    pr.style.fontSize='11px'; pr.style.fontWeight='700'; pr.style.color='#92400e'; pr.style.marginTop='6px';
+    pr.textContent = 'Há imagens sendo preparadas. Aguarde antes de salvar para que elas sejam enviadas.';
+    box.appendChild(pr);
+  }
   if(houveIncerto){
     var av = document.createElement('div'); av.className='muted'; av.style.fontSize='11px'; av.style.marginTop='6px';
     av.textContent = 'Uma ou mais imagens ficaram com confirmação pendente: o envio ocorreu, mas a resposta do registro não chegou. Reabra o cadastro para conferir antes de reenviar.';
     box.appendChild(av);
   }
   // ---- C) CONTROLE REAL DE RETRY ----
-  if(houveFalha && perfilAtualPodeGerenciarGaleriaForn()){
+  if(houveFalha && podeGerir){
     var rb = document.createElement('button');
     rb.setAttribute('type','button');
     rb.id = 'btnRetryGaleriaFormForn';
@@ -20898,6 +21580,13 @@ function _renderGaleriaFormForn(){
     });
     box.appendChild(rb);
   }
+  var msgEl = document.createElement('div'); msgEl.id='msgGaleriaFormForn';
+  msgEl.style.fontSize='12px'; msgEl.style.marginTop='6px';
+  if(e.msgTexto){
+    msgEl.textContent = String(e.msgTexto);
+    msgEl.style.color='#b91c1c'; msgEl.style.fontWeight='700';
+  } else { msgEl.className='muted'; }
+  box.appendChild(msgEl);
 }
 // Object URL tambem e validado: so blob: gerado localmente.
 function _urlObjetoSeguroForn(v){
@@ -20905,7 +21594,12 @@ function _urlObjetoSeguroForn(v){
   return /^blob:/i.test(s) ? s : '';
 }
 // Processa a fila SEQUENCIALMENTE, so depois do UUID real.
-function persistirGaleriaFormForn(uuid, aoFim){
+// C23 (EXT06/EXT07): 'restringirAIdsLocais' e OPCIONAL — quando ausente
+// (chamada normal de Salvar/Salvar alteracoes), o comportamento e o de
+// sempre: toda a fila pendente/erro elegivel entra. So o retry misto
+// (repetirGaleriaFalhaFormForn, abaixo) passa este parametro, com a lista
+// exata de idLocal que eram elegiveis ANTES de repreparar qualquer coisa.
+function persistirGaleriaFormForn(uuid, aoFim, restringirAIdsLocais){
   var e = estadoGaleriaFormForn;
   if(!_uuidValidoForn(uuid)){ if(typeof aoFim==='function') aoFim({enviadas:0,falhas:0}); return; }
   if(e.execucaoAtiva && e.execucaoDona === e.execucao){
@@ -20934,8 +21628,30 @@ function persistirGaleriaFormForn(uuid, aoFim){
     return;
   }
   var pendentes = e.itens.filter(function(i){
-    return (i.situacao === 'pendente' || i.situacao === 'erro') && !i.emExecucao;
+    if(!((i.situacao === 'pendente' || i.situacao === 'erro') && !i.emExecucao)) return false;
+    // C23 (EXT06): um item cuja ULTIMA falha foi de PREPARACAO nunca tem
+    // arquivo pronto (arquivo=null) — despacha-lo enviaria null. So volta a
+    // ser elegivel depois de uma repreparacao com sucesso (quando
+    // falhaDePreparacao volta a false e arquivo passa a existir de verdade).
+    if(i.falhaDePreparacao === true || !i.arquivo) return false;
+    // C23 (EXT07): quando o CHAMADOR informa exatamente quais idLocal eram
+    // elegiveis no momento em que a operacao comecou, qualquer item que tenha
+    // mudado de estado DEPOIS disso (ex.: uma repreparacao concluida no
+    // mesmo tick, sincrona) fica de fora deste envio — sobra para o Salvar
+    // seguinte, exatamente como a estrategia do C22 sempre prometeu.
+    if(restringirAIdsLocais && restringirAIdsLocais.indexOf(i.idLocal) < 0) return false;
+    return true;
   });
+  // C21 (secao 4): "Salvar alteracoes" NAO ignora em silencio imagens ainda
+  // sendo preparadas. Elas nao podem ser enviadas (a copia compactada ainda nao
+  // existe), mas o usuario e avisado e a contagem volta ao chamador em
+  // 'emPreparacao', para quem orquestra o salvamento poder decidir.
+  var emPreparacao = e.itens.filter(function(i){ return i.situacao === 'preparando'; }).length;
+  if(emPreparacao > 0){
+    _msgGaleriaFormForn(emPreparacao + (emPreparacao === 1
+      ? ' imagem ainda estava sendo preparada e NÃO foi enviada. Aguarde a preparação terminar e salve novamente.'
+      : ' imagens ainda estavam sendo preparadas e NÃO foram enviadas. Aguarde a preparação terminar e salve novamente.'));
+  }
   pendentes.forEach(function(i){ i.emExecucao = ctx.operacaoId; });
   var enviadas = 0, falhas = 0, k = 0;
   function _soltarTravaG(){
@@ -20945,13 +21661,13 @@ function persistirGaleriaFormForn(uuid, aoFim){
     _soltarTravaG();
     pendentes.forEach(function(i){ if(i.emExecucao === ctx.operacaoId) i.emExecucao = null; });
     if(geracao === e.execucao) _renderGaleriaFormForn();
-    if(typeof aoFim === 'function') aoFim({enviadas:enviadas, falhas:falhas, ctxOrigem:ctx});
+    if(typeof aoFim === 'function') aoFim({enviadas:enviadas, falhas:falhas, emPreparacao:emPreparacao, ctxOrigem:ctx});
   }
   function abortar(){
     _soltarTravaG();
     pendentes.forEach(function(i){ if(i.emExecucao === ctx.operacaoId){ i.emExecucao = null;
       if(i.situacao === 'enviando') i.situacao = 'pendente'; } });
-    if(typeof aoFim === 'function') aoFim({enviadas:enviadas, falhas:falhas, abortado:true, ctxOrigem:ctx});
+    if(typeof aoFim === 'function') aoFim({enviadas:enviadas, falhas:falhas, emPreparacao:emPreparacao, abortado:true, ctxOrigem:ctx});
   }
   function proximo(){
     if(geracao !== e.execucao){ abortar(); return; }
@@ -20979,7 +21695,65 @@ function persistirGaleriaFormForn(uuid, aoFim){
   }
   proximo();
 }
-function repetirGaleriaFalhaFormForn(uuid, aoFim){ persistirGaleriaFormForn(uuid, aoFim); }
+// C22 (EXT04): o retry precisa distinguir DUAS falhas diferentes que antes
+// caiam no mesmo caminho:
+//  (1) falha de PREPARACAO — a copia compactada nunca existiu (arquivo=null).
+//      Despachar para upload enviaria null ("Arquivo inválido."). O certo e
+//      recolocar o item na fila de preparacao, reprocessando arquivoOriginal.
+//  (2) falha de UPLOAD — o arquivo preparado existe e continua valido; deve
+//      ser REUTILIZADO, sem preparar de novo.
+// Itens ja 'enviado' nunca sao tocados, entao nada confirmado e reenviado.
+// Sem UUID valido nao ha upload: neste caso apenas a repreparacao acontece, e
+// o envio fica para o Salvar, quando o fornecedor ja existir.
+// C22 (EXT02/EXT03): ha imagem sendo preparada agora?
+function _temPreparacaoPendenteGaleriaForn(){
+  var itens = (estadoGaleriaFormForn && estadoGaleriaFormForn.itens) ? estadoGaleriaFormForn.itens : [];
+  for(var i=0;i<itens.length;i++){ if(itens[i].situacao === 'preparando') return true; }
+  return false;
+}
+// C22: aviso visivel. Vai ao bloco de mensagem do MODAL (que continua aberto,
+// justamente porque o salvamento foi bloqueado) e tambem ao bloco da galeria,
+// junto da fila — assim a mensagem nao depende de um modal ja fechado, que era
+// parte do problema apontado no cadastro.
+function _avisarPreparacaoPendenteGaleriaForn(){
+  var n = 0;
+  var itens = (estadoGaleriaFormForn && estadoGaleriaFormForn.itens) ? estadoGaleriaFormForn.itens : [];
+  for(var i=0;i<itens.length;i++){ if(itens[i].situacao === 'preparando') n++; }
+  var txt = (n === 1)
+    ? 'Uma imagem ainda está sendo preparada. Aguarde a preparação terminar e salve novamente — nada foi gravado e sua fila está preservada.'
+    : n + ' imagens ainda estão sendo preparadas. Aguarde a preparação terminar e salve novamente — nada foi gravado e sua fila está preservada.';
+  if(typeof _msgCadastroFornecedor === 'function') _msgCadastroFornecedor(txt, 'erro');
+  if(typeof _msgGaleriaFormForn === 'function') _msgGaleriaFormForn(txt);
+  if(typeof _renderGaleriaFormForn === 'function') _renderGaleriaFormForn();
+}
+function repetirGaleriaFalhaFormForn(uuid, aoFim){
+  var e = estadoGaleriaFormForn;
+  // C23 (EXT06/EXT07): a lista de ELEGIVEIS para upload e decidida AQUI, ANTES
+  // de repreparar qualquer coisa, e e ELA — nao uma nova consulta a fila mais
+  // tarde — que governa o envio. Antes, esta lista so servia para checar se
+  // estava vazia; persistirGaleriaFormForn reconsultava a fila inteira, e um
+  // item recem-repreparado no MESMO clique (callback sincrono) ou um item que
+  // falhou a preparacao de novo (arquivo null) podiam entrar no envio.
+  var idsParaUpload = (e.itens||[]).filter(function(i){
+    return (i.situacao === 'erro' || i.situacao === 'pendente') && i.arquivo && i.falhaDePreparacao !== true;
+  }).map(function(i){ return i.idLocal; });
+  var repreparar = (e.itens||[]).filter(function(i){
+    return i.situacao === 'erro' && i.falhaDePreparacao === true && i.arquivoOriginal;
+  });
+  repreparar.forEach(function(i){
+    i.situacao = 'preparando'; i.erro = ''; i.emPreparo = false;
+    i.falhaDePreparacao = false; i.arquivo = null;
+  });
+  if(repreparar.length){
+    _renderGaleriaFormForn();
+    _processarPreparacaoGaleriaFormForn();
+  }
+  if(!idsParaUpload.length || !_uuidValidoForn(uuid)){
+    if(typeof aoFim === 'function') aoFim({enviadas:0, falhas:0, repreparando:repreparar.length});
+    return;
+  }
+  persistirGaleriaFormForn(uuid, aoFim, idsParaUpload);
+}
 var _PERFIS_ATIVIDADE_FORN = ['socio','admin'];
 // Editar reutiliza EXATAMENTE a politica ja adotada para cadastro (socio, admin,
 // atendimento) — nao existe segunda lista divergente.
@@ -21161,7 +21935,13 @@ function abrirProntuarioFornecedorReal(id){
   lb.style.display='none'; lb.style.position='fixed'; lb.style.inset='0';
   lb.style.background='rgba(0,0,0,.75)'; lb.style.alignItems='center';
   lb.style.justifyContent='center'; lb.style.zIndex='1200'; lb.style.cursor='zoom-out';
-  lb.addEventListener('click', function(){ _fecharLightboxGaleriaForn(); });
+  // C21 (secao 3): fecha SOMENTE quando o clique acontece no proprio fundo.
+  // Antes, qualquer clique dentro do visualizador fechava por bubbling — o que
+  // faria as setas anterior/proxima acionarem o fechamento acidentalmente.
+  lb.addEventListener('click', function(ev){
+    if(ev && ev.target && ev.target !== lb) return;
+    _fecharLightboxGaleriaForn();
+  });
   box.appendChild(lb);
 
   carregarServicosFornecedorReal(id, { forceReload: false });
@@ -21987,6 +22767,17 @@ function _listaRecuperacoesElegiveisForn(){
   });
   return out;
 }
+// C26 (EXT13): identifica qual fornecedor tem uma operacao de recuperacao em
+// andamento agora — preparo OU persistencia. Usado so para refletir isso na
+// interface (botao desabilitado + motivo visivel dos OUTROS); a protecao de
+// verdade contra a corrida fica no handler de recuperarPendenciasForn, nao
+// aqui — um atributo disabled sozinho nunca e a guarda real.
+function _fornecedorOperacaoAtivaForn(){
+  var g = estadoGaleriaFormForn, s = estadoServicosFormForn;
+  if((g.preparandoAtivo || g.execucaoAtiva) && g.fornecedorOrigemItens) return String(g.fornecedorOrigemItens);
+  if(s.execucaoAtiva && s.fornecedorId) return String(s.fornecedorId);
+  return '';
+}
 function _renderRecuperacaoForn(){
   var host = document.getElementById('estadoFornecedoresRealUI');
   if(!host) return;
@@ -21996,6 +22787,7 @@ function _renderRecuperacaoForn(){
   if(velho){ velho.textContent = ''; velho.style.display = 'none'; velho.id = 'painelRecuperacaoFornAntigo'; }
   var lista = _listaRecuperacoesElegiveisForn();
   if(!lista.length) return;
+  var ocupadoPor = _fornecedorOperacaoAtivaForn();   // C26 (EXT13)
   var box = document.createElement('div');
   box.id = 'painelRecuperacaoForn';
   box.style.marginTop = '8px'; box.style.padding = '10px';
@@ -22029,10 +22821,25 @@ function _renderRecuperacaoForn(){
     if(lista.length === 1) bt.id = 'btnRecuperarPendenciasForn';   // compatibilidade: 1 pendencia
     bt.setAttribute('data-fornecedor', r.uuid);
     bt.textContent = 'Tentar novamente os itens não salvos';
-    bt.disabled = false;   // estado explicito, nunca deixado implicito no elemento
+    // C26 (EXT13): desabilitado explicitamente quando OUTRO fornecedor tem
+    // uma operacao ativa (preparo ou persistencia) — reforco visual; a
+    // recusa de verdade esta em recuperarPendenciasForn, ativa mesmo que
+    // este atributo seja ignorado por algum motivo.
+    var ocupadoPorOutro = !!ocupadoPor && ocupadoPor !== String(r.uuid);
+    bt.disabled = ocupadoPorOutro;   // estado explicito, nunca deixado implicito no elemento
     bt.style.marginTop = '6px'; bt.style.border = 'none'; bt.style.borderRadius = '6px';
     bt.style.padding = '6px 12px'; bt.style.fontSize = '12px'; bt.style.fontWeight = '700';
-    bt.style.cursor = 'pointer'; bt.style.background = '#fde68a'; bt.style.color = '#92400e';
+    bt.style.cursor = ocupadoPorOutro ? 'default' : 'pointer';
+    bt.style.background = ocupadoPorOutro ? '#f1f5f9' : '#fde68a';
+    bt.style.color = ocupadoPorOutro ? '#64748b' : '#92400e';
+    if(ocupadoPorOutro){
+      var avisoOcupado = document.createElement('div');
+      avisoOcupado.className = 'avisoOcupadoRecuperacaoForn';
+      var nomeOcupado = String((recuperacoesPendentesForn[ocupadoPor]||{}).nomeFornecedor || '');
+      avisoOcupado.textContent = 'Aguarde a recuperação' + (nomeOcupado ? (' de ' + nomeOcupado) : '') + ' terminar.';
+      avisoOcupado.style.fontSize = '11px'; avisoOcupado.style.color = '#92400e'; avisoOcupado.style.marginTop = '4px';
+      wrap.appendChild(avisoOcupado);
+    }
     // fecha sobre o UUID desta entrada: o retry sempre sabe qual fornecedor e seu
     (function(uuidFixo){
       bt.addEventListener('click', function(){ recuperarPendenciasForn(uuidFixo); });
@@ -22046,6 +22853,20 @@ function _renderRecuperacaoForn(){
 // Retry acessivel SEM reabrir o modal: reinstala apenas os itens falhos daquele
 // fornecedor e roda as mesmas persistencias. Nao repete a atualizacao
 // operacional nem toca a fila ou a pendencia de qualquer outro fornecedor.
+// C24: chama cb() quando NAO houver mais nada em preparacao. Se ja nao houver
+// nada pendente, chama de imediato (sincrono). Usado pela recuperacao de
+// pendencias, que precisa esperar uma repreparacao terminar antes de tentar
+// enviar — nunca despachar um arquivo que ainda nao existe.
+function _aoTerminarPreparacaoGaleriaForn(cb){
+  var e = estadoGaleriaFormForn;
+  var pendente = e.preparandoAtivo || e.itens.some(function(i){ return i.situacao === 'preparando'; });
+  if(!pendente){ cb(); return; }
+  // C25: a espera carrega a GERACAO em que foi registrada — e o que permite
+  // descarta-la (sem chamar) se a fila esvaziar numa geracao diferente, ou na
+  // limpeza explicita (limparGaleriaFormForn). Nunca uma continuacao antiga
+  // dispara sobre a fila de outro ciclo/fornecedor.
+  (e._aoTerminarPreparacaoForn = e._aoTerminarPreparacaoForn || []).push({ geracao: e.execucao, cb: cb });
+}
 function recuperarPendenciasForn(uuid){
   var chave = String(uuid||'');
   var r = recuperacoesPendentesForn[chave];
@@ -22055,9 +22876,31 @@ function recuperarPendenciasForn(uuid){
   // recuperar(B) sobrescrevia estadoServicosFormForn/estadoGaleriaFormForn ANTES
   // de a trava interna sequer ser consultada, corrompendo a operacao de A em
   // andamento e deixando B ser tratado como concluido sem enviar nada.
+  // C26 (EXT13): a exclusao mutua ANTERIOR so olhava execucaoAtiva (a etapa de
+  // PERSISTENCIA/upload). A preparacao (compactar a imagem) acontece ANTES
+  // disso e usa o MESMO estado compartilhado (estadoGaleriaFormForn) — sem
+  // cobri-la aqui, o clique em B trocava fornecedorOrigemItens enquanto A
+  // ainda preparava; ao A concluir, sua origem ja nao batia mais (descartado
+  // corretamente), mas preparandoAtivo nunca era liberado por ninguem, porque
+  // B nunca chegou a iniciar sua propria preparacao. Estender a MESMA guarda,
+  // no MESMO lugar (antes de qualquer troca de filas/origem), para cobrir
+  // tambem a preparacao resolve isso sem introduzir processamento paralelo.
   var travaAlheiaSv = estadoServicosFormForn.execucaoAtiva && estadoServicosFormForn.fornecedorId !== chave;
   var travaAlheiaGl = estadoGaleriaFormForn.execucaoAtiva && estadoGaleriaFormForn.fornecedorOrigemItens !== chave;
-  if(travaAlheiaSv || travaAlheiaGl) return;   // recusa em silencio: nada e tocado
+  var travaAlheiaPreparo = estadoGaleriaFormForn.preparandoAtivo && estadoGaleriaFormForn.fornecedorOrigemItens !== chave;
+  if(travaAlheiaSv || travaAlheiaGl || travaAlheiaPreparo){
+    // C26: aviso CLARO (nao mais silencioso) — nada e tocado nas filas de A
+    // nem de B; a pendencia de B continua exatamente como estava, disponivel
+    // para tentar de novo assim que a operacao de A terminar.
+    var _nomeOcupado = String((recuperacoesPendentesForn[
+      estadoGaleriaFormForn.fornecedorOrigemItens || estadoServicosFormForn.fornecedorId] || {}).nomeFornecedor || '');
+    _msgRecuperacaoPendenteForn = 'Aguarde a recuperação' + (_nomeOcupado ? (' de ' + _nomeOcupado) : ' de outro fornecedor')
+      + ' terminar antes de tentar novamente.';
+    var _elAviso = document.getElementById('estadoFornecedoresRealUI');
+    if(_elAviso){ _elAviso.textContent = _msgRecuperacaoPendenteForn; _elAviso.style.display = ''; }
+    _renderRecuperacaoForn();
+    return;
+  }
   estadoServicosFormForn.itens = r.servicos;
   estadoGaleriaFormForn.itens = r.imagens;
   estadoServicosFormForn.fornecedorId = chave;
@@ -22072,19 +22915,46 @@ function recuperarPendenciasForn(uuid){
     // (cobre tambem o duplo clique no MESMO fornecedor).
     if(rs && (rs.abortado || rs.ocupado)) return;
     if(!_ctxEncadeamentoValidoForn(ctxRec)) return;
-    persistirGaleriaFormForn(chave, function(rg){
-      if(rg && (rg.abortado || rg.ocupado)) return;
+    // C24: itens cuja ULTIMA falha foi de PREPARACAO (arquivo nunca existiu)
+    // precisam ser preparados de novo, a partir do arquivoOriginal, ANTES de
+    // qualquer tentativa de envio — persistir direto os deixaria de fora em
+    // silencio outra vez (o mesmo defeito que motivou esta correcao).
+    var precisamPreparar = estadoGaleriaFormForn.itens.filter(function(i){
+      return i.situacao === 'erro' && i.falhaDePreparacao === true && i.arquivoOriginal;
+    });
+    precisamPreparar.forEach(function(i){
+      i.situacao = 'preparando'; i.erro = ''; i.emPreparo = false;
+      i.falhaDePreparacao = false; i.arquivo = null;
+    });
+    if(precisamPreparar.length){ _renderGaleriaFormForn(); _processarPreparacaoGaleriaFormForn(); }
+    _aoTerminarPreparacaoGaleriaForn(function(){
       if(!_ctxEncadeamentoValidoForn(ctxRec)) return;
-      _avisoParcialEdicaoForn(rs, rg, ctxRec);
+      // Sem restricao de idLocal aqui: ao contrario do retry misto durante um
+      // Salvar concorrente (C23, EXT06/EXT07), este e o unico fluxo agindo
+      // sobre este fornecedor neste instante — o item recem-reparado E o que
+      // o usuario pediu para reenviar.
+      persistirGaleriaFormForn(chave, function(rg){
+        if(rg && (rg.abortado || rg.ocupado)) return;
+        if(!_ctxEncadeamentoValidoForn(ctxRec)) return;
+        _avisoParcialEdicaoForn(rs, rg, ctxRec);
+      });
     });
   });
 }
 function _avisoParcialEdicaoForn(rs, rg, ctxOrigem){
   var el = document.getElementById('estadoFornecedoresRealUI');
   if(!el) return;
-  var falhas = (rs ? (rs.falhos||0) : 0) + (rg ? (rg.falhas||0) : 0);
-  var oks = (rs ? (rs.salvos||0) : 0) + (rg ? (rg.enviadas||0) : 0);
   var uuid = (ctxOrigem && ctxOrigem.uuid) ? ctxOrigem.uuid : estadoServicosFormForn.fornecedorId;
+  // C24: 'falhas' deixa de vir SO do contador interno de persistencia. Aquele
+  // contador so cresce para arquivos EFETIVAMENTE despachados — um item
+  // excluido por falha de preparacao (arquivo=null, nunca chega a ser
+  // despachado) nunca o incrementava, e falhas=0 fazia este bloco tratar como
+  // "tudo certo" e apagar a recuperacao, mesmo com uma foto ainda com erro em
+  // memoria. Agora a pendencia e medida no ESTADO REAL das duas filas —
+  // qualquer coisa que ainda esteja 'erro' (upload OU preparacao) conta.
+  var falhas = (estadoServicosFormForn.itens||[]).filter(function(i){ return i.situacao === 'erro'; }).length
+             + (estadoGaleriaFormForn.itens||[]).filter(function(i){ return i.situacao === 'erro'; }).length;
+  var oks = (rs ? (rs.salvos||0) : 0) + (rg ? (rg.enviadas||0) : 0);
   if(falhas > 0){
     _msgRecuperacaoPendenteForn = 'Fornecedor atualizado. ' + oks + ' item(ns) salvos e ' + falhas +
       ' não salvos — use "Tentar novamente os itens não salvos" abaixo.';
@@ -22106,9 +22976,13 @@ function _avisoParcialEdicaoForn(rs, rg, ctxOrigem){
 function _avisoParcialCadastroForn(rs, rg, ctxOrigem){
   var el = document.getElementById('estadoFornecedoresRealUI');
   if(!el) return;
-  var falhas = (rs ? (rs.falhos||0) : 0) + (rg ? (rg.falhas||0) : 0);
   var uuid = (ctxOrigem && ctxOrigem.uuid) ? ctxOrigem.uuid
            : (estadoServicosFormForn.fornecedorId || estadoGaleriaFormForn.fornecedorId || '');
+  // C24: mesmo raciocinio de _avisoParcialEdicaoForn — 'falhas' medida no
+  // estado real das filas, nao no contador interno que ignora exclusoes por
+  // falha de preparacao.
+  var falhas = (estadoServicosFormForn.itens||[]).filter(function(i){ return i.situacao === 'erro'; }).length
+             + (estadoGaleriaFormForn.itens||[]).filter(function(i){ return i.situacao === 'erro'; }).length;
   if(falhas > 0){
     _msgRecuperacaoPendenteForn = 'Fornecedor cadastrado. ' + falhas +
       ' item(ns) não foram salvos — use "Tentar novamente os itens não salvos" abaixo.';
@@ -22218,14 +23092,15 @@ function _ligarControlesFormularioForn(){
       }
     });
   }
-  var inp = document.getElementById('inputGaleriaFormForn');
-  if(inp && !inp._c6){
-    inp._c6 = true;
-    inp.addEventListener('change', function(){
-      var arqs = inp.files ? Array.prototype.slice.call(inp.files) : [];
-      arqs.forEach(function(a){ adicionarImagemGaleriaFormForn(a); });   // fila, nao descarta
-    });
-  }
+  // C22 (EXT01): o listener LEGADO do seletor de galeria foi removido daqui.
+  // Ele se ligava a #inputGaleriaFormForn e despachava para
+  // a variante singular legada, que enfileirava direto como 'pendente',
+  // SEM passar pela preparacao/compactacao. Como
+  // _renderGaleriaFormForn ja cria o seletor unico e liga seu proprio
+  // listener para adicionarImagensGaleriaFormForn, manter este bloco
+  // significava dois caminhos de preparacao concorrentes sobre o mesmo
+  // elemento. A funcao singular continua existindo como API interna, mas nao
+  // e mais alcancavel pela interface.
 }
 function _limparFormularioCadastroReal(){
   // C6 (E1): os campos bancarios pertencem ao mesmo formulario e precisam ser
@@ -22260,9 +23135,12 @@ function _rotuloSalvarFornecedorReal(pendente){
 }
 function _bloquearSalvarCadastroReal(bloq){
   var b = _botaoSalvarCadastroReal();
-  if(!b) return;
-  b.disabled = !!bloq;
-  b.textContent = _rotuloSalvarFornecedorReal(!!bloq);
+  if(b){ b.disabled = !!bloq; b.textContent = _rotuloSalvarFornecedorReal(!!bloq); }
+  // C23 (EXT08): mesma chamada, em todo inicio e fim de gravacao (cadastro E
+  // edicao), religa o render da galeria — assim o seletor reflete o estado
+  // atual de 'salvando' tanto ao bloquear quanto ao reabilitar (falha ou novo
+  // ciclo), sem precisar repetir isto em cada um dos varios pontos de saida.
+  if(typeof _renderGaleriaFormForn === 'function') _renderGaleriaFormForn();
 }
 
 // ---------------------------------------------------------------- despachantes
@@ -22451,6 +23329,19 @@ function salvarFornecedorPorFonte(){
     return;
   }
   var est = estadoCadastroFornecedor;
+  // C22 (EXT02/EXT03): barreira ANTES de gravar e ANTES de fechar o modal,
+  // valendo para CADASTRO e para EDICAO (a edicao e despachada logo abaixo,
+  // entao a checagem precisa vir antes dela). Sem isto, o formulario fechava
+  // apos confirmar a ficha e a foto ainda em preparacao era perdida:
+  // modal=none, uploads=0, preparando=1, gravacoes=1.
+  // Nada e gravado e nada e fechado: a fila, os servicos e os campos editados
+  // permanecem como estao, e o usuario salva de novo quando a preparacao
+  // terminar. Os mecanismos de sucesso parcial e recuperacao seguem intactos,
+  // porque nem chegamos a inicia-los.
+  if(_temPreparacaoPendenteGaleriaForn()){
+    _avisarPreparacaoPendenteGaleriaForn();
+    return;
+  }
   // C3: despacha para o fluxo de edicao quando o modal esta em modo 'edicao'.
   // O cadastro real existente permanece intocado abaixo.
   if(est.modo === 'edicao'){ _salvarEdicaoFornecedorReal(); return; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZIP OS V1.0.0.0 · Acesso Oficial</title>
+<title>ZIP OS V1.0.0.1 · Recuperação de Senha</title>
 <style>
 :root{
   --bg:#f4f6f8;--panel:#fff;--ink:#17202a;--muted:#667085;--line:#e5e7eb;
@@ -240,6 +240,12 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
    <input id="recNovaSenha" type="password" placeholder="nova senha" autocomplete="new-password" style="width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box;margin-bottom:14px" onkeydown="if(event.key==='Enter')document.getElementById('recConfirmaSenha').focus()">
    <label style="display:block;font-size:12px;font-weight:700;color:#344054;margin-bottom:4px">Confirmar nova senha</label>
    <input id="recConfirmaSenha" type="password" placeholder="repita a nova senha" autocomplete="new-password" style="width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')confirmarNovaSenha()">
+   <!-- V1.0.0.1: aparece SOMENTE quando o SDK indica que a conta exige o autenticador (aal1 -> aal2) -->
+   <div id="recMfaSection" style="display:none;margin-top:14px">
+    <label style="display:block;font-size:12px;font-weight:700;color:#344054;margin-bottom:4px">Código do autenticador</label>
+    <input id="recMfaCodigo" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="000000" autocomplete="one-time-code" style="width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box;letter-spacing:3px" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')confirmarNovaSenha()">
+    <div style="font-size:12px;color:#667085;margin-top:4px">Sua conta usa verificação em duas etapas. Digite o código de 6 dígitos do aplicativo autenticador.</div>
+   </div>
    <button id="recSalvarBtn" onclick="confirmarNovaSenha()" style="width:100%;margin-top:20px;padding:13px;background:#1e3a5f;color:white;border:0;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">Salvar nova senha</button>
    <button id="recTentarEncerrarBtn" onclick="tentarEncerrarSessaoRecuperacaoNovamente()" style="display:none;width:100%;margin-top:10px;padding:11px;background:#fff;color:#1e3a5f;border:1px solid #1e3a5f;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">Tentar encerrar novamente</button>
    <div style="text-align:center;margin-top:14px">
@@ -262,7 +268,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 <!-- GRID DA LOGO — pronto para receber a logo da Zip Filmes no futuro. Basta substituir o conteúdo de #logoBox por <img src="..."> -->
 <div id="logoBox" style="display:grid;place-items:center;padding:8px 0 4px">
  <div class="logo" style="margin:0">ZIP OS</div>
- <div class="sub" style="text-align:center;margin-top:2px">V1.0.0.0 · Acesso Oficial</div><!-- origem: V8.20.2 Arquivos integrados (ver RELATORIO_IMPLEMENTACAO.md) -->
+ <div class="sub" style="text-align:center;margin-top:2px">V1.0.0.1 · Recuperação de Senha</div><!-- origem: V8.20.2 Arquivos integrados (ver RELATORIO_IMPLEMENTACAO.md) -->
 </div>
 <!-- V8.2.0: os perfis vêm exclusivamente do Supabase (usuarios_perfis). Os selects abaixo permanecem apenas como PONTE INTERNA DE COMPATIBILIDADE com funções antigas do frontend; ficam permanentemente ocultos, não representam autenticação nem autorização e não permitem simular perfil ou escolher identidade. A fonte real de acesso é currentUser.profiles / currentUser.screens. -->
 <div class="profile" style="display:none" aria-hidden="true"><select id="profileSelect" onchange="applyProfile()"><option value="socio">socio</option><option value="financeiro">financeiro</option><option value="atendimento">atendimento</option><option value="producao">producao</option><option value="edicao">edicao</option><option value="admin">admin</option></select>
@@ -8306,6 +8312,10 @@ var _recuperacaoLimpezaTardiaEmAndamento=false;
 // liberando o próximo evento para o fluxo normal do aplicativo mesmo sem a
 // sessão ter sido de fato encerrada.
 var _recuperacaoSessaoTardiaPendente=false;
+// V1.0.0.1 (AAL2 na recuperação): identifica o ciclo de recuperação em curso. Muda a
+// cada novo ciclo/logout; uma operação assíncrona que começou em outro ciclo é descartada.
+var _recuperacaoCicloId=0;
+var _recuperacaoMfaExigido=false;
 
 // Detecta, de forma SÍNCRONA e sem qualquer chamada de rede, se a URL atual é
 // um retorno de link de recuperação de senha. O cliente é criado sem
@@ -8345,6 +8355,7 @@ function _mostrarTelaRecuperacaoSenha(etapa, ehNovoCiclo){
   if(el)el.style.display='none';
  });
  if(ehNovoCiclo){
+  _recuperacaoNovoCiclo(); // V1.0.0.1: descarta operações em voo e limpa o código do autenticador
   // Nunca deixa uma mensagem de erro/status de uma etapa anterior visível na
   // etapa nova — em especial na transição automática via onAuthStateChange,
   // que não passa por abrirRecuperacaoSenha(). Só acontece em início de
@@ -8373,10 +8384,14 @@ function _mostrarTelaRecuperacaoSenha(etapa, ehNovoCiclo){
             : 'recSolicitarStep';
  var alvo=document.getElementById(alvoId);
  if(alvo)alvo.style.display='block';
+ if(etapa==='nova_senha'){
+  // V1.0.0.1: decide se mostra o campo do autenticador. Agendado fora do callback do SDK (sem deadlock).
+  setTimeout(function(){ void _recuperacaoAtualizarExigenciaMfa(); },0);
+ }
 }
 
 function _limparCamposRecuperacao(){
- ['recEmail','recNovaSenha','recConfirmaSenha'].forEach(function(id){
+ ['recEmail','recNovaSenha','recConfirmaSenha','recMfaCodigo'].forEach(function(id){
   var el=document.getElementById(id);
   if(el)el.value='';
  });
@@ -8654,6 +8669,7 @@ async function _encerrarSessaoRecuperacao(mensagemFinal){
  // sucedido mesmo sem confirmação real. Agora ambos os casos — erro
  // retornado e exceção — levam ao MESMO caminho de falha: nunca declarar
  // sucesso sem confirmação, e permitir nova tentativa.
+ _recuperacaoLimparCodigoMfa(); // V1.0.0.1: o código nunca fica no campo ao encerrar/cancelar
  var falhou=false;
  try{
   if(supabaseClient){
@@ -8696,11 +8712,171 @@ async function tentarEncerrarSessaoRecuperacaoNovamente(){
  await _encerrarSessaoRecuperacao('Senha atualizada. Faça login com sua nova senha.');
 }
 
+// ----------------------------------------------------------------------------
+// V1.0.0.1 — AUTENTICADOR (AAL2) NA TROCA DE SENHA POR RECUPERAÇÃO
+// ----------------------------------------------------------------------------
+// Causa comprovada (Auth logs, 01/11/2026 07:38:52): com autenticador TOTP verificado
+// na conta, o servidor recusa updateUser({password}) com 401 "AAL2 session is required
+// to update email or password when MFA is enabled." — o link de recuperação entrega
+// sessão AAL1. A versão anterior tratava esse erro como link expirado. Agora, na etapa
+// nova_senha, o SDK oficial (mfa.getAuthenticatorAssuranceLevel/listFactors) informa se a
+// sessão precisa subir de aal1 para aal2; só então a tela pede o código de 6 dígitos e o
+// valida com mfa.challengeAndVerify ANTES do updateUser. Não cadastra nem desvincula
+// fator e não mostra segredo/QR. O servidor continua sendo a autoridade: esta interface
+// nunca decide sozinha que a troca é permitida. Senha e código nunca vão a console/storage.
+var _RECUPERACAO_MSG_SESSAO='O link de recuperação expirou ou não é mais válido. Solicite um novo link.';
+var _RECUPERACAO_MSG_IDENTIDADE='Não foi possível confirmar que esta sessão pertence à conta em recuperação. Solicite um novo link de recuperação.';
+var _RECUPERACAO_MSG_REDE='Não foi possível conectar ao ZIP OS. Tente novamente.';
+
+function _recuperacaoLimparCodigoMfa(){
+ var c=document.getElementById('recMfaCodigo');
+ if(c)c.value='';
+}
+
+function _recuperacaoMostrarCampoMfa(mostrar){
+ _recuperacaoMfaExigido=!!mostrar;
+ var s=document.getElementById('recMfaSection');
+ if(s)s.style.display=mostrar?'block':'none';
+ if(!mostrar)_recuperacaoLimparCodigoMfa();
+}
+
+// Novo ciclo / logout / sucesso: descarta operações em voo e limpa o estado do autenticador.
+function _recuperacaoNovoCiclo(){
+ _recuperacaoCicloId+=1;
+ _recuperacaoMostrarCampoMfa(false);
+}
+
+function _recuperacaoCriarContexto(){
+ if(!_recuperacaoSenhaAtiva || _recuperacaoSenhaEtapa!=='nova_senha' || !supabaseClient)return null;
+ // UID da sessão de recuperação é obrigatório: sem ele não há como garantir de quem é o fator/a conta.
+ if(!_recuperacaoSenhaUsuarioId)return null;
+ return { epoch:_authContextEpoch, ciclo:_recuperacaoCicloId, uid:_recuperacaoSenhaUsuarioId, cliente:supabaseClient };
+}
+
+// Revalidado depois de CADA await: logout, novo ciclo, outro usuário ou outro cliente
+// tornam a operação obsoleta.
+function _recuperacaoContextoValido(ctx){
+ return !!ctx
+  && ctx.epoch===_authContextEpoch
+  && ctx.ciclo===_recuperacaoCicloId
+  && ctx.uid===_recuperacaoSenhaUsuarioId
+  && ctx.cliente===supabaseClient
+  && _recuperacaoSenhaAtiva
+  && _recuperacaoSenhaEtapa==='nova_senha'
+  && !_logoutEmAndamento
+  && !_rejeicaoContextoEmAndamento;
+}
+
+// Classifica pelo CÓDIGO/nome/mensagem específicos do SDK e do servidor — nunca por
+// substring genérica como "auth" ou "session".
+function _recuperacaoClassificarErro(erro){
+ var cod=String((erro && erro.code)||'').toLowerCase();
+ var msg=String((erro && erro.message)||'').toLowerCase();
+ var nome=String((erro && erro.name)||'');
+ var status=(erro && typeof erro.status==='number')?erro.status:-1;
+ if(cod==='insufficient_aal' || msg.indexOf('aal2 session is required')>=0)return 'aal';
+ if(cod==='reauthentication_needed' || cod==='reauthentication_not_valid' || msg.indexOf('reauthentication')>=0)return 'reauth';
+ if(cod==='same_password')return 'senha_igual';
+ if(cod==='weak_password' || nome==='AuthWeakPasswordError')return 'senha_fraca';
+ if(cod==='mfa_verification_failed' || cod==='mfa_challenge_expired' || msg.indexOf('invalid totp code')>=0)return 'codigo_incorreto';
+ if(cod==='over_request_rate_limit' || cod==='over_email_send_rate_limit' || status===429 || msg.indexOf('rate limit')>=0 || msg.indexOf('too many')>=0)return 'limite';
+ if(nome==='AuthRetryableFetchError' || status===502 || status===503 || status===504
+    || msg.indexOf('failed to fetch')>=0 || msg.indexOf('networkerror')>=0 || msg.indexOf('network request failed')>=0)return 'rede';
+ if(cod==='session_not_found' || cod==='session_expired' || cod==='refresh_token_not_found'
+    || cod==='refresh_token_already_used' || cod==='bad_jwt' || cod==='no_authorization' || cod==='user_not_found'
+    || nome==='AuthSessionMissingError'
+    || msg.indexOf('auth session missing')>=0 || msg.indexOf('jwt expired')>=0 || msg.indexOf('invalid jwt')>=0
+    || msg.indexOf('session expired')>=0)return 'sessao';
+ return 'outro';
+}
+
+// fase: 'avaliacao' (checar exigência do autenticador), 'mfa' (verificar código) ou 'senha' (updateUser).
+function _recuperacaoMensagemErro(erro, fase){
+ switch(_recuperacaoClassificarErro(erro)){
+  case 'aal': return 'Esta conta exige o código do autenticador para alterar a senha. Digite o código de 6 dígitos e tente novamente.';
+  case 'reauth': return 'O servidor pediu uma nova confirmação de identidade para alterar a senha. Solicite um novo link de recuperação e conclua a troca logo depois de abri-lo.';
+  case 'senha_igual': return 'A nova senha precisa ser diferente da senha atual.';
+  case 'senha_fraca': return 'A nova senha não atende aos requisitos de segurança. Escolha uma senha mais forte.';
+  case 'codigo_incorreto': return 'Código incorreto ou vencido. Confira o código atual no autenticador e tente novamente.';
+  case 'limite': return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos antes de tentar novamente.';
+  case 'rede': return _RECUPERACAO_MSG_REDE;
+  case 'sessao': return _RECUPERACAO_MSG_SESSAO;
+ }
+ if(fase==='mfa')return 'Não foi possível confirmar o código do autenticador. Tente novamente.';
+ if(fase==='avaliacao')return 'Não foi possível verificar a segurança da conta. Tente novamente.';
+ // Política de senha ou outro erro: mostra o que o Supabase devolveu, sem regra própria.
+ return (erro && erro.message) || 'Não foi possível salvar a nova senha.';
+}
+
+// Pergunta ao SDK oficial se esta sessão (aal1) precisa subir para aal2 e qual é o fator
+// TOTP verificado. Retorna {estado:'obsoleto'|'identidade'|'erro'|'nao_exigido'|'sem_fator'|'exigido', ...}.
+async function _recuperacaoAvaliarMfa(ctx){
+ try{
+  // Identidade ANTES de qualquer consulta de fator: a sessão atual do SDK precisa ser a do UID do ciclo.
+  var gs0=await ctx.cliente.auth.getSession();
+  if(!_recuperacaoContextoValido(ctx))return { estado:'obsoleto' };
+  if(!gs0 || gs0.error)return { estado:'erro', erro:gs0?gs0.error:null };
+  var s0=gs0.data?gs0.data.session:null;
+  if(!s0 || !s0.user)return { estado:'erro', erro:{ name:'AuthSessionMissingError', message:'Auth session missing!' } };
+  if(!s0.user.id || s0.user.id!==ctx.uid)return { estado:'identidade' };
+  var aal=await ctx.cliente.auth.mfa.getAuthenticatorAssuranceLevel();
+  if(!_recuperacaoContextoValido(ctx))return { estado:'obsoleto' };
+  if(!aal || aal.error)return { estado:'erro', erro:aal?aal.error:null };
+  var d=aal.data||{};
+  if(!(d.currentLevel==='aal1' && d.nextLevel==='aal2'))return { estado:'nao_exigido' };
+  var lf=await ctx.cliente.auth.mfa.listFactors();
+  if(!_recuperacaoContextoValido(ctx))return { estado:'obsoleto' };
+  if(!lf || lf.error)return { estado:'erro', erro:lf?lf.error:null };
+  var totp=(lf.data && lf.data.totp)||[];
+  for(var i=0;i<totp.length;i++){
+   if(totp[i] && totp[i].status==='verified')return { estado:'exigido', fatorId:totp[i].id };
+  }
+  return { estado:'sem_fator' };
+ }catch(e){
+  if(!_recuperacaoContextoValido(ctx))return { estado:'obsoleto' };
+  return { estado:'erro', erro:e };
+ }
+}
+
+// Mostra/esconde o campo do código assim que a etapa nova_senha abre. Roda FORA de
+// qualquer callback de onAuthStateChange (agendada por setTimeout). Silenciosa em caso de
+// erro: a verificação autoritativa acontece de novo em confirmarNovaSenha().
+async function _recuperacaoAtualizarExigenciaMfa(){
+ if(_recuperacaoAtualizacaoEmAndamento)return;
+ var ctx=_recuperacaoCriarContexto();
+ if(!ctx)return;
+ var av=await _recuperacaoAvaliarMfa(ctx);
+ if(!_recuperacaoContextoValido(ctx) || _recuperacaoAtualizacaoEmAndamento)return;
+ if(av.estado==='exigido')_recuperacaoMostrarCampoMfa(true);
+ else if(av.estado==='nao_exigido' || av.estado==='sem_fator')_recuperacaoMostrarCampoMfa(false);
+}
+
+// Ciclo mudou / logout durante a espera: nada é gravado e o formulário fica limpo para o
+// ciclo vigente (a reinicialização normal pula o formulário enquanto há operação em voo).
+function _recuperacaoAbortarObsoleto(){
+ var p1=document.getElementById('recNovaSenha'); if(p1)p1.value='';
+ var p2=document.getElementById('recConfirmaSenha'); if(p2)p2.value='';
+ _recuperacaoLimparCodigoMfa();
+ var st=document.getElementById('recStatus');
+ if(st && st.textContent==='Salvando nova senha...')_setRecStatus('');
+ var btn=document.getElementById('recSalvarBtn');
+ if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
+}
+
+// Falha recuperável: mantém as senhas digitadas e permite nova tentativa.
+function _recuperacaoFalhaEtapa(msg){
+ _setRecStatus('');
+ _setRecError(msg);
+ var btn=document.getElementById('recSalvarBtn');
+ if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
+}
+
 // Confirma a nova senha. A AUTORIZAÇÃO real de alterar a senha nunca vem de
 // _recuperacaoSenhaAtiva nem de qualquer flag de URL — vem exclusivamente de
 // existir, neste momento, uma sessão válida estabelecida pelo próprio
 // Supabase (o que updateUser() verifica internamente, independente do que a
-// interface mostra).
+// interface mostra). V1.0.0.1: se a conta exige autenticador, o código é
+// verificado (challengeAndVerify) antes do updateUser; o servidor segue decidindo.
 async function confirmarNovaSenha(){
  if(_recuperacaoAtualizacaoEmAndamento)return; // impede envios simultâneos
  if(!supabaseClient){
@@ -8723,31 +8899,54 @@ async function confirmarNovaSenha(){
  _setRecError(''); _setRecStatus('Salvando nova senha...');
  var btn=document.getElementById('recSalvarBtn');
  if(btn){btn.disabled=true;btn.textContent='Salvando...';}
+ var ctx=_recuperacaoCriarContexto();
  try{
-  const { error } = await supabaseClient.auth.updateUser({ password: p1 });
-  if(p1El)p1El.value=''; if(p2El)p2El.value='';
-  if(error){
-   var msg=String(error.message||'').toLowerCase();
-   var pareceSessaoInvalida = msg.indexOf('session')>=0 || msg.indexOf('token')>=0
-     || msg.indexOf('expired')>=0 || msg.indexOf('jwt')>=0 || msg.indexOf('auth')>=0;
-   _setRecStatus('');
-   if(pareceSessaoInvalida){
-    _setRecError('O link de recuperação expirou ou não é mais válido. Solicite um novo link.');
-   }else{
-    // Rejeição de política de senha pelo próprio Supabase, ou outro erro —
-    // mostramos a mensagem que o Supabase devolveu, sem inventar uma regra
-    // de senha própria por cima dela.
-    _setRecError(error.message||'Não foi possível salvar a nova senha.');
+  if(!ctx){ _recuperacaoFalhaEtapa(_RECUPERACAO_MSG_IDENTIDADE); return; }
+  // 1) A sessão precisa subir para aal2? (SDK oficial; o servidor revalida de qualquer forma)
+  var av=await _recuperacaoAvaliarMfa(ctx);
+  if(av.estado==='obsoleto' || !_recuperacaoContextoValido(ctx)){ _recuperacaoAbortarObsoleto(); return; }
+  if(av.estado==='identidade'){ _recuperacaoFalhaEtapa(_RECUPERACAO_MSG_IDENTIDADE); return; }
+  if(av.estado==='erro'){ _recuperacaoFalhaEtapa(_recuperacaoMensagemErro(av.erro,'avaliacao')); return; }
+  if(av.estado==='sem_fator'){
+   _recuperacaoFalhaEtapa('Esta conta exige uma confirmação em duas etapas que não pode ser feita nesta tela. Procure o administrador do ZIP OS.');
+   return;
+  }
+  if(av.estado==='exigido'){
+   _recuperacaoMostrarCampoMfa(true);
+   var cEl=document.getElementById('recMfaCodigo');
+   var codigo=(cEl?cEl.value:'').replace(/\s+/g,'');
+   if(!/^\d{6}$/.test(codigo)){
+    _recuperacaoFalhaEtapa('Digite o código de 6 dígitos do autenticador para alterar a senha.');
+    if(cEl){try{cEl.focus();}catch(_e){}}
+    return;
    }
-   if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
+   var vr=await ctx.cliente.auth.mfa.challengeAndVerify({ factorId:av.fatorId, code:codigo });
+   _recuperacaoLimparCodigoMfa(); // código de uso único: nunca reaproveitado
+   if(!_recuperacaoContextoValido(ctx)){ _recuperacaoAbortarObsoleto(); return; }
+   if(!vr || vr.error){ _recuperacaoFalhaEtapa(_recuperacaoMensagemErro(vr?vr.error:null,'mfa')); return; }
+   _recuperacaoMostrarCampoMfa(false); // sessão já está em aal2: nova tentativa não pede código de novo
+  }
+  // 2) A sessão ainda é a da mesma pessoa/ciclo?
+  var gs=await ctx.cliente.auth.getSession();
+  if(!_recuperacaoContextoValido(ctx)){ _recuperacaoAbortarObsoleto(); return; }
+  if(!gs || gs.error){ _recuperacaoFalhaEtapa(_recuperacaoMensagemErro(gs?gs.error:null,'avaliacao')); return; }
+  var sessao=gs.data?gs.data.session:null;
+  if(!sessao || !sessao.user){ _recuperacaoFalhaEtapa(_RECUPERACAO_MSG_SESSAO); return; }
+  if(sessao.user.id!==ctx.uid){ _recuperacaoFalhaEtapa(_RECUPERACAO_MSG_IDENTIDADE); return; }
+  // 3) Troca de senha — o servidor decide.
+  const { error } = await ctx.cliente.auth.updateUser({ password: p1 });
+  if(p1El)p1El.value=''; if(p2El)p2El.value='';
+  if(!_recuperacaoContextoValido(ctx)){ _recuperacaoAbortarObsoleto(); return; }
+  if(error){
+   if(_recuperacaoClassificarErro(error)==='aal')_recuperacaoMostrarCampoMfa(true);
+   _recuperacaoFalhaEtapa(_recuperacaoMensagemErro(error,'senha'));
    return;
   }
   _setRecStatus('Senha atualizada com sucesso.');
   await _encerrarSessaoRecuperacao('Senha atualizada. Faça login com sua nova senha.');
  }catch(_e){
-  _setRecStatus('');
-  _setRecError('Não foi possível conectar ao ZIP OS. Tente novamente.');
-  if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
+  if(!_recuperacaoContextoValido(ctx)){ _recuperacaoAbortarObsoleto(); return; }
+  _recuperacaoFalhaEtapa(_RECUPERACAO_MSG_REDE);
  }finally{
   _recuperacaoAtualizacaoEmAndamento=false;
  }
@@ -8832,6 +9031,7 @@ function selectPossuiValor(select, valor){
 function mostrarTelaLogin(mensagem, liberarLogin){
  // Sempre invalida qualquer carregamento pendente (muda a geração).
  invalidarContextosPendentes();
+ try{ _recuperacaoNovoCiclo(); }catch(_e){} // V1.0.0.1: logout/fim da recuperação limpa código e operações em voo
  currentUser=null;
  // V8.3.0: limpeza completa do estado Comercial real ao encerrar/perder sessão.
  try{ if(typeof limparComercialRealPorAuth==='function') limparComercialRealPorAuth('sessao_encerrada'); }catch(_e){}
@@ -9259,6 +9459,11 @@ async function inicializarAutenticacao(){
       _aoFalharProcessamentoRecuperacao('Link de recuperação inválido ou incompleto. Solicite um novo link.');
      }
     },0);
+    return;
+   }
+   if(event==='MFA_CHALLENGE_VERIFIED'){
+    // V1.0.0.1: elevação aal2 durante a recuperação (challengeAndVerify). Nunca abre o
+    // aplicativo nem reinicia a tela de nova senha; o fluxo segue em confirmarNovaSenha().
     return;
    }
    if(event==='SIGNED_OUT'){

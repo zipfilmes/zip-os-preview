@@ -1,3 +1,7 @@
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://hwrygoslhzogrmfctlhg.supabase.co https://img.youtube.com; font-src 'self'; connect-src 'self' https://hwrygoslhzogrmfctlhg.supabase.co wss://hwrygoslhzogrmfctlhg.supabase.co https://zipos-backup-gate-1029292070006.southamerica-east1.run.app https://storage.googleapis.com/upload/storage/v1/b/zipos-backups-rare-array-512816-b4/o https://cloudflareinsights.com; frame-src data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
   X-Frame-Options: DENY
+
+https://zipos.zipfilmes.com.br/*
+  Strict-Transport-Security: max-age=86400
+  Referrer-Policy: strict-origin-when-cross-origin

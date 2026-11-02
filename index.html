@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZIP OS V1.0.0.8 · Conexão Protegida</title>
+<title>ZIP OS V1.0.0.9 · Metas Comerciais</title>
 <style>
 :root{
   --bg:#f4f6f8;--panel:#fff;--ink:#17202a;--muted:#667085;--line:#e5e7eb;
@@ -268,7 +268,7 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 <!-- GRID DA LOGO — pronto para receber a logo da Zip Filmes no futuro. Basta substituir o conteúdo de #logoBox por <img src="..."> -->
 <div id="logoBox" style="display:grid;place-items:center;padding:8px 0 4px">
  <div class="logo" style="margin:0">ZIP OS</div>
- <div class="sub" style="text-align:center;margin-top:2px">V1.0.0.8 · Conexão Protegida</div><!-- origem: V8.20.2 Arquivos integrados (ver RELATORIO_IMPLEMENTACAO.md) -->
+ <div class="sub" style="text-align:center;margin-top:2px">V1.0.0.9 · Metas Comerciais</div><!-- origem: V8.20.2 Arquivos integrados (ver RELATORIO_IMPLEMENTACAO.md) -->
 </div>
 <!-- V8.2.0: os perfis vêm exclusivamente do Supabase (usuarios_perfis). Os selects abaixo permanecem apenas como PONTE INTERNA DE COMPATIBILIDADE com funções antigas do frontend; ficam permanentemente ocultos, não representam autenticação nem autorização e não permitem simular perfil ou escolher identidade. A fonte real de acesso é currentUser.profiles / currentUser.screens. -->
 <div class="profile" style="display:none" aria-hidden="true"><select id="profileSelect" onchange="applyProfile()"><option value="socio">socio</option><option value="financeiro">financeiro</option><option value="atendimento">atendimento</option><option value="producao">producao</option><option value="edicao">edicao</option><option value="admin">admin</option></select>
@@ -35489,7 +35489,7 @@ var VO_COL_NF = 'id,projeto_id,emitida_em,enviada_em';
 var VO_COL_CHECK = 'id,projeto_id,ordem,titulo,situacao';
 var VO_ETAPAS = ['atendimento', 'orcamento', 'negociacao', 'fechado', 'perdido'];
 var VO_LOTE_IDS = 40;
-var estadoVisaoOriginal = { escopo: '', seq: 0, uid: '', epoch: -1, perfil: '', status: 'idle', completo: false, fontes: {}, carregadoEm: '', hoje: '', leads: [], orcs: [], hist: [], metas: [], usuarios: {}, perfis: {}, notas: [], check: [], histOp: [] };
+var estadoVisaoOriginal = { escopo: '', seq: 0, uid: '', epoch: -1, perfil: '', status: 'idle', completo: false, fontes: {}, carregadoEm: '', hoje: '', leads: [], orcs: [], hist: [], metas: [], roster: [], usuarios: {}, perfis: {}, notas: [], check: [], histOp: [] };
 var visaoOriginalProvider = null;   // testes locais injetam um stub; em produção usa supabaseClient (RLS)
 
 function voEsc(t){ return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -35589,27 +35589,38 @@ function voNomeDe(id, d, uid){
 // d = { leads, orcs, hist, metas:[{usuario_id,meta,comissao_pct}], usuarios, perfis }; so = id do usuário quando a visão é só a dele (Atendimento); hoje = AAAA-MM-DD de SP
 function voCalcularPlacar(d, hoje, so){
   var mes = voMesDe(hoje); if(!mes) throw new Error('data');
-  var op = voOrcPorLead(d.orcs), fech = voDatasFechamento(d.hist), pess = {}, tot = { vendidoC: 0, nVendas: 0 }, aviso = { semData: 0, semValor: 0, semOrc: 0, ambiguos: op.ambiguos, invalidos: op.invalidos, leadsInvalidos: 0, inconsistentes: Object.keys(op.inconsistentes).length };
-  var pegar = function(id){ id = id || ''; if(!pess[id]) pess[id] = { id: id, metaC: null, vendidoC: 0, nVendas: 0, comPrevC: 0, comPotC: 0, nPot: 0, potSemOrc: 0 }; return pess[id]; };
-  (d.metas || []).forEach(function(m){ if(so && String(m.usuario_id) !== String(so)) return; var c = voC(m.meta); if(isFinite(c) && c >= 0) pegar(m.usuario_id).metaC = c; });
+  if(!Array.isArray(d.roster)) throw new Error('roster');   // sem a lista de participantes não há placar honesto (nunca "vazio"): quem chama trata como indisponível
+  var op = voOrcPorLead(d.orcs), fech = voDatasFechamento(d.hist), pess = {}, tot = { vendidoC: 0, nVendas: 0 }, aviso = { semData: 0, semValor: 0, semOrc: 0, foraLista: 0, ambiguos: op.ambiguos, invalidos: op.invalidos, leadsInvalidos: 0, inconsistentes: Object.keys(op.inconsistentes).length };
+  // Participantes = SÓ a lista persistente (comercial_participantes). Quem não está nela (inclusive contas de teste) nunca vira card; vendas de fora da lista não entram na soma e são avisadas.
+  var nomesD = {}; Object.keys(d.usuarios || {}).forEach(function(k){ nomesD[k] = d.usuarios[k]; });
+  d.roster.forEach(function(r){
+    if(!r || !voIdOk(r.usuario_id)) return;
+    if(so && String(r.usuario_id) !== String(so)) return;
+    pess[r.usuario_id] = { id: r.usuario_id, metaC: null, vendidoC: 0, nVendas: 0, comPrevC: 0, comPotC: 0, nPot: 0, potSemOrc: 0, ativoLista: r.participante_ativo === true, mov: false };
+    if(!nomesD[r.usuario_id]) nomesD[r.usuario_id] = { nome_exibicao: r.nome_exibicao, nome_curto: r.nome_curto };
+  });
+  var dn = { usuarios: nomesD };
+  var pegar = function(id, mov){ var p = id && Object.prototype.hasOwnProperty.call(pess, id) ? pess[id] : null; if(p && mov) p.mov = true; return p; };
+  (d.metas || []).forEach(function(m){ if(so && String(m.usuario_id) !== String(so)) return; var c = voC(m.meta); if(isFinite(c) && c >= 0){ var q = pegar(m.usuario_id, true); if(q) q.metaC = c; } });   // meta 0 gravada ≠ meta ausente (null)
   (d.leads || []).forEach(function(l){
     if(!l || !voIdOk(l.id) || VO_ETAPAS.indexOf(l.etapa) < 0 || !(l.atendimento_id === null || l.atendimento_id === undefined || voIdOk(l.atendimento_id))){ aviso.leadsInvalidos++; return; }
     if(so && String(l.atendimento_id) !== String(so)) return;
-    if(l.atendimento_id) pegar(l.atendimento_id);   // todo responsável real (UUID) de atendimento visível entra, mesmo sem venda, meta ou comissão (meta ausente continua ausente, nunca 0)
+    if(l.atendimento_id) pegar(l.atendimento_id, true);   // participante inativo com atendimento real continua visível (histórico não some)
     var o = op.mapa[l.id];
     if(l.etapa === 'fechado'){
       var dt = fech[l.id];
       if(!dt){ aviso.semData++; return; }
       if(dt.slice(0, 7) !== mes.ym) return;
       if(!o){ aviso.semValor++; return; }
-      var p = pegar(l.atendimento_id); p.vendidoC = voSomaC(p.vendidoC, o.valorC); p.nVendas++; tot.vendidoC = voSomaC(tot.vendidoC, o.valorC); tot.nVendas++;
-      if(o.elegivel && o.resp && o.comC > 0) pegar(o.resp).comPrevC = voSomaC(pegar(o.resp).comPrevC, o.comC);
+      var p = pegar(l.atendimento_id, true); if(!p){ aviso.foraLista++; return; }
+      p.vendidoC = voSomaC(p.vendidoC, o.valorC); p.nVendas++; tot.vendidoC = voSomaC(tot.vendidoC, o.valorC); tot.nVendas++;
+      if(o.elegivel && o.resp && o.comC > 0){ var pr = pegar(o.resp, true); if(pr) pr.comPrevC = voSomaC(pr.comPrevC, o.comC); }
     } else if(l.etapa === 'orcamento' || l.etapa === 'negociacao'){
-      if(!o){ if(!op.inconsistentes[l.id]) aviso.semOrc++; if(l.atendimento_id) pegar(l.atendimento_id).potSemOrc++; return; }
-      if(o.elegivel && o.resp && o.comC > 0){ var q = pegar(o.resp); q.comPotC = voSomaC(q.comPotC, o.comC); q.nPot++; }
+      if(!o){ if(!op.inconsistentes[l.id]) aviso.semOrc++; if(l.atendimento_id){ var z = pegar(l.atendimento_id, true); if(z) z.potSemOrc++; } return; }
+      if(o.elegivel && o.resp && o.comC > 0){ var q = pegar(o.resp, true); if(q){ q.comPotC = voSomaC(q.comPotC, o.comC); q.nPot++; } }
     }
   });
-  var lista = Object.keys(pess).map(function(k){ var p = pess[k]; p.nome = voNomeDe(k, d, so); p.pct = p.metaC !== null && p.metaC > 0 ? Math.round(p.vendidoC * 100 / p.metaC) : null; p.faltaC = p.metaC !== null ? Math.max(0, p.metaC - p.vendidoC) : null; return p; });
+  var lista = Object.keys(pess).map(function(k){ return pess[k]; }).filter(function(p){ return p.ativoLista || p.mov; }).map(function(p){ var k = p.id; p.nome = voNomeDe(k, dn, so); p.pct = p.metaC !== null && p.metaC > 0 ? Math.round(p.vendidoC * 100 / p.metaC) : null; p.faltaC = p.metaC !== null ? Math.max(0, p.metaC - p.vendidoC) : null; return p; });
   if(so) lista = lista.filter(function(p){ return String(p.id) === String(so); });
   lista.sort(function(a, b){ return a.nome < b.nome ? -1 : a.nome > b.nome ? 1 : a.id < b.id ? -1 : 1; });
   var comMeta = lista.filter(function(p){ return p.metaC !== null; }), semMeta = lista.length - comMeta.length, metaTotC = comMeta.length ? comMeta.reduce(function(s, p){ return voSomaC(s, p.metaC); }, 0) : null;
@@ -35638,6 +35649,7 @@ function voProvider(ctx){
     contagem: function(nome){ return filtro(nome, base(tab[nome], 'id', { count: 'exact', head: true })); },
     contagemOp: function(ids){ return base('historicos', 'id', { count: 'exact', head: true }).eq('area', 'operacional').in('projeto_id', ids); },
     metas: function(ano, mes){ return base('metas_comercial', 'usuario_id,meta,comissao_pct', { count: 'exact' }).eq('ano', ano).eq('mes', mes).order('usuario_id', { ascending: true }).range(0, VGPAG1()); },
+    roster: function(){ return supabaseClient.rpc('listar_participantes_comercial'); },
     usuarios: function(){ return base('usuarios', 'id,nome_exibicao,nome_curto', { count: 'exact' }).order('id', { ascending: true }).range(0, VGPAG1()); },
     perfis: function(){ return base('usuarios_perfis', 'usuario_id,perfil', { count: 'exact' }).order('usuario_id', { ascending: true }).order('perfil', { ascending: true }).range(0, VGPAG1()); }
   };
@@ -35654,9 +35666,25 @@ function voLerSimples(ok, q, chave){
     return dup ? { st: 'incompleto' } : { st: 'ok', linhas: r.data, total: r.count };
   }, function(){ return { st: 'erro' }; });
 }
+// Participantes de vendas (RPC listar_participantes_comercial): só id, nomes e situação. Lista vazia é válida (nenhum participante cadastrado); erro/ausência NUNCA vira lista vazia.
+function voLerRoster(ok, q){
+  return crComTempo(q).then(function(r){
+    if(!ok()) return null;
+    if(!r || r.error || !Array.isArray(r.data)){ var s = crStatusErro(r && r.error); return { st: s === 'sessao' ? 'sessao' : s === 'sem_permissao' ? 'sem_permissao' : 'erro' }; }
+    if(r.data.length >= VG_PAGINA) return { st: 'limite' };
+    var vistos = {}, linhas = [];
+    for(var i = 0; i < r.data.length; i++){
+      var x = r.data[i];
+      if(!x || !voIdOk(x.usuario_id) || typeof x.participante_ativo !== 'boolean' || vistos[x.usuario_id]) return { st: 'incompleto' };
+      vistos[x.usuario_id] = true;
+      linhas.push({ usuario_id: x.usuario_id, nome_exibicao: x.nome_exibicao, nome_curto: x.nome_curto, participante_ativo: x.participante_ativo });
+    }
+    return { st: 'ok', linhas: linhas, total: linhas.length };
+  }, function(){ return { st: 'erro' }; });
+}
 function voLimparEstado(status){
   var e = estadoVisaoOriginal;
-  e.status = status || 'idle'; e.completo = false; e.fontes = {}; e.carregadoEm = ''; e.hoje = ''; e.leads = []; e.orcs = []; e.hist = []; e.metas = []; e.usuarios = {}; e.perfis = {}; e.notas = []; e.check = []; e.histOp = [];
+  e.status = status || 'idle'; e.completo = false; e.fontes = {}; e.carregadoEm = ''; e.hoje = ''; e.leads = []; e.orcs = []; e.hist = []; e.metas = []; e.roster = []; e.usuarios = {}; e.perfis = {}; e.notas = []; e.check = []; e.histOp = [];
 }
 // escopo "visao" (Visão Geral: + notas e historicos(operacional) dos projetos do atendimento, só depois de vgCarregar) | "placar" (card do Comercial: só fontes comerciais)
 function voCarregar(escopo){
@@ -35678,6 +35706,7 @@ function voCarregar(escopo){
     add('orcs', function(){ return paginada('orcs'); });
     add('hist', function(){ return paginada('hist'); });
     add('metas', function(){ return voLerSimples(ok, prov.metas(mes.ano, mes.mes), function(x){ return String(x.usuario_id); }); });
+    add('roster', function(){ return voLerRoster(ok, prov.roster()); });
     if(modo === 'gestao'){
       add('usuarios', function(){ return voLerSimples(ok, prov.usuarios(), function(x){ return String(x.id); }); });
       add('perfis', function(){ return voLerSimples(ok, prov.perfis(), function(x){ return String(x.usuario_id) + '|' + String(x.perfil); }); });
@@ -35696,17 +35725,17 @@ function voCarregar(escopo){
   }
   return passos.reduce(function(p, passo){ return p.then(passo); }, Promise.resolve()).then(function(){
     if(caiu || !ok()) return;
-    var fontes = {}, dados = { leads: [], orcs: [], hist: [], metas: [], usuarios: {}, perfis: {}, notas: [], check: [], histOp: [] };
+    var fontes = {}, dados = { leads: [], orcs: [], hist: [], metas: [], roster: [], usuarios: {}, perfis: {}, notas: [], check: [], histOp: [] };
     Object.keys(R).forEach(function(k){
       var n = k.slice(0, 2) === 'op' ? 'op' : k, f = fontes[n];
       if(!f) fontes[n] = { st: R[k].st, total: R[k].total || 0 }; else { if(f.st === 'ok') f.st = R[k].st; f.total += R[k].total || 0; }
     });
-    ['leads', 'orcs', 'hist', 'metas', 'notas', 'check'].forEach(function(k){ if(R[k] && R[k].st === 'ok') dados[k] = R[k].linhas; });
+    ['leads', 'orcs', 'hist', 'metas', 'roster', 'notas', 'check'].forEach(function(k){ if(R[k] && R[k].st === 'ok') dados[k] = R[k].linhas; });
     if(R.usuarios && R.usuarios.st === 'ok') R.usuarios.linhas.forEach(function(u){ dados.usuarios[u.id] = { nome_exibicao: u.nome_exibicao, nome_curto: u.nome_curto }; });
     if(R.perfis && R.perfis.st === 'ok') R.perfis.linhas.forEach(function(p){ (dados.perfis[p.usuario_id] = dados.perfis[p.usuario_id] || []).push(p.perfil); });
     Object.keys(R).forEach(function(k){ if(k.slice(0, 2) === 'op' && R[k].st === 'ok') dados.histOp = dados.histOp.concat(R[k].linhas); });
     if(!ok()) return;
-    e.fontes = fontes; e.leads = dados.leads; e.orcs = dados.orcs; e.hist = dados.hist; e.metas = dados.metas; e.usuarios = dados.usuarios; e.perfis = dados.perfis; e.notas = dados.notas; e.check = dados.check; e.histOp = dados.histOp;
+    e.fontes = fontes; e.leads = dados.leads; e.orcs = dados.orcs; e.hist = dados.hist; e.metas = dados.metas; e.roster = dados.roster; e.usuarios = dados.usuarios; e.perfis = dados.perfis; e.notas = dados.notas; e.check = dados.check; e.histOp = dados.histOp;
     e.hoje = hoje; e.carregadoEm = new Date().toISOString(); e.status = 'ok'; e.completo = true;
     voRenderTudo();
   });
@@ -35753,8 +35782,8 @@ function voUrgenciaPrazo(prazo, hoje){   // urgenciaPrazo da referência, com a 
 }
 function voBarCor(pct, verde){ return pct >= verde ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--accent)'; }
 function voPlacarSeguro(){   // → { p } | { motivo }
-  var e = estadoVisaoOriginal, ok = voFonteOk('leads') && voFonteOk('orcs') && voFonteOk('hist') && voFonteOk('metas');
-  if(!ok){ var k = ['leads', 'orcs', 'hist', 'metas'].filter(function(n){ return !voFonteOk(n); })[0]; return { motivo: e.fontes[k] ? e.fontes[k].st : 'erro' }; }
+  var e = estadoVisaoOriginal, ok = voFonteOk('leads') && voFonteOk('orcs') && voFonteOk('hist') && voFonteOk('metas') && voFonteOk('roster');
+  if(!ok){ var k = ['leads', 'orcs', 'hist', 'metas', 'roster'].filter(function(n){ return !voFonteOk(n); })[0]; return { motivo: e.fontes[k] ? e.fontes[k].st : 'erro' }; }
   try { return { p: voCalcularPlacar(e, e.hoje || crHojeSP(), voModo(e.perfil) === 'atendimento' ? e.uid : '') }; } catch(_e){ return { motivo: 'limite_valor' }; }
 }
 
@@ -35783,10 +35812,11 @@ function voAvisoPlacar(p){   // só o que muda o número: vendas fora do mês po
   if(a.semValor) t.push(a.semValor + ' venda(s) do mês sem orçamento válido');
   if(a.semOrc) t.push(a.semOrc + ' atendimento(s) em Orçamento/Negociação ainda sem orçamento gravado (sem potencial de comissão)');
   if(a.inconsistentes) t.push(a.inconsistentes + ' atendimento(s) com orçamento inconsistente (versão mais recente inválida ou duplicada)');
+  if(a.foraLista) t.push(a.foraLista + ' venda(s) de responsável fora da lista de participantes');
   if(a.invalidos || a.leadsInvalidos) t.push('registros inválidos ignorados');
   return t.length ? '<div class="muted" style="font-size:12px;margin-top:10px">Fora da soma: ' + voEsc(t.join('; ')) + '.</div>' : '';
 }
-function voPlacarVazio(p){ return '<div class="muted" style="font-size:13px">Nenhuma meta ou venda registrada em ' + voEsc(p.mesRotulo) + '.</div>'; }
+function voPlacarVazio(p){ return '<div class="muted" style="font-size:13px">Nenhum participante de vendas cadastrado.</div>'; }
 function voPlacarIndisp(motivo, claro){ return '<div style="font-size:13px;color:' + (claro ? '#bfdbfe' : 'var(--muted)') + '">' + voMotivoCurto(motivo) + '.</div>'; }
 
 // ---------------- Comercial: card inferior (renderPlacar da referência) ----------------
@@ -35960,7 +35990,7 @@ function voDashAtendimento(g, hoje, e){
   voMostrar('dashAtendimento');
   var uid = e.uid, nome = voNomeDe(uid, e, uid), t = voDom('dashTitulo'); if(t) t.innerHTML = 'Ol&#225;, ' + voEsc(nome === '—' ? '' : nome) + ' &#128075;';
   var pl = voPlacarSeguro(), p = pl.p, mesRot = voMesRotulo(hoje.slice(0, 7)), html = '';
-  var me = p ? (p.pessoas[0] || { vendidoC: 0, nVendas: 0, metaC: null, pct: null, faltaC: null, comPrevC: 0, comPotC: 0, nPot: 0, potSemOrc: 0 }) : null;
+  var me = p ? (p.pessoas[0] || null) : null;   // fora da lista de participantes de vendas: sem placar (nunca zeros inventados)
   var corpoPlacar;
   if(me){
     var barCor = me.pct === null ? 'var(--accent)' : me.pct >= 100 ? 'var(--green)' : me.pct >= 50 ? 'var(--yellow)' : 'var(--accent)';
@@ -35970,7 +36000,7 @@ function voDashAtendimento(g, hoje, e){
       + '<div style="font-size:14px;color:#e0f2fe;margin-top:8px"><b style="color:#ffffff;font-size:16px">' + (me.pct === null ? '—' : me.pct + '%') + '</b> da meta' + (me.metaC === null ? '' : me.faltaC > 0 ? ' &#8226; faltam ' + voReais(me.faltaC) : ' &#127881; batida!') + '</div></div>'
       + '<div style="display:flex;flex-direction:column;gap:12px;min-width:170px"><div style="background:rgba(255,255,255,0.10);border-radius:14px;padding:14px 18px"><div style="font-size:12px;color:#7dd3fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#128176; Comiss&#227;o prevista</div><div style="font-size:26px;font-weight:900;color:#4ade80">' + voReais(me.comPrevC) + '</div></div>'
       + '<div style="background:rgba(255,255,255,0.10);border-radius:14px;padding:14px 18px"><div style="font-size:12px;color:#7dd3fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#127919; Potencial em aberto</div><div style="font-size:22px;font-weight:700;color:#e0f2fe">' + voReais(me.comPotC) + '</div><div style="font-size:12px;color:#7dd3fc;margin-top:4px">' + me.nPot + ' OS com or&#231;amento ativo</div>' + (me.potSemOrc ? '<div style="font-size:11px;color:#7dd3fc;margin-top:4px">Potencial incompleto: ' + me.potSemOrc + ' sem or&#231;amento gravado</div>' : '') + '</div></div></div>' + voAvisoPlacar(p).replace('class="muted"', 'style="color:#bfdbfe;font-size:12px;margin-top:10px"');
-  } else corpoPlacar = voPlacarIndisp(pl.motivo, true);
+  } else corpoPlacar = p ? '<div style="font-size:13px;color:#bfdbfe">Voc&#234; n&#227;o est&#225; na lista de participantes de vendas.</div>' : voPlacarIndisp(pl.motivo, true);
   html += '<div class="card" style="background:linear-gradient(135deg,#1e3a5f,#2d5282);color:white;border:none;margin-bottom:14px;padding:24px"><div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="font-size:32px">&#127942;</span><div style="font-size:16px;color:#e0f2fe;font-weight:800;letter-spacing:0.5px">Placar do Atendimento &#8212; ' + voEsc(mesRot) + '</div></div>' + corpoPlacar + '</div>';
   var projOk = g.fontes.proj && g.fontes.proj.st === 'ok', meus = projOk ? voAtivosDoUsuario(g, uid, ['atend']) : [];
   // Radar do dia
@@ -36140,6 +36170,7 @@ function foProvider(){
     cLeads: function(de, ate){ return supabaseClient.from('leads').select('id,os,atendimento_id,etapa,data_contato', { count: 'exact' }).order('id', { ascending: true }).range(de, ate); },
     cOrcs: function(de, ate){ return supabaseClient.from('orcamentos').select('id,lead_id,versao,valor_total,comissao,comissao_elegivel,comissao_responsavel_id', { count: 'exact' }).order('id', { ascending: true }).range(de, ate); },
     cHist: function(de, ate){ return supabaseClient.from('historicos').select('id,lead_id,descricao,data_evento', { count: 'exact' }).eq('area', 'comercial').ilike('descricao', '%Fechado%').order('id', { ascending: true }).range(de, ate); },
+    cRoster: function(){ return supabaseClient.rpc('listar_participantes_comercial'); },
     cMetas: function(){ return supabaseClient.from('metas_comercial').select('ano,mes,usuario_id,meta,comissao_pct,atualizado_em', { count: 'exact' }).order('ano', { ascending: true }).order('mes', { ascending: true }).order('usuario_id', { ascending: true }).range(0, VG_PAGINA - 1); },
     cPerfis: function(){ return supabaseClient.from('usuarios_perfis').select('usuario_id,perfil', { count: 'exact' }).order('usuario_id', { ascending: true }).order('perfil', { ascending: true }).range(0, VG_PAGINA - 1); },
     cFechamentos: function(){ return supabaseClient.rpc('fechamentos_comerciais_ler'); },
@@ -36168,6 +36199,8 @@ function foNome(id){
   if(!id) return '';
   var m = estadoFinOriginal.nomes.mapa; if(m[id]) return m[id];
   if(crSessao() && String(id) === String(currentUser.id)){ var s = String(currentUser.shortName || currentUser.operationalName || currentUser.displayName || '').trim(); if(s) return s; }
+  var rs = estadoComFin.roster || [];   // participante inativo some da equipe ativa, mas o nome do histórico continua vindo da lista de participantes
+  for(var i = 0; i < rs.length; i++){ if(rs[i].usuario_id === id){ var n = String(rs[i].nome_curto || '').trim() || String(rs[i].nome_exibicao || '').trim(); if(n) return n; } }
   return '';
 }
 // ---- fontes complementares (somente leitura; paginação com contagem, como as demais) ----
@@ -37701,10 +37734,10 @@ renderContasReceberReais = function(){ _foRenderCRRent.apply(this, arguments); t
 // (SQL/INSTALAR_FECHAMENTOS_COMERCIAIS.sql — NÃO instalado por esta versão). Sem ela, vendas/comissões do Financeiro ficam "Indisponível" (nunca zero). Nomes: RPC listar_equipe_operacional.
 // Editar a meta/% aqui NÃO altera orçamentos já gravados (a comissão deles está congelada); a regra "sócio não recebe comissão" é do banco (por perfil).
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
-var estadoComFin = { seq: 0, uid: '', epoch: -1, status: 'idle', leads: [], orcs: [], hist: [], histSt: 'idle', metas: [], perfis: {}, perfisSt: 'idle', eleg: {}, elegSt: 'idle', carregadoEm: '' };
+var estadoComFin = { seq: 0, uid: '', epoch: -1, status: 'idle', leads: [], orcs: [], hist: [], histSt: 'idle', metas: [], roster: [], rosterSt: 'idle', perfis: {}, perfisSt: 'idle', eleg: {}, elegSt: 'idle', carregadoEm: '' };
 var foMetasCom = { ym: '', pessoaRel: '', anoRel: '', executando: false };
 function foEhGestaoReal(){ return foPode() && (currentUser.profiles.indexOf('socio') >= 0 || currentUser.profiles.indexOf('admin') >= 0); }
-function foComZerar(status){ var e = estadoComFin; e.status = status || 'idle'; e.leads = []; e.orcs = []; e.hist = []; e.histSt = 'idle'; e.metas = []; e.perfis = {}; e.perfisSt = 'idle'; e.eleg = {}; e.elegSt = 'idle'; e.carregadoEm = ''; }
+function foComZerar(status){ var e = estadoComFin; e.status = status || 'idle'; e.leads = []; e.orcs = []; e.hist = []; e.histSt = 'idle'; e.metas = []; e.roster = []; e.rosterSt = 'idle'; e.perfis = {}; e.perfisSt = 'idle'; e.eleg = {}; e.elegSt = 'idle'; e.carregadoEm = ''; }
 function foComOk(){ return estadoComFin.status === 'ok'; }
 function foCarregarComercial(){
   if(!foPode()){ return Promise.resolve(); }
@@ -37716,6 +37749,7 @@ function foCarregarComercial(){
     passo('leads', function(){ return vgLerFonte(ctx, ok, 'cleads', function(a, b){ return prov.cLeads(a, b); }, prov); }),
     passo('orcs', function(){ return vgLerFonte(ctx, ok, 'corcs', function(a, b){ return prov.cOrcs(a, b); }, prov); }),
     passo('metas', function(){ return voLerSimples(ok, prov.cMetas(), function(x){ return x.ano + '-' + x.mes + '-' + x.usuario_id; }); }),
+    passo('roster', function(){ return voLerRoster(ok, prov.cRoster()); }),   // falha aqui NÃO derruba a leitura: só deixa o placar/lista "Indisponível" (rosterSt)
     passo('hist', function(){
       if(gestao) return vgLerFonte(ctx, ok, 'chist', function(a, b){ return prov.cHist(a, b); }, prov);
       return crComTempo(prov.cFechamentos()).then(function(r){
@@ -37742,6 +37776,7 @@ function foCarregarComercial(){
     var falha = ['leads', 'orcs', 'metas'].filter(function(k){ return !R[k] || R[k].st !== 'ok'; })[0];
     if(falha){ var s = R[falha] ? R[falha].st : 'erro'; if(s === 'sessao'){ foComZerar('sessao'); } else { foComZerar(s === 'sem_permissao' ? 'sem_permissao' : 'erro'); } foRenderTudo(); return; }
     e.leads = R.leads.linhas; e.orcs = R.orcs.linhas; e.metas = R.metas.linhas;
+    e.rosterSt = R.roster ? R.roster.st : 'erro'; if(R.roster && R.roster.st === 'ok') e.roster = R.roster.linhas;
     var h = R.hist; e.histSt = h && h.st ? h.st : 'erro';
     if(e.histSt === 'ok') e.hist = h.rpc ? h.linhas.map(function(x){ return { id: x.lead_id, lead_id: x.lead_id, descricao: '➡️ Etapa: Negociação → Fechado', data_evento: x.data_fechamento }; }) : h.linhas;
     e.elegSt = R.eleg ? R.eleg.st : 'idle'; if(R.eleg && R.eleg.st === 'ok') e.eleg = R.eleg.mapa;
@@ -37753,13 +37788,14 @@ function foRpcAusente(err){ return !!err && (/^(PGRST202|42883)$/.test(String(er
 // d para voCalcularPlacar no mês 'AAAA-MM' (metas só desse mês; nomes pelo RPC; sócio só se o perfil foi lido)
 function foDadosPlacar(ano, mes){
   var e = estadoComFin, us = {}, metas = e.metas.filter(function(m){ return +m.ano === +ano && +m.mes === +mes; });
-  var ids = {}; metas.forEach(function(m){ ids[m.usuario_id] = true; }); e.leads.forEach(function(l){ if(l.atendimento_id) ids[l.atendimento_id] = true; }); e.orcs.forEach(function(o){ if(o.comissao_responsavel_id) ids[o.comissao_responsavel_id] = true; });
+  var ids = {}; e.roster.forEach(function(r){ ids[r.usuario_id] = true; });   // placar parte SÓ da lista de participantes (voCalcularPlacar ignora o resto)
   Object.keys(ids).forEach(function(id){ var n = foNome(id); if(n) us[id] = { nome_curto: n }; });
-  return { leads: e.leads, orcs: e.orcs, hist: e.hist, metas: metas, usuarios: us, perfis: e.perfis };
+  return { leads: e.leads, orcs: e.orcs, hist: e.hist, metas: metas, roster: e.roster, usuarios: us, perfis: e.perfis };
 }
 function foPlacarMes(ano, mes){   // → { p } | { motivo }
   var e = estadoComFin;
   if(!foComOk()) return { motivo: e.status === 'carregando' ? 'carregando' : e.status === 'sem_permissao' ? 'sem_permissao' : 'erro' };
+  if(e.rosterSt !== 'ok') return { motivo: e.rosterSt === 'sem_permissao' ? 'sem_permissao' : 'roster' };
   if(e.histSt !== 'ok') return { motivo: e.histSt === 'rpc_ausente' ? 'rpc_ausente' : e.histSt };
   try { return { p: voCalcularPlacar(foDadosPlacar(ano, mes), ano + '-' + mes + '-15', '') }; } catch(_e){ return { motivo: 'limite_valor' }; }
 }
@@ -37778,6 +37814,7 @@ function finMetasNavMes(delta){
   var p = foYmRef().split('-'), y = +p[0], m = +p[1] - 1 + delta; if(m < 0){ m = 11; y--; } if(m > 11){ m = 0; y++; }
   foMetasCom.ym = y + '-' + String(m + 1).padStart(2, '0'); foRenderMetasCom();
 }
+function foParticipanteAtivo(id){ var r = estadoComFin.roster || []; for(var i = 0; i < r.length; i++){ if(r[i].usuario_id === id) return r[i].participante_ativo === true; } return false; }
 function foPctTexto(p){ return p === null || p === undefined ? '' : String(p).replace('.', ','); }
 function foMetaRow(ym, id){ var a = ym.slice(0, 4), m = ym.slice(5, 7), r = null; estadoComFin.metas.forEach(function(x){ if(+x.ano === +a && +x.mes === +m && x.usuario_id === id) r = x; }); return r; }
 function foSocioId(id){ var l = estadoComFin.perfis[id]; return !!l && l.indexOf('socio') >= 0; }
@@ -37794,21 +37831,24 @@ function foRenderMetasCom(){
   if(!foPode()){ body.textContent = ''; return; }
   var e = estadoComFin;
   if(!foComOk()){ body.innerHTML = foMsgLinha(e.status === 'carregando' || e.status === 'idle' ? 'Lendo…' : e.status === 'sem_permissao' ? 'Sem permissão.' : 'Indisponível: não foi possível ler as metas e os atendimentos agora. Nada é mostrado no lugar.'); return; }
+  if(e.rosterSt !== 'ok'){ body.innerHTML = foMsgLinha(e.rosterSt === 'sem_permissao' ? 'Sem permissão.' : 'Indisponível: não foi possível ler os participantes de vendas agora. Nada é mostrado no lugar.'); return; }   // sem a lista, nunca fingir "ninguém" nem salvar às cegas
   var r = foPlacarMes(ym.slice(0, 4), ym.slice(5, 7)), atual = ym === foYmAtual(), pessoas;
   if(r.p) pessoas = r.p.pessoas; else {   // sem as datas de fechamento: metas e % continuam editáveis; vendas/comissões ficam indisponíveis
-    var ids = {}; e.metas.forEach(function(m){ if(+m.ano === +ym.slice(0, 4) && +m.mes === +ym.slice(5, 7)) ids[m.usuario_id] = true; }); e.leads.forEach(function(l){ if(l.atendimento_id) ids[l.atendimento_id] = true; });
+    var ids = {}, comLead = {}; e.leads.forEach(function(l){ if(l.atendimento_id) comLead[l.atendimento_id] = true; });
+    e.roster.forEach(function(x){ if(x.participante_ativo || foMetaRow(ym, x.usuario_id) || comLead[x.usuario_id]) ids[x.usuario_id] = true; });
     pessoas = Object.keys(ids).map(function(id){ return { id: id, nome: foNome(id) || '—', metaC: null, vendidoC: null, comPrevC: null, comPotC: null, pct: null }; }).sort(function(a, b){ return a.nome < b.nome ? -1 : 1; });
   }
   var travado = !!foMetasCom.executando, html = '<div class="grid3" style="gap:14px">';
   pessoas.forEach(function(p){
-    var row = foMetaRow(ym, p.id), meta = row ? voC(row.meta) : null, pctCom = row ? Number(row.comissao_pct) : null, ce = p.id ? foComissaoEstado(p.id) : 'desconhecido', sem = ce === 'socio';
+    var row = foMetaRow(ym, p.id), meta = row ? voC(row.meta) : null, pctCom = row ? Number(row.comissao_pct) : null, ce = p.id ? foComissaoEstado(p.id) : 'desconhecido', sem = ce === 'socio', bloq = !foParticipanteAtivo(p.id) && !row;   // inativo: histórico visível, mas sem NOVA meta em mês sem linha
     var vend = p.vendidoC, pct = (meta && meta > 0 && vend !== null) ? Math.round((vend * 100) / meta) : null, barCor = pct === null ? 'var(--accent)' : pct >= 100 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--accent)';
     html += '<div class="card" style="margin:0"><div style="font-size:15px;font-weight:800;margin-bottom:12px">&#128100; ' + foEsc(p.nome) + '</div>'
-      + '<label>Meta do m&#234;s (R$)</label><input type="text" inputmode="decimal" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="meta" style="margin-bottom:10px" ' + (travado ? 'disabled ' : '') + 'value="' + foEsc(meta !== null && isFinite(meta) ? cxValorTexto(meta) : '') + '" placeholder="0,00">'
+      + '<label>Meta do m&#234;s (R$)</label><input type="text" inputmode="decimal" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="meta" style="margin-bottom:10px" ' + (travado || bloq ? 'disabled ' : '') + 'value="' + foEsc(meta !== null && isFinite(meta) ? cxValorTexto(meta) : '') + '" placeholder="Definir meta">'
+      + (bloq ? '<div class="muted" style="font-size:11px;margin-bottom:8px">Participante inativo: sem nova meta.</div>' : '')
       + '<label>% de comiss&#227;o sobre resultado antes da comiss&#227;o</label>'
       + (ce === 'desconhecido' ? '<input type="text" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="pct" style="margin-bottom:4px;background:#f1f5f9;color:var(--muted);cursor:not-allowed" value="' + foEsc(foPctTexto(pctCom)) + '" disabled><div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:6px 10px;margin-bottom:12px">&#128274; Elegibilidade à comiss&#227;o n&#227;o verificada para este perfil: o campo fica bloqueado (nada &#233; alterado).</div>'
         : sem ? '<input type="text" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="pct" style="margin-bottom:4px;background:#f1f5f9;color:var(--muted);cursor:not-allowed" value="0" disabled><div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:6px 10px;margin-bottom:12px">&#128274; S&#243;cio &#8212; n&#227;o recebe comiss&#227;o (regra Zip). Metas de venda continuam valendo.</div>'
-        : '<input type="text" inputmode="decimal" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="pct" style="margin-bottom:12px" ' + (travado ? 'disabled ' : '') + 'value="' + foEsc(foPctTexto(pctCom)) + '" placeholder="0">')
+        : '<input type="text" inputmode="decimal" class="finMeta-input" data-id="' + foEsc(p.id) + '" data-campo="pct" style="margin-bottom:12px" ' + (travado || bloq ? 'disabled ' : '') + 'value="' + foEsc(foPctTexto(pctCom)) + '" placeholder="0">')
       + '<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Vendido: <b>' + (vend === null ? '—' : voReais(vend)) + '</b> / ' + (meta === null || !isFinite(meta) ? 'meta n&#227;o configurada' : voReais(meta)) + '</div>'
       + '<div style="height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:' + Math.min(100, pct || 0) + '%;background:' + barCor + ';border-radius:999px"></div></div>'
       + '<div style="font-size:12px;color:var(--muted)">' + (pct === null ? '—' : pct + '% da meta') + '</div>'
@@ -37818,13 +37858,14 @@ function foRenderMetasCom(){
   });
   html += '</div>';
   html += '<div id="finMetasMsg"></div><div style="margin-top:14px"><button class="btn" type="button" data-pa="metas-com-salvar" ' + (travado || !pessoas.length ? 'disabled ' : '') + 'onclick="foSalvarMetasCom()">💾 Salvar metas do mês</button>' + (r.p ? '' : ' <span class="muted" style="font-size:12px">' + foEsc(foPlacarIndispTexto(r.motivo)) + '</span>') + '</div>';
-  if(!pessoas.length) html = foMsgLinha('Nenhuma pessoa com meta ou atendimento para listar neste mês.');
+  if(!pessoas.length) html = foMsgLinha('Nenhum participante de vendas cadastrado.');
   body.innerHTML = html + foRelatorioComissoes(pessoas);
   if(foMetasCom.msg) foMetasComMsg(foMetasCom.msg.t, foMetasCom.msg.cor);
 }
 function foRelatorioComissoes(pessoas){
   var ym = foYmRef(), anoRef = +ym.slice(0, 4), todos = {}, e = estadoComFin;
-  e.metas.forEach(function(m){ todos[m.usuario_id] = true; }); e.leads.forEach(function(l){ if(l.atendimento_id) todos[l.atendimento_id] = true; }); pessoas.forEach(function(p){ todos[p.id] = true; });
+  var naLista = {}; e.roster.forEach(function(x){ naLista[x.usuario_id] = true; });   // só quem está na lista de participantes (contas de teste e não participantes ficam fora)
+  e.metas.forEach(function(m){ if(naLista[m.usuario_id]) todos[m.usuario_id] = true; }); e.leads.forEach(function(l){ if(l.atendimento_id && naLista[l.atendimento_id]) todos[l.atendimento_id] = true; }); pessoas.forEach(function(p){ todos[p.id] = true; });
   var ids = Object.keys(todos).sort(function(a, b){ var na = foNome(a) || '~', nb = foNome(b) || '~'; return na < nb ? -1 : na > nb ? 1 : a < b ? -1 : 1; });
   if(!ids.length) return '';
   var pessoa = foMetasCom.pessoaRel && todos[foMetasCom.pessoaRel] ? foMetasCom.pessoaRel : ids[0], ano = foMetasCom.anoRel ? +foMetasCom.anoRel : anoRef;
@@ -37852,15 +37893,25 @@ function foRelatorioComissoes(pessoas){
 function foRelPessoa(i){ var id = (foMetasCom._relIds || [])[i]; if(id){ foMetasCom.pessoaRel = id; foRenderMetasCom(); } }
 function foRelAno(a){ foMetasCom.anoRel = String(a); foRenderMetasCom(); }
 function foMetasComMsg(t, cor){ foMetasCom.msg = t ? { t: t, cor: cor } : null; var m = foDom('finMetasMsg'); if(!m) return; m.textContent = ''; if(t) m.appendChild(crEl('div', 'font-size:13px;padding:8px 10px;margin-top:10px;color:' + (cor || 'var(--text)'), t)).className = 'notice'; }
+// Meta Comercial aceita 0 / 0,00 (meta zero explícita); o parser global cxParseValor (entradas financeiras) segue recusando zero e não é alterado.
+function foValorMetaCom(txt){
+  var s = String(txt == null ? '' : txt).trim().replace(/^R\$\s*/, '').replace(/\s/g, '');
+  if(/^0+([.,]0{1,2})?$/.test(s)) return { c: 0 };
+  return foValorMeta(txt);
+}
 function foSalvarMetasCom(){
   if(!foPode() || !foComOk() || foMetasCom.executando) return;
   var ym = foYmRef(), ano = +ym.slice(0, 4), mes = +ym.slice(5, 7), ops = [], erro = '', campos = {};
   document.querySelectorAll('.finMeta-input').forEach(function(inp){ var id = inp.getAttribute('data-id'), k = inp.getAttribute('data-campo'); (campos[id] = campos[id] || {})[k] = { v: String(inp.value == null ? '' : inp.value).trim(), off: !!inp.disabled }; });
   Object.keys(campos).forEach(function(id){
     var c = campos[id], row = foMetaRow(ym, id), nome = foNome(id) || '—', metaC, pct;
-    var mv = foValorMeta(c.meta.v); if(mv.erro){ erro = erro || nome + ': ' + mv.erro; return; } metaC = mv.vazio ? 0 : mv.c;
+    if(c.meta.off) return;   // campo bloqueado (participante inativo sem meta neste mês): nada a gravar
+    var mv = foValorMetaCom(c.meta.v); if(mv.erro){ erro = erro || nome + ': ' + mv.erro; return; } metaC = mv.vazio ? 0 : mv.c;
     if(c.pct.off) pct = (row && foComissaoEstado(id) !== 'socio') ? Number(row.comissao_pct) : 0; else if(!c.pct.v) pct = 0; else { var t = c.pct.v.replace(',', '.'); if(!/^\d{1,3}(\.\d{1,2})?$/.test(t) || Number(t) > 100){ erro = erro || nome + ': % de comissão inválido (0 a 100, até 2 casas).'; return; } pct = Number(t); }
-    if(!row){ if(metaC === 0 && pct === 0) return; ops.push({ k: 'inserir', id: id, nome: nome, metaC: metaC, pct: pct }); }
+    if(!row){
+      if(mv.vazio){ if(pct !== 0) erro = erro || nome + ': informe a meta (use 0 para meta zero) antes do % de comissão.'; return; }   // meta vazia e sem linha: continua NÃO definida (nada é gravado); 0 digitado grava meta zero
+      ops.push({ k: 'inserir', id: id, nome: nome, metaC: metaC, pct: pct });
+    }
     else if(voC(row.meta) !== metaC || Number(row.comissao_pct) !== pct) ops.push({ k: 'atualizar', id: id, nome: nome, metaC: metaC, pct: pct, ant: row });
   });
   if(erro){ foMetasComMsg(erro, 'var(--red)'); return; }

@@ -363,67 +363,285 @@ html[data-theme="dark"] [style*="background:#fef9c3;border:2px solid #fbbf24" i]
 html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]:not(:is(.c-a4-page,.c-editor-page) *){background:#233529!important;border-color:#3f7a56!important}
 </style>
 <script id="zosTemaJs">
-/* V1.1.0.0 Tema Escuro — rotina SEPARADA dos scripts de negócio/autenticação.
-   Guarda somente a chave 'zipos.theme' ('light' | 'dark') no armazenamento local do navegador; padrão 'light'.
-   Não lê perfil, dados ou sessão. Sem observadores de DOM nem temporizadores: a cobertura de estilos inline é feita só por CSS (seletores de atributo). */
+/* V1.1.0.1 Tema por Usuário — rotina SEPARADA dos scripts de negócio/autenticação.
+   Preferência Claro/Escuro guardada na conta (auth.users.raw_user_meta_data.zipos_theme) pela API Auth do próprio usuário.
+   É só preferência visual: não autoriza nada. Cache local vinculado ao usuário ('zipos.theme.<uid>'); a chave 'zipos.theme'
+   é só o último tema do aparelho (tela de login). Sem observadores de DOM nem temporizadores de repetição. */
 (function () {
-  var CHAVE = 'zipos.theme';
+  var CHAVE_LEGADA = 'zipos.theme';
+  var PREFIXO = 'zipos.theme.';
+  var PRAZO = 15000;         // limite de cada operação inteira (sessão + HTTP + corpo JSON)
   var raiz = document.documentElement;
-  var impressaoAnterior = null;
 
-  function ler() {
-    try { return window.localStorage.getItem(CHAVE) === 'dark' ? 'dark' : 'light'; }
-    catch (e) { return 'light'; }
+  var temaAtivo = 'light';   // tema pretendido (o DOM pode estar claro só durante a impressão)
+  var imprimindo = false;
+  var uid = null;            // usuário conhecido pela rotina (nunca herdado de outra conta)
+  var gen = 0;               // muda a cada troca de identidade: respostas antigas ficam sem efeito
+  var cliqueRev = 0;         // conta cliques explícitos
+  var evSeq = 0;             // conta eventos do Auth: só a conciliação do mais recente vale
+  var leituraSeq = 0;        // conta leituras do servidor: só a última vale
+  var opSeq = 0;             // conta gravações: só a última vale
+  var releitura = null;      // usuário cujo USER_UPDATED ainda pede nova leitura
+  var carregado = false, carregando = false;
+  var salvar = { desejado: null, emVoo: false, op: 0 };
+  var statusTipo = '';
+
+  function valido(v) { return v === 'dark' || v === 'light'; }
+  function lerChave(k) {
+    try { var v = window.localStorage.getItem(k); return valido(v) ? v : null; } catch (e) { return null; }
   }
-  function gravar(v) {
-    try { window.localStorage.setItem(CHAVE, v); } catch (e) { /* armazenamento inacessível: vale só nesta sessão */ }
+  function gravarChave(k, v) {
+    try { window.localStorage.setItem(k, v); } catch (e) { /* armazenamento inacessível: vale só nesta sessão */ }
   }
   function aplicar(v) {
-    raiz.setAttribute('data-theme', v === 'dark' ? 'dark' : 'light');
+    temaAtivo = v === 'dark' ? 'dark' : 'light';
+    if (!imprimindo) raiz.setAttribute('data-theme', temaAtivo);
   }
-  function atual() { return raiz.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
   function sincronizarBotoes() {
-    var v = atual();
     var botoes = document.querySelectorAll('#zosAjustes [data-tema]');
     for (var i = 0; i < botoes.length; i++) {
-      botoes[i].setAttribute('aria-pressed', botoes[i].getAttribute('data-tema') === v ? 'true' : 'false');
+      botoes[i].setAttribute('aria-pressed', botoes[i].getAttribute('data-tema') === temaAtivo ? 'true' : 'false');
     }
   }
-  function escolher(v) {
-    aplicar(v);
-    gravar(v);
+  function mostrar(tipo) {
+    statusTipo = tipo;
+    var el = document.getElementById('zosTemaStatus');
+    var bt = document.getElementById('zosTemaRetentar');
+    var txt = '';
+    if (tipo === 'salvando') txt = 'Salvando…';
+    else if (tipo === 'salvo') txt = 'Salvo na conta';
+    else if (tipo === 'erro') txt = 'Não foi possível salvar na conta. Tente novamente.';
+    else if (tipo === 'leitura') txt = 'Tema não sincronizado com a conta.';
+    if (el) el.textContent = txt;
+    if (bt) bt.style.display = tipo === 'erro' ? '' : 'none';
+  }
+  function cliente() { return (typeof supabaseClient !== 'undefined' && supabaseClient) ? supabaseClient : null; }
+  function bloqueado() {
+    try {
+      if (typeof _recuperacaoSenhaAtiva !== 'undefined' && _recuperacaoSenhaAtiva) return true;
+      if (typeof _logoutEmAndamento !== 'undefined' && _logoutEmAndamento) return true;
+      if (typeof _rejeicaoContextoEmAndamento !== 'undefined' && _rejeicaoContextoEmAndamento) return true;
+    } catch (e) { /* ignora */ }
+    return false;
+  }
+
+  // Prazo da operação INTEIRA: só termina por conclusão, erro ou expiração (rejeita 'prazo' de forma explícita).
+  // Ao expirar aborta apenas o fetch desta operação (nunca o cliente Auth); resultado tardio é descartado.
+  // Além do sinal (que pode não existir), entrega a guarda vigente(): depois de qualquer await, a etapa seguinte
+  // só pode iniciar GET/PUT se a operação ainda estiver viva — o prazo encerra a operação mesmo sem AbortController.
+  function comPrazo(iniciar) {
+    return new Promise(function (resolve, reject) {
+      var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+      var feito = false, t = null;
+      function fim() { feito = true; if (t !== null) clearTimeout(t); }
+      t = setTimeout(function () {
+        if (feito) return;
+        feito = true;
+        try { if (ctrl) ctrl.abort(); } catch (e) { /* ignora */ }
+        reject(new Error('prazo'));
+      }, PRAZO);
+      var p;
+      try { p = Promise.resolve(iniciar(ctrl ? ctrl.signal : null, function () { return !feito; })); } catch (e) { fim(); reject(e); return; }
+      p.then(function (v) { if (feito) return; fim(); resolve(v); },
+             function (e) { if (feito) return; fim(); reject(e); });
+    });
+  }
+  // Sessão ATUAL do SDK (leitura local; nenhuma chamada HTTP do SDK).
+  function sessaoAtual(vigente) {
+    if (vigente && !vigente()) return Promise.reject(new Error('prazo'));
+    return cliente().auth.getSession().then(function (r) {
+      if (vigente && !vigente()) throw new Error('prazo');          // expirou durante a leitura: nada mais se inicia
+      var s = r && r.data ? r.data.session : null;
+      return (s && s.access_token && s.user && s.user.id) ? s : null;
+    });
+  }
+  // GET/PUT na API Auth com o token da sessão atual; o corpo JSON faz parte da operação.
+  function chamarAuth(metodo, ses, corpo, signal, vigente) {
+    if (vigente && !vigente()) return Promise.reject(new Error('prazo'));   // nenhum HTTP começa depois do prazo
+    var opc = { method: metodo, headers: { 'Authorization': 'Bearer ' + ses.access_token, 'apikey': SUPABASE_PUBLISHABLE_KEY } };
+    if (corpo !== null) { opc.headers['Content-Type'] = 'application/json'; opc.body = JSON.stringify(corpo); }
+    if (signal) opc.signal = signal;
+    return fetch(SUPABASE_URL + '/auth/v1/user', opc).then(function (resp) {
+      if (!resp.ok) throw new Error('http');
+      return resp.json();
+    });
+  }
+
+  // Troca de identidade: nunca herda tema/estado da conta anterior.
+  function definirUsuario(novo) {
+    if (novo === uid) return;
+    uid = novo;
+    gen++;
+    carregado = false; carregando = false;
+    salvar = { desejado: null, emVoo: false, op: 0 };
+    mostrar('');
+    if (uid) aplicar(lerChave(PREFIXO + uid) || 'light');
+    else aplicar(lerChave(CHAVE_LEGADA) || 'light');
     sincronizarBotoes();
   }
 
-  // Antes da primeira pintura: evita o lampejo claro quando a preferência é escura.
-  aplicar(ler());
+  // Leitura verificada no servidor (GET /auth/v1/user com o token da sessão atual), fora do callback do Auth.
+  function carregar(alvo) {
+    var c = cliente();
+    if (!c || carregando || bloqueado()) return;
+    var g = gen, rev = cliqueRev, op = ++leituraSeq;
+    carregando = true;
+    function vivo() { return g === gen && alvo === uid && op === leituraSeq; }
+    function depois() {
+      if (releitura === alvo) { releitura = null; carregado = false; carregar(alvo); }
+    }
+    comPrazo(function (signal, vigente) {
+      return sessaoAtual(vigente).then(function (ses) {
+        if (!ses || ses.user.id !== alvo) throw new Error('sessao');
+        return chamarAuth('GET', ses, null, signal, vigente);
+      });
+    }).then(function (u) {
+      if (!vivo()) return;
+      carregando = false;
+      if (!u || u.id !== alvo) { mostrar('leitura'); return depois(); }
+      carregado = true;
+      var m = u.user_metadata && u.user_metadata.zipos_theme;
+      if (valido(m) && rev === cliqueRev && !salvar.emVoo && salvar.desejado === null) { // escolha explícita mais nova vence
+        aplicar(m);
+        gravarChave(PREFIXO + alvo, m);
+        gravarChave(CHAVE_LEGADA, m);
+        sincronizarBotoes();
+      }
+      depois();
+    }, function () {
+      if (!vivo()) return;
+      carregando = false;
+      mostrar('leitura');
+      depois();
+    });
+  }
+
+  // Gravação sequencial/coalescida: só a última escolha vale; sempre com o token da sessão ATUAL do mesmo usuário.
+  function drenar() {
+    var c = cliente();
+    if (!uid || !c) return;
+    if (salvar.emVoo || salvar.desejado === null) return;
+    var g = gen, u = uid, s = salvar;
+    var v = s.desejado;
+    var op = ++opSeq;
+    s.emVoo = true; s.op = op;
+    function vivo() { return g === gen && u === uid && s === salvar && s.op === op; }
+    if (bloqueado()) { s.emVoo = false; s.desejado = null; mostrar(''); return; }
+    mostrar('salvando');
+    comPrazo(function (signal, vigente) {
+      return sessaoAtual(vigente).then(function (ses) {
+        var cu = (typeof currentUser !== 'undefined') ? currentUser : null;
+        if (!vivo() || !ses || ses.user.id !== u || bloqueado()) throw new Error('sessao');
+        if (!cu || cu.id !== u || cu.active === false) throw new Error('perfil');
+        return chamarAuth('PUT', ses, { data: { zipos_theme: v } }, signal, vigente);
+      });
+    }).then(function (corpo) {
+      if (!vivo()) return;
+      var ok = corpo && corpo.id === u && corpo.user_metadata && corpo.user_metadata.zipos_theme === v;
+      s.emVoo = false;
+      if (!ok) { mostrar('erro'); return; }
+      if (s.desejado === v) { s.desejado = null; mostrar('salvo'); }
+      else if (s.desejado === null) mostrar('');
+      else drenar();                                    // houve escolha mais nova durante o envio
+    }, function () {
+      if (!vivo()) return;
+      s.emVoo = false;
+      mostrar('erro');
+    });
+  }
+
+  function escolher(v) {
+    if (!valido(v)) return;
+    cliqueRev++;
+    aplicar(v);
+    sincronizarBotoes();
+    gravarChave(CHAVE_LEGADA, v);
+    if (!uid) return;                                   // sem conta conhecida: só neste aparelho
+    gravarChave(PREFIXO + uid, v);
+    salvar.desejado = v;
+    drenar();
+  }
+
+  // Antes da primeira pintura: evita o lampejo claro (último tema do aparelho; só para login/pré-pintura).
+  aplicar(lerChave(CHAVE_LEGADA) || 'light');
+
+  // Reação a eventos do Auth — executada FORA do callback do SDK. O evento só avisa; quem manda é a sessão atual:
+  // evento com identidade diferente da sessão vigente (obsoleto) é ignorado, inclusive SIGNED_OUT de conta antiga.
+  function reagir(evento, id) {
+    if (evento === 'PASSWORD_RECOVERY') return;
+    if (!cliente()) return;
+    if (evento === 'USER_UPDATED' && id) releitura = id;
+    var seq = ++evSeq;
+    comPrazo(function (signal, vigente) { return sessaoAtual(vigente); }).then(function (ses) {
+      if (seq !== evSeq) return;                         // chegou evento mais novo: esta resposta é antiga
+      conciliar(evento, id, ses ? ses.user.id : null);
+    }, function () { /* sessão ilegível ou prazo: nada muda */ });
+  }
+  function conciliar(evento, id, real) {
+    if (!real) {                                         // sem sessão válida
+      if (evento === 'SIGNED_OUT' || !id) definirUsuario(null);
+      return;
+    }
+    if (!id || id !== real) return;                      // evento obsoleto: a sessão atual é de outra conta
+    if (bloqueado()) return;
+    definirUsuario(real);
+    var forcar = releitura === real;
+    if (forcar && carregando) return;                    // a leitura em andamento relê ao terminar
+    if (forcar) { releitura = null; carregado = false; }
+    else if (carregado || carregando) return;
+    carregar(real);
+  }
+  var ouvindo = false;
+  function ouvirAuth() {
+    var c = cliente();
+    if (ouvindo || !c || !c.auth || typeof c.auth.onAuthStateChange !== 'function') return;
+    ouvindo = true;
+    c.auth.onAuthStateChange(function (evento, sessao) {
+      // Callback síncrono: só captura e agenda; nenhuma chamada ao Auth aqui dentro.
+      var id = (sessao && sessao.user && sessao.user.id) ? sessao.user.id : null;
+      setTimeout(function () { reagir(evento, id); }, 0);
+    });
+  }
 
   function ligar() {
     var caixa = document.getElementById('zosAjustes');
     if (caixa) {
       caixa.addEventListener('click', function (ev) {
         var alvo = ev.target;
-        while (alvo && alvo !== caixa && !(alvo.getAttribute && alvo.getAttribute('data-tema'))) alvo = alvo.parentNode;
-        if (alvo && alvo !== caixa) escolher(alvo.getAttribute('data-tema'));
+        while (alvo && alvo !== caixa && !(alvo.getAttribute && (alvo.getAttribute('data-tema') || alvo.id === 'zosTemaRetentar'))) alvo = alvo.parentNode;
+        if (!alvo || alvo === caixa) return;
+        if (alvo.id === 'zosTemaRetentar') { if (salvar.desejado !== null) drenar(); return; }
+        escolher(alvo.getAttribute('data-tema'));
       });
     }
     sincronizarBotoes();
+    mostrar(statusTipo);
+    ouvirAuth();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ligar);
   else ligar();
 
-  // Outra aba mudou a preferência.
+  // Outra aba mudou a preferência (chave do mesmo usuário; sem usuário, só a chave do aparelho).
   window.addEventListener('storage', function (ev) {
-    if (ev.key === CHAVE) { aplicar(ev.newValue === 'dark' ? 'dark' : 'light'); sincronizarBotoes(); }
+    var v = ev.newValue;
+    if (!valido(v)) return;
+    if ((uid && ev.key === PREFIXO + uid) || (!uid && ev.key === CHAVE_LEGADA)) {
+      aplicar(v); sincronizarBotoes();
+      // a escolha da outra aba é a mais nova: "Salvo"/erro/pendência locais não descrevem mais o que está na tela
+      cliqueRev++;
+      salvar.desejado = null;
+      mostrar('');
+    }
   });
-  // Impressão do aplicativo sai sempre clara; a escolha do usuário é restaurada depois.
+  // Impressão do aplicativo sai sempre clara; não grava nada nem altera a preferência da conta.
   window.addEventListener('beforeprint', function () {
-    impressaoAnterior = atual();
-    if (impressaoAnterior === 'dark') aplicar('light');
+    imprimindo = true;
+    raiz.setAttribute('data-theme', 'light');
   });
   window.addEventListener('afterprint', function () {
-    if (impressaoAnterior === 'dark') { aplicar('dark'); sincronizarBotoes(); }
-    impressaoAnterior = null;
+    imprimindo = false;
+    raiz.setAttribute('data-theme', temaAtivo);
+    sincronizarBotoes();
   });
 })();
 </script>
@@ -538,8 +756,10 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 <div id="zosAjustes" role="group" aria-label="Ajustes">
 <div class="zos-aj-tit">Ajustes</div>
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
+<style id="zosTemaStatusCss">#zosAjustes .zos-aj-st{margin-top:6px;font-size:11px;color:#98a2b3}#zosAjustes .zos-aj-st:empty{display:none}#zosAjustes .zos-aj-retry{margin-top:4px;border:1px solid #475467;background:transparent;color:#cbd5e1;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}</style>
+<div id="zosTemaStatus" class="zos-aj-st" role="status" aria-live="polite"></div><button type="button" id="zosTemaRetentar" class="zos-aj-retry" style="display:none">Tentar novamente</button>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.0 · Tema Escuro</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.1 · Tema por Usuário</div>
 
 <div id="screenSwitcherSidebar"style="display:none;flex-direction:column;gap:8px;padding-top:16px;margin-top:16px;border-top:1px solid rgba(255,255,255,0.12)">
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>

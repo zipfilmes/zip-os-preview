@@ -211,6 +211,12 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 @media(max-height:620px){#loginScreen .zl-logo{width:150px;height:150px}#loginScreen .zl-card{padding-top:12px}}
 .zos-sb-logo{display:block;width:216px;height:216px;max-width:100%;margin:-8px auto -18px}
 .zos-sb-versao{font-size:12px;color:#cbd5e1;font-weight:700;text-align:center;margin-top:16px;padding:0 4px;overflow-wrap:anywhere}
+/* V1.1.0.2 Histórico do backup: só a exibição é limitada (50 mais recentes) e rolável; cabeçalho fixo. Escopado em #bkHistorico. */
+#bkHistorico .bk-hist-scroll{max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+#bkHistorico .bk-hist-scroll:focus-visible{outline:2px solid #175cd3;outline-offset:2px}
+#bkHistorico .bk-hist-scroll table{min-width:640px}
+#bkHistorico .bk-hist-scroll thead th{position:sticky;top:0;z-index:1;background:var(--panel);box-shadow:0 1px 0 var(--line)}
+#bkHistorico .bk-hist-nota{font-size:12px;margin:0 0 6px}
 </style>
 <style id="zosTemaCss">
 /* ===== V1.1.0.0 TEMA ESCURO — bloco ADICIONAL e escopado (html[data-theme="dark"]). O Tema Claro (padrão) não recebe nenhuma regra daqui,
@@ -759,12 +765,12 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 <style id="zosTemaStatusCss">#zosAjustes .zos-aj-st{margin-top:6px;font-size:11px;color:#98a2b3}#zosAjustes .zos-aj-st:empty{display:none}#zosAjustes .zos-aj-retry{margin-top:4px;border:1px solid #475467;background:transparent;color:#cbd5e1;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}</style>
 <div id="zosTemaStatus" class="zos-aj-st" role="status" aria-live="polite"></div><button type="button" id="zosTemaRetentar" class="zos-aj-retry" style="display:none">Tentar novamente</button>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.1 · Tema por Usuário</div>
 
 <div id="screenSwitcherSidebar"style="display:none;flex-direction:column;gap:8px;padding-top:16px;margin-top:16px;border-top:1px solid rgba(255,255,255,0.12)">
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.2 · Ajustes do Financeiro</div>
 </aside>
 
 <main class="main">
@@ -1563,9 +1569,12 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 <!-- 5. RESULTADO ANUAL -->
 
 <div id="finAnual" class="subsection">
- <div style="margin-bottom:18px">
-  <h2 style="margin:0;font-size:20px">📆 Resultado Anual — Comparativo entre anos</h2>
-  <p class="muted" style="font-size:13px;margin-top:4px">Visão estratégica: compare o desempenho de anos inteiros.</p>
+ <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+  <div>
+   <h2 style="margin:0;font-size:20px">📆 Resultado Anual — Comparativo entre anos</h2>
+   <p class="muted" style="font-size:13px;margin-top:4px">Visão estratégica: compare o desempenho de anos inteiros.</p>
+  </div>
+  <button type="button" id="finAnualAddBtn" class="btn btn2" onclick="abrirModalAnoHist()" disabled style="white-space:nowrap">➕ Adicionar ano anterior</button>
  </div>
  <div class="card" style="padding:0;overflow:hidden">
   <div id="finAnualTabela" style="overflow-x:auto"></div>
@@ -1814,6 +1823,22 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <div style="display:flex;gap:10px;margin-top:18px">
   <button class="btn" style="flex:1;font-size:14px;padding:12px" onclick="salvarMetas()">💾 Salvar metas</button>
   <button class="btn btn2" onclick="closeModals()" style="padding:12px 20px">Fechar</button>
+ </div>
+</div></div>
+
+<div id="modalAnoHist" class="modal"><div class="modalbox" style="max-width:460px">
+ <h2 style="margin-bottom:6px">📆 Adicionar ano anterior</h2>
+ <p class="muted" style="margin-bottom:14px;font-size:13px">Informe os totais do ano. Eles aparecem somente no Resultado Anual.</p>
+ <div style="display:flex;flex-direction:column;gap:10px">
+  <label style="font-size:13px;font-weight:600">Ano<input id="anoHistAno" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Ex.: 2023" style="display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:14px"></label>
+  <label style="font-size:13px;font-weight:600">Faturamento (R$)<input id="anoHistFat" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:14px;text-align:right"></label>
+  <label style="font-size:13px;font-weight:600">Custos (R$)<input id="anoHistCusto" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:14px;text-align:right"></label>
+  <label style="font-size:13px;font-weight:600">Quantidade de projetos<input id="anoHistProj" type="text" inputmode="numeric" autocomplete="off" placeholder="0" style="display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:14px;text-align:right"></label>
+ </div>
+ <div id="modalAnoHistMsg" role="status" aria-live="polite"></div>
+ <div style="display:flex;gap:10px;margin-top:18px">
+  <button type="button" id="anoHistSalvar" class="btn" style="flex:1;font-size:14px;padding:12px" onclick="salvarAnoHist()">💾 Adicionar ano</button>
+  <button type="button" id="anoHistCancelar" class="btn btn2" onclick="closeModals()" style="padding:12px 20px">Cancelar</button>
  </div>
 </div></div>
 
@@ -36640,6 +36665,8 @@ function foProvider(){
     cPerfis: function(){ return supabaseClient.from('usuarios_perfis').select('usuario_id,perfil', { count: 'exact' }).order('usuario_id', { ascending: true }).order('perfil', { ascending: true }).range(0, VG_PAGINA - 1); },
     cFechamentos: function(){ return supabaseClient.rpc('fechamentos_comerciais_ler'); },
     cElegib: function(){ return supabaseClient.rpc('comissao_elegibilidade_ler'); },
+    anosHist: function(){ return supabaseClient.from('financeiro_anos_historicos').select('ano,faturamento,custos,projetos', { count: 'exact' }).order('ano', { ascending: true }).range(0, VG_PAGINA - 1); },
+    anosHistInserir: function(reg){ return supabaseClient.from('financeiro_anos_historicos').insert(reg); },
     metasFin: function(){ return supabaseClient.from('financeiro_metas').select('ano,mes,valor,atualizado_em', { count: 'exact' }).order('ano', { ascending: true }).order('mes', { ascending: true }).range(0, VG_PAGINA - 1); },
     contagem: function(nome){ var t = { notas: 'notas_fiscais', forn: 'projeto_fornecedores', cleads: 'leads', corcs: 'orcamentos', chist: 'historicos' }[nome], q = supabaseClient.from(t).select('id', { count: 'exact', head: true }); if(nome === 'chist') q = q.eq('area', 'comercial').ilike('descricao', '%Fechado%'); return q; }
   };
@@ -38031,22 +38058,169 @@ function foRenderMensal(){
 // ---- Resultado Anual ----
 function foRenderAnual(){
   var tab = foDom('finAnualTabela'); if(!tab) return;
+  foAnoHistBotao();
   if(!foPode()){ tab.textContent = ''; return; }
   if(!foRtPronto()){ var rs = estadoRentabilidadeReal.status; tab.innerHTML = foMsgLinha(rs === 'carregando' || rs === 'idle' ? 'Lendo…' : 'Indisponível: leitura dos projetos não concluída.'); return; }
-  var custosOk = foCaixaPronto(), itens = custosOk ? estadoCaixaReal.itens : [], anos = foAnosResultado(estadoRentabilidadeReal.linhas, itens), dados = {};
-  try { anos.forEach(function(a){ var r = foResultadoAno(estadoRentabilidadeReal.linhas, itens, a), t = { fatC: 0, custoC: 0, nProj: 0, notas: r.notas }; r.meses.forEach(function(m){ t.fatC = foSomaSegura(t.fatC, m.fatC); t.custoC = foSomaSegura(t.custoC, m.custoC); t.nProj += m.nProj; }); dados[a] = t; }); }
+  var custosOk = foCaixaPronto(), itens = custosOk ? estadoCaixaReal.itens : [], hist = foAnosHistEstado(), mapaH = hist.status === 'ok' ? hist.mapa : {};
+  var anos = foAnosComparativo(estadoRentabilidadeReal.linhas, itens, mapaH), dados = {}, naoSomados = [], pendentes = [];
+  try {
+    anos.forEach(function(a){
+      if(mapaH[a] && !custosOk && !foAnoHistAtividadeReal(estadoRentabilidadeReal.linhas, [], a)){ dados[a] = { pend: true, fatC: 0, custoC: 0, nProj: 0 }; pendentes.push(a); return; }   // sem a leitura completa do caixa não dá para afirmar que não há saída real: o histórico não é exibido como confirmado
+      if(mapaH[a] && !foAnoHistAtividadeReal(estadoRentabilidadeReal.linhas, itens, a)){ dados[a] = { fatC: mapaH[a].fatC, custoC: mapaH[a].custoC, nProj: mapaH[a].nProj, hist: true }; return; }   // histórico só onde NÃO há dados reais
+      if(mapaH[a]) naoSomados.push(a);   // coexistem: vale o real; o histórico não é somado nem sobreposto
+      var r = foResultadoAno(estadoRentabilidadeReal.linhas, itens, a), t = { fatC: 0, custoC: 0, nProj: 0, notas: r.notas, hist: false };
+      r.meses.forEach(function(m){ t.fatC = foSomaSegura(t.fatC, m.fatC); t.custoC = foSomaSegura(t.custoC, m.custoC); t.nProj += m.nProj; }); dados[a] = t;
+    });
+  }
   catch(_e){ tab.innerHTML = foMsgLinha('Indisponível: soma acima do limite seguro.'); return; }
   if(!anos.length){ tab.innerHTML = foMsgLinha('Nenhum dado disponível ainda para comparação anual.'); return; }
   var linhas = anos.slice().reverse().map(function(a){
-    var d = dados[a], res = d.fatC - d.custoC, mg = custosOk ? foMargemPct(res, d.fatC) : null, ant = dados[String(+a - 1)];
+    var d = dados[a];
+    if(d.pend) return '<tr style="height:52px"><td style="font-weight:800;font-size:16px">' + a + '<div class="muted" style="font-size:11px;font-weight:400">histórico</div></td><td class="muted" colspan="6">Indisponível: aguardando a conferência completa do caixa.</td></tr>';
+    var okc = d.hist || custosOk, res = d.fatC - d.custoC, mg = okc ? foMargemPct(res, d.fatC) : null, ant = dados[String(+a - 1)]; if(ant && ant.pend) ant = null;
     var vari = '<span class="muted">—</span>';
     if(ant && ant.fatC > 0){ var v = Math.round(((d.fatC - ant.fatC) / ant.fatC) * 100); vari = '<span style="color:' + (v >= 0 ? '#065f46' : '#dc2626') + ';font-weight:700">' + (v >= 0 ? '▲ +' : '▼ ') + v + '%</span>'; }
-    return '<tr style="height:52px"><td style="font-weight:800;font-size:16px">' + a + '</td><td class="money" style="font-weight:700">' + crBRL(d.fatC) + '</td><td class="money" style="color:' + (custosOk ? '#dc2626' : 'var(--muted)') + '">' + (custosOk ? crBRL(d.custoC) : '—') + '</td>'
-      + '<td class="money" style="font-weight:700;color:' + (custosOk ? (res >= 0 ? '#065f46' : '#dc2626') : 'var(--muted)') + '">' + (custosOk ? crBRL(res) : '—') + '</td><td style="font-weight:700;color:' + (mg === null ? 'var(--muted)' : foCorMargem(mg)) + '">' + (mg !== null ? mg + '%' : '—') + '</td><td style="color:var(--muted)">' + d.nProj + '</td><td>' + vari + '</td></tr>';
+    return '<tr style="height:52px"><td style="font-weight:800;font-size:16px">' + a + (d.hist ? '<div class="muted" style="font-size:11px;font-weight:400">histórico</div>' : '') + '</td><td class="money" style="font-weight:700">' + crBRL(d.fatC) + '</td><td class="money" style="color:' + (okc ? '#dc2626' : 'var(--muted)') + '">' + (okc ? crBRL(d.custoC) : '—') + '</td>'
+      + '<td class="money" style="font-weight:700;color:' + (okc ? (res >= 0 ? '#065f46' : '#dc2626') : 'var(--muted)') + '">' + (okc ? crBRL(res) : '—') + '</td><td style="font-weight:700;color:' + (mg === null ? 'var(--muted)' : foCorMargem(mg)) + '">' + (mg !== null ? mg + '%' : '—') + '</td><td style="color:var(--muted)">' + d.nProj + '</td><td>' + vari + '</td></tr>';
   }).join('');
-  var n = dados[anos[anos.length - 1]].notas, nota = foNotaFora(n, custosOk, '');
-  tab.innerHTML = (nota ? '<div style="padding:10px 16px 0">' + nota + '</div>' : '') + '<table class="table" style="width:100%"><tr><th>Ano</th><th class="money">Faturamento</th><th class="money">Custos</th><th class="money">Resultado</th><th>Margem</th><th>Projetos</th><th>% Ano Anterior <span style="color:var(--muted);font-weight:400;font-size:11px">(faturamento)</span></th></tr>' + linhas + '</table>';
+  var n = dados[anos[anos.length - 1]].notas, nota = n ? foNotaFora(n, custosOk, '') : '';
+  var avisos = [];
+  if(hist.status === 'carregando') avisos.push('Lendo os anos anteriores cadastrados…');
+  else if(hist.status === 'invalido') avisos.push('Os anos anteriores cadastrados não puderam ser validados e não estão sendo exibidos.');
+  else if(hist.status !== 'ok') avisos.push('Anos anteriores cadastrados indisponíveis agora: a tabela mostra só os dados reais.');
+  if(pendentes.length) avisos.push('Histórico de ' + pendentes.join(', ') + ' aguardando a leitura completa do caixa para conferir se o ano já tem lançamentos reais.');
+  if(naoSomados.length) avisos.push('Histórico de ' + naoSomados.join(', ') + ' não somado: já há lançamentos reais nesse(s) ano(s), que prevalecem.');
+  var aviso = avisos.length ? '<p class="muted" style="font-size:12px;margin:0 0 14px">' + avisos.map(foEsc).join(' ') + '</p>' : '';
+  tab.innerHTML = ((nota || aviso) ? '<div style="padding:10px 16px 0">' + nota + aviso + '</div>' : '') + '<table class="table" style="width:100%"><tr><th>Ano</th><th class="money">Faturamento</th><th class="money">Custos</th><th class="money">Resultado</th><th>Margem</th><th>Projetos</th><th>% Ano Anterior <span style="color:var(--muted);font-weight:400;font-size:11px">(faturamento)</span></th></tr>' + linhas + '</table>';
 }
+// ---- Anos anteriores: totais históricos cadastrados à mão, usados SOMENTE no comparativo do Resultado Anual (tabela financeiro_anos_historicos) ----
+// Nunca entram em caixa, Resultado Mensal, metas, comissões, projetos ou dashboards: só foRenderAnual lê estadoAnosHist e só FO_ENTRADAS.finAnual carrega.
+var estadoAnosHist = { status: 'idle', seq: 0, uid: '', epoch: -1, mapa: {}, carregadoEm: '' };
+var foAnoModal = { aberto: false, executando: false, op: 0, inst: 0 };   // op: gravação em curso (0 = nenhuma); inst: instância do modal, trocada a cada abertura
+var FO_ANO_HIST_MIN = 1900, FO_ANO_HIST_PROJ_MAX = 100000000, FO_ANO_HIST_MAX_C = 99999999999999;   // numeric(14,2) → até 999.999.999.999,99
+function foAnoHistMax(){ return Number(crHojeSP().slice(0, 4)) - 1; }
+function foAnoHistValorC(txt, rotulo){   // BRL não negativo; zero é aceito aqui (cxParseValor exige > 0)
+  var s = String(txt == null ? '' : txt).trim().replace(/^R\$\s*/, '').replace(/\s/g, '');
+  if(/^0+([.,]0{1,2})?$/.test(s)) return { c: 0 };
+  var p = cxParseValor(s); if(p.erro) return { erro: rotulo + ': ' + p.erro };
+  return { c: p.centavos };
+}
+function foAnoHistParse(tAno, tFat, tCusto, tProj){
+  var max = foAnoHistMax(), a = String(tAno == null ? '' : tAno).trim();
+  if(!/^\d{4}$/.test(a)) return { erro: 'Ano: informe 4 dígitos, de ' + FO_ANO_HIST_MIN + ' a ' + max + '.' };
+  var n = Number(a);
+  if(n > max) return { erro: 'Ano: só anos anteriores ao ano atual (até ' + max + ').' };
+  if(n < FO_ANO_HIST_MIN) return { erro: 'Ano: o mínimo é ' + FO_ANO_HIST_MIN + '.' };
+  var f = foAnoHistValorC(tFat, 'Faturamento'); if(f.erro) return f;
+  var c = foAnoHistValorC(tCusto, 'Custos'); if(c.erro) return c;
+  var pr = String(tProj == null ? '' : tProj).trim();
+  if(!/^\d{1,9}$/.test(pr) || Number(pr) > FO_ANO_HIST_PROJ_MAX) return { erro: 'Projetos: informe um número inteiro de 0 a ' + FO_ANO_HIST_PROJ_MAX + '.' };
+  return { ano: n, fatC: f.c, custoC: c.c, nProj: Number(pr) };
+}
+// Há lançamento real no ano? Projetos (qualquer situação, pela competência) ou saídas de caixa. Usada no bloqueio do cadastro e para decidir quem prevalece na linha do ano.
+function foAnoHistAtividadeReal(linhas, itens, ano){
+  var a = String(ano), achou = false;
+  (linhas || []).forEach(function(l){ var c = foCompetencia(l); if(c && c.slice(0, 4) === a) achou = true; });
+  (itens || []).forEach(function(i){ if(i.tipo === 'saida' && /^\d{4}/.test(i.data) && i.data.slice(0, 4) === a) achou = true; });
+  return achou;
+}
+// Leitura validada estritamente: valor ausente/NaN/negativo, ano fora da faixa ou duplicado invalida o conjunto (nunca vira zero nem "sem histórico").
+function foAnosHistValidar(linhas){
+  var mapa = {}, inval = 0, max = foAnoHistMax();
+  (Array.isArray(linhas) ? linhas : []).forEach(function(x){
+    var fat = x ? voC(x.faturamento) : NaN, cus = x ? voC(x.custos) : NaN;
+    if(!x || typeof x.ano !== 'number' || !Number.isInteger(x.ano) || x.ano < FO_ANO_HIST_MIN || x.ano > max || !isFinite(fat) || fat < 0 || fat > FO_ANO_HIST_MAX_C || !isFinite(cus) || cus < 0 || cus > FO_ANO_HIST_MAX_C
+      || typeof x.projetos !== 'number' || !Number.isInteger(x.projetos) || x.projetos < 0 || x.projetos > FO_ANO_HIST_PROJ_MAX || mapa[String(x.ano)]){ inval++; return; }
+    mapa[String(x.ano)] = { fatC: fat, custoC: cus, nProj: x.projetos };
+  });
+  return { mapa: mapa, invalidos: inval };
+}
+function foAnosHistEstado(){   // o cache só vale para a conta/época atual
+  var e = estadoAnosHist;
+  return (crSessao() && e.uid === String(currentUser.id) && e.epoch === crEpoch()) ? e : { status: 'idle', mapa: {} };
+}
+function foCarregarAnosHist(){
+  if(!foPode()) return Promise.resolve();
+  var e = estadoAnosHist, ctx = foCtxAtual(), sq = ++e.seq;
+  e.status = 'carregando'; e.mapa = {}; e.uid = ctx.uid; e.epoch = ctx.epoch;
+  var ok = function(){ return sq === e.seq && foCtxOk(ctx); };
+  var q; try { q = foProvider().anosHist(); } catch(_e){ e.status = 'erro'; foRenderAnual(); return Promise.resolve(); }
+  return voLerSimples(ok, q, function(x){ return x && x.ano; }).then(function(f){
+    if(f === null || !ok()) return;
+    if(f.st !== 'ok'){ e.status = f.st === 'sem_permissao' ? 'sem_permissao' : 'erro'; foRenderAnual(); return; }
+    var v = foAnosHistValidar(f.linhas);
+    if(v.invalidos){ e.mapa = {}; e.status = 'invalido'; foRenderAnual(); return; }
+    e.mapa = v.mapa; e.status = 'ok'; e.carregadoEm = new Date().toISOString(); foRenderAnual();
+  });
+}
+// Anos do comparativo: os anos reais (foAnosResultado, intacta) + os históricos. Só o Resultado Anual usa esta lista.
+function foAnosComparativo(linhas, itens, mapaHist){
+  var set = {}; foAnosResultado(linhas, itens).forEach(function(a){ set[a] = true; });
+  Object.keys(mapaHist || {}).forEach(function(a){ set[a] = true; });
+  return Object.keys(set).sort(function(a, b){ return Number(a) - Number(b); });
+}
+// Por que NÃO dá para cadastrar agora ('' = pode). Com ano nulo, confere só as pré-condições gerais (estado do botão).
+function foAnoHistBloqueio(ano){
+  if(!foPode()) return 'Sem permissão para cadastrar.';
+  if(!foRtPronto() || !foCaixaPronto()) return 'Aguarde a leitura completa de projetos e caixa para conferir se o ano já tem lançamentos.';
+  var h = foAnosHistEstado();
+  if(h.status !== 'ok') return 'Os anos anteriores já cadastrados ainda não foram lidos. Tente de novo em instantes.';
+  if(ano == null) return '';
+  if(h.mapa[String(ano)]) return 'O ano ' + ano + ' já tem total histórico cadastrado. Não é possível sobrescrever por aqui.';
+  if(foAnoHistAtividadeReal(estadoRentabilidadeReal.linhas, estadoCaixaReal.itens, ano)) return 'O ano ' + ano + ' já tem lançamentos reais (projetos ou saídas de caixa): o histórico não pode ser cadastrado para ele.';
+  return '';
+}
+function foAnoHistBotao(){
+  var b = foDom('finAnualAddBtn'); if(!b) return;
+  b.disabled = !!(foAnoHistBloqueio(null) || foAnoModal.executando);
+}
+function foAnoMsg(t, cor){ var m = foDom('modalAnoHistMsg'); if(!m) return; m.textContent = ''; if(t){ var d = crEl('div', 'font-size:13px;padding:8px 10px;margin-top:10px;color:' + (cor || 'var(--text)'), t); d.className = 'notice'; m.appendChild(d); } }
+function foAnoHistTrava(on){ ['anoHistSalvar', 'anoHistAno', 'anoHistFat', 'anoHistCusto', 'anoHistProj'].forEach(function(id){ var el = foDom(id); if(el) el.disabled = !!on; }); foAnoHistBotao(); }
+function abrirModalAnoHist(){
+  if(!foPode() || foAnoModal.executando || foAnoHistBloqueio(null)) return;
+  ['anoHistAno', 'anoHistFat', 'anoHistCusto', 'anoHistProj'].forEach(function(id){ var el = foDom(id); if(el) el.value = ''; });
+  foAnoMsg('');
+  foAnoModal.aberto = true; foAnoModal.inst++; foAnoHistTrava(false);
+  openModal('modalAnoHist');
+}
+function salvarAnoHist(){
+  if(!foPode() || foAnoModal.executando) return;
+  var val = function(id){ var el = foDom(id); return el ? el.value : ''; };
+  var p = foAnoHistParse(val('anoHistAno'), val('anoHistFat'), val('anoHistCusto'), val('anoHistProj'));
+  if(p.erro){ foAnoMsg(p.erro, 'var(--red)'); return; }
+  var bloq = foAnoHistBloqueio(p.ano); if(bloq){ foAnoMsg(bloq, 'var(--red)'); return; }
+  var ctx = foCtxAtual(), op = ++foAnoModal.op, inst = foAnoModal.inst;
+  var meu = function(){ return foCtxOk(ctx) && foAnoModal.op === op; };   // esta resposta ainda é dona do estado (mesma conta e mesma gravação)
+  var visivel = function(){ return meu() && foAnoModal.aberto && foAnoModal.inst === inst; };   // e o modal que a iniciou continua aberto
+  var libera = function(){ foAnoModal.executando = false; foAnoModal.op = 0; foAnoHistTrava(false); };
+  var reg = { ano: p.ano, faturamento: Number((p.fatC / 100).toFixed(2)), custos: Number((p.custoC / 100).toFixed(2)), projetos: p.nProj };
+  foAnoModal.executando = true; foAnoHistTrava(true); foAnoMsg('Gravando…', 'var(--muted)');
+  var fim = function(texto, cor){ if(!meu()) return; var v = visivel(); libera(); if(v) foAnoMsg(texto, cor); };   // os valores digitados ficam preservados
+  var q; try { q = foProvider().anosHistInserir(reg); } catch(_e){ fim(FO_MSG.generica, 'var(--red)'); return; }
+  crComTempo(q).then(function(r){
+    if(!meu()) return;   // logout/conta/perfil mudou ou outra gravação assumiu: a resposta antiga não toca no estado novo
+    if(!r || r.error){
+      var dup = !!(r && r.error && r.error.code === '23505');
+      fim(dup ? 'O ano ' + p.ano + ' acabou de ser cadastrado por outra pessoa. Nada foi sobrescrito; a lista foi relida.' : (r ? foErroTexto(r.error) : FO_MSG.generica), 'var(--red)');
+      if(dup) foCarregarAnosHist();
+      return;
+    }
+    if(visivel()) foAnoMsg('Conferindo o registro gravado…', 'var(--muted)');
+    return foCarregarAnosHist().then(function(){
+      if(!meu()) return;
+      var h = foAnosHistEstado(), v = visivel();
+      if(h.status === 'ok' && h.mapa[String(p.ano)]){ libera(); if(v){ foAnoModal.aberto = false; closeModals(); } return; }   // modal fechado/trocado: só destrava, nunca fecha o formulário alheio
+      fim('A gravação respondeu, mas a conferência na leitura não foi concluída. Confira o ano ' + p.ano + ' na tabela antes de repetir.', '#b45309');
+    });
+  }, function(){
+    if(!meu()) return;
+    fim('Sem resposta: o ano ' + p.ano + ' pode ter sido gravado. A lista foi relida; confira antes de repetir.', '#b45309');
+    foCarregarAnosHist();
+  });
+}
+var _foCloseModalsAnoHist = closeModals;
+closeModals = function(){ foAnoModal.aberto = false; return _foCloseModalsAnoHist.apply(this, arguments); };
+FO_LIMPEZAS.push(function(){ var e = estadoAnosHist; e.seq++; e.status = 'idle'; e.mapa = {}; e.uid = ''; e.epoch = -1; e.carregadoEm = ''; foAnoModal.aberto = false; foAnoModal.executando = false; foAnoModal.op = 0; foAnoModal.inst++; ['anoHistAno', 'anoHistFat', 'anoHistCusto', 'anoHistProj'].forEach(function(id){ var el = foDom(id); if(el){ el.value = ''; el.disabled = false; } }); var s = foDom('anoHistSalvar'); if(s) s.disabled = false; foAnoMsg(''); var m = foDom('modalAnoHist'); if(m) m.classList.remove('open'); var b = foDom('finAnualAddBtn'); if(b) b.disabled = true; });
 // ---- Definir Metas (financeiro_metas) ----
 function foValorMeta(txt){ var s = String(txt == null ? '' : txt).trim().replace(/^R\$\s*/, '').replace(/\s/g, ''); if(!s) return { vazio: true }; var p = cxParseValor(s); return p.erro ? { erro: p.erro } : { c: p.centavos }; }
 abrirModalMetas = function(){
@@ -38101,7 +38275,7 @@ closeModals = function(){ foMetasModal.aberto = false; return _foCloseModalsMeta
 renderFinMensal = function(){ return FO_ENTRADAS.finMensal(); };
 renderFinAnual = function(){ return FO_ENTRADAS.finAnual(); };
 FO_ENTRADAS.finMensal = function(){ foCarregarNomes(); rtCarregar(); cxCarregar(false); foCarregarMetasFin(); foRenderMensal(); };
-FO_ENTRADAS.finAnual = function(){ rtCarregar(); cxCarregar(false); foRenderAnual(); };
+FO_ENTRADAS.finAnual = function(){ rtCarregar(); cxCarregar(false); foCarregarAnosHist(); foRenderAnual(); };
 FO_REPINTORES.push(foRenderMensal, foRenderAnual);
 FO_LIMPEZAS.push(function(){ var e = estadoMetasFin; e.seq++; e.status = 'idle'; e.mapa = {}; e.uid = ''; foMetasModal.aberto = false; foMetasModal.executando = false; ['finMensalCards', 'finMensalChart', 'finMensalTabela', 'finAnualTabela', 'modalMetasLista'].forEach(function(id){ var el = foDom(id); if(el) el.textContent = ''; }); });
 
@@ -42342,11 +42516,19 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   return '';
  }
 
+ // Ordem cronológica explícita (mais recente primeiro): created_at; data ausente/inválida vale como a mais antiga; empate por id. Não depende da ordem do servidor.
+ var HIST_MAX = 50;
+ function ordenarHistorico(ops){
+  return ops.map(function(op){ var t = Date.parse(op && op.created_at); return { op: op, t: isNaN(t) ? -Infinity : t, id: String((op && op.id) == null ? '' : op.id) }; })
+   .sort(function(a, b){ if(a.t !== b.t) return a.t > b.t ? -1 : 1; return a.id < b.id ? 1 : (a.id > b.id ? -1 : 0); })
+   .map(function(x){ return x.op; });
+ }
  function pintarHistorico(){
   var el = $('bkHistorico'); if(!el) return;
   if(!configurado()){ el.innerHTML = '<div class="muted" style="font-size:13px">Sem histórico: serviço de backup não configurado.</div>'; return; }
   if(!st.ops.length){ el.innerHTML = '<div class="muted" style="font-size:13px">Nenhum backup registrado ainda.</div>'; return; }
-  var rows = st.ops.map(function(op){
+  var ordenadas = ordenarHistorico(st.ops), vis = ordenadas.slice(0, HIST_MAX);
+  var rows = vis.map(function(op){
    var s = ESTADOS[op.status] || ['warn', op.status];
    var baixar = '';
    if(op.kind === 'backup' && op.status === 'succeeded'){
@@ -42358,7 +42540,8 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
     '</td><td><span class="badge ' + s[0] + '">' + esc(s[1]) + '</span></td><td>' + esc(fmtBytes(op.package_bytes)) +
     '</td><td style="font-size:12px">' + resumo(op) + '</td><td>' + baixar + '</td></tr>';
   }).join('');
-  el.innerHTML = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left">' +
+  var nota = ordenadas.length > HIST_MAX ? '<p class="muted bk-hist-nota">Mostrando os ' + HIST_MAX + ' registros mais recentes de ' + ordenadas.length + '.</p>' : '';
+  el.innerHTML = nota + '<div class="bk-hist-scroll" tabindex="0" role="region" aria-label="Histórico de backups"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left">' +
    '<th>Data/hora</th><th>Tipo</th><th>Estado</th><th>Tamanho</th><th>Resultado</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   el.querySelectorAll('button[data-bk-baixar]').forEach(function(b){ b.addEventListener('click', function(){ baixar(b.getAttribute('data-bk-baixar')); }); });
   trava(st.busy);

@@ -779,7 +779,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.4 · Clientes e Atendimento</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.5 · Refinos do Cadastro</div>
 </aside>
 
 <main class="main">
@@ -823,7 +823,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 </div>
 </div>
 <div class="formgrid">
-<label style="grid-column:1/-1">Cliente cadastrado (opcional)<select id="caClienteId" onchange="aoEscolherClienteCriacaoAtendReal()"><option value="">— Cliente novo / digitar manualmente —</option></select><span id="caClienteAjuda" class="muted" style="display:block;font-weight:400;margin-top:4px;font-size:12px"></span></label>
+<label style="grid-column:1/-1;justify-self:start;width:100%;max-width:540px;min-width:0">Cliente cadastrado (opcional)<select id="caClienteId" onchange="aoEscolherClienteCriacaoAtendReal()"><option value="">— Cliente novo / digitar manualmente —</option></select><span id="caClienteAjuda" class="muted" style="display:block;font-weight:400;margin-top:4px;font-size:12px;overflow-wrap:anywhere"></span></label>
 <label>Cliente / Empresa *<input id="caCliente" maxlength="200" autocomplete="off" placeholder="Nome do cliente ou empresa"></label>
 <label>Agência ou Direto *<input id="caAgencia" maxlength="200" autocomplete="off" placeholder="Ex.: nome da agência, ou Direto"></label>
 <label>Título / interesse *<input id="caTitulo" maxlength="200" autocomplete="off" placeholder="Ex.: Vídeo institucional"></label>
@@ -13271,7 +13271,7 @@ function _montarResponsavelCriacaoAtendReal(perfil){
   var nome = _nomeUsuarioAtualCriacaoAtend();
   if(perfil === 'atendimento'){
     sel.textContent = '';
-    _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, 'Você' + (nome ? ' — ' + nome : ''));
+    _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, nome || 'Responsável');
     sel.value = RESP_CRIACAO_EU;
     sel.disabled = true;
     if(ajuda) ajuda.textContent = 'Campo fixo: no perfil Atendimento, o atendimento é sempre seu. '
@@ -13284,7 +13284,7 @@ function _montarResponsavelCriacaoAtendReal(perfil){
   sel.textContent = '';
   _opcaoCriacaoAtend(sel, '', '— Selecionar —');
   if(_usuarioAtualPodeSerResponsavelAtendReal(perfil)){
-    _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, 'Eu' + (nome ? ' — ' + nome : ''));
+    _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, nome || 'Responsável');
   }
   if(elegiveis.status === 'ok'){
     elegiveis.lista.forEach(function(p){ _opcaoCriacaoAtend(sel, PREFIXO_RESP_OUTRO_ATEND + p.id, p.nome); });
@@ -22109,10 +22109,11 @@ function _construirProntuarioClienteReal(cli){
 
   // C3. Endereço
   var cEnd = _zpcCard('📍', 'Endereço');
-  var end = document.createElement('div');
-  end.className = 'zpc-endereco';
-  end.textContent = _txtOuTracoCli(cli.endereco);
-  cEnd._corpo.appendChild(end);
+  var linhaEnd = _zpcLinha(cEnd._corpo, 'Endereço', _txtOuTracoCli(cli.endereco));
+  linhaEnd.firstChild.style.flexShrink = '0';
+  linhaEnd.lastChild.style.minWidth = '0';
+  linhaEnd.lastChild.style.overflowWrap = 'anywhere';
+  linhaEnd.lastChild.style.textAlign = 'right';
   _zpcLinha(cEnd._corpo, 'CEP', _soDigitosCli(cli.cep).length === 8 ? _formatarCepCli(cli.cep) : '—');
   g.appendChild(cEnd);
 

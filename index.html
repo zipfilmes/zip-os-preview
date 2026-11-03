@@ -779,7 +779,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.3 · Visual da Recuperação</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.4 · Clientes e Atendimento</div>
 </aside>
 
 <main class="main">
@@ -823,12 +823,14 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 </div>
 </div>
 <div class="formgrid">
+<label style="grid-column:1/-1">Cliente cadastrado (opcional)<select id="caClienteId" onchange="aoEscolherClienteCriacaoAtendReal()"><option value="">— Cliente novo / digitar manualmente —</option></select><span id="caClienteAjuda" class="muted" style="display:block;font-weight:400;margin-top:4px;font-size:12px"></span></label>
 <label>Cliente / Empresa *<input id="caCliente" maxlength="200" autocomplete="off" placeholder="Nome do cliente ou empresa"></label>
 <label>Agência ou Direto *<input id="caAgencia" maxlength="200" autocomplete="off" placeholder="Ex.: nome da agência, ou Direto"></label>
 <label>Título / interesse *<input id="caTitulo" maxlength="200" autocomplete="off" placeholder="Ex.: Vídeo institucional"></label>
 <label>Responsável *<select id="caResponsavel"></select><span id="caResponsavelAjuda" style="display:block;font-weight:400;margin-top:4px"></span></label>
 <label>Origem *<input id="caOrigem" maxlength="120" autocomplete="off" placeholder="Ex.: Indicação, Instagram, Site"></label>
 <label style="grid-column:1/-1">Observações<textarea id="caObs" maxlength="4000" placeholder="Resumo do primeiro contato, o que o cliente precisa..."></textarea></label>
+<div id="caListasAviso" style="grid-column:1/-1;display:none;font-size:12px;color:#b45309"><span id="caListasAvisoTexto"></span> <button type="button" class="btn btn2" id="caListasRecarregar" style="padding:3px 8px;font-size:11px" onclick="recarregarListasCriacaoAtendReal()">Tentar novamente</button></div>
 </div>
 <div id="caDataContato" class="muted" style="margin-top:8px;font-size:12px"></div>
 <div id="caCodigoEnvio" class="muted" style="display:none;margin-top:2px;font-size:11px"></div>
@@ -2234,7 +2236,8 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <div class="formgrid">
   <label>CNPJ<input id="newClientCNPJ" placeholder="00.000.000/0000-00" oninput="mascararCnpjClienteInput(this)"></label>
   <label>Razão social<input id="newClientRazao" placeholder="Razão social para NF"></label>
-  <label style="grid-column:1/-1">Endereço completo<input id="newClientEndereco" placeholder="Rua, número, bairro, cidade, UF, CEP"></label>
+  <label style="grid-column:1/-1">Endereço completo<input id="newClientEndereco" placeholder="Rua, número, bairro, cidade, UF"></label>
+  <label>CEP<input id="newClientCEP" inputmode="numeric" autocomplete="off" placeholder="00000-000" oninput="mascararCepClienteInput(this)"></label>
   <label>E-mail para NF<input id="newClientEmailNF" placeholder="financeiro@cliente.com.br"></label>
   <label>Telefone financeiro<input id="newClientTelFin" placeholder="(35) 99999-0000" oninput="mascararTelefoneClienteInput(this)"></label>
  </div>
@@ -12838,9 +12841,9 @@ window.__zipComercialRealAtivo = function(){
 // ============================================================================
 var PERFIS_CRIACAO_ATENDIMENTO_REAL = ['socio','admin','atendimento'];
 // Allowlist EXATA das chaves que podem ir no INSERT. "os" fica de fora.
-var CHAVES_INSERT_LEAD_REAL = ['id','cliente_nome','agencia','titulo','atendimento_id',
+var CHAVES_INSERT_LEAD_REAL = ['id','cliente_nome','cliente_id','agencia','titulo','atendimento_id',
   'origem','observacoes','temperatura','data_contato','etapa'];
-var COLUNAS_LEAD_CRIADO_REAL = 'id,os,cliente_nome,agencia,titulo,atendimento_id,origem,observacoes,temperatura,valor_estimado,data_contato,etapa,motivo_perda';
+var COLUNAS_LEAD_CRIADO_REAL = 'id,os,cliente_nome,cliente_id,agencia,titulo,atendimento_id,origem,observacoes,temperatura,valor_estimado,data_contato,etapa,motivo_perda';
 // Decisão desta etapa: a criação grava temperatura FIXA "morno", sem seletor
 // (a edição da temperatura fica para o C29b). O leitor do C28 também exibe
 // "morno" para nulo; gravando explicitamente, banco e tela coincidem.
@@ -12965,8 +12968,14 @@ function _dataCivilSaoPauloISO(agora){
     return y + '-' + m + '-' + d;
   } catch(_e){ return ''; }
 }
-function validarCamposCriacaoAtendimentoReal(c, perfil){
+// listas (opcional): { clientesPorId:{id:{id,nome}}, elegiveisPorId:{id:{id,nome}} }, montadas SÓ
+// a partir de respostas validadas do banco. O que o DOM informa (cliente_id / responsavel)
+// é apenas uma indicação: só vale se existir nessas listas.
+var UUID_GERAL_ATEND_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+var PREFIXO_RESP_OUTRO_ATEND = 'u:';
+function validarCamposCriacaoAtendimentoReal(c, perfil, listas){
   c = c || {};
+  listas = listas || {};
   var erros = [], v = {};
   function texto(chave, rotulo, obrigatorio){
     var s = String(c[chave] === null || c[chave] === undefined ? '' : c[chave]).trim();
@@ -12979,12 +12988,42 @@ function validarCamposCriacaoAtendimentoReal(c, perfil){
   texto('agencia', 'Agência ou Direto', true);          // obrigatórios como no fluxo de criação anterior
   texto('origem', 'Origem', true);
   texto('observacoes', 'Observações', false);
+  // Cliente cadastrado (opcional). Vinculado: o nome gravado é o CANÔNICO da lista
+  // validada, nunca o texto do campo; id fora da lista = recusado (nunca vincula
+  // seleção obsoleta nem nome antigo).
+  v.cliente_id = null;
+  var cid = String(c.cliente_id === null || c.cliente_id === undefined ? '' : c.cliente_id).trim().toLowerCase();
+  if(cid !== ''){
+    var cli = (listas.clientesPorId && Object.prototype.hasOwnProperty.call(listas.clientesPorId, cid)) ? listas.clientesPorId[cid] : null;
+    if(!UUID_GERAL_ATEND_RE.test(cid) || !cli || !String(cli.nome || '').trim()){
+      erros.push('O cliente selecionado não está mais disponível. Escolha outro cliente ou volte para cliente novo / manual.');
+    } else if(String(cli.nome).trim().length > LIMITES_CAMPOS_ATEND_REAL.cliente_nome){
+      erros.push('Cliente / Empresa: no máximo ' + LIMITES_CAMPOS_ATEND_REAL.cliente_nome + ' caracteres.');
+    } else {
+      v.cliente_id = cid;
+      v.cliente_nome = String(cli.nome).trim();
+    }
+  }
+  v.responsavel_id = null;
   if(perfil === 'atendimento'){
     v.responsavel = RESP_CRIACAO_EU;             // fixo: o próprio usuário, qualquer que seja o select
   } else {
     var r = String(c.responsavel || '');
-    if(r !== RESP_CRIACAO_EU && r !== RESP_CRIACAO_NENHUM) erros.push('Escolha o responsável.');
-    else if(r === RESP_CRIACAO_EU && !_usuarioAtualPodeSerResponsavelAtendReal(perfil)) erros.push('Responsável inválido.');
+    if(r === RESP_CRIACAO_EU){
+      if(!_usuarioAtualPodeSerResponsavelAtendReal(perfil)) erros.push('Responsável inválido.');
+    } else if(r === RESP_CRIACAO_NENHUM){
+      // sem responsável: atribuir depois
+    } else if(r.indexOf(PREFIXO_RESP_OUTRO_ATEND) === 0){
+      // Outra pessoa: só se constar entre os elegíveis lidos do banco (ativo, perfil
+      // atendimento/socio/admin, conta real). Nunca confia no que o select afirma.
+      var uid = r.slice(PREFIXO_RESP_OUTRO_ATEND.length).toLowerCase();
+      var el = (listas.elegiveisPorId && Object.prototype.hasOwnProperty.call(listas.elegiveisPorId, uid)) ? listas.elegiveisPorId[uid] : null;
+      if(!UUID_GERAL_ATEND_RE.test(uid) || !el) erros.push('O responsável escolhido não está mais disponível. Escolha novamente.');
+      else if(currentUser && String(currentUser.id).toLowerCase() === uid) erros.push('Responsável inválido.');
+      else v.responsavel_id = uid;
+    } else {
+      erros.push('Escolha o responsável.');
+    }
     v.responsavel = r;
   }
   return { erros:erros, valores:v };
@@ -12996,6 +13035,10 @@ function montarPayloadCriacaoAtendimentoReal(id, valores, atendimentoId, dataCon
   var p = {};
   p.id = String(id);
   p.cliente_nome = valores.cliente_nome;
+  if(valores.cliente_id){                      // só quando há cliente cadastrado vinculado; manual não envia a chave
+    if(!UUID_GERAL_ATEND_RE.test(String(valores.cliente_id))) return null;
+    p.cliente_id = String(valores.cliente_id);
+  }
   p.titulo = valores.titulo;
   p.atendimento_id = atendimentoId;            // uuid ou null, sempre explícito
   p.etapa = 'atendimento';
@@ -13048,7 +13091,7 @@ function classificarVerificacaoAtendimentoReal(res, id){
 function _mesmoConteudoCriacaoAtendReal(p, row){
   if(!p || !row) return true;
   function t(x){ return (x === null || x === undefined) ? '' : String(x); }
-  var campos = ['cliente_nome','agencia','titulo','origem','observacoes','temperatura','data_contato','etapa'];
+  var campos = ['cliente_nome','cliente_id','agencia','titulo','origem','observacoes','temperatura','data_contato','etapa'];
   for(var i=0;i<campos.length;i++){ if(t(p[campos[i]]) !== t(row[campos[i]])) return false; }
   return t(p.atendimento_id) === t(row.atendimento_id);
 }
@@ -13170,7 +13213,7 @@ function _ctxCriacaoAtendRealValido(ctx){
 }
 
 // ---- DOM do formulário (somente textContent / createElement) -----------------
-var IDS_CAMPOS_CRIACAO_ATEND_REAL = ['caCliente','caAgencia','caTitulo','caResponsavel','caOrigem','caObs'];
+var IDS_CAMPOS_CRIACAO_ATEND_REAL = ['caClienteId','caCliente','caAgencia','caTitulo','caResponsavel','caOrigem','caObs'];
 function _elCriacaoAtend(id){ return document.getElementById(id); }
 function _valorCampoCriacaoAtend(id){
   var e = _elCriacaoAtend(id);
@@ -13178,6 +13221,7 @@ function _valorCampoCriacaoAtend(id){
 }
 function _lerCamposCriacaoAtendReal(){
   return {
+    cliente_id:   listasCriacaoAtendReal.clienteIdSelecionado,   // estado interno, não o valor do select
     cliente_nome: _valorCampoCriacaoAtend('caCliente'),
     agencia:      _valorCampoCriacaoAtend('caAgencia'),
     titulo:       _valorCampoCriacaoAtend('caTitulo'),
@@ -13187,6 +13231,7 @@ function _lerCamposCriacaoAtendReal(){
   };
 }
 function _limparCamposCriacaoAtendReal(){
+  _resetarListasCriacaoAtendReal();
   IDS_CAMPOS_CRIACAO_ATEND_REAL.forEach(function(id){
     var e = _elCriacaoAtend(id);
     if(!e) return;
@@ -13214,32 +13259,303 @@ function _opcaoCriacaoAtend(sel, valor, texto){
   sel.appendChild(o);
   return o;
 }
+// Nome COMPLETO (usuarios.nome_exibicao) do usuário da sessão; nunca o nome curto.
 function _nomeUsuarioAtualCriacaoAtend(){
   if(!currentUser) return '';
-  return String(currentUser.shortName || currentUser.operationalName || currentUser.displayName || '').trim();
+  return String(currentUser.displayName || currentUser.operationalName || currentUser.shortName || '').trim();
 }
 function _montarResponsavelCriacaoAtendReal(perfil){
   var sel = _elCriacaoAtend('caResponsavel');
   var ajuda = _elCriacaoAtend('caResponsavelAjuda');
   if(!sel) return;
-  sel.textContent = '';
   var nome = _nomeUsuarioAtualCriacaoAtend();
   if(perfil === 'atendimento'){
+    sel.textContent = '';
     _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, 'Você' + (nome ? ' — ' + nome : ''));
     sel.value = RESP_CRIACAO_EU;
     sel.disabled = true;
-    if(ajuda) ajuda.textContent = 'No perfil Atendimento, o responsável é sempre você.';
+    if(ajuda) ajuda.textContent = 'Campo fixo: no perfil Atendimento, o atendimento é sempre seu. '
+      + 'Para atribuir a outra pessoa, peça a um Sócio ou Admin.';
     return;
   }
+  // Sócio/Admin: reconstruível quando a lista de elegíveis chega; preserva a escolha válida.
+  var anterior = String(sel.value || '');
+  var elegiveis = listasCriacaoAtendReal.elegiveis;
+  sel.textContent = '';
   _opcaoCriacaoAtend(sel, '', '— Selecionar —');
   if(_usuarioAtualPodeSerResponsavelAtendReal(perfil)){
     _opcaoCriacaoAtend(sel, RESP_CRIACAO_EU, 'Eu' + (nome ? ' — ' + nome : ''));
   }
+  if(elegiveis.status === 'ok'){
+    elegiveis.lista.forEach(function(p){ _opcaoCriacaoAtend(sel, PREFIXO_RESP_OUTRO_ATEND + p.id, p.nome); });
+  }
   _opcaoCriacaoAtend(sel, RESP_CRIACAO_NENHUM, 'Sem responsável — atribuir depois');
-  sel.value = '';
-  sel.disabled = false;
-  if(ajuda) ajuda.textContent = 'Atribuir a outra pessoa da equipe ainda não está disponível nesta etapa. '
-    + 'Um atendimento sem responsável precisa ser atribuído por Sócio ou Admin antes de ser orçado.';
+  var existe = false;
+  for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value === anterior) existe = true; }
+  sel.value = existe ? anterior : '';
+  if(ajuda){
+    var base = 'Um atendimento sem responsável precisa ser atribuído por Sócio ou Admin antes de ser orçado.';
+    if(elegiveis.status === 'carregando') ajuda.textContent = 'Carregando a equipe… ' + base;
+    else if(elegiveis.status === 'erro') ajuda.textContent = 'Não foi possível carregar a equipe; só “Eu” e “Sem responsável” estão disponíveis agora. ' + base;
+    else ajuda.textContent = 'Aparecem usuários ativos com perfil Atendimento, Sócio ou Admin. ' + base;
+  }
+}
+
+// ---- Listas do formulário: clientes cadastrados e equipe elegível ----------------
+// Tudo vem de respostas VALIDADAS do banco (RLS vigente de clientes, usuarios e
+// usuarios_perfis; nada de Auth.users, e-mail ou metadados). O valor do select é só
+// uma indicação: o envio reconfere contra estas listas (validarCamposCriacaoAtendimentoReal).
+var TAM_PAGINA_CLIENTES_CRIACAO_ATEND = 500;
+var MAX_PAGINAS_CLIENTES_CRIACAO_ATEND = 40;
+var TEMPO_LIMITE_LISTAS_CRIACAO_ATEND_MS = 20000;
+var PERFIS_ELEGIVEIS_RESPONSAVEL_ATEND = ['atendimento','socio','admin'];
+var listasCriacaoAtendReal = {
+  gen: 0,                                  // muda a cada abertura/fechamento: descarta respostas tardias
+  clientes: { status:'ocioso', lista:[], porId:{} },     // ocioso | carregando | ok | vazio | erro
+  elegiveis: { status:'ocioso', lista:[], porId:{} },
+  clienteIdSelecionado: ''
+};
+function _temChaveAtend(obj, chave){ return Object.prototype.hasOwnProperty.call(obj, chave); }
+// Conta fictícia de teste: username terminado em _teste. Sem username = não elegível.
+function usernameContaTesteAtend(username){
+  var u = String(username === null || username === undefined ? '' : username).trim().toLowerCase();
+  return u === '' || u.slice(-6) === '_teste';
+}
+// Clientes ATIVOS, com id UUID e nome; sem duplicar id.
+function montarListaClientesCriacaoAtendReal(linhas){
+  var lista = [], porId = {};
+  (Array.isArray(linhas) ? linhas : []).forEach(function(c){
+    if(!c || c.ativo !== true) return;
+    var id = String(c.id === null || c.id === undefined ? '' : c.id).toLowerCase();
+    var nome = String(c.nome === null || c.nome === undefined ? '' : c.nome).trim();
+    if(!UUID_GERAL_ATEND_RE.test(id) || !nome || _temChaveAtend(porId, id)) return;
+    var item = { id:id, nome:nome, cidade:String(c.cidade === null || c.cidade === undefined ? '' : c.cidade).trim() };
+    porId[id] = item; lista.push(item);
+  });
+  return { lista:lista, porId:porId };
+}
+// Elegíveis a receber o atendimento: usuário ATIVO e REAL (não _teste) com ao menos um
+// perfil atendimento/socio/admin, pelo nome COMPLETO. O próprio usuário fica de fora
+// (já existe a opção "Eu"). Falha fechada: o que não consta não é oferecido.
+function montarElegiveisResponsavelAtendReal(usuarios, perfis, uidAtual){
+  var comPerfil = {};
+  (Array.isArray(perfis) ? perfis : []).forEach(function(p){
+    if(p && PERFIS_ELEGIVEIS_RESPONSAVEL_ATEND.indexOf(p.perfil) >= 0) comPerfil[String(p.usuario_id).toLowerCase()] = true;
+  });
+  var eu = String(uidAtual === null || uidAtual === undefined ? '' : uidAtual).toLowerCase();
+  var lista = [], porId = {};
+  (Array.isArray(usuarios) ? usuarios : []).forEach(function(u){
+    if(!u || u.ativo !== true) return;
+    var id = String(u.id === null || u.id === undefined ? '' : u.id).toLowerCase();
+    var nome = String(u.nome_exibicao === null || u.nome_exibicao === undefined ? '' : u.nome_exibicao).trim();
+    if(!UUID_GERAL_ATEND_RE.test(id) || id === eu || !nome || _temChaveAtend(porId, id)) return;
+    if(usernameContaTesteAtend(u.username)) return;
+    if(comPerfil[id] !== true) return;
+    var item = { id:id, nome:nome };
+    porId[id] = item; lista.push(item);
+  });
+  lista.sort(function(a, b){ return a.nome.localeCompare(b.nome, 'pt-BR') || (a.id < b.id ? -1 : 1); });
+  return { lista:lista, porId:porId };
+}
+function _listasValidadasCriacaoAtendReal(){
+  var L = listasCriacaoAtendReal;
+  return {
+    clientesPorId: L.clientes.status === 'ok' ? L.clientes.porId : {},
+    elegiveisPorId: L.elegiveis.status === 'ok' ? L.elegiveis.porId : {}
+  };
+}
+function _resetarListasCriacaoAtendReal(){
+  var L = listasCriacaoAtendReal;
+  L.gen++;
+  L.clientes = { status:'ocioso', lista:[], porId:{} };
+  L.elegiveis = { status:'ocioso', lista:[], porId:{} };
+  L.clienteIdSelecionado = '';
+  var sel = _elCriacaoAtend('caClienteId');
+  if(sel){
+    sel.textContent = '';
+    _opcaoCriacaoAtend(sel, '', '— Cliente novo / digitar manualmente —');
+    sel.value = '';
+  }
+  var inp = _elCriacaoAtend('caCliente'); if(inp) inp.readOnly = false;
+  var aj = _elCriacaoAtend('caClienteAjuda'); if(aj) aj.textContent = '';
+  _setDisplayCom('caListasAviso', 'none');
+}
+function _ctxListasCriacaoAtendValido(ctx){
+  var s = estadoCriacaoAtendimentoReal;
+  if(!ctx || ctx.gen !== listasCriacaoAtendReal.gen) return false;
+  if(s.fase === 'fechado' || s.visita !== ctx.visita) return false;
+  if(!contextoAindaValido(ctx.epoch)) return false;
+  if(!currentUser || currentUser.id !== ctx.ownerUserId) return false;
+  if(_perfilAtivoComercial() !== ctx.perfil) return false;
+  if(estadoComercialLeadsReais.sourceMode !== 'real') return false;
+  return _comercialSecaoAtiva();
+}
+// Uma leitura com prazo e cancelamento; entrega (ok, data, count). Nunca lança.
+function _lerPaginaCriacaoAtendReal(fabricar, cb){
+  var feito = false, timer = null, ctrl = null, q = null;
+  function fim(ok, data, count){
+    if(feito) return;
+    feito = true;
+    if(timer !== null){ try { clearTimeout(timer); } catch(_e){} }
+    cb(ok, data, count);
+  }
+  try {
+    if(typeof AbortController === 'function') ctrl = new AbortController();
+    q = _comSinalProntReal(fabricar(), ctrl ? ctrl.signal : null);
+  } catch(_e){ fim(false, null, null); return; }
+  timer = setTimeout(function(){ if(ctrl){ try { ctrl.abort(); } catch(_e){} } fim(false, null, null); }, TEMPO_LIMITE_LISTAS_CRIACAO_ATEND_MS);
+  try {
+    q.then(function(r){
+      fim(!!(r && !r.error), r ? r.data : null, (r && typeof r.count === 'number') ? r.count : null);
+    }, function(){ fim(false, null, null); });
+  } catch(_e){ fim(false, null, null); }
+}
+function _novoCtxListasCriacaoAtendReal(){
+  var s = estadoCriacaoAtendimentoReal;
+  return { gen:listasCriacaoAtendReal.gen, visita:s.visita, ownerUserId:s.ownerUserId, epoch:s.epoch, perfil:s.perfil };
+}
+function _carregarListasCriacaoAtendReal(){
+  var ctx = _novoCtxListasCriacaoAtendReal();
+  _carregarClientesCriacaoAtendReal(ctx);
+  if(ctx.perfil !== 'atendimento') _carregarElegiveisCriacaoAtendReal(ctx);
+}
+function recarregarListasCriacaoAtendReal(){
+  var s = estadoCriacaoAtendimentoReal, L = listasCriacaoAtendReal;
+  if(s.fase === 'fechado') return;
+  var ctx = _novoCtxListasCriacaoAtendReal();
+  if(!_ctxListasCriacaoAtendValido(ctx)) return;
+  if(L.clientes.status === 'erro') _carregarClientesCriacaoAtendReal(ctx);
+  if(ctx.perfil !== 'atendimento' && L.elegiveis.status === 'erro') _carregarElegiveisCriacaoAtendReal(ctx);
+}
+// Leitura COMPLETA e paginada (range) com prova de completude, reaproveitada por clientes,
+// usuarios e usuarios_perfis. A consulta (fabricar) deve pedir count exato e ordem estável.
+// Falha (nunca lista parcial) se: não houver count; o total mudar entre páginas; uma linha
+// se repetir (chaveDe); vierem linhas além do total; uma página vier vazia antes do total;
+// ou passar do limite de páginas. Só entrega (ok, linhas) quando as linhas ÚNICAS = total.
+function _lerTodasPaginasCriacaoAtendReal(fabricar, chaveDe, ctxOk, cb){
+  var acumulado = [], vistos = {}, total = null, pagina = 0;
+  function falhar(){ cb(false, null); }
+  function proxima(){
+    if(pagina >= MAX_PAGINAS_CLIENTES_CRIACAO_ATEND){ falhar(); return; }
+    var de = pagina * TAM_PAGINA_CLIENTES_CRIACAO_ATEND, ate = de + TAM_PAGINA_CLIENTES_CRIACAO_ATEND - 1;
+    _lerPaginaCriacaoAtendReal(function(){ return fabricar(de, ate); }, function(ok, data, count){
+      if(!ctxOk()) return;                                   // contexto trocado: descarta sem responder
+      if(!ok || !Array.isArray(data) || count === null){ falhar(); return; }
+      if(total === null) total = count;
+      else if(count !== total){ falhar(); return; }          // total mutante entre páginas
+      for(var i=0;i<data.length;i++){
+        var chave = String(chaveDe(data[i]));
+        if(chave === '' || Object.prototype.hasOwnProperty.call(vistos, chave)){ falhar(); return; }   // repetida
+        vistos[chave] = true;
+        acumulado.push(data[i]);
+      }
+      if(acumulado.length > total){ falhar(); return; }
+      if(acumulado.length === total){ cb(true, acumulado); return; }   // únicas == total conhecido
+      if(data.length === 0){ falhar(); return; }
+      pagina++; proxima();
+    });
+  }
+  proxima();
+}
+function _carregarClientesCriacaoAtendReal(ctx){
+  var L = listasCriacaoAtendReal.clientes;
+  L.status = 'carregando'; L.lista = []; L.porId = {};
+  _atualizarUIListasCriacaoAtendReal();
+  _lerTodasPaginasCriacaoAtendReal(function(de, ate){
+    return supabaseClient.from('clientes').select('id,nome,cidade,ativo', { count:'exact' }).eq('ativo', true)
+      .order('nome', { ascending:true }).order('id', { ascending:true }).range(de, ate);
+  }, function(r){ return String(r && r.id !== null && r.id !== undefined ? r.id : '').toLowerCase(); },
+  function(){ return _ctxListasCriacaoAtendValido(ctx); },
+  function(ok, linhas){
+    if(!_ctxListasCriacaoAtendValido(ctx)) return;
+    if(!ok){ L.status = 'erro'; L.lista = []; L.porId = {}; _atualizarUIListasCriacaoAtendReal(); return; }
+    var m = montarListaClientesCriacaoAtendReal(linhas);
+    L.lista = m.lista; L.porId = m.porId; L.status = m.lista.length ? 'ok' : 'vazio';
+    _atualizarUIListasCriacaoAtendReal();
+  });
+}
+function _carregarElegiveisCriacaoAtendReal(ctx){
+  var L = listasCriacaoAtendReal.elegiveis;
+  L.status = 'carregando'; L.lista = []; L.porId = {};
+  _atualizarUIListasCriacaoAtendReal();
+  var usuarios = null, perfis = null, falhou = false;
+  function juntar(){
+    if(!_ctxListasCriacaoAtendValido(ctx)) return;
+    if(falhou){ L.status = 'erro'; L.lista = []; L.porId = {}; _atualizarUIListasCriacaoAtendReal(); return; }
+    if(usuarios === null || perfis === null) return;
+    var m = montarElegiveisResponsavelAtendReal(usuarios, perfis, ctx.ownerUserId);
+    L.lista = m.lista; L.porId = m.porId; L.status = 'ok';
+    _atualizarUIListasCriacaoAtendReal();
+  }
+  var ctxOk = function(){ return _ctxListasCriacaoAtendValido(ctx); };
+  _lerTodasPaginasCriacaoAtendReal(function(de, ate){
+    return supabaseClient.from('usuarios').select('id,username,nome_exibicao,ativo', { count:'exact' }).eq('ativo', true)
+      .order('id', { ascending:true }).range(de, ate);
+  }, function(r){ return String(r && r.id !== null && r.id !== undefined ? r.id : '').toLowerCase(); }, ctxOk,
+  function(ok, linhas){ if(!ok) falhou = true; else usuarios = linhas; juntar(); });
+  _lerTodasPaginasCriacaoAtendReal(function(de, ate){
+    return supabaseClient.from('usuarios_perfis').select('usuario_id,perfil', { count:'exact' })
+      .order('usuario_id', { ascending:true }).order('perfil', { ascending:true }).range(de, ate);
+  }, function(r){ return r ? String(r.usuario_id).toLowerCase() + '|' + String(r.perfil) : ''; }, ctxOk,
+  function(ok, linhas){ if(!ok) falhou = true; else perfis = linhas; juntar(); });
+}
+function _textoOpcaoClienteCriacaoAtend(c){ return c.cidade ? (c.nome + ' (' + c.cidade + ')') : c.nome; }
+function _atualizarUIListasCriacaoAtendReal(){
+  var s = estadoCriacaoAtendimentoReal, L = listasCriacaoAtendReal;
+  if(s.fase === 'fechado') return;
+  var sel = _elCriacaoAtend('caClienteId'), inp = _elCriacaoAtend('caCliente');
+  var aj = _elCriacaoAtend('caClienteAjuda');
+  if(sel){
+    // Seleção que não consta mais na lista nova é desvinculada (nunca fica nome/id antigo).
+    if(L.clienteIdSelecionado !== '' && !(L.clientes.status === 'ok' && _temChaveAtend(L.clientes.porId, L.clienteIdSelecionado))){
+      L.clienteIdSelecionado = '';
+      if(inp){ inp.value = ''; inp.readOnly = false; }
+    }
+    sel.textContent = '';
+    _opcaoCriacaoAtend(sel, '', '— Cliente novo / digitar manualmente —');
+    if(L.clientes.status === 'ok'){
+      L.clientes.lista.forEach(function(c){ _opcaoCriacaoAtend(sel, c.id, _textoOpcaoClienteCriacaoAtend(c)); });
+    }
+    sel.value = L.clienteIdSelecionado;
+  }
+  if(aj){
+    var st = L.clientes.status;
+    if(L.clienteIdSelecionado !== '') aj.textContent = 'Vinculado ao cadastro: o nome vem do cadastro. Para digitar outro nome, volte para “Cliente novo / digitar manualmente”.';
+    else if(st === 'carregando') aj.textContent = 'Carregando clientes cadastrados…';
+    else if(st === 'erro') aj.textContent = 'Não foi possível carregar os clientes cadastrados. Você pode digitar o cliente manualmente.';
+    else if(st === 'vazio') aj.textContent = 'Nenhum cliente ativo cadastrado. Digite o cliente manualmente.';
+    else aj.textContent = 'Opcional: escolha um cliente já cadastrado ou deixe como cliente novo e digite o nome.';
+  }
+  if(s.perfil !== 'atendimento') _montarResponsavelCriacaoAtendReal(s.perfil);
+  var falhas = [];
+  if(L.clientes.status === 'erro') falhas.push('os clientes cadastrados');
+  if(s.perfil !== 'atendimento' && L.elegiveis.status === 'erro') falhas.push('a equipe');
+  var avisoTexto = _elCriacaoAtend('caListasAvisoTexto');
+  if(falhas.length){
+    if(avisoTexto) avisoTexto.textContent = 'Não foi possível carregar ' + falhas.join(' e ') + '. O restante do formulário continua disponível.';
+    _setDisplayCom('caListasAviso', '');
+  } else {
+    _setDisplayCom('caListasAviso', 'none');
+  }
+  _aplicarFaseCriacaoAtendReal();
+}
+function aoEscolherClienteCriacaoAtendReal(){
+  var s = estadoCriacaoAtendimentoReal, L = listasCriacaoAtendReal;
+  var sel = _elCriacaoAtend('caClienteId'), inp = _elCriacaoAtend('caCliente');
+  if(!sel || !inp || s.fase !== 'editando'){ _atualizarUIListasCriacaoAtendReal(); return; }
+  var id = String(sel.value || '').toLowerCase();
+  var cli = (id !== '' && L.clientes.status === 'ok' && _temChaveAtend(L.clientes.porId, id)) ? L.clientes.porId[id] : null;
+  if(cli){
+    L.clienteIdSelecionado = id;
+    inp.value = cli.nome;                      // nome canônico do cadastro
+    inp.readOnly = true;
+  } else {
+    // Voltou para manual (ou a opção não consta na lista validada): nenhum vínculo restante.
+    if(L.clienteIdSelecionado !== '') inp.value = '';
+    L.clienteIdSelecionado = '';
+    inp.readOnly = false;
+  }
+  _atualizarUIListasCriacaoAtendReal();
 }
 function _mostrarDataContatoCriacaoAtendReal(){
   var dt = _elCriacaoAtend('caDataContato'); if(!dt) return;
@@ -13381,9 +13697,11 @@ function abrirCriacaoAtendimentoReal(){
     // Envio PRÓPRIO sem desfecho: confere pelo MESMO id antes de liberar o
     // formulário, e o reutiliza se não tiver sido gravado.
     _verificarCriacaoAtendRealPorId('reabertura', id);
+    _carregarListasCriacaoAtendReal();
     return;
   }
   _proximaReconciliacaoAtendReal();
+  _carregarListasCriacaoAtendReal();           // clientes cadastrados e equipe elegível (a fase já foi definida)
 }
 // Confere, um a um, os pendentes de OUTRAS abas/sessões deste usuário, antes
 // de liberar o formulário. Gravado -> avisa e descarta a chave DAQUELE envio.
@@ -13486,7 +13804,7 @@ function enviarCriacaoAtendimentoReal(){
   var s = estadoCriacaoAtendimentoReal;
   if(s.fase !== 'editando') return;                      // bloqueia duplo clique e reenvio em andamento
   if(!_ctxCriacaoAtendRealValido(_novoCtxCriacaoAtendReal())) return;
-  var val = validarCamposCriacaoAtendimentoReal(_lerCamposCriacaoAtendReal(), s.perfil);
+  var val = validarCamposCriacaoAtendimentoReal(_lerCamposCriacaoAtendReal(), s.perfil, _listasValidadasCriacaoAtendReal());
   if(val.erros.length){ _mensagemCriacaoAtendReal('erro', val.erros.join(' ')); return; }
   s.fase = 'enviando';
   s.tentativa++;
@@ -13499,7 +13817,7 @@ function enviarCriacaoAtendimentoReal(){
     var dataContato = _dataCivilSaoPauloISO(new Date());
     if(!dataContato){ _voltarParaEdicaoCriacaoAtendReal(MSG_CRIACAO_ATEND.semData); return; }
     var atendimentoId = (ctx.perfil === 'atendimento') ? uid
-                      : (val.valores.responsavel === RESP_CRIACAO_EU ? uid : null);
+                      : (val.valores.responsavel === RESP_CRIACAO_EU ? uid : (val.valores.responsavel_id || null));
     var payload = montarPayloadCriacaoAtendimentoReal(ctx.id, val.valores, atendimentoId, dataContato);
     if(!payload){ _voltarParaEdicaoCriacaoAtendReal(MSG_CRIACAO_ATEND.generica); return; }
     s.ultimoPayload = payload;
@@ -21080,6 +21398,7 @@ function adaptarClienteSupabaseParaFrontend(row){
     cnpj: _txtCli(row.cnpj),
     razaoSocial: _txtCli(row.razao_social),
     endereco: _txtCli(row.endereco),
+    cep: _txtCli(row.cep),
     emailFinanceiro: _txtCli(row.email_financeiro),
     telefone: _txtCli(row.telefone),
     banco: _txtCli(row.banco),
@@ -21113,7 +21432,7 @@ function _brlCli(n){
 function _consultarClientesReais(){
   return supabaseClient
     .from('clientes')
-    .select('id,nome,classe,perfil,cidade,origem,faturamento_total,ticket_medio,em_aberto,ultimo_projeto,observacoes,cnpj,razao_social,endereco,email_financeiro,telefone,banco,agencia_bancaria,conta,chave_pix,ativo,criado_em,atualizado_em')
+    .select('id,nome,classe,perfil,cidade,origem,faturamento_total,ticket_medio,em_aberto,ultimo_projeto,observacoes,cnpj,razao_social,endereco,cep,email_financeiro,telefone,banco,agencia_bancaria,conta,chave_pix,ativo,criado_em,atualizado_em')
     .order('nome', {ascending:true})
     .order('id', {ascending:true});
 }
@@ -21639,11 +21958,13 @@ function _zpcIndicador(rotulo, valor, legenda){
   v.className = 'big'; v.style.fontSize = '22px';
   v.textContent = valor;
   c.appendChild(r); c.appendChild(v);
+  c._v = v;                          // permite atualizar o valor depois (indicador assíncrono)
   if(legenda){
     var l = document.createElement('div');
     l.className = 'muted'; l.style.fontSize = '11px'; l.style.marginTop = '2px';
     l.textContent = legenda;
     c.appendChild(l);
+    c._l = l;
   }
   return c;
 }
@@ -21759,7 +22080,9 @@ function _construirProntuarioClienteReal(cli){
   ind.className = 'zpc-ind';
   ind.appendChild(_zpcIndicador('💰 Faturamento histórico', _brlCli(cli.faturamentoTotal), 'total acumulado'));
   ind.appendChild(_zpcIndicador('🎯 Ticket médio', _brlCli(cli.ticketMedio), 'por projeto'));
-  ind.appendChild(_zpcIndicador('📅 Últimos 12 meses', '—', 'sem fonte no cadastro atual'));
+  var cardUlt12 = _zpcIndicador('📅 Últimos 12 meses', '—', 'carregando…');
+  cardUlt12.id = 'zpcIndUlt12Meses';
+  ind.appendChild(cardUlt12);
   ind.appendChild(_zpcIndicador('🧮 Valor em aberto', _brlCli(cli.emAberto), 'a receber'));
   root.appendChild(ind);
 
@@ -21790,6 +22113,7 @@ function _construirProntuarioClienteReal(cli){
   end.className = 'zpc-endereco';
   end.textContent = _txtOuTracoCli(cli.endereco);
   cEnd._corpo.appendChild(end);
+  _zpcLinha(cEnd._corpo, 'CEP', _soDigitosCli(cli.cep).length === 8 ? _formatarCepCli(cli.cep) : '—');
   g.appendChild(cEnd);
 
   // C4. Dados bancários
@@ -21849,6 +22173,7 @@ function abrirDetalheClienteReal(id){
   var _tok = _zpcNovoTokenDetalhe();
   try { _carregarContatosClienteReal(cli.id, _tok); } catch(_e){}
   try { _carregarHistoricoClienteReal(cli.id, _tok); } catch(_e){}
+  try { _carregarIndicador12mClienteReal(cli.id, _tok); } catch(_e){}
 }
 // FIM DA PARTE 4 — CLIENTES
 // ============================================================
@@ -21903,6 +22228,45 @@ function _formatarTelefoneCli(v){
   if(d.length<=6)  return '(' + d.slice(0,2) + ') ' + d.slice(2);
   if(d.length<=10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
   return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+}
+// CEP: só dígitos (8) no banco; máscara 00000-000 na interface. Letras ou outros
+// símbolos NÃO são descartados em silêncio: o campo é deixado como digitado e a
+// validação recusa o salvamento (ver _cepClienteValidoCli).
+function _cepCaracteresPermitidosCli(v){
+  var s = (v===null || v===undefined) ? '' : String(v);
+  for(var i=0;i<s.length;i++){
+    var ch = s.charAt(i);
+    if(!((ch>='0' && ch<='9') || ch==='-' || ch===' ')) return false;
+  }
+  return true;
+}
+function _formatarCepCli(v){
+  var d = _soDigitosCli(v).slice(0,8);
+  if(d.length<=5) return d;
+  return d.slice(0,5) + '-' + d.slice(5);
+}
+function mascararCepClienteInput(el){
+  if(!el) return;
+  var v = el.value;
+  if(!_cepCaracteresPermitidosCli(v)) return;          // mantém visível para a validação recusar
+  if(_soDigitosCli(v).length > 8) return;              // excesso também não é truncado em silêncio
+  el.value = _formatarCepCli(v);
+}
+// Retorna '' quando vazio ou com 8 dígitos; caso contrário, a mensagem de erro.
+function _cepClienteValidoCli(v){
+  var raw = (v===null || v===undefined) ? '' : String(v).trim();
+  if(raw === '') return '';
+  if(!_cepCaracteresPermitidosCli(raw)) return 'O CEP deve conter apenas números.';
+  var d = _soDigitosCli(raw);
+  if(d === '') return 'O CEP precisa ter 8 dígitos, ou ficar em branco.';
+  if(d.length !== 8) return 'O CEP precisa ter 8 dígitos, ou ficar em branco.';
+  return '';
+}
+function _cepParaPayloadCli(v){
+  var raw = (v===null || v===undefined) ? '' : String(v).trim();
+  if(raw === '' || !_cepCaracteresPermitidosCli(raw)) return null;
+  var d = _soDigitosCli(raw);
+  return d.length === 8 ? d : null;
 }
 function mascararCnpjClienteInput(el){ if(el) el.value = _formatarCnpjCli(el.value); }
 function mascararTelefoneClienteInput(el){ if(el) el.value = _formatarTelefoneCli(el.value); }
@@ -21962,7 +22326,7 @@ function _prepararModalClienteModoDemo(){
 
 // ---- Limpeza do formulário real --------------------------------------------
 function _limparFormClienteReal(){
-  ['newClientName','newClientRazao','newClientCNPJ','newClientCidade','newClientEndereco',
+  ['newClientName','newClientRazao','newClientCNPJ','newClientCidade','newClientEndereco','newClientCEP',
    'newClientTelFin','newClientEmailNF','newClientAgencia','newClientBanco','newClientAgBanco',
    'newClientConta','newClientPix','newClientObs'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.value = '';
@@ -22018,7 +22382,8 @@ function abrirEdicaoClienteReal(id){
   set('newClientCNPJ',     _formatarCnpjCli(cli.cnpj));          // reaplica máscara
   set('newClientCidade',   cli.cidade);
   set('newClientEndereco', cli.endereco);
-  set('newClientTelFin',   _formatarTelefoneCli(cli.telefone));  // reaplica máscara
+  set('newClientCEP',      _formatarCepCli(cli.cep));            // reaplica máscara
+  set('newClientTelFin',  _formatarTelefoneCli(cli.telefone));  // reaplica máscara
   set('newClientEmailNF',  cli.emailFinanceiro);
   set('newClientAgencia',  cli.origem);
   set('newClientBanco',    cli.banco);
@@ -22069,6 +22434,8 @@ function validarFormularioClienteReal(){
   if(String(val('newClientName')||'').trim() === '') erros.push('Informe o nome do cliente.');
   var cnpj = _soDigitosCli(val('newClientCNPJ'));
   if(cnpj !== '' && cnpj.length !== 14) erros.push('O CNPJ precisa ter 14 dígitos, ou ficar em branco.');
+  var erroCep = _cepClienteValidoCli(val('newClientCEP'));
+  if(erroCep !== '') erros.push(erroCep);
   var tel = _soDigitosCli(val('newClientTelFin'));
   if(tel !== '' && tel.length !== 10 && tel.length !== 11) erros.push('O telefone precisa ter 10 ou 11 dígitos, ou ficar em branco.');
   var classe = String(val('newClientABC')||'').trim();
@@ -22097,6 +22464,7 @@ function montarPayloadEdicaoClienteReal(){
     cnpj:             (_soDigitosCli(val('newClientCNPJ')) || null),
     razao_social:     textoOuNullCli(val('newClientRazao')),
     endereco:         textoOuNullCli(val('newClientEndereco')),
+    cep:              _cepParaPayloadCli(val('newClientCEP')),
     email_financeiro: textoOuNullCli(val('newClientEmailNF')),
     telefone:         (_soDigitosCli(val('newClientTelFin')) || null),
     banco:            textoOuNullCli(val('newClientBanco')),
@@ -22119,6 +22487,7 @@ function montarPayloadCadastroClienteReal(){
     cnpj:             (_soDigitosCli(val('newClientCNPJ')) || null),
     razao_social:     textoOuNullCli(val('newClientRazao')),
     endereco:         textoOuNullCli(val('newClientEndereco')),
+    cep:              _cepParaPayloadCli(val('newClientCEP')),
     email_financeiro: textoOuNullCli(val('newClientEmailNF')),
     telefone:         (_soDigitosCli(val('newClientTelFin')) || null),
     banco:            textoOuNullCli(val('newClientBanco')),
@@ -22684,6 +23053,108 @@ function _carregarHistoricoClienteReal(id, token){
       corpo.textContent = '';
       _zpcEstado(corpo, 'Não foi possível carregar o histórico de projetos. Feche e abra o prontuário para tentar novamente.');
     });
+}
+
+// ---- Indicador "Últimos 12 meses" (RPC existente, sem cálculo no navegador) ---
+// public.listar_indicadores_clientes() é SECURITY DEFINER e valida o chamador no
+// servidor (socio, financeiro, atendimento, admin). A janela móvel de 12 meses e
+// a exclusão de Perda/contrato-pai recorrente são feitas lá; aqui só se exibe.
+// Falha, resposta sem o cliente ou valor inválido NUNCA viram "R$ 0,00".
+var _ZPC_PRAZO_IND12M_MS = 15000;
+// O filtro por cliente_id vai no próprio pedido (PostgREST filtra o conjunto devolvido pela
+// função): a resposta traz uma linha, sem esbarrar no limite de linhas por resposta.
+function _consultarIndicadoresClientesReal(id){
+  return supabaseClient.rpc('listar_indicadores_clientes').eq('cliente_id', String(id));
+}
+function _zpcIndicador12mTexto(cardUlt12, valor, legenda){
+  if(!cardUlt12 || !cardUlt12._v) return;
+  cardUlt12._v.textContent = valor;
+  if(cardUlt12._l) cardUlt12._l.textContent = legenda;
+  var antigo = cardUlt12.querySelector('.zpc-ind12-retry');
+  if(antigo) antigo.remove();
+}
+function _zpcIndicador12mFalha(cardUlt12, legenda, id, token){
+  _zpcIndicador12mTexto(cardUlt12, '—', legenda);
+  var b = document.createElement('button');
+  b.className = 'btn btn2 zpc-ind12-retry';
+  b.style.marginTop = '6px'; b.style.padding = '3px 8px'; b.style.fontSize = '11px';
+  b.textContent = 'Tentar novamente';
+  b.addEventListener('click', function(){
+    if(!_zpcDetalheValido(token, id)) return;
+    _carregarIndicador12mClienteReal(id, token);
+  });
+  cardUlt12.appendChild(b);
+}
+function _zpcMsgErroIndicador12m(err){
+  var code = String((err && err.code) || '');
+  var msg = String((err && err.message) || '').toLowerCase();
+  if(code === 'PGRST202' || code === '42883' || msg.indexOf('could not find the function') >= 0){
+    return 'indicador ainda não disponível no banco';
+  }
+  if(code === '42501' || code === '28000' || msg.indexOf('acesso negado') >= 0){
+    return 'sem permissão para este indicador';
+  }
+  if(typeof _erroEhSessao === 'function' && _erroEhSessao(err)) return 'sessão expirada — entre novamente';
+  return 'não foi possível carregar';
+}
+function _carregarIndicador12mClienteReal(id, token){
+  var card = document.getElementById('zpcIndUlt12Meses');
+  if(!card) return;
+  var owner = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.id : '';
+  var epoch = (typeof _authContextEpoch !== 'undefined') ? _authContextEpoch : 0;
+  var perfil = _perfilAtivoClientes();
+  function ctxOk(){
+    if(!_zpcDetalheValido(token, id)) return false;
+    if(currentUser.id !== owner) return false;
+    if((typeof _authContextEpoch !== 'undefined' ? _authContextEpoch : 0) !== epoch) return false;
+    if(_perfilAtivoClientes() !== perfil) return false;
+    return document.getElementById('zpcIndUlt12Meses') === card;   // prontuário foi refeito → descarta
+  }
+  _zpcIndicador12mTexto(card, '—', 'carregando…');
+  var timer = null, encerrado = false;
+  var prazo = new Promise(function(resolve){
+    timer = setTimeout(function(){ resolve({ prazoEsgotado:true }); }, _ZPC_PRAZO_IND12M_MS);
+  });
+  var consulta;
+  try { consulta = Promise.resolve(_consultarIndicadoresClientesReal(id)); }
+  catch(_e){ consulta = Promise.reject(_e); }
+  Promise.race([consulta, prazo]).then(function(res){
+    clearTimeout(timer);
+    if(encerrado || !ctxOk()) return;
+    encerrado = true;
+    if(res && res.prazoEsgotado){
+      _zpcIndicador12mFalha(card, 'tempo esgotado ao carregar', id, token); return;
+    }
+    if(res && res.error){
+      console.error('[ZIP OS] Falha ao carregar indicador de 12 meses', { code: res.error.code });
+      _zpcIndicador12mFalha(card, _zpcMsgErroIndicador12m(res.error), id, token); return;
+    }
+    var linhas = (res && Array.isArray(res.data)) ? res.data : null;
+    if(!linhas){ _zpcIndicador12mFalha(card, 'resposta inesperada', id, token); return; }
+    var linha = null, achadas = 0;
+    for(var i=0;i<linhas.length;i++){
+      if(linhas[i] && String(linhas[i].cliente_id) === String(id)){ if(!linha) linha = linhas[i]; achadas++; }
+    }
+    if(achadas > 1){ _zpcIndicador12mFalha(card, 'resposta inesperada', id, token); return; }
+    if(!linha){ _zpcIndicador12mTexto(card, '—', 'sem registro nos indicadores'); return; }
+    var bruto = linha.faturamento_12_meses;
+    var n = (typeof bruto === 'number') ? bruto : (typeof bruto === 'string' && bruto.trim() !== '' ? Number(bruto) : NaN);
+    if(!isFinite(n) || n < 0){ _zpcIndicador12mFalha(card, 'valor inválido na resposta', id, token); return; }
+    var semFin = Number(linha.projetos_sem_linha_financeira);
+    var legenda = 'janela móvel de 12 meses';
+    if(linha.indicadores_incompletos === true){
+      legenda = (isFinite(semFin) && semFin > 0)
+        ? 'parcial — ' + semFin + ' projeto(s) sem valor lançado'
+        : 'dados financeiros incompletos';
+    }
+    _zpcIndicador12mTexto(card, _brlCli(n), legenda);
+  }).catch(function(){
+    clearTimeout(timer);
+    if(encerrado || !ctxOk()) return;
+    encerrado = true;
+    console.error('[ZIP OS] Falha de comunicação ao carregar indicador de 12 meses');
+    _zpcIndicador12mFalha(card, 'não foi possível carregar', id, token);
+  });
 }
 // ============================================================================
 // FIM DA PARTE 5.4 — CLIENTES

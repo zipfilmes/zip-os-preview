@@ -779,7 +779,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.1.0.5 · Refinos do Cadastro</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.2.0.0 · Caixa e Orçamentos</div>
 </aside>
 
 <main class="main">
@@ -1170,7 +1170,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <button onclick="showFin('finMensal',this)">📅 Resultado mensal</button>
  <button onclick="showFin('finAnual',this)">📆 Resultado anual</button>
  <button onclick="showFin('finProjetos',this)">🎯 Rentabilidade</button>
- <button id="tabFinSemAtend" onclick="showFin('finSemAtend',this)">🗂️ Sem atendimento</button>
+ <button id="tabFinSemAtend" hidden style="display:none" aria-hidden="true" tabindex="-1" onclick="showFin('finSemAtend',this)">🗂️ Sem atendimento</button>
 </div>
 
 <!-- 1. DASHBOARD (V8.8.0 PAINEL REAL: resumo de contas a receber do cliente, lido do banco) -->
@@ -1215,6 +1215,8 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <div id="finReceberStatusReal"></div>
 
  <div id="finProntuario" style="display:none;margin-top:16px"></div>
+ <style>#finOpCaixa [data-pa="corpo"],#finOpCaixa [data-pa="acoes"]{display:none}</style>
+ <div id="finOpHost" style="display:none;margin-top:16px"><div class="card" style="margin:0"><div id="finOpMsg" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-bottom:8px;background:#f1f5f9;color:#334155"></div><div id="finOpBarra"></div><div id="finOpCaixa"></div></div></div>
 
  <!-- Histórico financeiro -->
  <div style="margin-top:48px;padding-top:24px;border-top:2px dashed var(--line)">
@@ -1261,10 +1263,12 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
   <div style="display:flex;gap:8px;align-items:center;padding:14px 16px 0 16px;flex-wrap:wrap;justify-content:space-between">
    <h2 style="margin:0;font-size:20px;font-weight:800">💸 Fluxo de Caixa</h2>
    <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button id="cxSerieAbrirBtn" type="button" data-pa="caixa-serie-abrir" onclick="foCaixaAbrir('serie')" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">🔁 Série</button>
+    <button id="cxAberturaBtn" type="button" data-pa="caixa-abertura-abrir" onclick="cxAberturaAbrir()" style="display:none;padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">💰 Definir saldo inicial</button>
+    <button id="cxSerieAbrirBtn" type="button" data-pa="caixa-serie-abrir" onclick="foCaixaAbrir('serie')" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">🔁 Lançamento recorrente</button>
     <button id="cxNovoAbrirBtn" type="button" data-pa="caixa-novo-abrir" onclick="foCaixaAbrir('novo')" style="padding:9px 14px;border:none;border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:var(--green);color:white;cursor:pointer;white-space:nowrap">+ Novo lançamento</button>
    </div>
   </div>
+  <div id="cxAbertura" style="padding:8px 16px 0 16px"></div>
   <div style="display:flex;gap:8px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap">
    <select id="finCaixaMes" onchange="foCaixaPeriodo()" style="flex:1;min-width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">
     <option value="">Todos os meses</option>
@@ -1402,8 +1406,23 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
   </div>
  </div></div>
 
+ <div id="modalSaldoAbertura" class="modal"><div class="modalbox" style="max-width:560px">
+  <h2 style="margin-bottom:6px">💰 Saldo inicial da empresa</h2>
+  <p class="muted" style="font-size:13px;margin:0 0 10px">Informe quanto a empresa tinha em caixa ao começar a usar o ZIP OS. O valor vale no começo do dia escolhido, antes dos lançamentos desse dia. Não é venda, receita nem lançamento: só compõe o saldo.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+   <label style="font-size:12px;font-weight:700">Valor (R$)<br><input id="cxAbValor" type="text" inputmode="decimal" placeholder="0,00" style="width:150px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"></label>
+   <label style="font-size:12px;font-weight:700">Data de referência<br><input id="cxAbData" type="date" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px"></label>
+  </div>
+  <label id="cxAbMotivoLbl" style="font-size:12px;font-weight:700;display:none;margin-top:8px">Motivo da alteração<br><input id="cxAbMotivo" type="text" maxlength="300" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:10px"></label>
+  <div id="cxAbMsg" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-top:10px"></div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+   <button id="cxAbSalvarBtn" class="btn" type="button" style="flex:2" onclick="cxAberturaSalvar()">💾 Gravar saldo inicial</button>
+   <button class="btn btn2" type="button" style="flex:1" onclick="cxAberturaFechar()">Fechar</button>
+  </div>
+  <div id="cxAbHist"></div>
+ </div></div>
  <div id="modalSerieLancamento" class="modal"><div class="modalbox" style="max-width:640px">
-  <h2 style="margin-bottom:8px">🔁 Série de lançamentos</h2>
+  <h2 style="margin-bottom:8px">🔁 Lançamento recorrente</h2>
   <p class="muted" style="margin-bottom:12px;font-size:13px">De 2 a 12 lançamentos já ocorridos (sem datas futuras); a prévia pede sua confirmação. Não é agendamento: nada é gerado automaticamente depois.</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
    <label style="font-size:12px;font-weight:700">Tipo<br><select id="cxSerTipo" onchange="cxFormEstado();cxSerieInvalida()" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></label>
@@ -1936,6 +1955,25 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 </div>
 </div></div>
 
+<div id="modalTemplatesOrc" class="modal" style="z-index:20"><div class="modalbox" style="max-width:640px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+ <h2 style="margin:0">📑 Templates de orçamento</h2>
+ <button class="btn btn2" type="button" style="padding:8px 14px" onclick="coTplFechar()">✕ Fechar</button>
+</div>
+<p class="muted" style="font-size:13px;margin:0 0 10px">O template guarda só os itens do catálogo, as quantidades e a ordem. Os preços vêm do catálogo atual na hora de aplicar.</p>
+<div id="coTplAviso" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-bottom:8px"></div>
+<div id="coTplLista" style="max-height:280px;overflow-y:auto"></div>
+<div id="coTplConfirma"></div>
+<div style="display:flex;justify-content:flex-end;margin-top:6px"><button id="coTplAtualizarBtn" class="btn btn2" type="button" style="font-size:12px;padding:6px 12px" onclick="coTplCarregar()">↻ Atualizar lista</button></div>
+<div class="card" style="background:#f9fafb;margin:12px 0 0">
+ <h3 style="margin:0 0 8px;font-size:15px">Salvar o orçamento atual como template</h3>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <input id="coTplNome" maxlength="80" placeholder="Ex.: Comercial de 30 segundos" style="flex:1;min-width:200px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">
+  <button id="coTplSalvarBtn" class="btn" type="button" onclick="coTplSalvar()">💾 Salvar template</button>
+ </div>
+</div>
+</div></div>
+
 <div id="modalAvancar" class="modal"><div class="modalbox">
 <h2 id="avancarTitle">Avançar lead</h2>
 <div class="formgrid">
@@ -1955,6 +1993,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
   <p class="muted" id="orcSubtitulo" style="margin:4px 0 0;font-size:13px"></p>
  </div>
  <div style="display:flex;gap:8px">
+  <button class="btn btn2" style="padding:8px 14px;font-size:13px" onclick="coTplAbrir()">📑 Selecionar template</button>
   <button class="btn btn2" style="padding:8px 14px;font-size:13px" onclick="abrirGerenciarItens()">⚙️ Gerenciar lista</button>
   <button class="btn btn2" onclick="closeModals()" style="padding:8px 14px">✕ Fechar</button>
  </div>
@@ -1977,7 +2016,8 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  </div>
 
  <!-- Cabeçalho da tabela -->
- <div style="display:grid;grid-template-columns:1fr 60px 90px 80px 36px;gap:6px;padding:0 12px;margin-bottom:6px">
+ <div style="display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;padding:0 12px;margin-bottom:6px">
+  <span></span>
   <span class="muted" style="font-size:11px;font-weight:700">DESCRIÇÃO</span>
   <span class="muted" style="font-size:11px;font-weight:700;text-align:center">QTD</span>
   <span class="muted" style="font-size:11px;font-weight:700;text-align:right">VALOR UNIT.</span>
@@ -2059,6 +2099,14 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 </div></div>
 
 
+<div id="modalRevisao" class="modal"><div class="modalbox" style="max-width:880px">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+  <h2 id="coRevTitulo" style="margin:0;font-size:20px"></h2>
+  <button class="btn btn2" type="button" style="padding:8px 14px" onclick="coRevModalFechar()">✕ Fechar</button>
+ </div>
+ <div id="coRevAvisoModal" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-bottom:8px"></div>
+ <div id="coRevConteudo"></div>
+</div></div>
 <div id="modalProjeto" class="modal"><div class="modalbox" style="max-width:900px">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
  <div>
@@ -15828,8 +15876,8 @@ var MSG_PRONT_REV3 = {
   orcAusente:     'O orçamento ainda não pode ser criado nem editado por aqui. Nada foi gravado.',
   orcRecusado:    'O banco recusou o orçamento: ',
   orcEtapaAtend:  'A revisão do orçamento só é feita em Orçamento ou Negociação. Envie o atendimento para Orçamento antes de revisar.',
-  orcEtapaFech:   'Atendimento fechado: a revisão comercial do orçamento não é feita por aqui. Os custos pós-orçamento continuam disponíveis.',
-  orcProjeto:     'Com o projeto iniciado, o orçamento não recebe mais revisão comercial. Os custos pós-orçamento e a troca de fornecedores continuam disponíveis aqui.',
+  orcEtapaFech:   'Atendimento fechado: o orçamento só muda por uma Nova revisão. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
+  orcProjeto:     'Com o projeto iniciado, o orçamento só muda por uma Nova revisão (aplicada por Sócio ou Admin). Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
   orcCriadoAvancou:'Orçamento criado: versão 1. O atendimento avançou para Orçamento.',
   orcCriarAvisa:  'Ao salvar o primeiro orçamento, o atendimento avança automaticamente de Atendimento para Orçamento.',
   orcAliquotaDif: 'A alíquota atual ({atual}) difere da aplicada na versão salva ({aplicada}). Salvar criará uma nova versão com a alíquota atual; a versão anterior continua como está.',
@@ -16819,6 +16867,7 @@ function _renderFinanceiroProntReal(el){
   var s = estadoProntuarioAtendReal, fin = s.fin;
   el.textContent = '';
   if(!_finDisponivelProntReal()) return;
+  if(!finOpHospedando()) return;   // 1.2.0.0: o Financeiro do projeto só aparece hospedado no Financeiro
   if(!fin.aberto){
     var w = _elProntReal('div', 'margin:8px 0');
     w.appendChild(_botaoProntReal('💼 Financeiro do projeto', 'fin-abrir', abrirFinanceiroProntReal, true));
@@ -18961,8 +19010,7 @@ function _renderOrcamentoAcoesRev3ProntReal(){
   if(a.orcamento.ok) wrap.appendChild(_botaoProntReal(temOrc ? '📝 Editar orçamento' : '📝 Criar orçamento', 'abrir-orcamento', function(){ abrirPainelRev3ProntReal('orcamento'); }, false));
   else if(a.orcamento.motivo){ var m = _elProntReal('div', 'font-size:12px;color:var(--muted)', a.orcamento.motivo); m.setAttribute('data-pa', 'motivo-orcamento'); wrap.appendChild(m); }
   if(a.custoExtra && !a.custoExtra.ok && a.custoExtra.motivo){ var mce = _elProntReal('div', 'font-size:12px;color:var(--muted);margin-top:4px', a.custoExtra.motivo); mce.setAttribute('data-pa', 'motivo-custo-extra'); wrap.appendChild(mce); }
-  if(a.custoExtra && a.custoExtra.ok) wrap.appendChild(_botaoProntReal('🔧 Custos pós-orçamento', 'abrir-custo-extra', function(){ abrirPainelRev3ProntReal('custoExtra'); }, true, 'margin-top:4px'));
-  if(a.fornecedores && a.fornecedores.ok) wrap.appendChild(_botaoProntReal('🎬 Fornecedores', 'abrir-fornecedores', function(){ abrirPainelRev3ProntReal('fornecedores'); }, true, 'margin-top:4px;margin-left:6px'));
+  // 1.2.0.0: Custos pós-orçamento e Fornecedores passaram para Financeiro → Operações do projeto (mesmas funções e RPCs)
   return wrap;
 }
 // rev7 (achado 2 da auditoria da rev6): histórico de versões do contrato — mais recente primeiro,
@@ -34844,9 +34892,9 @@ renderOrcItens = function(){
     var total = (isFinite(qn) && isFinite(un)) ? _arred2ProntReal(Math.max(0, qtd) * Math.max(0, un)) : NaN;
     var exibir = it[3], eCusto = it[4] || false;
     var estiloLinha = eCusto
-      ? 'display:grid;grid-template-columns:1fr 60px 90px 80px 36px;gap:6px;align-items:center'
-      : 'display:grid;grid-template-columns:1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
-    var linhaPrincipal = '<div style="' + estiloLinha + '">'
+      ? 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center'
+      : 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
+    var linhaPrincipal = '<div style="' + estiloLinha + '">' + coOrdAlcaHtml(i, orcItens.length, desab)
       + '<div>'
       + '<input' + desab + ' value="' + coEsc(it[0]) + '" oninput="orcItens[' + i + '][0]=this.value" placeholder="Descrição" maxlength="' + LIMITES_ORC_PRONT_REAL.descricao + '" style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box">'
       + (eCusto ? '<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>' : '')
@@ -34859,8 +34907,8 @@ renderOrcItens = function(){
       + '</div>';
     var linhaTotal = (isFinite(total) && total > 0)
       ? '<div style="text-align:right;font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:4px;padding-right:48px">' + qtd.toLocaleString('pt-BR') + '× R$ ' + un.toLocaleString('pt-BR') + ' = <b>R$ ' + total.toLocaleString('pt-BR') + '</b></div>' : '';
-    if(eCusto) return '<div style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px;margin-bottom:8px">' + linhaPrincipal + linhaTotal + renderSeletorFornecedorItem(it, i) + '</div>';
-    return linhaPrincipal + linhaTotal;
+    if(eCusto) return '<div data-orc-item="' + i + '" style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px;margin-bottom:8px">' + linhaPrincipal + linhaTotal + renderSeletorFornecedorItem(it, i) + '</div>';
+    return '<div data-orc-item="' + i + '">' + linhaPrincipal + linhaTotal + '</div>';
   }).join('');
   atualizarTotalOrc();
 };
@@ -35023,7 +35071,7 @@ exportarPDFOrcamento = function(){
   var s = coS(), ro = typeof coRO !== 'undefined' && coRO.aberta && coRO.tipo === 'orcamento';   // ro = janela SOMENTE LEITURA: PDF da versão SALVA
   if(ro){ if(!coROVivo()) return; }
   else if(!coOrc.aberta || s.painel !== 'orcamento' || s.acao) return;
-  var f = ro ? coRO.form : coOrcColetar(), x = _situacaoRev3ProntReal(), o = ro ? coRO.o : ((x.orcLer && x.orcLer.orcamento) || null);
+  var f = ro ? coRO.form : coOrcColetar(), x = _situacaoRev3ProntReal(), o = ro ? coRO.o : (coRevPdfO() || (x.orcLer && x.orcLer.orcamento) || null);
   if(!o || !f.orcamento_id){ alert('⚠️ Este orçamento ainda não foi salvo.\n\nSalve o orçamento antes de exportar o PDF.'); return; }
   if(!ro){
     if(coOrcAlterado()){ alert('⚠️ Existem alterações não salvas neste orçamento.\n\nSalve primeiro para gerar uma nova versão antes de exportar o PDF.'); return; }
@@ -35042,7 +35090,7 @@ exportarPDFOrcamento = function(){
   var responsavel = esc(coOrcResponsavelNome()), cliente = esc(lead.cliente_nome || '—'), agencia0 = String(lead.agencia || '').trim();
   var agencia = esc(agencia0 || 'Direto'), interesse = esc(lead.titulo || '—'), os = esc(s.os || '');
   var dataHoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-  var l = { orcVersao: Number(o.versao) || 1 };                                                     // sombra local: o corpo da referência lê `l.orcVersao`
+  var l = { orcVersao: coRevPdfVersao(o) }; os = coRevPdfOs(os);                                                     // sombra local: o corpo da referência lê `l.orcVersao`
   var orcItens = f.itens.map(function(it){ var r = coItemParaLinha(it); r[0] = esc(r[0]); return r; });   // sombra local: o corpo da referência usa `orcItens`
   var moneyToNumber = function(v){ var n = _numCampoProntReal(String(v).replace(/^\s*R\$\s*/, ''), 0); return isFinite(n) ? n : 0; };   // sombra local: parser estrito
    let condicaoDetalhe='';
@@ -36289,10 +36337,10 @@ function coRoLinhas(){
     var eCusto = it[4] === true, linhaBanco = itensLer.filter(function(x){ return String(x.id) === String(it[6]); })[0];
     var qn = _numCampoProntReal(coQtdLinhaParaForm(it[1]), NaN), un = _numCampoProntReal(it[2], NaN);
     var total = (linhaBanco && coRoNum(linhaBanco.valor_linha_entrada)) ? Number(linhaBanco.valor_linha_entrada) : ((isFinite(qn) && isFinite(un)) ? _arred2ProntReal(Math.max(0, qn === 0 ? 1 : qn) * Math.max(0, un)) : NaN);
-    var estilo = eCusto ? 'display:grid;grid-template-columns:1fr 60px 90px 80px 36px;gap:6px;align-items:center'
-      : 'display:grid;grid-template-columns:1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
+    var estilo = eCusto ? 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center'
+      : 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
     var campo = 'padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:#f8fafc;width:100%;box-sizing:border-box';
-    var linha = '<div style="' + estilo + '"><div><input disabled value="' + coEsc(it[0]) + '" style="' + campo + '">' + (eCusto ? '<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>' : '') + '</div>'
+    var linha = '<div style="' + estilo + '"><span class="muted" style="font-size:11px;text-align:center">' + (i + 1) + '</span><div><input disabled value="' + coEsc(it[0]) + '" style="' + campo + '">' + (eCusto ? '<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>' : '') + '</div>'
       + '<input disabled type="number" value="' + coEsc(it[1]) + '" style="' + campo + ';text-align:center"><input disabled value="' + coEsc(it[2]) + '" style="' + campo + ';text-align:right">'
       + '<div style="text-align:center"><label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--muted)"><input disabled type="checkbox"' + (it[3] ? ' checked' : '') + ' style="width:14px;height:14px">valor</label></div><span></span></div>';
     var tot = (isFinite(total) && total > 0 && isFinite(qn)) ? '<div style="text-align:right;font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:4px;padding-right:48px">' + (qn === 0 ? 1 : qn).toLocaleString('pt-BR') + '× R$ ' + (isFinite(un) ? un.toLocaleString('pt-BR') : '—') + ' = <b>R$ ' + total.toLocaleString('pt-BR') + '</b></div>' : '';
@@ -37259,7 +37307,9 @@ function foCaixaNumeros(hoje){
   if(!foCaixaPronto()) return null;
   var ym = hoje.slice(0, 7), ate = estadoCaixaReal.itens.filter(function(i){ return i.data <= hoje; }), mes = estadoCaixaReal.itens.filter(function(i){ return i.data.slice(0, 7) === ym; });
   var a = cxTotais(ate), m = cxTotais(mes);
-  return { acumC: a.saldoC, mesC: m.saldoC };
+  if(!cxAberturaPronta()) return null;
+  var ab = cxAberturaObj(), s = ab ? cxAbSaldoAte(estadoCaixaReal.itens, ab, hoje) : a.saldoC;
+  return { acumC: s, mesC: m.saldoC, comAbertura: !!ab, desde: ab ? ab.data : '' };
 }
 // Resultado do mês (referência): faturamento do mês − custos do mês (mesma regra do Resultado Mensal); sem custos lidos ou sem projetos lidos ⇒ indisponível, nunca zero
 function foResultadoMesAtual(hoje){ var x = foResultadoAtual(hoje.slice(0, 4)); if(!x || !x.custosOk) return null; var m = x.r.meses[+hoje.slice(5, 7) - 1]; return { resC: m.resC }; }
@@ -37267,7 +37317,7 @@ function foCardsDash(hoje){
   var cx = foCaixaNumeros(hoje), pf = null, crTxt = 'Indisponível';
   if(foCrPronto()){ pf = pfCalcular(estadoContasReceberReais.linhas, hoje); if(pf.nAnomalias) pf = null; else if(!Number.isSafeInteger(pf.saldoC) || !Number.isSafeInteger(pf.atrasoC)) pf = null; }
   var cinza = 'var(--muted)', ind = 'Indisponível', rm = foResultadoMesAtual(hoje);
-  return foCardDash('Caixa (lançamentos)', cx ? foBRLc(cx.acumC) : '—', cx ? '#1e3a5f' : cinza, cx ? 'Entradas − saídas lançadas até hoje' : ind)
+  return foCardDash(cx && cx.comAbertura ? 'Saldo em caixa' : 'Caixa (lançamentos)', cx ? foBRLc(cx.acumC) : '—', cx ? '#1e3a5f' : cinza, cx ? (cx.comAbertura ? 'Saldo inicial + lançamentos desde ' + crDataBR(cx.desde) : 'Entradas − saídas lançadas até hoje') : ind)
     + foCardDash('Total a receber', pf ? foBRLc(pf.saldoC) : '—', pf ? '#d97706' : cinza, pf ? 'Saldo das parcelas em aberto' : ind)
     + foCardDash('Em atraso', pf ? foBRLc(pf.atrasoC) : '—', pf ? '#dc2626' : cinza, pf ? 'Recebimentos do cliente vencidos' : ind)
     + foCardDash('Resultado do mês', rm ? foBRLc(rm.resC) : '—', rm ? (rm.resC >= 0 ? '#065f46' : '#dc2626') : cinza, rm ? 'Faturamento do mês menos custos do mês' : ind);
@@ -37808,7 +37858,7 @@ function foRenderProntuario(){
   var d = p.d, l = foLinhaCr(p.os) || { os: p.os, cliente: '', parcelas: [], atendimentoId: d.proj.atendimento_id || '', situacao: '' }, enc = d.proj.status === 'Encerrado';
   var ag = foStr(d.proj.agencia).trim();
   el.innerHTML = '<div class="card" style="margin:0">' + topo + '<h2 style="margin:0;font-size:20px">' + foEsc(l.cliente || '(cliente não legível)') + '</h2><div class="muted" style="font-size:13px;margin-top:4px">' + foEsc(d.proj.tipo_servico || d.proj.titulo || '') + (ag && ag !== 'Direto' ? ' • via ' + foEsc(ag) : '') + (d.proj.status !== 'Financeiro' ? ' • ' + foEsc(d.proj.status) : '') + '</div></div>'
-    + '<button class="btn btn2" style="font-size:13px" onclick="foFecharProntuario()">✕ Fechar</button></div>' + foMsgPront()
+    + '<button class="btn btn2" style="font-size:13px;margin-right:6px" data-pa="fin-operacoes" onclick="finOpAbrir()">🧰 Operações do projeto</button><button class="btn btn2" style="font-size:13px" onclick="foFecharProntuario()">✕ Fechar</button></div>' + foMsgPront()
     + '<div style="display:flex;align-items:flex-start;margin-bottom:20px;background:#f9fafb;border-radius:14px;padding:14px">' + foTrilhoHtml(foEtapasFeitas(d, l), enc) + '</div>'
     + foResumoHtml(d, l)
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">' + foClienteHtml(d, l) + foStatusFinHtml(d, l)
@@ -38308,17 +38358,20 @@ cxRender = function(){
   var f = cxFiltroAtual(), periodoOk = !(f.de && f.ate && f.de > f.ate);
   if(!periodoOk) aviso(CX_MSG.periodo, 'var(--red)');
   var filtrados = periodoOk ? cxFiltrar(e.itens, f) : [];
-  var anteriorC = f.de && totalOk ? cxTotais(e.itens.filter(function(i){ return i.data < f.de; })).saldoC : 0;
-  if(tot && totalOk && periodoOk) tot.innerHTML = foCaixaTotaisTexto(f, e.itens, filtrados, anteriorC, totalOk);
+  var cfgAb = cxAberturaCfg(totalOk);
+  var anteriorC = f.de && cfgAb.saldoOk ? cxAbSaldoAntes(e.itens, cfgAb.abertura, f.de) : 0;
+  if(tot && totalOk && periodoOk) tot.innerHTML = foCaixaTotaisTexto(f, e.itens, filtrados, anteriorC, cfgAb.saldoOk);
   else if(tot) tot.textContent = totalOk ? '' : 'Totais indisponíveis: leitura incompleta ou dados incoerentes.';
   try { renderResumoEquipe(); } catch(_e){}
-  if(!e.itens.length){ tab.innerHTML = foMsgLinha(e.status === 'ok' ? CX_MSG.vazio : 'Nenhum lançamento lido.'); return; }
-  if(!filtrados.length && !(f.de && totalOk)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado); return; }
+  if(!e.itens.length && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(e.status === 'ok' ? CX_MSG.vazio : 'Nenhum lançamento lido.'); return; }
+  if(!filtrados.length && !(f.de && totalOk) && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado); return; }
   var ord = filtrados.slice().sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : a.criadoMs !== b.criadoMs ? a.criadoMs - b.criadoMs : a.id < b.id ? -1 : 1; });
   var vis = ord.slice(0, e.mostrar), hoje = crHojeSP(), saldo = anteriorC, linhas = '';
-  if(f.de && totalOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="6">Saldo anterior (lançamentos até o dia anterior ao período)</td>' + foCelula(crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
-  vis.forEach(function(i){
-    var ent = i.tipo === 'entrada' ? i.valorC : 0, sai = i.tipo === 'saida' ? i.valorC : 0; if(totalOk) saldo += ent - sai;
+  if(f.de && cfgAb.saldoOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="6">' + cxAbRotuloAnterior() + '</td>' + foCelula(crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
+  cxAbPlano(vis, e.itens, cfgAb, f, vis.length === ord.length).forEach(function(pl){
+    if(pl.tipo === 'abertura'){ linhas += cxAbLinhaHtml(pl); return; }
+    var i = pl.item; saldo = pl.saldoC;
+    var ent = i.tipo === 'entrada' ? i.valorC : 0, sai = i.tipo === 'saida' ? i.valorC : 0;
     var acoes = '—';
     if(i.avulso && !i.anom.length && i.snap){
       acoes = (cxPodeEditar() && !cxPendente() ? '<button class="btn btn2" type="button" style="font-size:12px;margin-right:4px" data-pa="caixa-editar" onclick="foCaixaEditar(' + "'" + foEsc(i.id) + "'" + ')">Editar</button>' : '')
@@ -38330,9 +38383,9 @@ cxRender = function(){
     }
     var origem = i.avulso ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
     linhas += '<tr><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
-      + '<td>' + foEsc(i.descricao || '—') + origem + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td><td style="font-size:12px;color:var(--muted)">' + foEsc(i.os || '—') + '</td>'
+      + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td><td style="font-size:12px;color:var(--muted)">' + foEsc(i.os || '—') + '</td>'
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
-      + foCelula(totalOk ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
+      + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
   tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + '</table>'
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
@@ -42748,6 +42801,1413 @@ var _showAI = show;
 show = function(id, btn){ if(id === 'arquivos'){ try { aiMarcarAtualizar(); } catch(_e){} } return _showAI.apply(this, arguments); };
 FO_LIMPEZAS.push(function(){ aiZerar(); estadoAI.uid = ''; estadoAI.epoch = -1; var t = foDom('arqTabela'); if(t) t.textContent = ''; var m = foDom('arqMsg'); if(m) m.textContent = ''; });
 // END ZIP OS V8.20.0 ARQUIVOS INTEGRADOS
+// BEGIN 1.2.0.0 ORDEM DOS ITENS (item 5): reordenar só move a linha dentro de orcItens; nenhum campo, vínculo, quantidade ou preço é tocado.
+// A ordem é gravada pelo salvar_orcamento (orcamento_itens.ordem = posição) e relida em ordem; PDF/template usam o mesmo array.
+function coOrdMoverArray(arr, de, para){
+  if(!Array.isArray(arr) || Object.isFrozen(arr)) return false;
+  var n = arr.length;
+  if(!Number.isInteger(de) || !Number.isInteger(para) || de < 0 || para < 0 || de >= n || para >= n || de === para) return false;
+  var it = arr.splice(de, 1)[0]; arr.splice(para, 0, it);
+  return true;
+}
+function coOrcPodeReordenar(){ return !!coOrc.aberta && !(typeof coRO !== 'undefined' && coRO.aberta) && !coS().acao; }
+function coOrcMover(de, para){
+  if(!coOrcPodeReordenar() || !coOrdMoverArray(orcItens, de, para)) return false;
+  fornBuscaAberta = -1;   // a busca de fornecedor é por índice: fecha para não apontar para outra linha
+  renderOrcItens(); calcOrc();
+  return true;
+}
+function coOrdFoco(seletor){ var el = document.querySelector(seletor); if(el && !el.disabled){ try { el.focus({ preventScroll: true }); } catch(_e){ el.focus(); } return true; } return false; }
+function coOrcMoverBtn(i, d){
+  if(!coOrcMover(i, i + d)) return;
+  var p = i + d;
+  if(!coOrdFoco('[data-orc-' + (d < 0 ? 'sobe' : 'desce') + '="' + p + '"]')) coOrdFoco('[data-orc-' + (d < 0 ? 'desce' : 'sobe') + '="' + p + '"]');
+}
+function coOrdAlcaHtml(i, n, desab){
+  var b = 'background:none;border:none;cursor:pointer;color:var(--muted);padding:0;line-height:1;font-size:11px;width:18px;height:14px';
+  return '<div style="display:flex;align-items:center;gap:2px" data-orc-ctl="' + i + '">'
+    + '<button type="button"' + desab + ' data-orc-alca="' + i + '" aria-label="Arrastar o item ' + (i + 1) + ' para outra posição (ou use as setas do teclado)" title="Arraste para reordenar"'
+    + ' onpointerdown="coOrdIniciar(event,' + i + ')" onpointermove="coOrdMovendo(event)" onpointerup="coOrdSoltar(event)" onpointercancel="coOrdCancelar(event)" onlostpointercapture="coOrdCancelar(event)" onkeydown="coOrdTecla(event,' + i + ')"'
+    + ' style="touch-action:none;cursor:grab;background:none;border:none;color:var(--muted);font-size:16px;padding:2px 3px;line-height:1">⠿</button>'
+    + '<div style="display:flex;flex-direction:column">'
+    + '<button type="button"' + (desab || i === 0 ? ' disabled' : '') + ' data-orc-sobe="' + i + '" aria-label="Subir o item ' + (i + 1) + '" title="Subir" onclick="coOrcMoverBtn(' + i + ',-1)" style="' + b + '">▲</button>'
+    + '<button type="button"' + (desab || i === n - 1 ? ' disabled' : '') + ' data-orc-desce="' + i + '" aria-label="Descer o item ' + (i + 1) + '" title="Descer" onclick="coOrcMoverBtn(' + i + ',1)" style="' + b + '">▼</button>'
+    + '</div></div>';
+}
+var coOrdDrag = null;
+function coOrdAlvoDe(ev){
+  var el = document.elementFromPoint(ev.clientX, ev.clientY), row = el && el.closest ? el.closest('[data-orc-item]') : null;
+  return row ? { row: row, idx: parseInt(row.getAttribute('data-orc-item'), 10) } : null;
+}
+function coOrdLimpar(){ Array.prototype.forEach.call(document.querySelectorAll('[data-orc-item]'), function(r){ r.style.outline = ''; r.style.opacity = ''; }); }
+function coOrdDragOk(d){   // o arrasto só vale para o MESMO editor, o MESMO array de itens e o MESMO contexto de prontuário/conta/perfil
+  if(!d || d.inst !== coOrc || d.arr !== orcItens || d.form !== coOrc.form) return false;
+  if(!coOrc.aberta || !coOrcPodeReordenar()) return false;
+  if(d.ctx && typeof _ctxProntValido === 'function' && !_ctxProntValido(d.ctx)) return false;
+  return true;
+}
+function coOrdAbortar(){ coOrdDrag = null; coOrdLimpar(); }
+function coOrdIniciar(ev, i){
+  if(!coOrcPodeReordenar() || (typeof ev.button === 'number' && ev.button > 0)) return;
+  coOrdDrag = { de: i, alvo: i, id: ev.pointerId, inst: coOrc, arr: orcItens, form: coOrc.form, ctx: (typeof _ctxProntReal === 'function' ? _ctxProntReal() : null) };
+  try { ev.currentTarget.setPointerCapture(ev.pointerId); } catch(_e){}
+  var r = ev.currentTarget.closest('[data-orc-item]'); if(r) r.style.opacity = '.55';
+  if(ev.cancelable) ev.preventDefault();
+}
+function coOrdMovendo(ev){
+  var d = coOrdDrag; if(!d || ev.pointerId !== d.id) return;
+  if(!coOrdDragOk(d)){ coOrdAbortar(); return; }
+  var a = coOrdAlvoDe(ev); if(!a || !isFinite(a.idx)) return;
+  d.alvo = a.idx;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-orc-item]'), function(r){ r.style.outline = ''; });
+  if(a.idx !== d.de) a.row.style.outline = '2px solid var(--accent)';
+}
+function coOrdSoltar(ev){
+  var d = coOrdDrag; if(!d || ev.pointerId !== d.id) return;
+  coOrdDrag = null; coOrdLimpar();
+  try { ev.currentTarget.releasePointerCapture(ev.pointerId); } catch(_e){}
+  if(!coOrdDragOk(d)) return;   // editor fechado/reaberto, array trocado (template/carga), conta/perfil/OS mudou: nada é reordenado
+  var a = coOrdAlvoDe(ev), alvo = a && isFinite(a.idx) ? a.idx : d.alvo;
+  if(coOrcMover(d.de, alvo)) coOrdFoco('[data-orc-alca="' + alvo + '"]');
+}
+function coOrdCancelar(ev){ var d = coOrdDrag; if(!d) return; if(ev && typeof ev.pointerId === 'number' && ev.pointerId !== d.id) return; coOrdAbortar(); }   // outro ponteiro não cancela este
+function coOrdTecla(ev, i){
+  if(ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown') return;
+  ev.preventDefault();
+  var p = i + (ev.key === 'ArrowUp' ? -1 : 1);
+  if(coOrcMover(i, p)) coOrdFoco('[data-orc-alca="' + p + '"]');
+}
+// fechar o editor ou limpar o prontuário (logout, conta, perfil, OS) invalida qualquer arrasto em curso
+if(typeof coOrcFecharJanela === 'function'){ var _coOrcFecharJanelaOrd = coOrcFecharJanela; coOrcFecharJanela = function(){ coOrdAbortar(); return _coOrcFecharJanelaOrd.apply(this, arguments); }; }
+if(typeof _limparEstadoProntReal === 'function'){ var _limparEstadoOrd = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _limparEstadoOrd.apply(this, arguments); coOrdAbortar(); return r; }; }
+// END 1.2.0.0 ORDEM DOS ITENS
+// BEGIN 1.2.0.0 TEMPLATES (item 4): modelo = descrição do item do CATÁLOGO + quantidade + ordem. Sem cliente, preço, fornecedor, desconto, taxa, comissão ou autoridade.
+// Ao aplicar, os preços e a condição de custo vêm do catálogo ATUAL (relido e validado agora); item ausente/duplicado no catálogo bloqueia TUDO (nada é aplicado pela metade).
+var CO_RPC_TPL_LISTAR = 'orcamento_template_listar', CO_RPC_TPL_SALVAR = 'orcamento_template_salvar', CO_RPC_TPL_EXCLUIR = 'orcamento_template_excluir';
+var CO_TPL_QTD_MAX = 100000;   // = LIMITES_ORC_PRONT_REAL.quantidade: o que o orçamento aceita, o template aceita
+var CO_TPL_MAX_ITENS = 200, CO_TPL_NOME_MAX = 80, CO_TPL_LIMITE_MS = 20000;
+var coTpl = { status: 'idle', lista: [], ocupado: false, confirma: null, pend: null, ctx: null, seq: 0 };
+
+// ---- lógica pura (testada em Node a partir deste mesmo código) --------------------------------------------------------------------------------
+function coTplNomeLimpo(n){
+  var s = String(n === null || n === undefined ? '' : n).replace(/\s+/g, ' ').trim();
+  if(!s || s.length > CO_TPL_NOME_MAX || /[\u0000-\u001f\u007f]/.test(s)) return null;
+  return s;
+}
+function coTplQtdValida(q){
+  var s = String(q === null || q === undefined ? '' : q).trim().replace(',', '.');
+  if(!/^[0-9]{1,6}(\.[0-9]{1,2})?$/.test(s)) return null;
+  var n = Number(s);
+  return n > 0 && n <= CO_TPL_QTD_MAX ? n : null;
+}
+// linhas do orçamento ([desc, qtd, ...]) + catálogo ([desc, valor, custo]) → itens do modelo; qualquer item fora do catálogo (ou duplicado nele) bloqueia
+function coTplItensDoOrcamento(linhas, catalogo){
+  var vistos = new Map(), erros = [], itens = [];
+  (catalogo || []).forEach(function(c){ var k = String(c[0]).trim(); vistos.set(k, (vistos.get(k) || 0) + 1); });
+  if(!Array.isArray(linhas) || !linhas.length) return { ok: false, itens: [], erros: ['O orçamento não tem itens.'] };
+  if(linhas.length > CO_TPL_MAX_ITENS) return { ok: false, itens: [], erros: ['Itens demais para um template (máximo ' + CO_TPL_MAX_ITENS + ').'] };
+  linhas.forEach(function(l, i){
+    var d = String(l[0] === null || l[0] === undefined ? '' : l[0]).trim(), q = coTplQtdValida(l[1]);
+    if(!d) { erros.push('Item ' + (i + 1) + ': sem descrição.'); return; }
+    if(!vistos.has(d)) { erros.push('“' + d + '” não está no catálogo atual (item personalizado não entra em template).'); return; }
+    if(vistos.get(d) > 1) { erros.push('“' + d + '” aparece mais de uma vez no catálogo: corrija o catálogo antes.'); return; }
+    if(q === null) { erros.push('“' + d + '”: quantidade inválida.'); return; }
+    itens.push({ descricao: d, quantidade: q, ordem: i });
+  });
+  return { ok: erros.length === 0, itens: itens, erros: erros };
+}
+// modelo + catálogo atual → linhas prontas para orcItens (mesmo formato do quickAddItem), ou a lista do que impede
+function coTplResolver(modelo, catalogo){
+  var porDesc = new Map(), faltando = [], duplicados = [], linhas = [];
+  (catalogo || []).forEach(function(c){ var k = String(c[0]).trim(); if(!porDesc.has(k)) porDesc.set(k, []); porDesc.get(k).push(c); });
+  var itens = (modelo && Array.isArray(modelo.itens) ? modelo.itens : []).slice().sort(function(a, b){ return (Number(a.ordem) - Number(b.ordem)) || 0; });
+  itens.forEach(function(m){
+    var d = String(m.descricao).trim(), c = porDesc.get(d), q = coTplQtdValida(m.quantidade);
+    if(!c) faltando.push(d);
+    else if(c.length > 1) duplicados.push(d);
+    else if(q === null) faltando.push(d + ' (quantidade inválida no template)');
+    else {
+      var v = String(c[0][1] === undefined || c[0][1] === null ? '0' : c[0][1]).replace(',', '.');
+      linhas.push([String(c[0][0]).trim(), String(q), (v && v !== '0') ? v : '0', false, c[0][2] === true, null, '']);
+    }
+  });
+  return { ok: itens.length > 0 && !faltando.length && !duplicados.length && linhas.length === itens.length, linhas: linhas, faltando: faltando, duplicados: duplicados };
+}
+function coTplTextoImpedimento(r){
+  var p = [];
+  if(r.faltando.length) p.push('Itens que não estão mais no catálogo: ' + r.faltando.join('; ') + '.');
+  if(r.duplicados.length) p.push('Itens repetidos no catálogo (ambíguos): ' + r.duplicados.join('; ') + '.');
+  if(!r.faltando.length && !r.duplicados.length) p.push('O template não tem itens.');
+  return 'Nada foi aplicado. ' + p.join(' ');
+}
+// ---- comunicação ------------------------------------------------------------------------------------------------------------------------------
+function coTplEditavel(){ return !!coOrc.aberta && !(typeof coRO !== 'undefined' && coRO.aberta) && !coS().acao; }
+function coTplCtxAtual(){ var c = _ctxProntReal(); c.seq = coTpl.seq; c.form = coOrc.form; return c; }
+// o editor é o MESMO (instância do formulário), aberto, editável, no painel de orçamento e com o contexto do prontuário válido
+function coTplEditorOk(c){ return !!c && _ctxProntValido(c) && !!coOrc.aberta && coOrc.form === c.form && !(typeof coRO !== 'undefined' && coRO.aberta) && coS().painel === 'orcamento'; }
+function coTplResetar(fechar){   // invalida respostas em voo, confirmação e estado ocupado; nada herdado de outro editor/conta
+  coTpl.seq++; coTpl.ocupado = false; coTpl.confirma = null; coTpl.pend = null; coTpl.lista = []; coTpl.status = 'idle';
+  if(fechar){ var m = coEl('modalTemplatesOrc'); if(m) m.classList.remove('open'); }
+}
+function coTplCtxOk(c){ return !!c && c.seq === coTpl.seq && coTplEditorOk(c); }
+function coTplRpc(nome, args, cb){
+  var ctx = coTplCtxAtual(), feito = false, timer = null, ctrl = null, q;
+  function fim(tipo, r){
+    if(feito) return; feito = true; if(timer !== null){ try { clearTimeout(timer); } catch(_e){} }
+    if(ctx.seq !== coTpl.seq) return;                       // resposta de uma janela/instância antiga: ignorada por inteiro (não mexe no estado da atual)
+    if(!coTplEditorOk(ctx)){ coTplResetar(true); return; }   // editor fechado/trocado, conta ou perfil mudou: descarta e destrava
+    cb(tipo, r);
+  }
+  try { if(typeof AbortController === 'function') ctrl = new AbortController(); q = _comSinalProntReal(supabaseClient.rpc(nome, args || {}), ctrl ? ctrl.signal : null); }
+  catch(_e){ fim('falha', null); return; }
+  timer = setTimeout(function(){ if(ctrl){ try { ctrl.abort(); } catch(_e){} } fim('tempo', null); }, CO_TPL_LIMITE_MS);
+  try { q.then(function(r){ fim('resposta', r); }, function(){ fim('falha', null); }); } catch(_e){ fim('falha', null); }
+}
+function coTplErroTexto(r){
+  var c = String((r && r.error && r.error.code) || '');
+  if(c === 'PGRST202' || c === '42883') return 'Os templates ainda não estão instalados no banco. Nada foi alterado.';
+  if(c === '42501') return 'Seu perfil não permite esta ação nos templates.';
+  return 'Não foi possível concluir agora. Nada foi alterado no orçamento.';
+}
+function coTplAviso(texto, tipo){
+  var a = coEl('coTplAviso'); if(!a) return;
+  a.textContent = texto || ''; a.style.display = texto ? 'block' : 'none';
+  var cor = tipo === 'erro' ? ['#fff1f2', '#9f1239'] : (tipo === 'ok' ? ['#f0fdf4', '#166534'] : ['#f1f5f9', '#334155']);
+  a.style.background = cor[0]; a.style.color = cor[1];
+}
+function coTplAbrir(){
+  if(!coTplEditavel()) return;
+  coTpl.seq++; coTpl.ocupado = false; coTpl.confirma = null;   // nova instância da janela; o envio incerto (coTpl.pend) é mantido para repetir com a MESMA chave
+  coTplAviso('', 'info'); openModal('modalTemplatesOrc');
+  coTplCarregar();
+}
+function coTplFechar(){ if(coTpl.ocupado) return; coTpl.confirma = null; var m = coEl('modalTemplatesOrc'); if(m) m.classList.remove('open'); }
+function coTplCarregar(){
+  coTpl.status = 'carregando'; coTplRender();
+  coTplRpc(CO_RPC_TPL_LISTAR, {}, function(tipo, r){
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && d.status === 'ok' && Array.isArray(d.templates)){ coTpl.lista = d.templates.filter(function(t){ return _objetoProntReal(t) && typeof t.id === 'string' && typeof t.nome === 'string' && Array.isArray(t.itens); }); coTpl.status = 'ok'; }
+    else { coTpl.lista = []; coTpl.status = 'erro'; coTplAviso(tipo === 'resposta' ? coTplErroTexto(r) : 'Não foi possível ler os templates agora.', 'erro'); }
+    coTplRender();
+  });
+}
+function coTplCatalogoAtual(cb){   // relê e valida o catálogo AGORA; cb(null) se indisponível; cb(lista, versão)
+  coTplRpc(CO_RPC_CAT_LER, {}, function(tipo, r){
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(!(_objetoProntReal(d) && d.status === 'ok' && isFinite(Number(d.versao)))){ cb(null, 0); return; }
+    var v = d.definido === true ? coCatItensValidos(d.itens) : ORC_ITENS_PADRAO_DEFAULT.map(function(x){ return [String(x[0]).trim(), String(x[1]), x[2] === true]; });
+    cb(v, Number(d.versao));
+  });
+}
+function coTplAssinItens(){ return JSON.stringify(orcItens); }   // identidade do conteúdo atual do editor (para confirmar a MESMA situação)
+function coTplSalvar(){
+  if(coTpl.ocupado || !coTplEditavel()) return;
+  var inp = coEl('coTplNome'), nome = coTplNomeLimpo(inp ? inp.value : '');
+  if(nome === null){ coTplAviso('Informe um nome de até ' + CO_TPL_NOME_MAX + ' caracteres, sem caracteres de controle.', 'erro'); return; }
+  coTpl.ocupado = true; coTplAviso('Conferindo o catálogo atual…', 'info'); coTplRender();
+  coTplCatalogoAtual(function(cat, ver){
+    if(!cat){ coTpl.ocupado = false; coTplAviso('Não foi possível validar o catálogo agora. O template não foi salvo.', 'erro'); coTplRender(); return; }
+    var m = coTplItensDoOrcamento(orcItens, cat);
+    if(!m.ok){ coTpl.ocupado = false; coTplAviso('Template não salvo. ' + m.erros.join(' '), 'erro'); coTplRender(); return; }
+    var assin = JSON.stringify([nome, m.itens]);
+    if(!coTpl.pend || coTpl.pend.assin !== assin) coTpl.pend = { assin: assin, chave: _novoUuidAtendimentoReal() };   // mesma chave se for repetição do MESMO envio
+    if(!coTpl.pend.chave){ coTpl.pend = null; coTpl.ocupado = false; coTplAviso('Não foi possível gerar a chave do envio. Nada foi salvo.', 'erro'); coTplRender(); return; }
+    coTplAviso('Salvando…', 'info');
+    coTplRpc(CO_RPC_TPL_SALVAR, { p_chave: coTpl.pend.chave, p_nome: nome, p_itens: m.itens }, function(tipo, r){
+      coTpl.ocupado = false;
+      var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+      if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_aplicado')){ coTpl.pend = null; if(inp) inp.value = ''; coTplAviso('Template “' + nome + '” salvo (' + m.itens.length + ' itens, sem preços).', 'ok'); coTplCarregar(); return; }
+      if(_objetoProntReal(d) && d.status === 'nome_duplicado'){ coTpl.pend = null; coTplAviso('Já existe um template com este nome. Escolha outro nome.', 'erro'); coTplRender(); return; }
+      if(tipo === 'resposta' && r && r.error){ coTpl.pend = null; coTplAviso(coTplErroTexto(r), 'erro'); coTplRender(); return; }
+      coTplAviso('Não consegui confirmar se o template foi salvo. Use “Atualizar lista”; se ele aparecer, foi salvo. Se não, clique em Salvar de novo (o envio é repetido com segurança).', 'erro'); coTplRender();
+    });
+  });
+}
+function coTplAplicar(id){
+  if(coTpl.ocupado || !coTplEditavel()) return;
+  var t = coTpl.lista.filter(function(x){ return x.id === id; })[0]; if(!t) return;
+  coTpl.ocupado = true; coTpl.confirma = null; coTplAviso('Conferindo o catálogo atual…', 'info'); coTplRender();
+  coTplCatalogoAtual(function(cat, ver){
+    coTpl.ocupado = false;
+    if(!cat){ coTplAviso('Não foi possível validar o catálogo agora. Nada foi aplicado.', 'erro'); coTplRender(); return; }
+    var r = coTplResolver(t, cat);
+    if(!r.ok){ coTplAviso(coTplTextoImpedimento(r), 'erro'); coTplRender(); return; }
+    if(r.linhas.length > LIMITES_ORC_PRONT_REAL.itens){ coTplAviso('Itens demais para o orçamento. Nada foi aplicado.', 'erro'); coTplRender(); return; }
+    if(orcItens.length > 0){ coTpl.confirma = { tipo: 'substituir', nome: t.nome, modelo: t, linhas: r.linhas, atuais: orcItens.length, form: coOrc.form, assin: coTplAssinItens(), versao: ver }; coTplAviso('', 'info'); coTplRender(); return; }
+    coTplEfetivar(t.nome, r.linhas);
+  });
+}
+function coTplEfetivar(nome, linhas){
+  if(!coTplEditavel()) return;
+  orcItens = linhas.map(function(l){ return l.slice(); });
+  fornBuscaAberta = -1; coTpl.confirma = null;
+  var m = coEl('modalTemplatesOrc'); if(m) m.classList.remove('open');
+  renderOrcItens(); calcOrc();
+  var av = coEl('coOrcAviso'); if(av){ av.textContent = 'Template “' + nome + '” aplicado: ' + linhas.length + ' item(ns) com os preços do catálogo atual. Revise e salve o orçamento.'; av.style.background = '#f0fdf4'; av.style.color = '#166534'; av.style.display = 'block'; }
+}
+function coTplConfirmarSubstituir(){
+  var c = coTpl.confirma; if(!c || c.tipo !== 'substituir' || coTpl.ocupado) return;
+  var mudou = function(txt){ coTpl.confirma = null; coTplAviso(txt + ' Nada foi aplicado; aplique o template de novo.', 'erro'); coTplRender(); };
+  if(!coTplEditorOk(coTplCtxAtual()) || c.form !== coOrc.form){ coTplResetar(true); return; }
+  if(c.assin !== coTplAssinItens()){ mudou('Os itens do orçamento mudaram depois da prévia.'); return; }
+  coTpl.ocupado = true; coTplAviso('Reconferindo o catálogo…', 'info'); coTplRender();
+  coTplCatalogoAtual(function(cat, ver){
+    coTpl.ocupado = false;
+    if(!cat || ver !== c.versao){ mudou('O catálogo mudou (ou ficou indisponível) depois da prévia.'); return; }
+    var r = coTplResolver(c.modelo, cat);
+    if(!r.ok || JSON.stringify(r.linhas) !== JSON.stringify(c.linhas)){ mudou('Os itens ou preços do catálogo mudaram depois da prévia.'); return; }
+    if(c.assin !== coTplAssinItens()){ mudou('Os itens do orçamento mudaram depois da prévia.'); return; }
+    coTplEfetivar(c.nome, r.linhas);
+  });
+}
+function coTplPedirExcluir(id){
+  if(coTpl.ocupado) return;
+  var t = coTpl.lista.filter(function(x){ return x.id === id; })[0]; if(!t) return;
+  coTpl.confirma = { tipo: 'excluir', id: id, nome: t.nome }; coTplAviso('', 'info'); coTplRender();
+}
+function coTplConfirmarExcluir(){
+  var c = coTpl.confirma; if(!c || c.tipo !== 'excluir' || coTpl.ocupado) return;
+  coTpl.ocupado = true; coTplAviso('Excluindo…', 'info'); coTplRender();
+  coTplRpc(CO_RPC_TPL_EXCLUIR, { p_id: c.id }, function(tipo, r){
+    coTpl.ocupado = false; coTpl.confirma = null;
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_excluido')){ coTplAviso('Template excluído. Orçamentos que o usaram não foram alterados.', 'ok'); coTplCarregar(); return; }
+    coTplAviso(tipo === 'resposta' && r && r.error ? coTplErroTexto(r) : 'Não consegui confirmar a exclusão. Use “Atualizar lista”.', 'erro'); coTplRender();
+  });
+}
+function coTplCancelarConfirma(){ coTpl.confirma = null; coTplRender(); }
+function coTplBotao(txt, fn, cls, desab){ var b = document.createElement('button'); b.type = 'button'; b.className = cls || 'btn btn2'; b.textContent = txt; b.disabled = !!desab; b.addEventListener('click', fn); return b; }
+function coTplRender(){
+  var box = coEl('coTplLista'), cf = coEl('coTplConfirma'); if(!box || !cf) return;
+  box.textContent = ''; cf.textContent = '';
+  var nome = coEl('coTplNome'), sv = coEl('coTplSalvarBtn'), at = coEl('coTplAtualizarBtn');
+  if(nome) nome.disabled = coTpl.ocupado; if(sv) sv.disabled = coTpl.ocupado; if(at) at.disabled = coTpl.ocupado;
+  if(coTpl.status === 'carregando'){ var p = document.createElement('p'); p.className = 'muted'; p.textContent = 'Lendo os templates…'; box.appendChild(p); }
+  else if(coTpl.status === 'ok' && !coTpl.lista.length){ var p2 = document.createElement('p'); p2.className = 'muted'; p2.style.fontSize = '13px'; p2.textContent = 'Nenhum template ainda. Monte o orçamento e salve abaixo.'; box.appendChild(p2); }
+  coTpl.lista.forEach(function(t){
+    var linha = document.createElement('div'); linha.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;flex-wrap:wrap';
+    var info = document.createElement('div'), n = document.createElement('div'), sub = document.createElement('div');
+    n.style.cssText = 'font-weight:700;font-size:14px'; n.textContent = t.nome;
+    sub.className = 'muted'; sub.style.fontSize = '12px'; sub.textContent = t.itens.length + ' item(ns)' + (t.criado_por_nome ? ' · ' + t.criado_por_nome : '') + (t.criado_em ? ' · ' + String(t.criado_em).slice(0, 10).split('-').reverse().join('/') : '');
+    info.appendChild(n); info.appendChild(sub);
+    var acoes = document.createElement('div'); acoes.style.cssText = 'display:flex;gap:6px';
+    acoes.appendChild(coTplBotao('Aplicar', function(){ coTplAplicar(t.id); }, 'btn', coTpl.ocupado));
+    if(t.pode_excluir === true) acoes.appendChild(coTplBotao('Excluir', function(){ coTplPedirExcluir(t.id); }, 'btn btn2', coTpl.ocupado));
+    linha.appendChild(info); linha.appendChild(acoes); box.appendChild(linha);
+  });
+  var c = coTpl.confirma;
+  if(c){
+    var q = document.createElement('div'); q.style.cssText = 'border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px';
+    var t1 = document.createElement('div'); t1.style.fontWeight = '700';
+    t1.textContent = c.tipo === 'substituir' ? 'Este orçamento já tem ' + c.atuais + ' item(ns). Aplicar “' + c.nome + '” substitui todos eles.' : 'Excluir o template “' + c.nome + '”? Orçamentos que o usaram não mudam.';
+    var bs = document.createElement('div'); bs.style.cssText = 'display:flex;gap:6px;margin-top:8px';
+    bs.appendChild(coTplBotao(c.tipo === 'substituir' ? 'Substituir itens' : 'Excluir template', c.tipo === 'substituir' ? coTplConfirmarSubstituir : coTplConfirmarExcluir, 'btn', coTpl.ocupado));
+    bs.appendChild(coTplBotao('Cancelar', coTplCancelarConfirma, 'btn btn2', coTpl.ocupado));
+    q.appendChild(t1); q.appendChild(bs); cf.appendChild(q);
+  }
+}
+// editor fechado/trocado ou prontuário limpo (logout, conta, perfil, OS): zera tudo e destrava
+if(typeof coOrcFecharJanela === 'function'){ var _coOrcFecharJanelaTpl = coOrcFecharJanela; coOrcFecharJanela = function(){ coTplResetar(true); return _coOrcFecharJanelaTpl.apply(this, arguments); }; }
+if(typeof _limparEstadoProntReal === 'function'){ var _limparEstadoTpl = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _limparEstadoTpl.apply(this, arguments); coTplResetar(true); return r; }; }
+// Janela somente leitura (proposta vigente/histórica): "Selecionar template" não é editável, então some junto com "Gerenciar lista"; volta ao abrir o editor. coTplAbrir também se recusa em RO.
+if(typeof coRoModalOrc === 'function'){
+var _coTplRoModalOrc = coRoModalOrc;
+coRoModalOrc = function(ligar){
+  var r = _coTplRoModalOrc.apply(this, arguments);
+  var m = coEl('modalOrcamento');
+  if(m) Array.prototype.slice.call(m.querySelectorAll('button')).forEach(function(b){ if(/coTplAbrir/.test(String(b.getAttribute('onclick') || ''))) b.style.display = ligar ? 'none' : ''; });
+  return r;
+};
+}
+// END 1.2.0.0 TEMPLATES
+// BEGIN 1.2.0.0 SALDO INICIAL (item 1): uma abertura da empresa (valor + data) em financeiro_saldo_abertura. NÃO é lançamento, venda nem receita:
+// entradas/saídas/resultado, mensal/anual, comissões e rentabilidade seguem usando só os lançamentos. A abertura entra apenas no SALDO (tabela do Fluxo e card do Dashboard).
+// Regra da data: o saldo inicial vale no COMEÇO do dia informado, antes dos lançamentos desse dia. Lançamentos de datas anteriores continuam registrados, mas não entram no saldo.
+var aberturaCaixa = { status: 'idle', valorC: 0, data: '', versao: 0, atualizadoEm: '', atualizadoPor: '', historico: [], histStatus: 'idle' };
+var CX_AB_LIMITE_MS = 20000, cxAbInst = 0;   // cxAbInst: cada reset/troca de contexto invalida janela, envio, histórico e respostas em voo
+var cxAbEnvio = null, cxAbPend = null;   // envio em andamento / mesmo envio a repetir com a mesma chave
+
+// ---- lógica pura (testada em Node a partir deste mesmo código) --------------------------------------------------------------------------------
+function cxAbAssinado(it){ return it.tipo === 'entrada' ? it.valorC : it.tipo === 'saida' ? -it.valorC : 0; }
+function cxAbSoma(itens, ini, fim, fimInclusivo){
+  var s = 0;
+  (itens || []).forEach(function(it){
+    var d = String(it.data || '');
+    if(ini && d < ini) return;
+    if(fimInclusivo ? d > fim : d >= fim) return;
+    s += cxAbAssinado(it);
+  });
+  return s;
+}
+// ab = { valorC, data } | null. Sem abertura: comportamento anterior (soma dos lançamentos). Com abertura e dia antes dela: null (saldo não definido).
+function cxAbSaldoAntes(itens, ab, d){
+  if(!ab) return cxAbSoma(itens, '', d, false);
+  if(d < ab.data) return null;
+  return ab.valorC + cxAbSoma(itens, ab.data, d, false);
+}
+function cxAbSaldoAte(itens, ab, d){
+  if(!ab) return cxAbSoma(itens, '', d, true);
+  if(d < ab.data) return null;
+  return ab.valorC + cxAbSoma(itens, ab.data, d, true);
+}
+// Linhas da tabela do Fluxo: movimentos (com saldo acumulado ou null quando anteriores à abertura) e a linha "Saldo inicial" na posição certa.
+// saldoOk=false (leitura incompleta ou abertura indisponível) → nenhum saldo é calculado. tudoVisivel=false → a linha de abertura só entra quando alcançada.
+function cxAbSaldoPorId(itens, ab){   // saldo REAL após cada lançamento (ordem canônica: data, criação, id), qualquer filtro; null antes da abertura
+  var ord = (itens || []).slice().sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : (a.criadoMs !== b.criadoMs && isFinite(a.criadoMs - b.criadoMs)) ? a.criadoMs - b.criadoMs : a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
+  var mapa = new Map(), acc = ab ? ab.valorC : 0;
+  ord.forEach(function(m){
+    if(ab && String(m.data || '') < ab.data){ mapa.set(m.id, null); return; }
+    acc += cxAbAssinado(m); mapa.set(m.id, acc);
+  });
+  return mapa;
+}
+// Linhas da tabela do Fluxo: movimentos com o SALDO REAL de caixa (não o saldo do filtro) e a linha "Saldo inicial" na posição certa.
+// saldoOk=false (leitura incompleta ou abertura indisponível) → nenhum saldo é calculado. tudoVisivel=false → a linha de abertura só entra quando alcançada.
+function cxAbPlano(vis, itens, cfg, f, tudoVisivel){
+  var ab = cfg.abertura, out = [], de = f.de || '', ate = f.ate || '';
+  if(!cfg.saldoOk) return vis.map(function(m){ return { tipo: 'mov', item: m, saldoC: null, antes: false }; });
+  var mapa = cxAbSaldoPorId(itens, ab);
+  var inserida = ab ? !!(de && de >= ab.data) : true;
+  vis.forEach(function(m){
+    if(ab && !inserida && String(m.data || '') >= ab.data){ inserida = true; out.push({ tipo: 'abertura', saldoC: ab.valorC, data: ab.data }); }
+    var sd = mapa.has(m.id) ? mapa.get(m.id) : null;
+    out.push({ tipo: 'mov', item: m, saldoC: sd, antes: !!ab && sd === null });
+  });
+  if(ab && !inserida && tudoVisivel && (!ate || ab.data <= ate) && (!de || ab.data >= de)) out.push({ tipo: 'abertura', saldoC: ab.valorC, data: ab.data });
+  return out;
+}
+// Sem nenhum lançamento a exibir, a abertura ainda aparece sozinha quando a data dela está dentro do período (e o saldo é confiável).
+function cxAbMostraSozinha(cfg, f){
+  var ab = cfg.abertura; if(!cfg.saldoOk || !ab) return false;
+  return (!f.de || ab.data >= f.de) && (!f.ate || ab.data <= f.ate);
+}
+function cxAbValorTexto(txt){   // aceita sinal "-" (saldo negativo) e zero; devolve { centavos } | { erro }
+  var s = String(txt === null || txt === undefined ? '' : txt).trim(), neg = false;
+  if(/^-/.test(s)){ neg = true; s = s.slice(1).trim(); }
+  if(/^(R\$\s*)?0([.,]0{1,2})?$/.test(s)) return { centavos: 0 };
+  var v = cxParseValor(s); if(v.erro) return v;
+  return { centavos: neg ? -v.centavos : v.centavos };
+}
+
+// ---- estado, leitura e pintura ----------------------------------------------------------------------------------------------------------------
+var _cxZerarAb = cxZerar;
+cxZerar = function(){ cxAbInvalidar(); aberturaCaixa = { status: 'idle', valorC: 0, data: '', versao: 0, atualizadoEm: '', atualizadoPor: '', historico: [], histStatus: 'idle' }; return _cxZerarAb.apply(this, arguments); };
+function cxAbInvalidar(){   // conta/época/leitura nova: nada da janela, do envio ou do histórico anterior sobrevive
+  cxAbInst++; cxAbEnvio = null; cxAbPend = null;
+  var m = foDom('modalSaldoAbertura'); if(m) m.classList.remove('open');
+  var h = foDom('cxAbHist'); if(h) h.textContent = '';
+  var g = foDom('cxAbMsg'); if(g){ g.textContent = ''; g.style.display = 'none'; }
+}
+function cxAberturaPronta(){ return aberturaCaixa.status === 'ok' || aberturaCaixa.status === 'ausente' || aberturaCaixa.status === 'nao_instalado'; }
+function cxAberturaObj(){ return aberturaCaixa.status === 'ok' ? { valorC: aberturaCaixa.valorC, data: aberturaCaixa.data } : null; }
+function cxAberturaCfg(totalOk){ return { saldoOk: !!totalOk && cxAberturaPronta(), abertura: cxAberturaObj() }; }
+function cxAbRotuloAnterior(){
+  var ab = cxAberturaObj();
+  return ab ? 'Saldo anterior (saldo inicial de ' + crDataBR(ab.data) + ' + lançamentos desde então, até o dia anterior ao período)' : 'Saldo anterior (lançamentos até o dia anterior ao período)';
+}
+function cxAbLinhaHtml(pl){
+  return '<tr style="background:#eff6ff;font-weight:700"><td style="font-size:12px;white-space:nowrap">' + (crDataBR(pl.data) || foEsc(pl.data)) + '</td><td colspan="5">Saldo inicial da empresa <span class="muted" style="font-weight:400;font-size:11px">(abertura no começo do dia; não é entrada nem receita)</span></td>'
+    + foCelula(crBRL(pl.saldoC), 'font-weight:700;color:' + (pl.saldoC >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td></td></tr>';
+}
+function cxAberturaCarregar(){
+  var e = estadoCaixaReal;
+  if(!crSessao() || !crPodeLer()) return;
+  var ctx = { seq: e.seq, uid: String(currentUser.id), epoch: crEpoch() };
+  aberturaCaixa = { status: 'carregando', valorC: 0, data: '', versao: 0, atualizadoEm: '', atualizadoPor: '', historico: [], histStatus: 'idle' };
+  var ok = function(){ return ctx.seq === estadoCaixaReal.seq && cxCtxValido(ctx); }, feito = false, timer = null, q;
+  var falhar = function(st){ if(feito) return; feito = true; if(timer !== null) clearTimeout(timer); if(ok()){ aberturaCaixa.status = st || 'erro'; cxRender(); } };
+  try { q = caixaRealProvider && caixaRealProvider.abertura ? caixaRealProvider.abertura() : supabaseClient.from('financeiro_saldo_abertura').select('valor,data_referencia,versao,atualizado_em,atualizado_por').limit(2); }
+  catch(_e){ falhar('erro'); return; }
+  timer = setTimeout(function(){ falhar('erro'); }, CX_AB_LIMITE_MS);   // sem resposta: saldos ocultos com aviso (nunca zero)
+  Promise.resolve(q).then(function(r){
+    if(feito) return; feito = true; clearTimeout(timer);
+    if(!ok()) return;
+    var cod = String((r && r.error && r.error.code) || '');
+    if(r && r.error){ aberturaCaixa.status = (cod === '42P01' || cod === 'PGRST205' || cod === 'PGRST202') ? 'nao_instalado' : 'erro'; cxRender(); return; }
+    var rows = r && Array.isArray(r.data) ? r.data : null;
+    if(!rows || rows.length > 1){ aberturaCaixa.status = 'erro'; cxRender(); return; }
+    if(!rows.length){ aberturaCaixa.status = 'ausente'; cxRender(); return; }
+    var x = rows[0], c = crCent(x && x.valor);
+    if(!Number.isSafeInteger(c) || !cxDataValida(x.data_referencia) || !Number.isInteger(Number(x.versao))){ aberturaCaixa.status = 'erro'; cxRender(); return; }
+    aberturaCaixa = { status: 'ok', valorC: c, data: x.data_referencia, versao: Number(x.versao), atualizadoEm: String(x.atualizado_em || ''), atualizadoPor: String(x.atualizado_por || ''), historico: [], histStatus: 'idle' };
+    cxRender();
+  }, function(){ falhar('erro'); });
+}
+var _cxCarregarAb = cxCarregar;
+cxCarregar = function(){ var p = _cxCarregarAb.apply(this, arguments); try { cxAberturaCarregar(); } catch(_e){} return p; };
+var _cxRenderAb = cxRender;
+cxRender = function(){ var r = _cxRenderAb.apply(this, arguments); try { cxAberturaPintar(); } catch(_e){} return r; };
+function cxAberturaPintar(){
+  var box = foDom('cxAbertura'), btn = foDom('cxAberturaBtn'); if(!box) return;
+  var a = aberturaCaixa, vivo = foPode(), t = '', cor = 'var(--muted)';
+  box.textContent = '';
+  if(estadoCaixaReal.status !== 'ok' && estadoCaixaReal.status !== 'incompleto'){ if(btn) btn.style.display = 'none'; return; }
+  if(btn){
+    btn.style.display = vivo && a.status !== 'nao_instalado' ? '' : 'none';
+    btn.textContent = a.status === 'ok' ? '💰 Editar saldo inicial' : '💰 Definir saldo inicial';
+    btn.disabled = !(a.status === 'ok' || a.status === 'ausente');
+  }
+  if(a.status === 'ok'){
+    var quem = a.atualizadoPor ? foNome(a.atualizadoPor) : '';
+    t = 'Saldo inicial da empresa: ' + crBRL(a.valorC) + ', no começo de ' + crDataBR(a.data) + (quem ? ' · definido por ' + quem : '') + '. Não é receita e não entra em entradas, saídas ou resultados.';
+  } else if(a.status === 'ausente'){ t = 'Saldo inicial não definido: o saldo mostrado é só a soma dos lançamentos.'; }
+  else if(a.status === 'nao_instalado'){ t = 'O recurso de saldo inicial ainda não está instalado no banco. O saldo mostrado é só a soma dos lançamentos.'; }
+  else if(a.status === 'erro'){ t = 'Não foi possível ler o saldo inicial agora: os saldos ficam ocultos (entradas, saídas e resultado continuam corretos). Use Atualizar.'; cor = 'var(--red)'; }
+  else if(a.status === 'carregando'){ t = 'Lendo o saldo inicial…'; }
+  if(t){ var d = document.createElement('div'); d.style.cssText = 'font-size:12px;color:' + cor; d.textContent = t; box.appendChild(d); }
+  try { foRenderDash(); } catch(_e){}   // o card de saldo do Dashboard acompanha a leitura da abertura
+}
+// ---- janela de definir/editar ------------------------------------------------------------------------------------------------------------------
+function cxAbMsg(txt, tipo){
+  var m = foDom('cxAbMsg'); if(!m) return; m.textContent = txt || ''; m.style.display = txt ? 'block' : 'none';
+  m.style.background = tipo === 'erro' ? '#fff1f2' : tipo === 'ok' ? '#f0fdf4' : '#f1f5f9'; m.style.color = tipo === 'erro' ? '#9f1239' : tipo === 'ok' ? '#166534' : '#334155';
+}
+function cxAberturaAbrir(){
+  if(!foPode() || !(aberturaCaixa.status === 'ok' || aberturaCaixa.status === 'ausente')) return;
+  var a = aberturaCaixa;
+  foDom('cxAbValor').value = a.status === 'ok' ? (a.valorC < 0 ? '-' : '') + cxValorTexto(Math.abs(a.valorC)) : '';
+  foDom('cxAbData').value = a.status === 'ok' ? a.data : '';
+  foDom('cxAbMotivo').value = ''; foDom('cxAbMotivoLbl').style.display = a.status === 'ok' ? '' : 'none';
+  foDom('cxAbData').max = crHojeSP();
+  // um envio em andamento ou incerto NÃO é descartado ao reabrir: a chave pendente só muda se o conteúdo/versão mudar
+  cxAbMsg(cxAbEnvio ? 'Gravando…' : '', 'info');
+  foDom('cxAbSalvarBtn').disabled = !!cxAbEnvio;
+  foDom('modalSaldoAbertura').classList.add('open');
+  cxAberturaHistorico();
+}
+function cxAberturaFechar(){ if(cxAbEnvio) return; var m = foDom('modalSaldoAbertura'); if(m) m.classList.remove('open'); }
+function cxAberturaHistorico(){
+  var box = foDom('cxAbHist'); if(!box) return; box.textContent = '';
+  if(aberturaCaixa.status !== 'ok') return;
+  var inst = cxAbInst, e = estadoCaixaReal, ctx = { seq: e.seq, uid: String(currentUser.id), epoch: crEpoch() };
+  var vivo = function(){ var m = foDom('modalSaldoAbertura'); return inst === cxAbInst && ctx.seq === estadoCaixaReal.seq && cxCtxValido(ctx) && box === foDom('cxAbHist') && !!m && m.classList.contains('open'); };
+  var nota = function(t){ box.textContent = ''; var n = document.createElement('div'); n.className = 'muted'; n.style.cssText = 'font-size:12px;margin-top:10px'; n.textContent = t; box.appendChild(n); };
+  var feito = false, timer = null, q;
+  var falha = function(){ if(feito) return; feito = true; if(timer !== null) clearTimeout(timer); if(vivo()) nota('Histórico indisponível agora (a leitura falhou). O saldo inicial acima continua válido.'); };
+  try { q = supabaseClient.from('financeiro_saldo_abertura_historico').select('versao,valor,data_referencia,motivo,criado_por,criado_em').order('versao', { ascending: false }).limit(20); } catch(_e){ falha(); return; }
+  timer = setTimeout(falha, CX_AB_LIMITE_MS);
+  Promise.resolve(q).then(function(r){
+    if(feito) return;
+    if(!r || r.error || !Array.isArray(r.data)){ falha(); return; }
+    feito = true; clearTimeout(timer);
+    if(!vivo()) return;
+    if(!r.data.length){ nota('Sem registros no histórico.'); return; }
+    box.textContent = '';
+    var h = document.createElement('div'); h.style.cssText = 'font-size:12px;font-weight:700;margin:10px 0 4px'; h.textContent = 'Histórico do saldo inicial'; box.appendChild(h);
+    r.data.forEach(function(x){
+      var l = document.createElement('div'); l.className = 'muted'; l.style.cssText = 'font-size:12px;padding:3px 0;border-top:1px solid var(--line)';
+      l.textContent = 'V' + x.versao + ' · ' + crBRL(crCent(x.valor)) + ' em ' + crDataBR(x.data_referencia) + ' · ' + (foNome(x.criado_por) || 'usuário') + ' · ' + crDataBR(String(x.criado_em || '').slice(0, 10)) + (x.motivo ? ' · ' + x.motivo : '');
+      box.appendChild(l);
+    });
+  }, falha);
+}
+function cxAberturaSalvar(){
+  if(cxAbEnvio || !foPode()) return;
+  var a = aberturaCaixa, ehEdicao = a.status === 'ok';
+  var v = cxAbValorTexto(foDom('cxAbValor').value); if(v.erro){ cxAbMsg(v.erro, 'erro'); return; }
+  if(Math.abs(v.centavos) > CX_VALOR_MAX_C){ cxAbMsg('Valor acima do limite permitido.', 'erro'); return; }
+  var data = foDom('cxAbData').value; if(!cxDataValida(data) || data < '2000-01-01'){ cxAbMsg('Informe uma data de referência válida.', 'erro'); return; }
+  if(data > crHojeSP()){ cxAbMsg('A data de referência não pode ser futura.', 'erro'); return; }
+  var motivo = String(foDom('cxAbMotivo').value || '').trim();
+  if(ehEdicao && (motivo.length < 3 || motivo.length > 300)){ cxAbMsg('Informe o motivo da alteração (3 a 300 caracteres).', 'erro'); return; }
+  if(ehEdicao && v.centavos === a.valorC && data === a.data){ cxAbMsg('Nada mudou em relação ao saldo inicial atual.', 'info'); return; }
+  var ass = JSON.stringify([v.centavos, data, motivo, ehEdicao ? a.versao : 0]);
+  if(!cxAbPend || cxAbPend.ass !== ass) cxAbPend = { ass: ass, chave: cxUuid() };   // repetição de um envio incerto = MESMA chave
+  var env = { uid: String(currentUser.id), epoch: crEpoch(), chave: cxAbPend.chave, esperado: ehEdicao ? a.versao : 0, inst: cxAbInst };
+  cxAbEnvio = env; foDom('cxAbSalvarBtn').disabled = true; cxAbMsg('Gravando…', 'info');
+  var feito = false, timer = null;
+  var vivo = function(){ return cxAbEnvio === env && env.inst === cxAbInst && crSessao() && String(currentUser.id) === env.uid && crEpoch() === env.epoch && foPode(); };
+  var soltar = function(){ if(cxAbEnvio === env) cxAbEnvio = null; };   // resposta obsoleta nunca mexe no envio de outra janela/conta
+  var fim = function(txt, tipo){ soltar(); var b = foDom('cxAbSalvarBtn'); if(b) b.disabled = false; cxAbMsg(txt, tipo); };
+  var tomar = function(){ if(feito) return false; feito = true; if(timer !== null) clearTimeout(timer); return true; };
+  var incerto = function(){ if(!tomar()) return; if(!vivo()){ soltar(); return; } fim('Não consegui confirmar se o saldo inicial foi gravado. Clique em Salvar de novo: o envio é repetido com a mesma chave, sem duplicar.', 'erro'); };
+  var q;
+  try { q = supabaseClient.rpc('financeiro_saldo_abertura_definir', { p_chave: env.chave, p_valor: Number((v.centavos / 100).toFixed(2)), p_data: data, p_versao_esperada: env.esperado, p_motivo: motivo || null }); }
+  catch(_e){ tomar(); fim('Não foi possível enviar. Nada foi gravado.', 'erro'); return; }
+  timer = setTimeout(incerto, CX_AB_LIMITE_MS);
+  Promise.resolve(q).then(function(r){
+    if(!tomar()) return;
+    if(!vivo()){ soltar(); return; }
+    var d = r && !r.error ? r.data : null;
+    if(d && typeof d === 'object' && (d.status === 'ok' || d.status === 'ja_aplicado')){ cxAbPend = null; fim('Saldo inicial gravado.', 'ok'); cxCarregar(true); return; }
+    if(d && d.status === 'conflito'){ cxAbPend = null; fim('Outra pessoa alterou o saldo inicial enquanto você editava. Confira o valor atual e tente de novo.', 'erro'); cxCarregar(true); return; }
+    if(r && r.error){ cxAbPend = null; var c = String(r.error.code || ''); fim(c === '42501' ? 'Seu perfil não permite definir o saldo inicial.' : (c === 'PGRST202' || c === '42883') ? 'O recurso de saldo inicial ainda não está instalado no banco. Nada foi gravado.' : 'O banco recusou: ' + String(r.error.message || 'verifique os dados') + '. Nada foi gravado.', 'erro'); return; }
+    fim('Resposta inesperada do banco. Confira o saldo inicial exibido antes de repetir.', 'erro'); cxCarregar(true);
+  }, incerto);
+}
+// END 1.2.0.0 SALDO INICIAL
+// BEGIN 1.2.0.0 REVISAO V2 (item 7): revisão pós-contrato na JANELA EXISTENTE do orçamento. O servidor (RPCs orcamento_revisao_*) decide permissões, cálculo, impedimentos e aplicação;
+// aqui só há contexto, envio idempotente, prévia real antes/depois, confirmação ligada ao hash e histórico. O rascunho NUNCA muda o orçamento corrente, o contrato ou o financeiro.
+var CO_REV_LIMITE_MS = 25000;
+var coRev = { tok: 0, ativo: false, projetoId: '', revisao: null, form: null, calculo: null, busy: false, pend: {}, previa: null, confirmado: false, dataNova: '', modo: '', incertoAplicar: false, hist: { chave: '', status: 'idle', dados: null }, histGen: 0, detalhe: '' };
+
+// ---- lógica pura (testada em Node a partir deste mesmo código) --------------------------------------------------------------------------------
+function coRevPayload(f){   // formulário da janela → parâmetros/itens para o servidor (sem cálculo pronto; entradas como digitadas: 1.005 continua 1.005)
+  var num = function(v){ var t = String(v === null || v === undefined ? '' : v).trim(); if(t === '') return 0; return _numCampoProntReal(t, NaN); };
+  var tx = function(v){ var t = String(v === null || v === undefined ? '' : v).trim(); return t === '' ? null : t; };
+  var par = { bv_pct: Number(f.bv_pct) || 0, desconto: num(f.desconto), custo_extra: num(f.custo_extra), ajuste_imposto: num(f.ajuste_imposto), ajuste_bv: num(f.ajuste_bv),
+              justificativa_imposto: tx(f.just_imposto), justificativa_bv: tx(f.just_bv), condicao_pagamento: tx(f.condicao) };
+  var itens = (f.itens || []).map(function(it){
+    var o = { descricao: String(it.descricao === null || it.descricao === undefined ? '' : it.descricao).trim(), quantidade: num(it.quantidade), valor_unitario: num(it.valor_unitario), exibir_valor: it.exibir_valor === true, eh_custo: it.eh_custo === true };
+    if(typeof it.item_id === 'string' && /^[0-9a-fA-F-]{36}$/.test(it.item_id)) o.origem_item_id = it.item_id;   // item existente: identidade preservada
+    if(o.eh_custo){ o.tipo_vinculo = it.tipo_vinculo || 'a_definir'; if(o.tipo_vinculo === 'cadastrado') o.fornecedor_id = it.fornecedor_id; if(o.tipo_vinculo === 'manual') o.nome_manual = it.nome_manual; }
+    return o;
+  });
+  return { par: par, itens: itens };
+}
+// Habilitar "Aplicar": só com prévia do servidor FRESCA (mesma versão de linha, sem edição pendente, mesma data de parcela), sem impedimentos, com confirmação e perfil de aplicação.
+function coRevPodeConfirmar(p, e){
+  if(!p || !p.d || p.d.status !== 'ok') return { ok: false, motivo: 'Sem prévia do servidor.' };
+  if(!e.podeAplicar) return { ok: false, motivo: 'Somente Sócio ou Admin aplicam uma revisão.' };
+  if(e.alterado) return { ok: false, motivo: 'Há alterações não salvas: salve e veja a prévia de novo.' };
+  if(p.vl !== e.versaoLinha) return { ok: false, motivo: 'O rascunho mudou depois desta prévia: atualize a prévia.' };
+  if((p.data || '') !== (e.dataNova || '')) return { ok: false, motivo: 'Atualize a prévia com a data informada.' };
+  if(Array.isArray(p.d.impedimentos) && p.d.impedimentos.length) return { ok: false, motivo: 'Há impedimentos: corrija o rascunho.' };
+  if(p.d.precisa_data_nova_parcela === true && !e.dataNova) return { ok: false, motivo: 'Informe o vencimento da nova parcela.' };
+  if(e.busy) return { ok: false, motivo: 'Aguarde o envio em andamento.' };
+  if(!e.confirmado) return { ok: false, motivo: 'Marque a confirmação.' };
+  return { ok: true, motivo: '' };
+}
+function coRevNovaChave(op, assin){   // MESMO conteúdo → MESMA chave (retry seguro); conteúdo diferente → chave nova
+  var p = coRev.pend[op];
+  if(!p || p.assin !== assin){ var k = _novoUuidAtendimentoReal(); if(!k) return ''; p = coRev.pend[op] = { assin: assin, chave: k }; }
+  return p.chave;
+}
+var CO_REV_TEXTOS = {
+  rascunho_existente: 'Já existe um rascunho de revisão para este projeto: ele foi aberto.', revisao_nao_aberta: 'Esta revisão não está mais em rascunho.', base_desatualizada: 'O orçamento mudou depois que este rascunho foi criado. Descarte e crie outra revisão.',
+  confirmacao_ausente: 'A confirmação explícita é obrigatória.', data_nova_parcela_obrigatoria: 'Informe o vencimento da nova parcela e atualize a prévia.', sem_aliquota: 'A alíquota do orçamento não está configurada.',
+  sem_orcamento: 'Este projeto não tem orçamento vinculado para revisar.', sem_snapshot: 'A versão atual do orçamento não tem registro suficiente para revisar.',
+  projeto_finalizado: 'Projeto encerrado, arquivado ou perdido: a revisão não se aplica.', projeto_recorrente: 'Projeto recorrente, contrato-pai ou ciclo: a revisão ainda não tem regra segura para isso.',
+  versao_contratada_divergente: 'A versão contratada do projeto não é a versão atual do orçamento.', custo_extra_inconsistente: 'O custo extra do orçamento não fecha com o custo comercial + custos pós-orçamento.'
+};
+function coRevErroTexto(r){
+  var e = r && r.error, c = String((e && e.code) || '');
+  if(c === 'PGRST202' || c === '42883') return 'O recurso de revisão ainda não está instalado no banco. Nada foi alterado.';
+  if(c === '42501') return 'Seu perfil ou este atendimento não permite esta ação.';
+  if(c === '22023' && e && e.message) return String(e.message).slice(0, 220) + ' Nada foi alterado.';
+  return 'O banco recusou a operação. Nada foi alterado.';
+}
+function coRevStatusTexto(d){
+  if(!d) return '';
+  if(d.status === 'impedido') return CO_REV_TEXTOS[d.codigo] || 'A revisão está impedida (' + String(d.codigo || '') + ').';
+  return CO_REV_TEXTOS[d.status] || '';
+}
+// ---- contexto / comunicação ------------------------------------------------------------------------------------------------------------------
+function coRevPerfis(){ return currentUser && Array.isArray(currentUser.profiles) ? currentUser.profiles : []; }
+function coRevPodeAplicar(){ var p = coRevPerfis(); return p.indexOf('socio') >= 0 || p.indexOf('admin') >= 0; }
+function coRevProjetoId(){ var sp = coS().sub && coS().sub.projetos, d = sp && sp.status === 'ok' && Array.isArray(sp.dados) ? sp.dados : []; return d.length === 1 && coUuidOk(String(d[0].id)) ? String(d[0].id) : ''; }
+function coRevCtx(globalTok){ var c = _ctxProntReal(); c.tok = globalTok ? null : coRev.tok; c.uid = currentUser ? String(currentUser.id) : ''; c.projeto = coRevProjetoId(); return c; }
+function coRevCtxOk(c){ return !!c && (c.tok === null || c.tok === coRev.tok) && !!currentUser && c.uid === String(currentUser.id) && c.projeto !== '' && c.projeto === coRevProjetoId() && _ctxProntValido(c); }
+function coRevAtivoOk(){ return coRev.ativo && !!coRev.form && !!coRev.revisao && coOrc.aberta && coOrc.form === coRev.form; }
+// Resposta de um contexto que NÃO vale mais: é descartada por inteiro. Se ela pertencia à instância ATUAL do editor (conta/perfil/OS/projeto mudou), o editor é encerrado e destravado; de instâncias antigas nada é tocado.
+function coRevCtxPerdido(ctx){
+  if(!ctx || ctx.tok === null || ctx.tok !== coRev.tok || !coRev.ativo) return;
+  coRevReset(true); try { if(coOrc.aberta) coOrcFecharJanela(); } catch(_e){}
+}
+function coRevRpc(nome, args, ctx, cb, perdido){ coRevChamar(function(){ return supabaseClient.rpc(nome, args); }, ctx, cb, perdido); }
+function coRevChamar(mk, ctx, cb, perdido){   // mk() devolve a consulta (RPC ou leitura); resposta de contexto que não vale mais é descartada (perdido() se informado)
+  var feito = false, timer = null, ctrl = null, q;
+  function fim(tipo, r){ if(feito) return; feito = true; if(timer !== null){ try { clearTimeout(timer); } catch(_e){} } if(!coRevCtxOk(ctx)){ if(typeof perdido === 'function') perdido(); else coRevCtxPerdido(ctx); return; } cb(tipo, r); }
+  try { if(typeof AbortController === 'function') ctrl = new AbortController(); q = _comSinalProntReal(mk(), ctrl ? ctrl.signal : null); }
+  catch(_e){ fim('falha', null); return; }
+  timer = setTimeout(function(){ if(ctrl){ try { ctrl.abort(); } catch(_e){} } fim('tempo', null); }, CO_REV_LIMITE_MS);
+  try { q.then(function(r){ fim('resposta', r); }, function(){ fim('falha', null); }); } catch(_e){ fim('falha', null); }
+}
+function coRevLer(rid, ctx, cb){   // rascunho + itens CRUS do servidor (RLS decide quem lê)
+  var feito = false, timer = null, ctrl = null, a, b;
+  function fim(ok, rev, itens){ if(feito) return; feito = true; if(timer !== null){ try { clearTimeout(timer); } catch(_e){} } if(!coRevCtxOk(ctx)){ coRevCtxPerdido(ctx); return; } cb(ok, rev, itens); }
+  try {
+    if(typeof AbortController === 'function') ctrl = new AbortController();
+    var sig = ctrl ? ctrl.signal : null;
+    a = _comSinalProntReal(supabaseClient.from('orcamento_revisoes').select('*').eq('id', rid).limit(2), sig);
+    b = _comSinalProntReal(supabaseClient.from('orcamento_revisao_itens').select('*').eq('revisao_id', rid).order('ordem', { ascending: true }).limit(250), sig);
+  } catch(_e){ fim(false); return; }
+  timer = setTimeout(function(){ if(ctrl){ try { ctrl.abort(); } catch(_e){} } fim(false); }, CO_REV_LIMITE_MS);
+  Promise.all([a, b]).then(function(rs){
+    var r1 = rs[0], r2 = rs[1];
+    if(!r1 || r1.error || !r2 || r2.error || !Array.isArray(r1.data) || r1.data.length !== 1 || String(r1.data[0].id) !== String(rid) || !Array.isArray(r2.data) || r2.data.length < 1){ fim(false); return; }
+    var itens = r2.data.slice().sort(function(x, y){ return Number(x.ordem) - Number(y.ordem); });
+    for(var i = 0; i < itens.length; i++) if(Number(itens[i].ordem) !== i || !isFinite(Number(itens[i].quantidade)) || !isFinite(Number(itens[i].valor_unitario))){ fim(false); return; }
+    fim(true, r1.data[0], itens);
+  }, function(){ fim(false); });
+}
+function coRevFormDe(rev, itens){
+  var num = function(v){ var n = Number(v); return (v === null || v === undefined || !isFinite(n) || n === 0) ? '' : _numParaCampoProntReal(n); };
+  var bv = Number(rev.bv_pct), op = BV_OPCOES_PRONT_REAL.filter(function(p){ return Number(p[0]) === bv; })[0];
+  var f = { itens: [], bv_pct: op ? op[0] : String(isFinite(bv) ? bv : 0), desconto: num(rev.desconto), custo_extra: num(rev.custo_extra), ajuste_imposto: num(rev.ajuste_imposto), just_imposto: _textoProntReal(rev.justificativa_imposto),
+            ajuste_bv: num(rev.ajuste_bv), just_bv: _textoProntReal(rev.justificativa_bv), condicao: _textoProntReal(rev.condicao_pagamento), novoItem: '', orcamento_id: String(rev.orcamento_id), versao: null, atualizado_em: '',
+            custo_extra_ok: true, revisao_id: String(rev.id) };
+  itens.forEach(function(i){
+    f.itens.push({ item_id: _textoProntReal(i.origem_item_id), descricao: _textoProntReal(i.descricao), quantidade: _numParaCampoProntReal(i.quantidade), valor_unitario: _numParaCampoProntReal(i.valor_unitario),
+                   exibir_valor: i.exibir_valor === true, eh_custo: i.eh_custo === true, tipo_vinculo: String(i.tipo_vinculo || 'a_definir'), fornecedor_id: _textoProntReal(i.fornecedor_id),
+                   nome_manual: _textoProntReal(i.nome_manual), fornecedor_nome: String((i.snapshot && i.snapshot.nome) || '') });
+  });
+  return f;
+}
+// ---- mensagens / barra do editor -------------------------------------------------------------------------------------------------------------
+function coRevAviso(tipo, texto){
+  var a = coEl('coRevBarraMsg'); if(!a) return;
+  a.textContent = texto || ''; a.style.display = texto ? 'block' : 'none';
+  var cor = tipo === 'erro' ? ['#fff1f2', '#9f1239'] : (tipo === 'ok' ? ['#f0fdf4', '#166534'] : (tipo === 'aviso' ? ['#fffbeb', '#92400e'] : ['#f1f5f9', '#334155']));
+  a.style.background = cor[0]; a.style.color = cor[1];
+}
+function coRevAvisoModal(tipo, texto){
+  var a = coEl('coRevAvisoModal'); if(!a) return;
+  a.textContent = texto || ''; a.style.display = texto ? 'block' : 'none';
+  var cor = tipo === 'erro' ? ['#fff1f2', '#9f1239'] : (tipo === 'ok' ? ['#f0fdf4', '#166534'] : (tipo === 'aviso' ? ['#fffbeb', '#92400e'] : ['#f1f5f9', '#334155']));
+  a.style.background = cor[0]; a.style.color = cor[1];
+}
+function coRevBtn(txt, fn, cls, desab){ var b = document.createElement('button'); b.type = 'button'; b.className = cls || 'btn btn2'; b.style.fontSize = '13px'; b.textContent = txt; b.disabled = !!desab; b.addEventListener('click', fn); return b; }
+function coRevGarantirBarra(){
+  var m = coEl('modalOrcamento'), box = m && m.querySelector ? m.querySelector('.modalbox') : null; if(!box) return null;
+  var b = coEl('coRevBarra');
+  if(!b){
+    b = document.createElement('div'); b.setAttribute('id', 'coRevBarra'); b.style.cssText = 'display:none;border:1px solid #bae6fd;background:#f0f9ff;color:#0369a1;border-radius:12px;padding:10px 12px;margin:10px 0';
+    var ref = box.children && box.children[0] ? box.children[0].nextSibling : null;
+    box.insertBefore(b, ref);
+  }
+  return b;
+}
+function coRevPintarBarra(){
+  var b = coRevGarantirBarra(); if(!b) return;
+  b.textContent = '';
+  if(!coRevAtivoOk()){ b.style.display = 'none'; return; }
+  b.style.display = 'block';
+  var r = coRev.revisao, t = document.createElement('div'); t.style.cssText = 'font-size:13px;font-weight:700;margin-bottom:6px';
+  t.textContent = '🔁 Revisão #' + r.numero + ' em rascunho · a proposta vigente (V' + r.base_versao + ') continua valendo até um Sócio ou Admin aplicar. O contrato anterior é preservado (aditivo quando necessário).';
+  b.appendChild(t);
+  var l = document.createElement('div'); l.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
+  l.appendChild(coRevBtn('👁️ Prévia e aplicar', function(){ coRevPrevia(); }, 'btn', coRev.busy));
+  l.appendChild(coRevBtn('↻ Recarregar do servidor', function(){ coRevRecarregarConfirmado(); }, 'btn btn2', coRev.busy));
+  l.appendChild(coRevBtn('🗑️ Descartar rascunho', function(){ coRevModalAbrir('descartar'); }, 'btn btn2', coRev.busy));
+  b.appendChild(l);
+  var m = document.createElement('div'); m.setAttribute('id', 'coRevBarraMsg'); m.setAttribute('role', 'status'); m.style.cssText = 'display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-top:8px';
+  b.appendChild(m);
+}
+function coRevTravar(on){
+  var m = coEl('modalOrcamento'); if(!m) return;
+  Array.prototype.slice.call(m.querySelectorAll('input,select,button,textarea')).forEach(function(e){ e.disabled = !!on; });
+  if(!on){ try { coOrcAtualizarEstado(); } catch(_e){} }
+  coRevPintarBarra();
+}
+function coRevCustomizarEditor(){
+  var r = coRev.revisao, l = coS().lead || {};
+  coOrcDefinirTexto('orcTitulo', 'Revisão da proposta — ' + String(l.cliente_nome || ''));
+  coOrcDefinirTexto('orcSubtitulo', String(coS().os || '') + ' • rascunho #' + r.numero + ' • base V' + r.base_versao + ' • Resp: ' + coOrcResponsavelNome());
+  coRevRotuloExtra(true);
+  coRevPintarBarra(); coRevAjustarBotaoSalvar(); calcOrc();
+}
+// No modo revisão o campo é o custo extra COMERCIAL (o ledger de custos pós-orçamento é preservado à parte e somado na prévia/resumo).
+function coRevRotuloExtra(on){
+  var ce = coEl('orcCustoExtra'), lb = ce && ce.parentNode; if(!lb || !lb.firstChild || typeof lb.getAttribute !== 'function') return;
+  var n = lb.firstChild, aj = (typeof lb.querySelector === 'function') ? lb.querySelector('span') : null;
+  if(on){
+    if(lb.getAttribute('data-rev-rotulo') === null && n.nodeType === 3 && String(n.nodeValue || '').indexOf('Custo extra') >= 0){ lb.setAttribute('data-rev-rotulo', n.nodeValue); n.nodeValue = 'Custo extra comercial (R$) '; }
+    if(aj && aj.getAttribute('data-rev-ajuda') === null){ aj.setAttribute('data-rev-ajuda', aj.textContent); aj.textContent = '💡 Custo extra previsto na proposta (não repassado ao cliente). Os custos pós-orçamento já lançados no projeto são preservados e entram na conta à parte.'; }
+  } else {
+    var o = lb.getAttribute('data-rev-rotulo'); if(o !== null){ n.nodeValue = o; lb.removeAttribute('data-rev-rotulo'); }
+    if(aj){ var h = aj.getAttribute('data-rev-ajuda'); if(h !== null){ aj.textContent = h; aj.removeAttribute('data-rev-ajuda'); } }
+  }
+}
+function coRevAjustarBotaoSalvar(){
+  var m = coEl('modalOrcamento'); if(!m) return;
+  var s = m.querySelector('button[onclick="salvarOrcamento()"]'); if(s && coRevAtivoOk()) s.textContent = coRev.busy ? 'Salvando…' : '💾 Salvar rascunho';
+}
+function coRevRestaurarEditor(){
+  coRevRotuloExtra(false);
+  var b = coEl('coRevBarra'); if(b){ b.textContent = ''; b.style.display = 'none'; }
+}
+function coRevReset(fecharModal){   // nova instância: nada do editor/modal/envio anterior sobrevive
+  coRev.tok++; coRev.ativo = false; coRev.revisao = null; coRev.form = null; coRev.calculo = null; coRev.busy = false; coRev.pend = {}; coRev.previa = null; coRev.confirmado = false; coRev.dataNova = '';
+  if(fecharModal) coRevModalFechar(true);
+  coRevRestaurarEditor();
+}
+// ---- abrir o editor (rascunho) -----------------------------------------------------------------------------------------------------------------
+function coRevPodeEditar(){ var s = coS(); return !!s && s.leadStatus === 'ok' && !!s.lead && !s.painel && !s.acao && _textoProntReal(s.lead.etapa) === 'fechado' && _podeEditarLeadProntReal(s.lead) && !!coRevProjetoId() && !(typeof finOp !== 'undefined' && finOp.ativo); }
+function coRevAbrirEditor(rid){
+  var s = coS();
+  if(!coRevPodeEditar() || !coUuidOk(String(rid))) return;
+  coRevReset(true);
+  var ctx = coRevCtx(); coRev.busy = true;
+  _mensagemProntReal('info', 'Abrindo a revisão…');
+  coRevLer(rid, ctx, function(ok, rev, itens){
+    coRev.busy = false;
+    if(!ok){ _mensagemProntReal('erro', 'Não foi possível ler o rascunho agora. Nada foi alterado.'); return; }
+    if(rev.estado !== 'rascunho'){ _mensagemProntReal('aviso', 'Esta revisão não está mais em rascunho.'); coRevHistInvalidar(); coRevHistCarregar(true); return; }
+    if(s.acao || s.painel){ _mensagemProntReal('aviso', 'Conclua ou feche o painel aberto antes de abrir a revisão.'); return; }
+    coRev.ativo = true; coRev.revisao = rev; coRev.calculo = rev.calculo || null; coRev.projetoId = ctx.projeto; coRev.form = coRevFormDe(rev, itens);
+    s.painel = 'orcamento'; s.form = coRev.form; s.formDados = {}; s.mensagem = { tipo: '', texto: '' };
+    _renderProntuarioAtendReal('tudo');   // coSincronizar abre a janela existente; coOrcAbrirJanela é complementada abaixo
+  });
+}
+function coRevRecarregar(msgOk){   // relê o rascunho do servidor e reconstrói a janela (após salvar, ou a pedido)
+  if(!coRevAtivoOk()) return;
+  var ctx = coRevCtx(), rid = coRev.revisao.id; coRev.busy = true; coRevTravar(true);
+  coRevLer(rid, ctx, function(ok, rev, itens){
+    coRev.busy = false;
+    if(!ok || !coRevAtivoOk()){ coRevTravar(false); coRevAviso('erro', 'Não consegui reler o rascunho. Seus campos foram mantidos; tente "Recarregar do servidor".'); return; }
+    if(rev.estado !== 'rascunho'){ coRevTravar(false); coRevAviso('aviso', 'Esta revisão não está mais em rascunho.'); return; }
+    coRev.revisao = rev; coRev.calculo = rev.calculo || null; coRev.previa = null; coRev.confirmado = false;
+    var f = coRevFormDe(rev, itens); Object.keys(f).forEach(function(k){ coRev.form[k] = f[k]; });
+    orcItens = coRev.form.itens.map(coItemParaLinha); fornBuscaAberta = -1;
+    coOrcPreencherCampos(coRev.form, null); renderOrcItens(); coOrc.baseline = coAssinaturaOrc(coOrcColetar());
+    coRevTravar(false); calcOrc(); coRevAviso(msgOk ? 'ok' : 'info', msgOk || 'Rascunho recarregado do servidor.');
+  });
+}
+function coRevRecarregarConfirmado(){ if(coRev.busy || !coRevAtivoOk()) return; if(coOrcAlterado() && !confirm('Recarregar do servidor descarta as alterações não salvas desta janela. Continuar?')) return; coRevRecarregar(); }
+// ---- salvar rascunho ----------------------------------------------------------------------------------------------------------------------------
+function coRevSalvar(){
+  if(!coRevAtivoOk() || coRev.busy) return;
+  var f = coOrcColetar(), erros = coOrcErrosEntrada(f);
+  if(erros.length){ coRevAviso('erro', 'Confira os valores digitados (' + erros.join('; ') + ').'); return; }
+  var pl = coRevPayload(f), ctx = coRevCtx(), r = coRev.revisao, vl = r.versao_linha;
+  var chave = coRevNovaChave('salvar', JSON.stringify([r.id, vl, pl]));
+  if(!chave){ coRevAviso('erro', 'Não foi possível gerar a chave do envio. Nada foi salvo.'); return; }
+  coRev.busy = true; coRevTravar(true); coRevAjustarBotaoSalvar(); coRevAviso('info', 'Salvando o rascunho…');
+  coRevRpc('orcamento_revisao_salvar', { p_chave: chave, p_revisao_id: r.id, p_versao_linha: vl, p_parametros: pl.par, p_itens: pl.itens }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && (d.status === 'ok' || d.status === 'ja_aplicado')){ delete coRev.pend.salvar; coRevHistInvalidar(); coRev.revisao.versao_linha = d.versao_linha; if(d.calculo) coRev.calculo = d.calculo; coRevRecarregar('Rascunho salvo. A prévia mostra o efeito real antes de aplicar.'); return; }
+    coRevTravar(false); coRevAjustarBotaoSalvar();
+    if(d && d.status === 'conflito'){ delete coRev.pend.salvar; coRevAviso('erro', 'O rascunho mudou em outra sessão. Seus campos foram mantidos: use "Recarregar do servidor" para ver a versão atual (isso descarta o que você digitou aqui).'); return; }
+    if(d){ delete coRev.pend.salvar; coRevAviso('erro', coRevStatusTexto(d) || 'O servidor não salvou o rascunho.'); return; }
+    if(tipo === 'resposta' && resp && resp.error){ delete coRev.pend.salvar; coRevAviso('erro', coRevErroTexto(resp)); return; }
+    coRevAviso('erro', 'Não consegui confirmar se o rascunho foi salvo. Clique em Salvar de novo: o envio é repetido com a mesma chave, sem duplicar. Seus campos foram mantidos.');
+  });
+}
+// ---- prévia real ---------------------------------------------------------------------------------------------------------------------------------
+function coRevPrevia(){
+  if(!coRevAtivoOk() || coRev.busy) return;
+  if(coOrcAlterado()){ coRevAviso('aviso', 'Salve o rascunho antes: a prévia mostra o que está salvo no servidor.'); return; }
+  coRevPreviaPedir(false);
+}
+function coRevPreviaPedir(jaAberto){
+  if(!coRevAtivoOk() || coRev.busy) return;
+  var ctx = coRevCtx(), r = coRev.revisao, data = coRev.dataNova || null, vl = r.versao_linha;
+  coRev.busy = true; coRev.previa = null; coRev.confirmado = false;
+  if(jaAberto) coRevRenderPrevia(); else coRevAviso('info', 'Pedindo a prévia ao servidor…');
+  coRevRpc('orcamento_revisao_previa', { p_revisao_id: r.id, p_data_nova_parcela: data }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && d.status === 'ok' && d.revisao && d.revisao.versao_linha === vl && d.revisao.id === r.id){ coRev.previa = { d: d, data: data || '', vl: vl }; coRevAviso('', ''); coRevModalAbrir('previa'); return; }
+    coRevAviso('erro', d && d.revisao && d.revisao.versao_linha !== vl ? 'O rascunho mudou durante a prévia. Recarregue e tente de novo.' : (resp && resp.error ? coRevErroTexto(resp) : 'Não foi possível obter a prévia agora. Nada foi alterado.'));
+    if(jaAberto) coRevRenderPrevia();
+  });
+}
+function coRevAplicarHabilitado(){
+  return coRevPodeConfirmar(coRev.previa, { podeAplicar: coRevPodeAplicar(), alterado: coRevAtivoOk() ? coOrcAlterado() : true, versaoLinha: coRev.revisao ? coRev.revisao.versao_linha : -1, dataNova: coRev.dataNova, busy: coRev.busy, confirmado: coRev.confirmado });
+}
+function coRevAplicar(){
+  var h = coRevAplicarHabilitado(); if(!h.ok || !coRevAtivoOk()) { coRevAvisoModal('aviso', h.motivo); return; }
+  var p = coRev.previa, ctx = coRevCtx(), r = coRev.revisao;
+  var conf = { confirmo: true }; if(coRev.dataNova) conf.data_nova_parcela = coRev.dataNova;
+  var chave = coRevNovaChave('aplicar', JSON.stringify([r.id, p.vl, p.d.estado_hash, conf]));
+  if(!chave){ coRevAvisoModal('erro', 'Não foi possível gerar a chave do envio. Nada foi aplicado.'); return; }
+  coRev.busy = true; coRevAvisoModal('info', 'Aplicando a revisão…'); coRevRenderPrevia();
+  coRevRpc('orcamento_revisao_aplicar', { p_chave: chave, p_revisao_id: r.id, p_versao_linha: p.vl, p_hash_estado: p.d.estado_hash, p_confirmacao: conf }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && (d.status === 'ok' || d.status === 'ja_aplicado')){
+      delete coRev.pend.aplicar;
+      var v = d.versao_resultante, aditivo = d.exige_aditivo === true;
+      coRevModalFechar(true); coRevReset(true); coRevHistInvalidar();
+      try { _concluirRev3ProntReal('Revisão aplicada: o orçamento agora está na V' + v + (aditivo ? '. Preço, escopo ou condição mudaram: providencie o aditivo contratual (o contrato não foi alterado nem assinado).' : '.'), 'projeto', 'ok'); } catch(_e){}
+      coRevHistCarregar(true);   // se o projeto ainda está sendo relido, fica 'idle' e a próxima pintura dos botões recarrega sozinha
+      return;
+    }
+    if(d && (d.status === 'conflito' || d.status === 'impedido' || d.status === 'revisao_nao_aberta' || d.status === 'data_nova_parcela_obrigatoria' || d.status === 'confirmacao_ausente')){
+      delete coRev.pend.aplicar;
+      coRevAvisoModal('erro', (d.status === 'conflito' ? 'O estado mudou depois da prévia (recebimento, pagamento, orçamento ou taxas). Nada foi aplicado. Confira as diferenças de novo.' : (coRevStatusTexto(d) || 'A revisão não pode ser aplicada agora.')) + (d.status === 'impedido' && Array.isArray(d.impedimentos) && d.impedimentos.length ? ' ' + d.impedimentos.map(function(i){ return i.texto; }).join(' ') : ''));
+      if(d.status === 'revisao_nao_aberta'){ coRevHistInvalidar(); coRevHistCarregar(true); coRevRenderPrevia(); return; }
+      coRevPreviaPedir(true); return;   // relê e refaz hash/prévia antes de permitir nova confirmação
+    }
+    if(tipo === 'resposta' && resp && resp.error){ delete coRev.pend.aplicar; coRevAvisoModal('erro', coRevErroTexto(resp)); coRevRenderPrevia(); return; }
+    coRevAvisoModal('erro', 'Não consegui confirmar se a revisão foi aplicada. NÃO é seguro assumir nada: use "Conferir estado" (lê o histórico e refaz a prévia) ou "Repetir com a mesma chave" (idempotente).');
+    coRev.incertoAplicar = true; coRevRenderPrevia();
+  });
+}
+function coRevConferirEstado(){ coRev.incertoAplicar = false; coRevHistInvalidar(); coRevHistCarregar(true); coRevPreviaPedir(true); }
+// ---- criar / descartar -----------------------------------------------------------------------------------------------------------------------
+function coRevCriar(){
+  if(coRev.busy || coRev.ativo) return;
+  var ta = coEl('coRevMotivo'), mot = String(ta ? ta.value : '').trim();
+  if(mot.length < 3 || mot.length > 500){ coRevAvisoModal('erro', 'Informe o motivo da revisão (3 a 500 caracteres).'); return; }
+  var ctx = coRevCtx(), chave = coRevNovaChave('criar', JSON.stringify([ctx.projeto, mot]));
+  if(!chave){ coRevAvisoModal('erro', 'Não foi possível gerar a chave do envio. Nada foi criado.'); return; }
+  coRev.busy = true; coRevAvisoModal('info', 'Criando o rascunho…'); coRevRenderCriar();
+  coRevRpc('orcamento_revisao_criar', { p_chave: chave, p_projeto_id: ctx.projeto, p_motivo: mot }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && (d.status === 'ok' || d.status === 'ja_aplicado' || d.status === 'rascunho_existente') && coUuidOk(String(d.revisao_id || ''))){
+      delete coRev.pend.criar; coRevModalFechar(true); coRevHistInvalidar(); coRevAbrirEditor(String(d.revisao_id)); return;
+    }
+    if(d){ delete coRev.pend.criar; coRevAvisoModal('erro', coRevStatusTexto(d) || 'O servidor não criou o rascunho.'); coRevRenderCriar(); return; }
+    if(tipo === 'resposta' && resp && resp.error){ delete coRev.pend.criar; coRevAvisoModal('erro', coRevErroTexto(resp)); coRevRenderCriar(); return; }
+    coRevAvisoModal('erro', 'Não consegui confirmar se o rascunho foi criado. Clique em Criar de novo: o envio é repetido com a mesma chave, sem duplicar.'); coRevRenderCriar();
+  });
+}
+function coRevDescartar(){
+  if(coRev.busy || !coRevAtivoOk()) return;
+  var ta = coEl('coRevMotivo'), mot = String(ta ? ta.value : '').trim();
+  if(mot.length < 3 || mot.length > 500){ coRevAvisoModal('erro', 'Informe o motivo do descarte (3 a 500 caracteres).'); return; }
+  var ctx = coRevCtx(), r = coRev.revisao, chave = coRevNovaChave('descartar', JSON.stringify([r.id, r.versao_linha, mot]));
+  if(!chave){ coRevAvisoModal('erro', 'Não foi possível gerar a chave do envio. Nada foi descartado.'); return; }
+  coRev.busy = true; coRevAvisoModal('info', 'Descartando o rascunho…'); coRevRenderDescartar();
+  coRevRpc('orcamento_revisao_descartar', { p_chave: chave, p_revisao_id: r.id, p_versao_linha: r.versao_linha, p_motivo: mot }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && (d.status === 'ok' || d.status === 'ja_aplicado')){
+      delete coRev.pend.descartar; coRevModalFechar(true); coRevReset(true);
+      try { fecharPainelProntReal(); } catch(_e){}
+      _mensagemProntReal('ok', 'Rascunho descartado. Ele fica no histórico e não gerou nova versão do orçamento.'); coRevHistInvalidar(); try { _relerRev3ProntReal('orcamento'); } catch(_e){} coRevHistCarregar(true); return;
+    }
+    if(d){ delete coRev.pend.descartar; coRevAvisoModal('erro', d.status === 'conflito' ? 'O rascunho mudou em outra sessão. Recarregue antes de descartar.' : (coRevStatusTexto(d) || 'O servidor não descartou o rascunho.')); coRevRenderDescartar(); return; }
+    if(tipo === 'resposta' && resp && resp.error){ delete coRev.pend.descartar; coRevAvisoModal('erro', coRevErroTexto(resp)); coRevRenderDescartar(); return; }
+    coRevAvisoModal('erro', 'Não consegui confirmar o descarte. Clique de novo: o envio é repetido com a mesma chave, sem duplicar.'); coRevRenderDescartar();
+  });
+}
+// ---- histórico -------------------------------------------------------------------------------------------------------------------------------
+function coRevHistInvalidar(){ coRev.histGen++; coRev.hist = { chave: '', status: 'idle', dados: null }; }   // sincrono: nada do histórico antigo sobrevive nem é aceito depois
+function coRevHistCarregar(forcar, cb){
+  var pid = coRevProjetoId(); if(!pid || !currentUser){ if(typeof cb === 'function') cb(false); return; }
+  var chave = pid + '|' + String(currentUser.id) + '|' + String(coS().token) + '|' + String(coS().os);
+  if(!forcar && coRev.hist.chave === chave && (coRev.hist.status === 'ok' || coRev.hist.status === 'carregando')){ if(typeof cb === 'function') cb(coRev.hist.status === 'ok'); return; }
+  var gen = ++coRev.histGen;
+  coRev.hist = { chave: chave, status: 'carregando', dados: null };
+  var ctx = coRevCtx(true);
+  coRevRpc('orcamento_revisao_historico', { p_projeto_id: pid }, ctx, function(tipo, resp){
+    if(gen !== coRev.histGen || coRev.hist.chave !== chave) return;
+    var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
+    if(d && d.status === 'ok' && Array.isArray(d.versoes) && Array.isArray(d.revisoes)) coRev.hist = { chave: chave, status: 'ok', dados: d };
+    else coRev.hist = { chave: chave, status: tipo === 'resposta' && resp && resp.error && String(resp.error.code || '') === '42501' ? 'sem_permissao' : 'erro', dados: null };
+    try { if(!coRev.ativo) _renderProntuarioAtendReal('dados'); } catch(_e){}
+    if(coRev.modo === 'historico') coRevRenderHistorico();
+    if(typeof cb === 'function') cb(coRev.hist.status === 'ok');
+  }, function(){   // contexto mudou durante a leitura (ex.: projeto sendo relido): descarta e volta a 'idle' — a próxima pintura dos botões recarrega sozinha
+    if(gen === coRev.histGen){ coRev.hist = { chave: '', status: coRev.modo === 'historico' ? 'erro' : 'idle', dados: null }; if(coRev.modo === 'historico') coRevRenderHistorico(); if(typeof cb === 'function') cb(false); }
+  });
+}
+// ---- modal único (criar / prévia / descartar / histórico) -----------------------------------------------------------------------------
+function coRevEl(tag, estilo, texto){ var e = document.createElement(tag); if(estilo) e.style.cssText = estilo; if(texto !== undefined && texto !== null) e.textContent = texto; return e; }
+function coRevModalAbrir(modo){
+  coRev.modo = modo; coRevAvisoModal('', '');
+  if(modo === 'historico'){ coRev.detalhe = ''; coRevHistCarregar(true); coRevRenderHistorico(); }
+  else if(modo === 'criar') coRevRenderCriar();
+  else if(modo === 'descartar') coRevRenderDescartar();
+  else if(modo === 'previa') coRevRenderPrevia();
+  openModal('modalRevisao');
+}
+function coRevModalFechar(silencioso){
+  if(!silencioso && coRev.busy){ coRev.tok++; coRev.busy = false; }   // fechar durante um envio invalida a resposta (o servidor continua sendo a verdade; use Conferir estado)
+  var m = coEl('modalRevisao'); if(m) m.classList.remove('open');
+  var c = coEl('coRevConteudo'); if(c) c.textContent = '';
+  coRev.modo = ''; coRev.confirmado = false; coRevAvisoModal('', '');
+}
+function coRevTitulo(t){ coOrcDefinirTexto('coRevTitulo', t); }
+function coRevRenderCriar(){
+  var c = coEl('coRevConteudo'); if(!c) return; var ta0 = coEl('coRevMotivo'), v0 = ta0 ? ta0.value : ''; c.textContent = '';
+  coRevTitulo('🔁 Nova revisão da proposta');
+  var vs = coRev.hist.dados && coRev.hist.dados.versoes ? coRev.hist.dados.versoes : [], atual = vs.length ? vs[vs.length - 1].versao : '';
+  c.appendChild(coRevEl('p', 'font-size:13px;margin:0 0 8px', 'A proposta atual' + (atual ? ' (V' + atual + ')' : '') + ', o contrato, os recebimentos e os pagamentos continuam intactos até um Sócio ou Admin aplicar a revisão. O rascunho nasce como cópia dos itens e valores vigentes.'));
+  var l = coRevEl('label', 'font-size:12px;font-weight:700;display:block', 'Motivo da revisão (aparece no histórico)'); var ta = document.createElement('textarea'); ta.id = 'coRevMotivo'; ta.setAttribute('maxlength', '500'); ta.rows = 3; ta.value = v0; ta.disabled = coRev.busy; l.appendChild(ta); c.appendChild(l);
+  var b = coRevEl('div', 'display:flex;gap:8px;margin-top:10px'); b.appendChild(coRevBtn('Criar rascunho e abrir o editor', coRevCriar, 'btn', coRev.busy)); b.appendChild(coRevBtn('Cancelar', function(){ coRevModalFechar(false); }, 'btn btn2', false)); c.appendChild(b);
+}
+function coRevRenderDescartar(){
+  var c = coEl('coRevConteudo'); if(!c) return; var ta0 = coEl('coRevMotivo'), v0 = ta0 ? ta0.value : ''; c.textContent = '';
+  coRevTitulo('🗑️ Descartar o rascunho');
+  c.appendChild(coRevEl('p', 'font-size:13px;margin:0 0 8px', 'O rascunho sai da lista e fica no histórico (com autor, data e motivo). Descartar NÃO cria versão do orçamento e não altera valores, contrato ou financeiro.'));
+  var l = coRevEl('label', 'font-size:12px;font-weight:700;display:block', 'Motivo do descarte'); var ta = document.createElement('textarea'); ta.id = 'coRevMotivo'; ta.setAttribute('maxlength', '500'); ta.rows = 3; ta.value = v0; ta.disabled = coRev.busy; l.appendChild(ta); c.appendChild(l);
+  var b = coRevEl('div', 'display:flex;gap:8px;margin-top:10px'); b.appendChild(coRevBtn('Descartar rascunho', coRevDescartar, 'btn', coRev.busy)); b.appendChild(coRevBtn('Voltar', function(){ coRevModalFechar(false); }, 'btn btn2', false)); c.appendChild(b);
+}
+function coRevLinhaDiff(rot, par, fmt){
+  var a = par && par[0], d = par && par[1], mudou = JSON.stringify(a) !== JSON.stringify(d);
+  var l = coRevEl('div', 'display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:4px 0;border-bottom:1px solid var(--line)');
+  l.appendChild(coRevEl('span', 'color:var(--muted)', rot));
+  l.appendChild(coRevEl(mudou ? 'b' : 'span', mudou ? '' : 'color:var(--muted)', fmt(a) + (mudou ? '  →  ' + fmt(d) : '  (sem mudança)')));
+  return l;
+}
+var CO_REV_CAMPOS = { descricao: 'Descrição', quantidade: 'Quantidade', valor_unitario: 'Valor unitário', exibir_valor: 'Exibir valor ao cliente', eh_custo: 'Item de custo', ordem: 'Posição na lista' };
+function coRevCampoValor(k, v){
+  if(v === null || v === undefined || v === '') return '—';
+  if(k === 'valor_unitario') return coBRL(v);
+  if(k === 'exibir_valor' || k === 'eh_custo') return v === true ? 'sim' : 'não';
+  if(k === 'ordem') return String(Number(v) + 1) + 'º';
+  return String(v);
+}
+var CO_REV_ROT_FORN = { atualizar_previsto: 'a previsão do fornecedor acompanha o item', trocar_fornecedor: 'fornecedor trocado (o anterior fica no histórico)', remover_previsao: 'previsão do fornecedor removida (histórico guardado)', criar_previsao: 'nova previsão de fornecedor', preservado: 'fornecedor com pagamento: nada muda' };
+function coRevRenderItensForn(c, dif){   // itens e fornecedores afetados, em português (prévia e histórico)
+  dif = dif || {};
+  var it = dif.itens || {};
+  if((it.adicionados || []).length + (it.removidos || []).length + (it.alterados || []).length){
+    c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Itens'));
+    (it.adicionados || []).forEach(function(x){ c.appendChild(coRevEl('div', 'font-size:13px', '＋ ' + x.descricao + ' · ' + String(x.quantidade) + ' × ' + coBRL(x.valor_unitario) + ' (novo)')); });
+    (it.removidos || []).forEach(function(x){ c.appendChild(coRevEl('div', 'font-size:13px', '− ' + x.descricao + ' (removido)')); });
+    (it.alterados || []).forEach(function(x){
+      var partes = Object.keys(x.campos || {}).map(function(k){ var v = x.campos[k]; if(k === 'vinculo') return 'fornecedor trocado'; return (CO_REV_CAMPOS[k] || 'Outro dado') + ': ' + coRevCampoValor(k, v[0]) + ' → ' + coRevCampoValor(k, v[1]); });
+      c.appendChild(coRevEl('div', 'font-size:13px', '✎ ' + x.descricao + ' — ' + partes.join('; ')));
+    });
+  }
+  if((dif.fornecedores || []).length){
+    c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Fornecedores afetados'));
+    dif.fornecedores.forEach(function(x){ c.appendChild(coRevEl('div', 'font-size:13px', '• ' + String(x.item) + ' — ' + (CO_REV_ROT_FORN[x.acao] || 'ajuste de previsão'))); });
+  }
+}
+function coRevRenderValores(c, val){
+  var pct = function(x){ return x === null || x === undefined ? '—' : (Number(x) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '%'; };
+  var brl = function(x){ return x === null || x === undefined ? '—' : coBRL(x); };
+  [['Valor ao cliente', 'valor_total'], ['Subtotal dos itens', 'subtotal_itens'], ['Desconto', 'desconto'], ['Imposto', 'imposto'], ['BV de agência', 'bv_valor'], ['Receita líquida', 'receita_liquida'], ['Custos diretos (itens de custo)', 'custo_prod'],
+   ['Custo extra comercial', 'custo_extra_comercial'], ['Custos pós-orçamento (preservados)', 'custos_pos'], ['Custo extra total (comercial + pós)', 'custo_extra_total'], ['Resultado antes da comissão', 'resultado_antes_comissao'],
+   ['Comissão', 'comissao'], ['Lucro líquido', 'lucro_liquido']].forEach(function(x){ if(val[x[1]]) c.appendChild(coRevLinhaDiff(x[0], val[x[1]], brl)); });
+  if(val.comissao_pct) c.appendChild(coRevLinhaDiff('Comissão (%)', val.comissao_pct, pct));
+  if(val.aliquota) c.appendChild(coRevLinhaDiff('Alíquota (%)', val.aliquota, pct));
+  if(val.margem) c.appendChild(coRevLinhaDiff('Margem (%)', val.margem, function(x){ return x === null || x === undefined ? '—' : String(x) + '%'; }));
+  if(val.condicao_pagamento) c.appendChild(coRevLinhaDiff('Condição de pagamento', val.condicao_pagamento, function(x){ return x ? String(x) : '—'; }));
+}
+function coRevRenderPrevia(){
+  var c = coEl('coRevConteudo'); if(!c) return; c.textContent = '';
+  var r = coRev.revisao, p = coRev.previa; coRevTitulo('👁️ Prévia da revisão' + (r ? ' #' + r.numero : ''));
+  if(!p){ c.appendChild(coRevEl('p', 'font-size:13px', coRev.busy ? 'Pedindo a prévia ao servidor…' : 'Sem prévia. Use "Atualizar prévia".')); c.appendChild(coRevBtn('Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy)); return; }
+  var d = p.d, dif = d.diferencas || {}, val = dif.valores || {}, pl = d.plano_parcelas || {};
+  c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-bottom:8px', 'Valores calculados pelo servidor com o que está salvo. A proposta atual é V' + d.revisao.versao_atual + '; aplicar cria a V' + (Number(d.revisao.versao_atual) + 1) + ' (a V' + d.revisao.versao_atual + ' e o contrato ficam preservados).'));
+  if(Array.isArray(d.impedimentos) && d.impedimentos.length){
+    var im = coRevEl('div', 'border:1px solid #fecdd3;background:#fff1f2;color:#9f1239;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px');
+    im.appendChild(coRevEl('div', 'font-weight:800;margin-bottom:4px', '⛔ Não é possível aplicar agora (o rascunho foi mantido):'));
+    d.impedimentos.forEach(function(i){ im.appendChild(coRevEl('div', 'margin-top:3px', '• ' + String(i.texto || i.codigo))); });
+    c.appendChild(im);
+  }
+  c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Valores (antes → depois)'));
+  coRevRenderValores(c, val);
+  if(dif.comissao_paga !== null && dif.comissao_paga !== undefined && Number(dif.comissao_paga) > 0) c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-top:4px', 'Comissão já paga (não é alterada): ' + coBRL(dif.comissao_paga)));
+  // parcelas
+  c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Recebimentos do cliente'));
+  if(pl.ok === false) c.appendChild(coRevEl('div', 'font-size:13px;color:#9f1239', String(pl.motivo || 'Parcelas: não é possível calcular.')));
+  else if(Array.isArray(pl.parcelas)){
+    var tb = document.createElement('table'); tb.className = 'table'; tb.style.cssText = 'width:100%;font-size:12px';
+    var th = document.createElement('tr'); ['Parcela', 'Vencimento', 'Previsto', 'Recebido', 'Situação'].forEach(function(h){ th.appendChild(coRevEl('th', '', h)); }); tb.appendChild(th);
+    pl.parcelas.forEach(function(x){
+      var tr = document.createElement('tr'), mud = Number(x.previsto_depois) !== Number(x.previsto_antes);
+      [String(x.parcela), x.vencimento ? crDataBR(x.vencimento) : '—', coBRL(x.previsto_antes) + (mud ? ' → ' + coBRL(x.previsto_depois) : ''), coBRL(x.recebido), String(x.status_antes) + (x.status_depois !== x.status_antes ? ' → ' + String(x.status_depois) : '')].forEach(function(t){ tr.appendChild(coRevEl('td', mud ? 'font-weight:700' : '', t)); }); tb.appendChild(tr);
+    });
+    if(pl.nova_parcela){ var tn = document.createElement('tr'); [String(pl.nova_parcela.parcela) + ' (nova)', crDataBR(pl.nova_parcela.vencimento), '— → ' + coBRL(pl.nova_parcela.previsto_depois), coBRL(0), 'pendente'].forEach(function(t){ tn.appendChild(coRevEl('td', 'font-weight:700', t)); }); tb.appendChild(tn); }
+    c.appendChild(tb);
+    c.appendChild(coRevEl('div', 'font-size:13px;margin-top:6px', 'Já recebido (preservado): ' + coBRL(pl.recebido) + ' · Saldo a receber: ' + coBRL(pl.saldo_antes) + (Number(pl.saldo_depois) !== Number(pl.saldo_antes) ? ' → ' + coBRL(pl.saldo_depois) : '') + ' · Nenhum lançamento de caixa é criado.'));
+    if(d.precisa_data_nova_parcela === true || coRev.dataNova){
+      var lb = coRevEl('label', 'font-size:12px;font-weight:700;display:block;margin-top:8px', 'Todas as parcelas já foram quitadas: informe o vencimento da NOVA parcela da diferença');
+      var di = document.createElement('input'); di.type = 'date'; di.id = 'coRevDataNova'; di.value = coRev.dataNova || ''; di.disabled = coRev.busy; di.style.maxWidth = '200px';
+      di.addEventListener('change', function(){ coRev.dataNova = di.value || ''; coRevPreviaPedir(true); }); lb.appendChild(di); c.appendChild(lb);
+    }
+  }
+  coRevRenderItensForn(c, dif);
+  if(d.exige_aditivo === true) c.appendChild(coRevEl('div', 'border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:8px 12px;margin-top:10px;font-size:13px', '📄 Preço, escopo ou condição mudaram: será preciso um aditivo contratual. O contrato e a assinatura NÃO são alterados automaticamente.'));
+  // confirmação
+  var h = coRevAplicarHabilitado(), rodape = coRevEl('div', 'margin-top:14px;border-top:1px solid var(--line);padding-top:10px');
+  if(coRevPodeAplicar()){
+    var lc = coRevEl('label', 'display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:600;margin-bottom:8px'); var cb = document.createElement('input'); cb.type = 'checkbox'; cb.style.cssText = 'width:auto;margin-top:2px'; cb.checked = coRev.confirmado; cb.disabled = coRev.busy;
+    lc.appendChild(cb); lc.appendChild(document.createTextNode('Conferi as diferenças acima e confirmo aplicar esta revisão ao projeto (cria a V' + (Number(d.revisao.versao_atual) + 1) + ').'));
+    rodape.appendChild(lc);
+    var bAp = coRevBtn('✅ Aplicar revisão', coRevAplicar, 'btn', !h.ok); bAp.setAttribute('data-rev', 'aplicar');
+    cb.addEventListener('change', function(){ coRev.confirmado = cb.checked; bAp.disabled = !coRevAplicarHabilitado().ok; });
+    var bl = coRevEl('div', 'display:flex;gap:8px;flex-wrap:wrap'); bl.appendChild(bAp);
+    bl.appendChild(coRevBtn('↻ Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy));
+    if(coRev.incertoAplicar){ bl.appendChild(coRevBtn('Conferir estado', coRevConferirEstado, 'btn btn2', coRev.busy)); bl.appendChild(coRevBtn('Repetir com a mesma chave', function(){ coRev.confirmado = true; coRevAplicar(); }, 'btn btn2', coRev.busy)); }
+    rodape.appendChild(bl);
+    if(!h.ok && h.motivo) rodape.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-top:6px', h.motivo));
+  } else {
+    rodape.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Somente Sócio ou Admin aplicam uma revisão. Você pode salvar o rascunho; um Sócio ou Admin confere esta prévia e aplica.'));
+    rodape.appendChild(coRevBtn('↻ Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy));
+  }
+  c.appendChild(rodape);
+}
+function coRevDataHora(t){ try { var d = new Date(t); if(!t || isNaN(d.getTime())) return '—'; return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); } catch(_e){ return '—'; } }
+function coRevNomeUsuario(u){ try { return _nomeResponsavelProntReal(u) || 'usuário'; } catch(_e){ return 'usuário'; } }
+function coRevRenderHistorico(){
+  var c = coEl('coRevConteudo'); if(!c) return; c.textContent = ''; coRevTitulo('📜 Histórico de versões do orçamento');
+  var h = coRev.hist;
+  if(h.status === 'carregando' || h.status === 'idle'){ c.appendChild(coRevEl('p', 'font-size:13px', 'Lendo o histórico…')); return; }
+  if(h.status !== 'ok'){ c.appendChild(coRevEl('p', 'font-size:13px;color:#9f1239', h.status === 'sem_permissao' ? 'Seu perfil não vê o histórico deste projeto.' : 'Não foi possível ler o histórico agora.')); c.appendChild(coRevBtn('↻ Tentar de novo', function(){ coRevHistCarregar(true); coRevRenderHistorico(); }, 'btn btn2', false)); return; }
+  var d = h.dados, rd = coRev.detalhe ? d.revisoes.filter(function(r){ return String(r.id) === String(coRev.detalhe); })[0] : null;
+  if(rd){ coRevRenderDetalheRevisao(c, rd); return; }
+  var data = function(t){ return t ? crDataBR(String(t).slice(0, 10)) : '—'; };
+  c.appendChild(coRevEl('h3', 'margin:0 0 4px;font-size:15px', 'Versões do orçamento'));
+  d.versoes.forEach(function(v){
+    var l = coRevEl('div', 'display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;padding:3px 0;border-bottom:1px solid var(--line)');
+    l.appendChild(coRevEl('span', '', 'V' + v.versao + (v.contratada ? ' · contratada pelo projeto' : '') + ' · ' + data(v.criado_em) + ' · ' + (v.valor_total !== null && v.valor_total !== undefined ? coBRL(v.valor_total) : '—')
+      + (v.origem === 'revisao_v2' ? ' · veio da revisão' : (v.versao === 1 ? ' · versão original (preservada)' : ''))));
+    l.appendChild(coRevBtn('Ver proposta', function(){ coRevVerVersao(String(v.id)); }, 'btn btn2', coRev.busy));
+    c.appendChild(l);
+  });
+  c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Revisões (o número da revisão não é o número da versão)'));
+  if(!d.revisoes.length) c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Nenhuma revisão ainda.'));
+  d.revisoes.forEach(function(r){
+    var bx = coRevEl('div', 'border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px');
+    var estado = r.estado === 'aplicada' ? '✅ aplicada → V' + r.versao_resultante : (r.estado === 'descartada' ? '🗑️ descartada (não gerou versão)' : '✏️ rascunho');
+    bx.appendChild(coRevEl('div', 'font-size:13px;font-weight:700', 'Revisão #' + r.numero + ' · ' + estado + ' · base V' + r.base_versao));
+    bx.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted)', 'Motivo: ' + String(r.motivo) + ' · criada por ' + coRevNomeUsuario(r.criado_por) + ' em ' + coRevDataHora(r.criado_em)));
+    (r.eventos || []).forEach(function(e){
+      var tipo = { criada: 'criada', salva: 'rascunho salvo', aplicada: 'aplicada', descartada: 'descartada' }[e.tipo] || 'registro', linha = tipo + ' · ' + coRevNomeUsuario(e.autor) + ' · ' + coRevDataHora(e.em);
+      if(e.motivo && e.tipo !== 'criada') linha += ' · motivo: ' + e.motivo;
+      if(e.tipo === 'aplicada' && e.depois){
+        var vv = e.depois.diferencas && e.depois.diferencas.valores && e.depois.diferencas.valores.valor_total;
+        if(vv) linha += ' · valor ' + coBRL(vv[0]) + ' → ' + coBRL(vv[1]);
+        if(e.depois.exige_aditivo === true) linha += ' · exige aditivo contratual';
+      }
+      bx.appendChild(coRevEl('div', 'font-size:12px;margin-top:2px', '• ' + linha));
+    });
+    if(r.estado === 'aplicada') bx.appendChild(coRevBtn('Ver o que mudou', function(){ coRev.detalhe = String(r.id); coRevRenderHistorico(); }, 'btn btn2', false));
+    c.appendChild(bx);
+  });
+}
+// Detalhe SOMENTE LEITURA de uma revisão aplicada: quem, quando, por quê e o que mudou (valores, itens, fornecedores, recebimentos, aditivo). Nada é gravado nem copiado para o estado vigente.
+function coRevRenderDetalheRevisao(c, r){
+  c.appendChild(coRevBtn('← Voltar ao histórico', function(){ coRev.detalhe = ''; coRevRenderHistorico(); }, 'btn btn2', false));
+  var ev = (r.eventos || []).filter(function(e){ return e.tipo === 'aplicada'; })[0], dep = ev && ev.depois ? ev.depois : {}, ant = ev && ev.antes ? ev.antes : {}, dif = dep.diferencas || {};
+  c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Revisão #' + r.numero + ' · V' + r.base_versao + ' → V' + r.versao_resultante));
+  c.appendChild(coRevEl('div', 'font-size:13px', 'Motivo: ' + String(r.motivo)));
+  c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-bottom:6px', 'Criada por ' + coRevNomeUsuario(r.criado_por) + ' em ' + coRevDataHora(r.criado_em) + ' · aplicada por ' + coRevNomeUsuario(r.aplicada_por || (ev && ev.autor)) + ' em ' + coRevDataHora(r.aplicada_em || (ev && ev.em))));
+  if(!ev){ c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'O registro das diferenças desta revisão não está disponível.')); return; }
+  c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Valores (antes → depois)'));
+  coRevRenderValores(c, dif.valores || {});
+  if(Array.isArray(ant.parcelas) && ant.parcelas.length){
+    c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Recebimentos do cliente (antes da revisão)'));
+    ant.parcelas.forEach(function(x){ c.appendChild(coRevEl('div', 'font-size:13px', 'Parcela ' + String(x.parcela) + (x.vencimento ? ' · vence ' + crDataBR(x.vencimento) : '') + ' · previsto ' + coBRL(x.previsto_antes) + (Number(x.previsto_depois) !== Number(x.previsto_antes) ? ' → ' + coBRL(x.previsto_depois) : '') + ' · recebido ' + coBRL(x.recebido))); });
+    c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted)', 'Os valores já recebidos foram preservados; nenhum lançamento de caixa foi criado.'));
+  }
+  coRevRenderItensForn(c, dif);
+  c.appendChild(coRevEl('div', 'border:1px solid ' + (dep.exige_aditivo === true ? '#fde68a;background:#fffbeb;color:#92400e' : 'var(--line)') + ';border-radius:10px;padding:8px 12px;margin-top:10px;font-size:13px',
+    (dep.exige_aditivo === true ? '📄 Preço, escopo ou condição mudaram: é preciso um aditivo contratual. ' : '') + 'O contrato anterior foi preservado: não foi reescrito nem assinado automaticamente.'));
+  var vid = ev.versao_referenciada || r.versao_resultante;
+  var vs = coRev.hist.dados && coRev.hist.dados.versoes ? coRev.hist.dados.versoes.filter(function(v){ return Number(v.versao) === Number(vid); })[0] : null;
+  if(vs) c.appendChild(coRevBtn('Ver a proposta V' + vs.versao, function(){ coRevVerVersao(String(vs.id)); }, 'btn', coRev.busy));
+}
+// ---- proposta de uma versão (SOMENTE LEITURA, na janela RO existente: itens, valores e PDF da versão salva; não copia nada para o estado vigente nem grava) ----
+function coRevLerDeSnapshot(row){
+  var sn = row.snapshot, num = function(v){ var n = Number(v); return (v === null || v === undefined || !isFinite(n)) ? null : n; };
+  var o = { id: String(row.id), versao: Number(row.versao), bv_percentual: sn.bv_pct, desconto: sn.desconto, ajuste_imposto: sn.ajuste_imposto, ajuste_bv: sn.ajuste_bv, justificativa_imposto: sn.justificativa_imposto, justificativa_bv: sn.justificativa_bv,
+    condicao_pagamento: sn.condicao_pagamento, subtotal_itens: sn.subtotal_itens, valor_total: sn.valor_total, imposto: sn.imposto, bv_valor: sn.bv_valor, receita_liquida: sn.receita_liquida, custo_prod: sn.custo_prod, custo_extra: sn.custo_extra,
+    resultado_antes_comissao: sn.resultado_antes_comissao, comissao: sn.comissao, comissao_pct: sn.comissao_pct, comissao_elegivel: sn.comissao_elegivel, lucro_liquido: sn.lucro_liquido, margem: sn.margem, aliquota_aplicada: sn.aliquota,
+    comissao_responsavel_id: sn.responsavel_id || null, atualizado_em: '',
+    entrada_original: { bv_pct: sn.bv_pct, desconto: sn.desconto, custo_extra: sn.custo_extra, ajuste_imposto: sn.ajuste_imposto, ajuste_bv: sn.ajuste_bv } };
+  var pos = num(sn.custos_pos_total);
+  return { orcamento: o, custos_pos: { custo_extra_comercial: num(sn.custo_extra), total: pos === null ? 0 : pos },
+    itens: (sn.itens || []).map(function(i, k){ return { id: '', ordem: k, descricao: i.descricao, quantidade: i.quantidade, valor_unitario: i.valor_unitario, exibir_valor: i.exibir_valor === true, eh_custo: i.eh_custo === true,
+      tipo_vinculo: i.tipo_vinculo, fornecedor_id: i.fornecedor_id, nome_manual: i.nome_manual, fornecedor_nome: (i.snapshot && typeof i.snapshot.nome === 'string') ? i.snapshot.nome : '' }; }) };
+}
+function coRevVerVersao(vid){
+  var h = coRev.hist.dados, ok = h && h.versoes.some(function(v){ return String(v.id) === String(vid); });   // só versões que o próprio histórico (ACL do servidor) listou
+  if(!ok || coRev.busy || !coUuidOk(String(vid))) return;
+  if(!coROLivre()){ coRevAvisoModal('aviso', 'Feche o painel ou a janela aberta antes de consultar a proposta.'); return; }
+  var ctx = coRevCtx(true); coRev.busy = true; coRevAvisoModal('info', 'Lendo a proposta…');
+  coRevChamar(function(){ return supabaseClient.from('orcamento_versoes').select('id,versao,snapshot').eq('id', vid).limit(2); }, ctx, function(tipo, resp){
+    coRev.busy = false;
+    var rows = tipo === 'resposta' && resp && !resp.error && Array.isArray(resp.data) ? resp.data : null, row = rows && rows.length === 1 ? rows[0] : null, sn = row && row.snapshot;
+    if(!row || String(row.id) !== String(vid) || !_objetoProntReal(sn) || !Array.isArray(sn.itens) || !isFinite(Number(sn.valor_total)) || !isFinite(Number(sn.subtotal_itens))){ coRevAvisoModal('erro', 'Não foi possível ler os detalhes desta versão agora (ou seu perfil não os consulta).'); return; }
+    if(!coROLivre()){ coRevAvisoModal('aviso', 'Feche o painel ou a janela aberta antes de consultar a proposta.'); return; }
+    coRevModalFechar(true); coRevAbrirRO(row);
+  });
+}
+function coRevAbrirRO(row){   // espelha coROAbrirOrcamento com os dados do instantâneo da versão
+  var s = coS(), ler = coRevLerDeSnapshot(row), o = ler.orcamento, l = s.lead || {}, f = _formOrcamentoDoBancoProntReal(ler);
+  var rows = f.itens.map(function(it){ return coRoCongelar(coItemParaLinha(it)); });
+  coRO = { aberta: true, tipo: 'orcamento', token: s.token, leadId: s.leadId, form: f, o: o, ler: ler, contrato: null, visual: null };
+  orcItens = Object.freeze(rows); orcCustos = []; orcLeadOs = ''; fornBuscaAberta = -1;
+  coOrcGarantirExtras();
+  coOrcDefinirTexto('orcTitulo', 'Orçamento — ' + String(l.cliente_nome || ''));
+  coOrcDefinirTexto('orcSubtitulo', String(s.os || '') + ' • ' + String(l.titulo || '') + ' • Resp: ' + coOrcResponsavelNome() + ' • v' + String(o.versao) + ' • somente leitura');
+  coOrcPreencherCampos(f, o);
+  var rod = coEl('orcRodapeAliquota'); if(rod) rod.textContent = coRoNum(o.aliquota_aplicada) ? 'Simples Nacional ' + _pctProntReal(o.aliquota_aplicada) + ' (alíquota da versão salva) • CNAE 13.03.01 • Varginha/MG' : 'Simples Nacional • CNAE 13.03.01 • Varginha/MG';
+  coRoModalOrc(true);
+  [['coJustImpostoRot', f.just_imposto], ['coJustBVRot', f.just_bv]].forEach(function(p){ var e = coEl(p[0]); if(e) e.style.display = String(p[1] || '').trim() ? 'block' : 'none'; });
+  coRoResumo(o, ler); renderOrcItens();
+  var av = coEl('coOrcAviso');
+  if(av){ av.textContent = 'Somente leitura: proposta da versão V' + String(o.versao) + ' como foi salva. Nada aqui altera o orçamento vigente.'; av.style.background = '#f1f5f9'; av.style.color = '#334155'; av.style.display = 'block'; }
+  openModal('modalOrcamento');
+}
+// ---- ganchos: botões no prontuário, editor existente, ordem/templates, limpeza ------------------------------------------------------
+function coRevElegivel(){
+  var s = coS();
+  if(!s || s.leadStatus !== 'ok' || !s.lead || s.painel || s.acao) return false;
+  if(typeof finOp !== 'undefined' && finOp.ativo) return false;
+  return _textoProntReal(s.lead.etapa) === 'fechado' && _podeEditarLeadProntReal(s.lead) && !!coRevProjetoId();
+}
+function coRevClicarAbrir(){   // confere o histórico NA HORA (rascunho criado/descartado por outra pessoa ou aba) antes de abrir o editor ou o pedido de motivo
+  coRevHistCarregar(true, function(ok){
+    if(!ok){ try { _mensagemProntReal('erro', 'Não consegui conferir o histórico agora. Tente de novo; nada foi alterado.'); } catch(_e){} return; }
+    if(!coRevElegivel()) return;
+    var rasc = coRev.hist.dados.revisoes.filter(function(r){ return r.estado === 'rascunho'; })[0];
+    if(rasc) coRevAbrirEditor(String(rasc.id)); else coRevModalAbrir('criar');
+  });
+}
+function coRevAcoes(el){
+  if(!coRevElegivel()) return;
+  if(coRev.hist.status === 'idle'){ coRevHistCarregar(false); return; }
+  if(coRev.hist.status !== 'ok') return;   // sem permissão ou erro: nenhum botão (o servidor decide)
+  var rasc = coRev.hist.dados.revisoes.filter(function(r){ return r.estado === 'rascunho'; })[0];
+  var linha = el.querySelector('[data-pa="acoes-linha"]');
+  if(!linha){ linha = _elProntReal('div', 'display:flex;gap:8px;flex-wrap:wrap;margin-top:14px'); linha.setAttribute('data-pa', 'acoes-linha'); el.appendChild(linha); }
+  linha.appendChild(_botaoProntReal(rasc ? '🔁 Continuar revisão (#' + rasc.numero + ')' : '🔁 Nova revisão', 'rev-abrir', function(){ coRevClicarAbrir(); }, true));
+  linha.appendChild(_botaoProntReal('📜 Histórico de versões', 'rev-historico', function(){ coRevModalAbrir('historico'); }, true));
+}
+function coRevHistoricoAbrir(){ if(coRevProjetoId()) coRevModalAbrir('historico'); }   // Financeiro (somente leitura) usa o mesmo histórico; o servidor decide
+var _coRevAcoesOrig = _renderAcoesProntReal;
+_renderAcoesProntReal = function(el){ _coRevAcoesOrig.apply(this, arguments); try { coRevAcoes(el); } catch(e){ try { console.error('ZIP OS · revisão:', e && e.message); } catch(_e){} } };
+var _coRevAbrirJanela = coOrcAbrirJanela;
+coOrcAbrirJanela = function(){ var r = _coRevAbrirJanela.apply(this, arguments); if(coRev.ativo && coOrc.aberta && coOrc.form === coRev.form){ try { coRevCustomizarEditor(); } catch(e){ try { console.error('ZIP OS · revisão:', e && e.message); } catch(_e){} } } return r; };
+var _coRevFecharJanela = coOrcFecharJanela;
+coOrcFecharJanela = function(){ coRevReset(true); return _coRevFecharJanela.apply(this, arguments); };
+var _coRevSalvarOrc = coOrcSalvar;
+coOrcSalvar = function(){ if(coRev.ativo){ coRevSalvar(); return; } return _coRevSalvarOrc.apply(this, arguments); };
+var _coRevVerificar = coOrcVerificar;
+coOrcVerificar = function(){ if(coRev.ativo) return; return _coRevVerificar.apply(this, arguments); };
+var _coRevConfirmarPainel = confirmarPainelProntReal;
+confirmarPainelProntReal = function(){ if(coRev.ativo && coS().painel === 'orcamento') return; return _coRevConfirmarPainel.apply(this, arguments); };   // o caminho legado nunca grava uma revisão
+var _coRevCalc = calcOrc;
+// A calculadora, o resumo rico (imposto/BV/comissão/lucro/margem) e o total dos itens da janela ORIGINAL continuam em tempo real no modo revisão (mesma conta, mesmos custos pós-orçamento do ledger).
+// Esta conta é só a estimativa do que está na tela; quem aprova é a prévia do servidor (diferenças + hash). Só os textos que mudam de sentido na revisão são ajustados.
+calcOrc = function(){
+  var r = _coRevCalc.apply(this, arguments);
+  if(coRevAtivoOk()){
+    var el = coEl('orcResumo');
+    if(el && typeof el.innerHTML === 'string' && el.innerHTML){
+      var h = el.innerHTML.split('Custo extra pós-orçamento').join('Custo extra comercial').split('Salvar criará uma nova versão').join('Aplicar esta revisão criará uma nova versão');
+      var nota = coOrcAlterado() ? 'Estimativa com o que você digitou (ainda não salvo). A prévia do servidor, com o rascunho salvo, é que decide a aplicação.' : 'Estimativa com o rascunho salvo. A prévia do servidor decide a aplicação.';
+      el.innerHTML = h + '<div data-rev="nota-estimativa" style="font-size:11px;color:var(--muted);margin-top:6px">' + nota + '</div>';
+    }
+  }
+  return r;
+};
+// PDF da proposta revisada: mesmo documento do orçamento, com valores do rascunho SALVO e identificado como REVISÃO/RASCUNHO (não é a V2 aplicada; não grava nada nem altera contrato/financeiro)
+function coRevPdfO(){
+  if(!coRev.ativo) return null;
+  var c = coRev.calculo, r = coRev.revisao; if(!c || !r || !coRevAtivoOk()) return null;
+  return { id: String(r.id), versao: 0, desconto: c.desconto, subtotal_itens: c.subtotal_itens, valor_total: c.valor_total, revisao_numero: r.numero };
+}
+function coRevPdfVersao(o){ return (o && o.revisao_numero) ? 'Rev. #' + Number(o.revisao_numero) + ' (rascunho)' : (Number(o && o.versao) || 1); }
+function coRevPdfOs(os){ return coRev.ativo && coRev.revisao ? os + ' &nbsp;&bull;&nbsp; PROPOSTA REVISADA — RASCUNHO, AINDA NÃO APLICADA' : os; }
+var _coRevPdf = exportarPDFOrcamento;
+exportarPDFOrcamento = function(){
+  if(coRev.ativo){
+    if(!coRevAtivoOk() || coRev.busy) return;
+    if(!coRev.calculo){ alert('⚠️ Salve o rascunho antes de gerar o PDF da proposta revisada: o documento usa os valores salvos.'); return; }
+    if(coOrcAlterado()){ alert('⚠️ Há alterações não salvas nesta revisão. Salve o rascunho para gerar o PDF da proposta revisada com esses valores.'); return; }
+  }
+  return _coRevPdf.apply(this, arguments);
+};
+var _coRevAtualizarEstado = coOrcAtualizarEstado;
+coOrcAtualizarEstado = function(){ var r = _coRevAtualizarEstado.apply(this, arguments); if(coRevAtivoOk()){ coRevAjustarBotaoSalvar(); if(coRev.busy){ Array.prototype.slice.call((coEl('modalOrcamento') || { querySelectorAll: function(){ return []; } }).querySelectorAll('input,select,button,textarea')).forEach(function(e){ e.disabled = true; }); } } return r; };
+var _coRevPodeReordenar = coOrcPodeReordenar;
+coOrcPodeReordenar = function(){ return !coRev.busy && _coRevPodeReordenar.apply(this, arguments); };
+var _coRevTplEditavel = coTplEditavel;
+coTplEditavel = function(){ return !coRev.busy && _coRevTplEditavel.apply(this, arguments); };
+// template aplicado no editor da revisão: itens com a MESMA descrição mantêm identidade (origem) e vínculo de fornecedor; o resto vira item novo (o servidor explica o que isso afeta na prévia)
+var _coRevTplEfetivar = coTplEfetivar;
+coTplEfetivar = function(nome, linhas){
+  if(coRevAtivoOk()){
+    var antigos = orcItens.slice(), usados = {};
+    linhas = linhas.map(function(l){
+      var k = -1; for(var i = 0; i < antigos.length; i++){ if(!usados[i] && String(antigos[i][0]).trim() === String(l[0]).trim()){ k = i; break; } }
+      var n = l.slice(); if(k >= 0){ usados[k] = true; n[6] = antigos[k][6]; if(n[4] === true && antigos[k][4] === true) n[5] = antigos[k][5]; } return n;
+    });
+    coRevAviso('aviso', 'Template aplicado. Itens com a mesma descrição mantiveram identidade e fornecedor; os demais contam como itens novos/removidos na prévia (fornecedor com pagamento bloqueia a aplicação).');
+  }
+  return _coRevTplEfetivar.call(this, nome, linhas);
+};
+var _coRevLimpar = _limparEstadoProntReal;
+_limparEstadoProntReal = function(){ var r = _coRevLimpar.apply(this, arguments); coRevReset(true); coRev.hist = { chave: '', status: 'idle', dados: null }; return r; };
+// END 1.2.0.0 REVISAO V2
+// BEGIN 1.2.0.0 OPERACOES DO PROJETO (item 6): os painéis Custos pós-orçamento / Fornecedores / Financeiro do projeto passam a ser operados a partir do prontuário FINANCEIRO
+// ("🧰 Operações do projeto"), com a OS explícita. Reaproveita o MESMO prontuário e as MESMAS RPCs/guardas/confirmações/histórico (nada reescrito); o banco continua decidindo por perfil.
+// O prontuário é um estado único: abrir aqui NUNCA descarta ação em andamento nem painel do Comercial, e fecha (e zera) em logout, troca de conta/perfil/OS, saída da tela ou fechamento.
+var finOp = { ativo: false, abrindo: false, forcar: false, os: '', leadId: '', uid: '', epoch: null, perfil: '', req: 0, semSel: '' };
+
+// ---- lógica pura (testada em Node a partir deste mesmo código) --------------------------------------------------------------------------------
+// Perfis REAIS da conta. Custos pós: o banco aceita financeiro/sócio/atendimento/admin; troca de fornecedor: sócio/atendimento/admin (aqui só gestão, pois a tela é do Financeiro).
+function finOpPerms(perfis){
+  var p = Array.isArray(perfis) ? perfis : [], tem = function(x){ return p.indexOf(x) >= 0; };
+  return { custos: tem('financeiro') || tem('socio') || tem('admin'), fornecedores: tem('socio') || tem('admin') };
+}
+// Mantém SÓ custos pós e fornecedores (conforme perfil) das ações calculadas pelo Comercial; todo o resto fica indisponível no modo hospedado.
+function finOpFiltrarAcoes(a, perms){
+  var nada = { ok: false, motivo: '' }, out = {};
+  Object.keys(a || {}).forEach(function(k){ out[k] = a[k]; });
+  ['editar', 'obs', 'avancar', 'perdido', 'recuperar', 'orcamento', 'contrato', 'contratoSit', 'projeto'].forEach(function(k){ out[k] = nada; });
+  out.custoExtra = perms.custos && a && a.custoExtra ? a.custoExtra : nada;
+  out.fornecedores = perms.fornecedores && a && a.fornecedores ? a.fornecedores : nada;
+  return out;
+}
+// ---- estado/validade ---------------------------------------------------------------------------------------------------------------------------
+function finOpSecaoOk(){   // a operação só vale com a tela do Financeiro (Contas a receber) à vista; o estado do Comercial não participa
+  var a = foDom('financeiro'), b = foDom('finReceber');
+  return !!a && !!b && a.classList.contains('active') && b.classList.contains('active');
+}
+function finOpValido(){
+  var s = estadoProntuarioAtendReal;
+  return finOp.ativo && crSessao() && String(currentUser.id) === finOp.uid && crEpoch() === finOp.epoch && _perfilAtivoComercial() === finOp.perfil
+    && s.os === finOp.os && s.leadId === finOp.leadId && s.ownerUserId === currentUser.id && foPode() && estadoFinPront.os === finOp.os && finOpSecaoOk();
+}
+// Validade do contexto de uma resposta/ação do prontuário NO MODO HOSPEDADO: as mesmas conferências de _ctxProntValido (geração/token, OS, época, dono, perfil real),
+// mais lead e Financeiro ativo — e SEM depender da seção/estado do Comercial (que aqui não participa nem é "fingido" ativo).
+function finOpCtxValido(ctx){
+  var s = estadoProntuarioAtendReal;
+  if(!ctx || ctx.token !== s.token || !ctx.os || ctx.os !== s.os || ctx.os !== finOp.os) return false;
+  if(String(ctx.leadId) !== String(s.leadId) || String(ctx.leadId) !== String(finOp.leadId)) return false;
+  if(!contextoAindaValido(ctx.epoch)) return false;
+  if(!currentUser || currentUser.id !== ctx.ownerUserId) return false;
+  if(_perfilAtivoComercial() !== ctx.perfil || ctx.perfil !== finOp.perfil) return false;
+  if(PERFIS_FIN_PRONT_REAL.indexOf(ctx.perfil) < 0) return false;
+  if(!Array.isArray(currentUser.profiles) || currentUser.profiles.indexOf(ctx.perfil) < 0) return false;
+  return finOpValido();
+}
+// Inicia o prontuário único para a OS hospedada, sem passar pela lista do Comercial (não exige Comercial carregado nem ativo).
+function finOpIniciarProntuario(os, raw){
+  var s = estadoProntuarioAtendReal, box = document.getElementById('detalheLeadComercialReal');
+  if(!box || !os || !raw || !raw.id || !currentUser) return false;
+  _limparEstadoProntReal();
+  s.token++;
+  s.os = os; s.leadId = String(raw.id); s.ownerUserId = currentUser.id; s.epoch = _authContextEpoch; s.perfil = _perfilAtivoComercial();
+  s.leadLista = Object.assign({}, raw); s.leadStatus = 'carregando';
+  _posicionarDetalheProntReal(box);   // hospedado: o cartão vai para o Financeiro
+  box.textContent = ''; box.style.display = '';
+  _renderProntuarioAtendReal('tudo');
+  _carregarTudoProntReal();
+  return true;
+}
+function finOpHospedando(){ return finOp.ativo && finOpValido(); }
+function finOpMsg(t){ var m = foDom('finOpMsg'); if(m){ m.textContent = t || ''; m.style.display = t ? 'block' : 'none'; } }
+function finOpFechar(forcar){
+  if(!finOp.ativo) return true;
+  var s = estadoProntuarioAtendReal;
+  if(!forcar && s.acao){ finOpMsg('Há uma gravação em andamento: aguarde o resultado antes de fechar.'); return false; }
+  finOp.ativo = false; finOp.abrindo = false; finOp.forcar = false; finOp.req++;
+  var host = foDom('finOpHost'), barra = foDom('finOpBarra');
+  if(barra) barra.textContent = '';
+  try { _fecharDetalheReal(); } catch(_e){}   // encerra o prontuário único (zera estado, formulários e painel) e esconde o cartão
+  var box = document.getElementById('detalheLeadComercialReal');
+  if(box){ try { _posicionarDetalheProntReal(box); } catch(_e){} }   // devolve o cartão ao lugar do Comercial
+  if(host) host.style.display = 'none';
+  finOpMsg('');
+  return true;
+}
+function finOpAbrir(){
+  if(!foPode()) return;
+  var p = estadoFinPront, s = estadoProntuarioAtendReal;
+  if(!p.os || p.status !== 'ok' || !finOpSecaoOk()) return;
+  if(finOp.ativo && finOp.os === p.os && finOpValido()){ finOpPintarBarra(); return; }
+  if(!p.leadId){ finOpSemAtendimento(p); return; }   // projeto sem atendimento: o painel existente (aba oculta) com o projeto já escolhido
+  if(s.acao || (s.os && s.os !== p.os && (s.painel || s.leadStatus === 'carregando'))){ finOpMsg('Há uma ação ou painel aberto no prontuário do Comercial. Conclua ou feche-o antes de abrir as operações deste projeto.'); return; }
+  if(finOp.ativo) finOpFechar(false);
+  var req = ++finOp.req, os = String(p.os), leadId = String(p.leadId), uid = String(currentUser.id), epoch = crEpoch(), perfil = _perfilAtivoComercial();
+  if(PERFIS_FIN_PRONT_REAL.indexOf(perfil) < 0 || !Array.isArray(currentUser.profiles) || currentUser.profiles.indexOf(perfil) < 0){ finOpMsg('O perfil ativo não tem acesso às operações financeiras do projeto.'); return; }
+  finOpMsg('Abrindo as operações do projeto…');
+  var q; try { q = supabaseClient.from('leads').select('*').eq('id', leadId).limit(2); } catch(_e){ finOpMsg('Não foi possível abrir agora. Nada foi alterado.'); return; }
+  var feito = false, timer = setTimeout(function(){ if(feito) return; feito = true; if(req === finOp.req) finOpMsg('A leitura do atendimento demorou demais. Nada foi alterado; tente de novo.'); }, 20000);
+  Promise.resolve(q).then(function(r){
+    if(feito) return; feito = true; clearTimeout(timer);
+    var vivo = req === finOp.req && crSessao() && String(currentUser.id) === uid && crEpoch() === epoch && _perfilAtivoComercial() === perfil && foPode() && estadoFinPront.os === os && finOpSecaoOk();
+    if(!vivo) return;
+    var rows = r && !r.error && Array.isArray(r.data) ? r.data : null;
+    if(!rows || rows.length !== 1 || String(rows[0].os) !== os || String(rows[0].id) !== leadId){ finOpMsg('Não consegui ler o atendimento deste projeto agora. Nada foi alterado.'); return; }
+    if(estadoProntuarioAtendReal.acao){ finOpMsg('Há uma gravação em andamento no prontuário. Aguarde antes de abrir as operações.'); return; }
+    finOp = { ativo: true, abrindo: true, forcar: false, os: os, leadId: leadId, uid: uid, epoch: epoch, perfil: perfil, req: req, semSel: '' };
+    var host = foDom('finOpHost'); if(host) host.style.display = 'block';
+    var ok = false;
+    try { ok = finOpIniciarProntuario(os, rows[0]); } catch(_e){ ok = false; }
+    finOp.abrindo = false;
+    if(!ok){ finOpFechar(true); finOpMsg('Não foi possível abrir as operações deste projeto agora. Nada foi alterado.'); return; }
+    finOpMsg(''); finOpPintarBarra();
+  }, function(){ if(feito) return; feito = true; clearTimeout(timer); if(req === finOp.req) finOpMsg('Não foi possível abrir agora. Nada foi alterado.'); });
+}
+function finOpPintarBarra(){
+  var barra = foDom('finOpBarra'); if(!barra) return;
+  barra.textContent = '';
+  if(!finOp.ativo) return;
+  var s = estadoProntuarioAtendReal, perms = finOpPerms(currentUser && currentUser.profiles), a = acoesDisponiveisProntReal();
+  var cab = document.createElement('div'); cab.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px';
+  var h = document.createElement('h3'); h.style.margin = '0'; h.textContent = '🧰 Operações do projeto · OS ' + finOp.os; cab.appendChild(h);
+  var f = document.createElement('button'); f.type = 'button'; f.className = 'btn btn2'; f.style.fontSize = '13px'; f.textContent = '✕ Fechar operações'; f.addEventListener('click', function(){ finOpFechar(false); });
+  cab.appendChild(f);
+  if(typeof coRevHistoricoAbrir === 'function'){ var hb = document.createElement('button'); hb.type = 'button'; hb.className = 'btn btn2'; hb.style.fontSize = '13px'; hb.setAttribute('data-pa', 'fo-historico-versoes'); hb.textContent = '📜 Histórico de versões'; hb.addEventListener('click', function(){ coRevHistoricoAbrir(); }); cab.appendChild(hb); }   // leitura; o servidor decide
+  barra.appendChild(cab);
+  var linha = document.createElement('div'); linha.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px';
+  var nota = function(t){ var n = document.createElement('div'); n.className = 'muted'; n.style.cssText = 'font-size:12px;margin-bottom:4px'; n.textContent = t; barra.appendChild(n); };
+  if(s.leadStatus === 'carregando' || s.leadStatus === 'idle') nota('Lendo os dados do projeto…');
+  else if(s.leadStatus !== 'ok') nota('Não foi possível ler o atendimento deste projeto. Use ↻ Atualizar no topo.');
+  else if(!s.painel && !s.acao){
+    if(a.custoExtra.ok){ var b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'btn btn2'; b1.setAttribute('data-pa', 'fo-abrir-custo-extra'); b1.textContent = '🔧 Custos pós-orçamento'; b1.addEventListener('click', function(){ abrirPainelRev3ProntReal('custoExtra'); }); linha.appendChild(b1); }
+    else if(!perms.custos) nota('Seu perfil não registra custos pós-orçamento.');
+    if(a.fornecedores.ok){ var b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'btn btn2'; b2.setAttribute('data-pa', 'fo-abrir-fornecedores'); b2.textContent = '🎬 Fornecedores'; b2.addEventListener('click', function(){ abrirPainelRev3ProntReal('fornecedores'); }); linha.appendChild(b2); }
+    else if(!perms.fornecedores) nota('Trocar fornecedor de um custo exige Sócio ou Admin.');
+    if(linha.children.length) barra.appendChild(linha);
+    else if(perms.custos && !a.custoExtra.ok) nota('Custos pós-orçamento e troca de fornecedor não se aplicam a este projeto agora (sem orçamento gravado ou etapa incompatível). O Financeiro do projeto está logo abaixo.');
+  }
+}
+// projeto SEM atendimento: o painel existente ("Sem atendimento", aba oculta por decisão de Douglas) abre com o projeto já escolhido; nada reativa a aba.
+function finOpSemAtendimento(p){
+  var e = estadoSemAtendReal;
+  finOp.semSel = String(p.projId || '');
+  try { showFin('finSemAtend', null); } catch(_e){}
+  e.busca = String(p.os || ''); try { finSemAtendBuscarProntReal(); } catch(_e){}
+}
+var _renderSemAtendFinOp = _renderSemAtendProntReal;
+_renderSemAtendProntReal = function(){
+  var r = _renderSemAtendFinOp.apply(this, arguments);
+  var e = estadoSemAtendReal, sel = finOp.semSel;
+  if(sel && e.lista.status === 'ok'){
+    finOp.semSel = '';
+    if(e.lista.itens.some(function(x){ return String(x.projeto_id) === sel; })) { try { finSemAtendEscolherProntReal(sel); } catch(_e){} }
+  }
+  return r;
+};
+
+// o contexto de TODA resposta/ação do prontuário passa por aqui: hospedado → validade própria (sem Comercial); fora disso → a função original, intacta
+var _ctxValidoFinOp = _ctxProntValido;
+_ctxProntValido = function(ctx){ return finOp.ativo ? finOpCtxValido(ctx) : _ctxValidoFinOp.apply(this, arguments); };
+// ---- ganchos no prontuário único (todos só agem com o modo hospedado ativo) ----------------------------------------------------------------
+var _podeEditarFinOp = _podeEditarLeadProntReal;
+_podeEditarLeadProntReal = function(lead){
+  if(finOp.ativo && finOpValido()){
+    if(finOp.forcar) return true;   // só durante o cálculo das ações, que depois é filtrado para custos/fornecedores
+    var s = estadoProntuarioAtendReal, perms = finOpPerms(currentUser && currentUser.profiles);
+    if((s.painel === 'custoExtra' && perms.custos) || (s.painel === 'fornecedores' && perms.fornecedores)) return true;
+  }
+  return _podeEditarFinOp.apply(this, arguments);
+};
+var _acoesDispFinOp = acoesDisponiveisProntReal;
+acoesDisponiveisProntReal = function(){
+  if(!(finOp.ativo && finOpValido())) return _acoesDispFinOp.apply(this, arguments);
+  var a;
+  finOp.forcar = true;
+  try { a = _acoesDispFinOp.apply(this, arguments); } finally { finOp.forcar = false; }
+  return finOpFiltrarAcoes(a, finOpPerms(currentUser && currentUser.profiles));
+};
+var _posicionarFinOp = _posicionarDetalheProntReal;
+_posicionarDetalheProntReal = function(box){
+  if(finOp.ativo){ var c = foDom('finOpCaixa'); if(c && box && box.parentNode !== c) c.appendChild(box); return; }
+  return _posicionarFinOp.apply(this, arguments);
+};
+var _renderProntFinOp = _renderProntuarioAtendReal;
+_renderProntuarioAtendReal = function(){
+  if(finOp.ativo && !finOp.abrindo && !finOpValido()){ finOpFechar(true); return; }
+  var r = _renderProntFinOp.apply(this, arguments);
+  if(finOp.ativo && finOp.abrindo === false && finOpValido()) finOpPintarBarra();
+  return r;
+};
+var _limparProntFinOp = _limparEstadoProntReal;
+_limparEstadoProntReal = function(){
+  var r = _limparProntFinOp.apply(this, arguments);
+  if(finOp.ativo && !finOp.abrindo) finOpFechar(true);
+  return r;
+};
+// saídas: outra seção/aba, outro projeto, fechar o prontuário financeiro, logout/troca de conta ou perfil (limpezas do Financeiro)
+var _showFinOp = show;
+show = function(){ if(finOp.ativo) finOpFechar(true); return _showFinOp.apply(this, arguments); };
+var _showFinFinOp = showFin;
+showFin = function(id){ if(finOp.ativo && id !== 'finReceber') finOpFechar(true); return _showFinFinOp.apply(this, arguments); };
+var _foFecharPrFinOp = foFecharProntuario;
+foFecharProntuario = function(){ if(finOp.ativo && !finOpFechar(false)) return; return _foFecharPrFinOp.apply(this, arguments); };
+var _foAbrirPrFinOp = foAbrirProntuario;
+foAbrirProntuario = function(os){ if(finOp.ativo && String(os) !== finOp.os) finOpFechar(true); return _foAbrirPrFinOp.apply(this, arguments); };
+FO_LIMPEZAS.push(function(){ finOp.semSel = ''; if(finOp.ativo) finOpFechar(true); });
+// END 1.2.0.0 OPERACOES DO PROJETO
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

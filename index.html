@@ -48,6 +48,36 @@ h1{margin:0;font-size:30px}h2{margin:0 0 12px;font-size:20px}h3{font-size:15px;c
 #lbPrev{left:20px}#lbNext{right:20px}
 @media(max-width:1100px){.sidebar{position:relative;width:100%}.app{display:block}.main{margin-left:0;width:100%;padding:16px}.grid6,.grid5,.grid4,.grid3,.grid2,.formgrid,.week{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}.top{display:block}}
 @media(max-width:760px){.contratoFullCols{flex-direction:column}}
+/* 1.2.0.1 · Orçamento e Contrato — janela ampliada, linhas de item (descrição legível) e arraste fluido. Só layout; as cores continuam as inline já mapeadas nos dois temas. */
+.coOrcCols{grid-template-columns:minmax(0,1fr) minmax(260px,32%)}
+@media(min-width:1200px){.coOrcCols{grid-template-columns:minmax(0,1fr) 320px}}
+@media(max-width:1100px){.coOrcCols{grid-template-columns:1fr}}
+.coOrcHead{display:flex;justify-content:space-between;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-bottom:4px}
+.coOrcHeadBtns{display:flex;gap:8px;flex-wrap:wrap}
+#orcItensLista{display:flex;flex-direction:column;gap:8px;min-width:0}
+.coOrcItem{min-width:0}
+.coOrcLn,.coOrcCab{display:grid;grid-template-columns:54px minmax(0,1fr) 64px 92px 62px 32px;gap:8px;align-items:start}
+.coOrcCab{padding:0 12px;margin-bottom:6px}
+.coOrcLn input:not([type=checkbox]),.coOrcLn textarea{margin-top:0;min-width:0}
+.coOrcLn input:not([type=checkbox]){height:36px}
+textarea.coOrcDesc{display:block;min-height:36px;height:36px;line-height:20px;resize:none;overflow:hidden;overflow-wrap:anywhere}
+.coOrcCtl,.coOrcExi,.coOrcRem{height:36px;display:flex;align-items:center}
+.coOrcCtl{gap:2px}
+.coOrcExi,.coOrcRem{justify-content:center}
+@media(min-width:1200px){.coOrcLn,.coOrcCab{grid-template-columns:54px minmax(0,1fr) 72px 112px 70px 36px;gap:10px}}
+@media(max-width:560px){
+ .coOrcCab{display:none}
+ .coOrcLn{grid-template-columns:54px minmax(0,1fr) minmax(0,1fr) 62px 32px}
+ .coOrcDescCel{grid-column:2/-1}
+ .coOrcQtd{grid-column:2}
+ .coOrcLn input:not([type=checkbox]),textarea.coOrcDesc{font-size:16px}
+}
+#orcItensLista.coOrdAtivo{position:relative;user-select:none;-webkit-user-select:none}
+#orcItensLista.coOrdAtivo>[data-orc-item]{position:relative;z-index:1;transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+#orcItensLista.coOrdAtivo>.coOrdFlutuante{z-index:5;transition:none;box-shadow:0 18px 36px rgba(16,24,40,.28);outline:2px solid var(--accent);cursor:grabbing;will-change:transform}
+.coOrdVaga{position:absolute;left:0;right:0;z-index:0;box-sizing:border-box;border:2px dashed var(--accent);border-radius:10px;background:rgba(59,130,246,.08);pointer-events:none}
+.coOrdAlca:active{cursor:grabbing}
+@media(prefers-reduced-motion:reduce){#orcItensLista.coOrdAtivo>[data-orc-item]{transition:none}}
 /* ═══════════ V7.14.6 — Editor A4 de contratos ═══════════ */
 .c-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;margin-bottom:12px}
 .c-toolbar .c-group{display:flex;align-items:center;gap:5px}
@@ -779,7 +809,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.2.0.0 · Caixa e Orçamentos</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.2.0.1 · Orçamento e Contrato</div>
 </aside>
 
 <main class="main">
@@ -1986,20 +2016,20 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
 <button class="btn" id="btnAvancarConfirm" onclick="">Confirmar</button> <button class="btn btn2" onclick="closeModals()">Cancelar</button>
 </div></div>
 
-<div id="modalOrcamento" class="modal"><div class="modalbox" style="max-width:980px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+<div id="modalOrcamento" class="modal"><div class="modalbox" style="max-width:1440px">
+<div class="coOrcHead">
  <div>
   <h2 id="orcTitulo" style="margin:0">Orçamento</h2>
   <p class="muted" id="orcSubtitulo" style="margin:4px 0 0;font-size:13px"></p>
  </div>
- <div style="display:flex;gap:8px">
+ <div class="coOrcHeadBtns">
   <button class="btn btn2" style="padding:8px 14px;font-size:13px" onclick="coTplAbrir()">📑 Selecionar template</button>
   <button class="btn btn2" style="padding:8px 14px;font-size:13px" onclick="abrirGerenciarItens()">⚙️ Gerenciar lista</button>
   <button class="btn btn2" onclick="closeModals()" style="padding:8px 14px">✕ Fechar</button>
  </div>
 </div>
 
-<div class="grid2" style="gap:24px;align-items:start;margin-top:16px">
+<div class="grid2 coOrcCols" style="gap:24px;align-items:start;margin-top:16px">
 
 <!-- ESQUERDA: itens -->
 <div>
@@ -2016,7 +2046,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  </div>
 
  <!-- Cabeçalho da tabela -->
- <div style="display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;padding:0 12px;margin-bottom:6px">
+ <div class="coOrcCab">
   <span></span>
   <span class="muted" style="font-size:11px;font-weight:700">DESCRIÇÃO</span>
   <span class="muted" style="font-size:11px;font-weight:700;text-align:center">QTD</span>
@@ -15876,8 +15906,8 @@ var MSG_PRONT_REV3 = {
   orcAusente:     'O orçamento ainda não pode ser criado nem editado por aqui. Nada foi gravado.',
   orcRecusado:    'O banco recusou o orçamento: ',
   orcEtapaAtend:  'A revisão do orçamento só é feita em Orçamento ou Negociação. Envie o atendimento para Orçamento antes de revisar.',
-  orcEtapaFech:   'Atendimento fechado: o orçamento só muda por uma Nova revisão. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
-  orcProjeto:     'Com o projeto iniciado, o orçamento só muda por uma Nova revisão (aplicada por Sócio ou Admin). Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
+  orcEtapaFech:   'Atendimento fechado: o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
+  orcProjeto:     'Com o projeto iniciado, o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
   orcCriadoAvancou:'Orçamento criado: versão 1. O atendimento avançou para Orçamento.',
   orcCriarAvisa:  'Ao salvar o primeiro orçamento, o atendimento avança automaticamente de Atendimento para Orçamento.',
   orcAliquotaDif: 'A alíquota atual ({atual}) difere da aplicada na versão salva ({aplicada}). Salvar criará uma nova versão com a alíquota atual; a versão anterior continua como está.',
@@ -19073,9 +19103,13 @@ function _renderContratoRev3ProntReal(){
   if(cl.status === 'erro' || !cl.dados) return _cardEstadoProntReal(titulo, 'Não foi possível carregar o contrato.', 'contratos', 'contratos');
   var card = _elProntReal('div', 'margin-top:8px'); card.className = 'card';
   card.setAttribute('data-pa', 'contratos');
-  card.appendChild(_elProntReal('div', 'font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px', titulo));
+  // 1.2.0.1: título em destaque; status em área própria; modelo/atualização secundários; trecho do texto; ações numa só linha que quebra (botões no tamanho padrão)
+  var tt = _elProntReal('div', 'font-size:18px;font-weight:800;margin-bottom:10px', titulo); tt.setAttribute('data-pa', 'contrato-titulo'); card.appendChild(tt);
   var a = (s.lead && s.leadStatus === 'ok' && !s.acao && !s.painel) ? acoesDisponiveisProntReal() : {};
   var c = x.contrato;
+  var acoes = _elProntReal('div', 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px');
+  acoes.setAttribute('data-pa', 'contrato-acoes');
+  var mostrarHistorico = false;
   if(x.contratosN > 1){
     card.appendChild(_elProntReal('div', 'font-size:13px;color:#b45309', 'Há ' + x.contratosN + ' contratos registrados para este atendimento. A tela não escolhe entre eles.'));
   } else if(!c){
@@ -19085,66 +19119,69 @@ function _renderContratoRev3ProntReal(){
       : 'Nenhum contrato registrado. A decisão de contrato é feita em “✅ Negociação Fechada”.'));
   } else {
     var sit = _textoProntReal(c.situacao);
-    var selo = _elProntReal('div', 'font-size:14px;font-weight:700;margin-bottom:4px', ROTULO_SITUACAO_CTR_PRONT_REAL[sit] || sit || '—');
+    var faixa = _elProntReal('div', 'display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;padding:10px 12px;background:#f9fafb;border:1px solid var(--line);border-radius:10px');
+    faixa.setAttribute('data-pa', 'contrato-status');
+    var selo = _elProntReal('div', 'font-size:14px;font-weight:700', ROTULO_SITUACAO_CTR_PRONT_REAL[sit] || sit || '—');
     selo.setAttribute('data-pa', 'contrato-situacao');
-    card.appendChild(selo);
+    faixa.appendChild(selo);
     if(c.editado_apos_fechamento === true){
       // Decisão 4 (rev6): sinalizar sempre que a versão atual foi criada por uma edição pós-fechamento/
       // assinatura — mesmo quando a situação atual já não é mais 'gerado' (ex.: assinado de novo).
-      var selEdit = _elProntReal('div', 'font-size:12px;font-weight:700;color:#b45309;background:#fef3c7;border-radius:6px;display:inline-block;padding:2px 8px;margin-bottom:4px', '✏️ Editado após fechamento/assinatura');
+      var selEdit = _elProntReal('div', 'font-size:12px;font-weight:700;color:#b45309;background:#fef3c7;border-radius:6px;display:inline-block;padding:2px 8px', '✏️ Editado após fechamento/assinatura');
       selEdit.setAttribute('data-pa', 'contrato-editado-pos-fechamento');
-      card.appendChild(selEdit);
+      faixa.appendChild(selEdit);
     }
+    card.appendChild(faixa);
     var info = [];
     if(c.modelo_nome) info.push('Modelo: ' + _textoProntReal(c.modelo_nome));
     if(c.situacao_em) info.push('Atualizado em ' + _dataBRProntReal(c.situacao_em) + (c.situacao_por_nome ? ' por ' + _textoProntReal(c.situacao_por_nome) : ''));
     if(c.legado === true) info.push('registro anterior à situação do contrato');
-    if(info.length) card.appendChild(_elProntReal('div', 'font-size:12px;color:var(--muted)', info.join(' • ')));
+    if(info.length) card.appendChild(_elProntReal('div', 'font-size:12px;color:var(--muted);margin-top:8px', info.join(' • ')));
     if(c.versao_assinada){
       // Decisão 4 (rev6): identifica qual versão foi a assinada, mesmo depois de uma edição criar
       // uma versão mais nova — a nova versão NÃO herda essa assinatura automaticamente.
-      var vaLinha = _elProntReal('div', 'font-size:12px;color:var(--muted)', 'Versão assinada: v' + _textoProntReal(c.versao_assinada) + (c.assinado_em ? ' em ' + _dataBRProntReal(c.assinado_em) : ''));
+      var vaLinha = _elProntReal('div', 'font-size:12px;color:var(--muted);margin-top:4px', 'Versão assinada: v' + _textoProntReal(c.versao_assinada) + (c.assinado_em ? ' em ' + _dataBRProntReal(c.assinado_em) : ''));
       vaLinha.setAttribute('data-pa', 'contrato-versao-assinada');
       card.appendChild(vaLinha);
     }
     if(c.editado_apos_fechamento === true && c.motivo_ultima_edicao){
-      var motLinha = _elProntReal('div', 'font-size:13px;margin-top:4px', 'Motivo da alteração: ' + _textoProntReal(c.motivo_ultima_edicao));
+      var motLinha = _elProntReal('div', 'font-size:13px;margin-top:6px', 'Motivo da alteração: ' + _textoProntReal(c.motivo_ultima_edicao));
       motLinha.setAttribute('data-pa', 'contrato-motivo-edicao');
       card.appendChild(motLinha);
     }
-    if(sit === 'dispensado' && c.justificativa){ var j = _elProntReal('div', 'font-size:13px;margin-top:4px', 'Justificativa: ' + _textoProntReal(c.justificativa)); j.setAttribute('data-pa', 'contrato-justificativa'); card.appendChild(j); }
+    if(sit === 'dispensado' && c.justificativa){ var j = _elProntReal('div', 'font-size:13px;margin-top:6px', 'Justificativa: ' + _textoProntReal(c.justificativa)); j.setAttribute('data-pa', 'contrato-justificativa'); card.appendChild(j); }
     if(_textoProntReal(c.corpo).trim()){
       if(s.verContratoCompleto){
-        var tx = _elProntReal('div', 'white-space:pre-wrap;font-size:13px;background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:6px;max-height:420px;overflow-y:auto', _textoProntReal(c.corpo));
+        var tx = _elProntReal('div', 'white-space:pre-wrap;font-size:13px;background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px;max-height:420px;overflow-y:auto', _textoProntReal(c.corpo));
         tx.setAttribute('data-pa', 'contrato-texto'); card.appendChild(tx);
       } else {
-        var tr = _elProntReal('div', 'font-size:13px;margin-top:6px;color:var(--muted)', _trechoContratoProntReal(c.corpo));
+        var tr = _elProntReal('div', 'font-size:13px;margin-top:10px;color:var(--muted)', _trechoContratoProntReal(c.corpo));
         tr.setAttribute('data-pa', 'contrato-trecho'); card.appendChild(tr);
       }
-      card.appendChild(_botaoProntReal(s.verContratoCompleto ? 'Ocultar texto' : 'Ver texto completo', 'contrato-ver', function(){
-        estadoProntuarioAtendReal.verContratoCompleto = !estadoProntuarioAtendReal.verContratoCompleto; _renderProntuarioAtendReal('dados'); }, true, 'font-size:12px;padding:4px 10px;margin-top:6px'));
+      acoes.appendChild(_botaoProntReal(s.verContratoCompleto ? 'Ocultar contrato' : '📄 Ver contrato', 'contrato-ver', function(){
+        estadoProntuarioAtendReal.verContratoCompleto = !estadoProntuarioAtendReal.verContratoCompleto; _renderProntuarioAtendReal('dados'); }, true));
     }
     // rev7 (achado 2 da auditoria da rev6): consulta do histórico de versões pela tela, usando
     // contrato_versoes_listar — sob demanda (só carrega quando o usuário abre), não junto com o
     // resto do prontuário.
-    card.appendChild(_botaoProntReal(s.verHistoricoVersoes ? 'Ocultar histórico de versões' : '📜 Ver histórico de versões', 'contrato-historico-ver', function(){
+    acoes.appendChild(_botaoProntReal(s.verHistoricoVersoes ? 'Ocultar histórico de versões do contrato' : '📜 Histórico de versões do contrato', 'contrato-historico-ver', function(){
       var st = estadoProntuarioAtendReal;
       st.verHistoricoVersoes = !st.verHistoricoVersoes;
       if(st.verHistoricoVersoes && st.sub.contratoVersoes.status === 'idle') _lerContratoVersoesProntReal();
       _renderProntuarioAtendReal('dados');
-    }, true, 'font-size:12px;padding:4px 10px;margin-top:6px'));
-    if(s.verHistoricoVersoes) _renderHistoricoVersoesProntReal(card);
+    }, true));
+    mostrarHistorico = !!s.verHistoricoVersoes;
   }
-  var bt = _elProntReal('div', 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px');
-  if(a.contrato && a.contrato.ok) bt.appendChild(_botaoProntReal(
+  if(a.contrato && a.contrato.ok) acoes.appendChild(_botaoProntReal(
     // rev7: o rótulo "já fechado/assinado" agora usa o mesmo sinal do resto da tela — inclusive um
     // contrato 'gerado' (nunca assinado) num atendimento já Fechado, ou depois de uma edição anterior.
     _ctrEdicaoProtegidaProntReal(x.sitContrato, _textoProntReal(x.lead && x.lead.etapa), x.contrato) ? '✏️ Editar (contrato já fechado/assinado)'
     : (x.sitContrato === 'gerado' ? '✏️ Editar texto do contrato' : (c ? 'Mudar a decisão de contrato' : '📄 Registrar decisão de contrato')),
-    'abrir-contrato', function(){ abrirPainelRev3ProntReal('contrato'); }, true, 'font-size:12px;padding:5px 10px'));
-  if(a.contratoSit && a.contratoSit.ok && a.contratoSit.assinado) bt.appendChild(_botaoProntReal('✅ Marcar como assinado', 'contrato-assinado', function(){ abrirPainelRev3ProntReal('contratoSit', 'assinado'); }, true, 'font-size:12px;padding:5px 10px'));
-  if(a.contratoSit && a.contratoSit.ok && a.contratoSit.autorizado) bt.appendChild(_botaoProntReal('⚠️ Autorizar início sem assinatura', 'contrato-autorizado', function(){ abrirPainelRev3ProntReal('contratoSit', 'autorizado_sem_assinatura'); }, true, 'font-size:12px;padding:5px 10px'));
-  if(bt.children.length) card.appendChild(bt);
+    'abrir-contrato', function(){ abrirPainelRev3ProntReal('contrato'); }, true));
+  if(a.contratoSit && a.contratoSit.ok && a.contratoSit.assinado) acoes.appendChild(_botaoProntReal('✅ Marcar contrato como assinado', 'contrato-assinado', function(){ abrirPainelRev3ProntReal('contratoSit', 'assinado'); }, true));
+  if(a.contratoSit && a.contratoSit.ok && a.contratoSit.autorizado) acoes.appendChild(_botaoProntReal('⚠️ Autorizar início sem assinatura', 'contrato-autorizado', function(){ abrirPainelRev3ProntReal('contratoSit', 'autorizado_sem_assinatura'); }, true));
+  if(acoes.children.length) card.appendChild(acoes);
+  if(mostrarHistorico) _renderHistoricoVersoesProntReal(card);
   if(a.contrato && !a.contrato.ok && a.contrato.motivo){ var mc = _elProntReal('div', 'font-size:12px;color:var(--muted);margin-top:6px', a.contrato.motivo); mc.setAttribute('data-pa', 'motivo-contrato'); card.appendChild(mc); }
   return card;
 }
@@ -34886,32 +34923,49 @@ renderOrcItens = function(){
     var t0 = coEl('orcTotalItens'); if(t0) t0.textContent = '';
     return;
   }
+  // 1.2.0.1: cada item é um cartão único (o cartão é o que se arrasta); colunas por CSS (.coOrcLn); descrição em área de texto que cresce, com o selo "custo" ABAIXO dela
+  var campo = 'padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box';
   el.innerHTML = orcItens.map(function(it, i){
     var qn = _numCampoProntReal(coQtdLinhaParaForm(it[1]), NaN), un = _numCampoProntReal(it[2], NaN);
     var qtd = (isFinite(qn) && qn !== 0) ? qn : 1;
     var total = (isFinite(qn) && isFinite(un)) ? _arred2ProntReal(Math.max(0, qtd) * Math.max(0, un)) : NaN;
     var exibir = it[3], eCusto = it[4] || false;
-    var estiloLinha = eCusto
-      ? 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center'
-      : 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
-    var linhaPrincipal = '<div style="' + estiloLinha + '">' + coOrdAlcaHtml(i, orcItens.length, desab)
-      + '<div>'
-      + '<input' + desab + ' value="' + coEsc(it[0]) + '" oninput="orcItens[' + i + '][0]=this.value" placeholder="Descrição" maxlength="' + LIMITES_ORC_PRONT_REAL.descricao + '" style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box">'
-      + (eCusto ? '<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>' : '')
+    var linhaPrincipal = '<div class="coOrcLn">' + coOrdAlcaHtml(i, orcItens.length, desab)
+      + '<div class="coOrcDescCel">'
+      + '<textarea' + desab + ' class="coOrcDesc" rows="1" aria-label="Descrição do item ' + (i + 1) + '" oninput="coOrcDescInput(this,' + i + ')" onkeydown="if(event.key===\'Enter\')event.preventDefault()" placeholder="Descrição" maxlength="' + LIMITES_ORC_PRONT_REAL.descricao + '" style="' + campo + '">' + coEsc(it[0]) + '</textarea>'
+      + (eCusto ? '<span class="coOrcSelo" style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:4px;display:inline-block">custo</span>' : '')
       + '</div>'
-      + '<input' + desab + ' type="number" min="1" step="any" value="' + coEsc(it[1] === '' || it[1] === undefined ? 1 : it[1]) + '" oninput="this.value=this.value.replace(/-/g,\'\');orcItens[' + i + '][1]=this.value;atualizarTotalOrc()" style="padding:7px 6px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:center">'
-      + '<input' + desab + ' value="' + coEsc(it[2]) + '" oninput="this.value=this.value.replace(/-/g,\'\');orcItens[' + i + '][2]=this.value;atualizarTotalOrc()" placeholder="0" style="padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:white;width:100%;box-sizing:border-box;text-align:right">'
-      + '<div style="text-align:center"><label style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:11px;color:var(--muted)">'
+      + '<input' + desab + ' class="coOrcQtd" type="number" min="1" step="any" value="' + coEsc(it[1] === '' || it[1] === undefined ? 1 : it[1]) + '" oninput="this.value=this.value.replace(/-/g,\'\');orcItens[' + i + '][1]=this.value;atualizarTotalOrc()" style="' + campo + ';padding:7px 6px;text-align:center">'
+      + '<input' + desab + ' class="coOrcVal" value="' + coEsc(it[2]) + '" oninput="this.value=this.value.replace(/-/g,\'\');orcItens[' + i + '][2]=this.value;atualizarTotalOrc()" placeholder="0" style="' + campo + ';text-align:right">'
+      + '<div class="coOrcExi"><label style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:11px;color:var(--muted)">'
       + '<input' + desab + ' type="checkbox"' + (exibir ? ' checked' : '') + ' onchange="orcItens[' + i + '][3]=this.checked;calcOrc()" style="width:14px;height:14px">valor</label></div>'
-      + '<button' + desab + ' onclick="orcItens.splice(' + i + ',1);renderOrcItens();calcOrc()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;text-align:center">✕</button>'
+      + '<button' + desab + ' class="coOrcRem" onclick="orcItens.splice(' + i + ',1);renderOrcItens();calcOrc()" aria-label="Remover o item ' + (i + 1) + '" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;text-align:center">✕</button>'
       + '</div>';
     var linhaTotal = (isFinite(total) && total > 0)
-      ? '<div style="text-align:right;font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:4px;padding-right:48px">' + qtd.toLocaleString('pt-BR') + '× R$ ' + un.toLocaleString('pt-BR') + ' = <b>R$ ' + total.toLocaleString('pt-BR') + '</b></div>' : '';
-    if(eCusto) return '<div data-orc-item="' + i + '" style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px;margin-bottom:8px">' + linhaPrincipal + linhaTotal + renderSeletorFornecedorItem(it, i) + '</div>';
-    return '<div data-orc-item="' + i + '">' + linhaPrincipal + linhaTotal + '</div>';
+      ? '<div style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px;padding-right:46px">' + qtd.toLocaleString('pt-BR') + '× R$ ' + un.toLocaleString('pt-BR') + ' = <b>R$ ' + total.toLocaleString('pt-BR') + '</b></div>' : '';
+    if(eCusto) return '<div class="coOrcItem" data-orc-item="' + i + '" style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px">' + linhaPrincipal + linhaTotal + renderSeletorFornecedorItem(it, i) + '</div>';
+    return '<div class="coOrcItem" data-orc-item="' + i + '" style="background:#f9fafb;border-radius:10px;padding:8px 12px">' + linhaPrincipal + linhaTotal + '</div>';
   }).join('');
+  coOrcAjustarTodasDesc();
   atualizarTotalOrc();
 };
+// Descrição legível: a área de texto cresce com o conteúdo (uma linha por padrão). Item sem quebra de linha: Enter não insere, e texto colado com quebras vira espaço.
+function coOrcAjustarDesc(t){
+  if(!t || !t.style) return;
+  t.style.height = 'auto';
+  t.style.height = Math.max(36, (Number(t.scrollHeight) || 0) + 2) + 'px';
+}
+function coOrcAjustarTodasDesc(){
+  Array.prototype.forEach.call(document.querySelectorAll('textarea.coOrcDesc'), coOrcAjustarDesc);
+}
+function coOrcDescInput(t, i){
+  if(/[\r\n]/.test(t.value)) t.value = t.value.replace(/[\r\n]+/g, ' ');
+  orcItens[i][0] = t.value;
+  coOrcAjustarDesc(t);
+}
+if(typeof window !== 'undefined' && typeof window.addEventListener === 'function') window.addEventListener('resize', function(){ try { coOrcAjustarTodasDesc(); } catch(_e){} });
+// a altura só é medida com a janela visível: ao abrir (editor, nova versão ou somente leitura) as descrições são reajustadas
+if(typeof openModal === 'function'){ var _openModalOrc = openModal; openModal = function(id){ var r = _openModalOrc.apply(this, arguments); if(id === 'modalOrcamento'){ try { coOrcAjustarTodasDesc(); } catch(_e){} } return r; }; }
 atualizarTotalOrc = function(){
   var tot = coEl('orcTotalItens');
   if(tot){
@@ -36337,19 +36391,18 @@ function coRoLinhas(){
     var eCusto = it[4] === true, linhaBanco = itensLer.filter(function(x){ return String(x.id) === String(it[6]); })[0];
     var qn = _numCampoProntReal(coQtdLinhaParaForm(it[1]), NaN), un = _numCampoProntReal(it[2], NaN);
     var total = (linhaBanco && coRoNum(linhaBanco.valor_linha_entrada)) ? Number(linhaBanco.valor_linha_entrada) : ((isFinite(qn) && isFinite(un)) ? _arred2ProntReal(Math.max(0, qn === 0 ? 1 : qn) * Math.max(0, un)) : NaN);
-    var estilo = eCusto ? 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center'
-      : 'display:grid;grid-template-columns:54px 1fr 60px 90px 80px 36px;gap:6px;align-items:center;margin-bottom:6px;padding:8px 12px;background:#f9fafb;border-radius:10px';
     var campo = 'padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:#f8fafc;width:100%;box-sizing:border-box';
-    var linha = '<div style="' + estilo + '"><span class="muted" style="font-size:11px;text-align:center">' + (i + 1) + '</span><div><input disabled value="' + coEsc(it[0]) + '" style="' + campo + '">' + (eCusto ? '<span style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:3px;display:inline-block">custo</span>' : '') + '</div>'
-      + '<input disabled type="number" value="' + coEsc(it[1]) + '" style="' + campo + ';text-align:center"><input disabled value="' + coEsc(it[2]) + '" style="' + campo + ';text-align:right">'
-      + '<div style="text-align:center"><label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--muted)"><input disabled type="checkbox"' + (it[3] ? ' checked' : '') + ' style="width:14px;height:14px">valor</label></div><span></span></div>';
+    var linha = '<div class="coOrcLn"><span class="muted coOrcCtl" style="font-size:11px;justify-content:center">' + (i + 1) + '</span><div class="coOrcDescCel"><textarea disabled class="coOrcDesc" rows="1" style="' + campo + '">' + coEsc(it[0]) + '</textarea>' + (eCusto ? '<span class="coOrcSelo" style="font-size:10px;color:var(--red);background:#fee2e2;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:4px;display:inline-block">custo</span>' : '') + '</div>'
+      + '<input disabled class="coOrcQtd" type="number" value="' + coEsc(it[1]) + '" style="' + campo + ';text-align:center"><input disabled class="coOrcVal" value="' + coEsc(it[2]) + '" style="' + campo + ';text-align:right">'
+      + '<div class="coOrcExi"><label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--muted)"><input disabled type="checkbox"' + (it[3] ? ' checked' : '') + ' style="width:14px;height:14px">valor</label></div><span class="coOrcRem"></span></div>';
     var tot = (isFinite(total) && total > 0 && isFinite(qn)) ? '<div style="text-align:right;font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:4px;padding-right:48px">' + (qn === 0 ? 1 : qn).toLocaleString('pt-BR') + '× R$ ' + (isFinite(un) ? un.toLocaleString('pt-BR') : '—') + ' = <b>R$ ' + total.toLocaleString('pt-BR') + '</b></div>' : '';
-    if(!eCusto) return linha + tot;
+    if(!eCusto) return '<div class="coOrcItem" style="background:#f9fafb;border-radius:10px;padding:8px 12px">' + linha + tot + '</div>';
     var forn = it[5], tipo = classificarVinculoForn(forn), txt = tipo === 'cadastrado' ? '🎬 ' + coEsc(forn.snapshot.nome || '—') + ' <span style="font-size:10px;background:#dcfce7;color:#065f46;border-radius:5px;padding:1px 6px">cadastrado</span>'
       : tipo === 'manual' ? '🎬 ' + coEsc(forn.nome || '(sem nome)') + ' <span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:5px;padding:1px 6px">manual</span>'
       : tipo === 'nao_se_aplica' ? '➖ Fornecedor não se aplica a este custo' : '⏳ Fornecedor a definir';
-    return '<div style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px;margin-bottom:8px">' + linha + tot + '<div style="margin:2px 0 0;padding:8px 10px;background:#eef2f7;border-radius:8px;font-size:12px">' + txt + '</div></div>';
+    return '<div class="coOrcItem" style="border:1px solid #e5e7eb;border-radius:10px;background:#fcfcfd;padding:10px 12px">' + linha + tot + '<div style="margin:2px 0 0;padding:8px 10px;background:#eef2f7;border-radius:8px;font-size:12px">' + txt + '</div></div>';
   }).join('') || '<p class="muted" style="font-size:13px;padding:8px 0">Nenhum item.</p>';
+  coOrcAjustarTodasDesc();
   var t = coEl('orcTotalItens'); if(t) t.innerHTML = coRoNum(o.subtotal_itens) ? '<b>Subtotal: R$ ' + Number(o.subtotal_itens).toLocaleString('pt-BR') + '</b>' : '';
 }
 renderOrcItens = function(){ if(coRO.aberta && coRO.tipo === 'orcamento') return coRoLinhas(); return _coRoRenderItens.apply(this, arguments); };
@@ -42801,8 +42854,10 @@ var _showAI = show;
 show = function(id, btn){ if(id === 'arquivos'){ try { aiMarcarAtualizar(); } catch(_e){} } return _showAI.apply(this, arguments); };
 FO_LIMPEZAS.push(function(){ aiZerar(); estadoAI.uid = ''; estadoAI.epoch = -1; var t = foDom('arqTabela'); if(t) t.textContent = ''; var m = foDom('arqMsg'); if(m) m.textContent = ''; });
 // END ZIP OS V8.20.0 ARQUIVOS INTEGRADOS
-// BEGIN 1.2.0.0 ORDEM DOS ITENS (item 5): reordenar só move a linha dentro de orcItens; nenhum campo, vínculo, quantidade ou preço é tocado.
+// BEGIN 1.2.0.1 ORDEM DOS ITENS: reordenar só move a linha dentro de orcItens; nenhum campo, vínculo, quantidade ou preço é tocado.
 // A ordem é gravada pelo salvar_orcamento (orcamento_itens.ordem = posição) e relida em ordem; PDF/template usam o mesmo array.
+// Arraste fluido (1.2.0.1): a alça só INICIA o gesto depois de um limiar de movimento (clique simples nunca reordena); o item acompanha o ponteiro (transform), uma "vaga" tracejada marca a inserção
+// e os demais deslizam para abrir espaço. As posições vêm de medidas tiradas UMA vez no início do gesto (o item em movimento nunca é medido: sem oscilação). Nada muda em orcItens até soltar.
 function coOrdMoverArray(arr, de, para){
   if(!Array.isArray(arr) || Object.isFrozen(arr)) return false;
   var n = arr.length;
@@ -42825,8 +42880,8 @@ function coOrcMoverBtn(i, d){
 }
 function coOrdAlcaHtml(i, n, desab){
   var b = 'background:none;border:none;cursor:pointer;color:var(--muted);padding:0;line-height:1;font-size:11px;width:18px;height:14px';
-  return '<div style="display:flex;align-items:center;gap:2px" data-orc-ctl="' + i + '">'
-    + '<button type="button"' + desab + ' data-orc-alca="' + i + '" aria-label="Arrastar o item ' + (i + 1) + ' para outra posição (ou use as setas do teclado)" title="Arraste para reordenar"'
+  return '<div class="coOrcCtl" data-orc-ctl="' + i + '">'
+    + '<button type="button"' + desab + ' class="coOrdAlca" data-orc-alca="' + i + '" aria-label="Arrastar o item ' + (i + 1) + ' para outra posição (ou use as setas do teclado)" title="Arraste para reordenar"'
     + ' onpointerdown="coOrdIniciar(event,' + i + ')" onpointermove="coOrdMovendo(event)" onpointerup="coOrdSoltar(event)" onpointercancel="coOrdCancelar(event)" onlostpointercapture="coOrdCancelar(event)" onkeydown="coOrdTecla(event,' + i + ')"'
     + ' style="touch-action:none;cursor:grab;background:none;border:none;color:var(--muted);font-size:16px;padding:2px 3px;line-height:1">⠿</button>'
     + '<div style="display:flex;flex-direction:column">'
@@ -42835,52 +42890,178 @@ function coOrdAlcaHtml(i, n, desab){
     + '</div></div>';
 }
 var coOrdDrag = null;
-function coOrdAlvoDe(ev){
-  var el = document.elementFromPoint(ev.clientX, ev.clientY), row = el && el.closest ? el.closest('[data-orc-item]') : null;
-  return row ? { row: row, idx: parseInt(row.getAttribute('data-orc-item'), 10) } : null;
+var CO_ORD_LIMIAR = 5;   // px de movimento antes de o gesto virar arraste (abaixo disso é só clique)
+function coOrdReduzido(){ try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch(_e){ return false; } }
+function coOrdLinhas(lista){ return Array.prototype.filter.call(lista.children || [], function(c){ return c && typeof c.hasAttribute === 'function' && c.hasAttribute('data-orc-item'); }); }
+// Onde cada linha fica depois de levar o item "de" para a posição "t": posições (relativas à lista) calculadas com as alturas medidas no início. Função pura.
+function coOrdNovasPosicoes(geo, gap, de, t){
+  var ordem = [], k;
+  for(k = 0; k < geo.length; k++) if(k !== de) ordem.push(k);
+  ordem.splice(t, 0, de);
+  var pos = {}, y = geo.length ? geo[0].top : 0;
+  ordem.forEach(function(i){ pos[i] = y; y += geo[i].h + gap; });
+  return pos;
 }
-function coOrdLimpar(){ Array.prototype.forEach.call(document.querySelectorAll('[data-orc-item]'), function(r){ r.style.outline = ''; r.style.opacity = ''; }); }
-function coOrdDragOk(d){   // o arrasto só vale para o MESMO editor, o MESMO array de itens e o MESMO contexto de prontuário/conta/perfil
+// Posição de destino a partir do centro do item arrastado: conta quantos OUTROS itens têm o centro (original, fixo) acima dele. Função pura.
+function coOrdAlvoPorCentro(geo, de, centro){
+  var t = 0;
+  for(var k = 0; k < geo.length; k++){ if(k === de) continue; if(geo[k].top + geo[k].h / 2 < centro) t++; }
+  return t;
+}
+function coOrdLimparVisual(){
+  var l = document.getElementById('orcItensLista');
+  if(l && l.classList) l.classList.remove('coOrdAtivo');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-orc-item]'), function(r){
+    if(r.style){ r.style.transform = ''; r.style.transition = ''; }
+    if(r.classList){ r.classList.remove('coOrdFlutuante'); }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.coOrdVaga'), function(v){ if(v.parentNode) v.parentNode.removeChild(v); });
+}
+function coOrdParar(d){
+  if(!d) return;
+  if(d.raf && typeof cancelAnimationFrame === 'function'){ try { cancelAnimationFrame(d.raf); } catch(_e){} }
+  if(d.timer){ try { clearTimeout(d.timer); } catch(_e){} }
+  d.raf = 0; d.timer = 0;
+}
+function coOrdDragOk(d){   // o arrasto só vale para o MESMO editor, o MESMO array de itens, o MESMO item e o MESMO contexto de prontuário/conta/perfil
   if(!d || d.inst !== coOrc || d.arr !== orcItens || d.form !== coOrc.form) return false;
   if(!coOrc.aberta || !coOrcPodeReordenar()) return false;
+  if(orcItens.length !== d.n || orcItens[d.de] !== d.item) return false;
   if(d.ctx && typeof _ctxProntValido === 'function' && !_ctxProntValido(d.ctx)) return false;
   return true;
 }
-function coOrdAbortar(){ coOrdDrag = null; coOrdLimpar(); }
+// Encerra sem reordenar e sem animar (contexto perdido, janela fechada, outro item). semRender: o chamador vai redesenhar/fechar por conta própria.
+function coOrdAbortar(semRender){
+  var d = coOrdDrag; coOrdDrag = null; coOrdParar(d);
+  coOrdLimparVisual();
+  if(d && d.btn && d.fase !== 'espera'){ try { d.btn.releasePointerCapture(d.id); } catch(_e){} }
+  if(d && d.rerender && !semRender && coOrc.aberta && typeof renderOrcItens === 'function'){ try { renderOrcItens(); } catch(_e){} }
+}
 function coOrdIniciar(ev, i){
   if(!coOrcPodeReordenar() || (typeof ev.button === 'number' && ev.button > 0)) return;
-  coOrdDrag = { de: i, alvo: i, id: ev.pointerId, inst: coOrc, arr: orcItens, form: coOrc.form, ctx: (typeof _ctxProntReal === 'function' ? _ctxProntReal() : null) };
+  if(coOrdDrag){ if(coOrdDrag.fase === 'espera') coOrdAbortar(true); else return; }
+  coOrdDrag = { fase: 'espera', de: i, alvo: i, ult: i, id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, x: ev.clientX, y: ev.clientY, btn: ev.currentTarget,
+                inst: coOrc, arr: orcItens, item: orcItens[i], n: orcItens.length, form: coOrc.form, ctx: (typeof _ctxProntReal === 'function' ? _ctxProntReal() : null), raf: 0, timer: 0, rerender: false, feito: false };
   try { ev.currentTarget.setPointerCapture(ev.pointerId); } catch(_e){}
-  var r = ev.currentTarget.closest('[data-orc-item]'); if(r) r.style.opacity = '.55';
   if(ev.cancelable) ev.preventDefault();
 }
+// Primeiro movimento além do limiar: mede as linhas UMA vez e prepara o gesto. false = não dá para arrastar com segurança (nada foi alterado).
+function coOrdComecar(d){
+  var lista = document.getElementById('orcItensLista'); if(!lista || typeof lista.getBoundingClientRect !== 'function') return false;
+  var rows = coOrdLinhas(lista);
+  if(rows.length !== d.n || rows.length !== orcItens.length || d.de < 0 || d.de >= rows.length) return false;
+  for(var k = 0; k < rows.length; k++) if(parseInt(rows[k].getAttribute('data-orc-item'), 10) !== k) return false;
+  var lr = lista.getBoundingClientRect();
+  var geo = rows.map(function(r){ var b = r.getBoundingClientRect(); return { top: b.top - lr.top, h: b.height }; });
+  d.lista = lista; d.rows = rows; d.geo = geo;
+  d.gap = rows.length > 1 ? Math.max(0, geo[1].top - (geo[0].top + geo[0].h)) : 8;
+  d.row = rows[d.de];
+  d.grab = d.y0 - (lr.top + geo[d.de].top);   // em que altura do item o ponteiro o segurou
+  d.scroller = (typeof lista.closest === 'function') ? lista.closest('.modalbox') : null;
+  var vaga = document.createElement('div'); vaga.className = 'coOrdVaga'; vaga.setAttribute('aria-hidden', 'true');
+  vaga.style.top = geo[d.de].top + 'px'; vaga.style.height = geo[d.de].h + 'px';
+  lista.insertBefore(vaga, lista.firstChild); d.vaga = vaga;
+  lista.classList.add('coOrdAtivo'); d.row.classList.add('coOrdFlutuante');
+  d.fase = 'arrastando'; d.alvo = d.de; d.ult = d.de;
+  if(typeof requestAnimationFrame === 'function') d.raf = requestAnimationFrame(function(){ coOrdAuto(d); });
+  return true;
+}
+function coOrdPosicionar(d, t){
+  var pos = coOrdNovasPosicoes(d.geo, d.gap, d.de, t);
+  for(var k = 0; k < d.rows.length; k++){
+    if(k === d.de) continue;
+    var delta = pos[k] - d.geo[k].top;
+    d.rows[k].style.transform = Math.abs(delta) < 0.5 ? '' : 'translate3d(0,' + delta + 'px,0)';
+  }
+  if(d.vaga) d.vaga.style.top = pos[d.de] + 'px';
+}
+function coOrdAtualizar(d){
+  var lr = d.lista.getBoundingClientRect(), g = d.geo[d.de];
+  var topoDesejado = d.y - d.grab;                               // topo do item sob o ponteiro (viewport)
+  var dy = topoDesejado - (lr.top + g.top);
+  var dx = Math.max(-22, Math.min(22, d.x - d.x0));
+  d.row.style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0) rotate(-.4deg)';
+  var t = coOrdAlvoPorCentro(d.geo, d.de, (topoDesejado - lr.top) + g.h / 2);
+  d.alvo = t;
+  if(t !== d.ult){ coOrdPosicionar(d, t); d.ult = t; }
+}
+// Rolagem automática da janela perto das bordas enquanto o item é arrastado.
+function coOrdAuto(d){
+  if(coOrdDrag !== d || d.fase !== 'arrastando') return;
+  if(d.scroller && typeof d.scroller.getBoundingClientRect === 'function'){
+    var r = d.scroller.getBoundingClientRect(), z = 56, v = 0;
+    if(d.y < r.top + z) v = -Math.ceil((r.top + z - d.y) / z * 16); else if(d.y > r.bottom - z) v = Math.ceil((d.y - (r.bottom - z)) / z * 16);
+    if(v){ var antes = d.scroller.scrollTop; d.scroller.scrollTop = antes + v; if(d.scroller.scrollTop !== antes) coOrdAtualizar(d); }
+  }
+  if(typeof requestAnimationFrame === 'function') d.raf = requestAnimationFrame(function(){ coOrdAuto(d); });
+}
 function coOrdMovendo(ev){
-  var d = coOrdDrag; if(!d || ev.pointerId !== d.id) return;
+  var d = coOrdDrag; if(!d || ev.pointerId !== d.id || d.fase === 'soltando') return;
   if(!coOrdDragOk(d)){ coOrdAbortar(); return; }
-  var a = coOrdAlvoDe(ev); if(!a || !isFinite(a.idx)) return;
-  d.alvo = a.idx;
-  Array.prototype.forEach.call(document.querySelectorAll('[data-orc-item]'), function(r){ r.style.outline = ''; });
-  if(a.idx !== d.de) a.row.style.outline = '2px solid var(--accent)';
+  d.x = ev.clientX; d.y = ev.clientY;
+  if(d.fase === 'espera'){
+    var dx = d.x - d.x0, dy = d.y - d.y0;
+    if(dx * dx + dy * dy < CO_ORD_LIMIAR * CO_ORD_LIMIAR) return;   // ainda é um clique
+    if(!coOrdComecar(d)){ coOrdAbortar(); return; }
+  }
+  coOrdAtualizar(d);
+  if(ev.cancelable) ev.preventDefault();
+}
+function coOrdFinalizar(d, destino, cancelar){
+  if(coOrdDrag === d) coOrdDrag = null;
+  coOrdParar(d); coOrdLimparVisual();
+  if(!cancelar && destino !== d.de && coOrdDragOk(d)){   // o contexto pode ter mudado durante a animação de encaixe
+    if(coOrcMover(d.de, destino)) coOrdFoco('[data-orc-alca="' + destino + '"]');
+    return;
+  }
+  if(d.rerender && coOrc.aberta && typeof renderOrcItens === 'function'){ try { renderOrcItens(); } catch(_e){} }
+}
+// Encaixe suave do item na vaga (ou de volta ao lugar, se cancelar) e só então grava a nova ordem.
+function coOrdAssentar(d, destino, cancelar){
+  d.fase = 'soltando'; coOrdParar(d);
+  try { d.btn.releasePointerCapture(d.id); } catch(_e){}
+  var alvo = cancelar ? d.de : destino;
+  if(d.ult !== alvo){ coOrdPosicionar(d, alvo); d.ult = alvo; }
+  var pos = coOrdNovasPosicoes(d.geo, d.gap, d.de, alvo), ty = pos[d.de] - d.geo[d.de].top;
+  var concluir = function(){ if(d.feito) return; d.feito = true; coOrdFinalizar(d, destino, cancelar); };
+  if(coOrdReduzido()){ concluir(); return; }
+  d.row.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)';
+  d.row.style.transform = 'translate3d(0,' + ty + 'px,0)';
+  if(typeof d.row.addEventListener === 'function') d.row.addEventListener('transitionend', concluir);
+  d.timer = setTimeout(concluir, 320);
 }
 function coOrdSoltar(ev){
-  var d = coOrdDrag; if(!d || ev.pointerId !== d.id) return;
-  coOrdDrag = null; coOrdLimpar();
-  try { ev.currentTarget.releasePointerCapture(ev.pointerId); } catch(_e){}
-  if(!coOrdDragOk(d)) return;   // editor fechado/reaberto, array trocado (template/carga), conta/perfil/OS mudou: nada é reordenado
-  var a = coOrdAlvoDe(ev), alvo = a && isFinite(a.idx) ? a.idx : d.alvo;
-  if(coOrcMover(d.de, alvo)) coOrdFoco('[data-orc-alca="' + alvo + '"]');
+  var d = coOrdDrag; if(!d || ev.pointerId !== d.id || d.fase === 'soltando') return;
+  if(d.fase === 'espera'){ coOrdAbortar(true); return; }   // clique sem movimento: só clique, nada é reordenado
+  if(!coOrdDragOk(d)){ coOrdAbortar(); return; }
+  if(typeof ev.clientX === 'number'){ d.x = ev.clientX; d.y = ev.clientY; coOrdAtualizar(d); }
+  coOrdAssentar(d, d.alvo, false);
 }
-function coOrdCancelar(ev){ var d = coOrdDrag; if(!d) return; if(ev && typeof ev.pointerId === 'number' && ev.pointerId !== d.id) return; coOrdAbortar(); }   // outro ponteiro não cancela este
+function coOrdCancelar(ev){   // outro ponteiro não cancela este; durante o encaixe o fim da captura é esperado
+  var d = coOrdDrag; if(!d) return;
+  if(ev && typeof ev.pointerId === 'number' && ev.pointerId !== d.id) return;
+  if(d.fase === 'soltando') return;
+  if(d.fase === 'arrastando' && coOrdDragOk(d)){ coOrdAssentar(d, d.de, true); return; }
+  coOrdAbortar();
+}
 function coOrdTecla(ev, i){
+  if(coOrdDrag) return;
   if(ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown') return;
   ev.preventDefault();
   var p = i + (ev.key === 'ArrowUp' ? -1 : 1);
   if(coOrcMover(i, p)) coOrdFoco('[data-orc-alca="' + p + '"]');
 }
+if(typeof document !== 'undefined' && typeof document.addEventListener === 'function'){
+  // Escape cancela o arraste (e não fecha a janela por trás); perder o foco da janela também cancela
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && coOrdDrag && coOrdDrag.fase !== 'soltando'){ ev.preventDefault(); ev.stopPropagation(); coOrdCancelar(null); } }, true);
+}
+if(typeof window !== 'undefined' && typeof window.addEventListener === 'function'){ window.addEventListener('blur', function(){ if(coOrdDrag && coOrdDrag.fase === 'arrastando') coOrdCancelar(null); }); }
+// enquanto o item está sendo movido, redesenhos vindos de fora (catálogo de fornecedores etc.) esperam o fim do gesto: não destroem as linhas medidas
+if(typeof renderOrcItens === 'function'){ var _renderOrcItensOrd = renderOrcItens; renderOrcItens = function(){ var d = coOrdDrag; if(d && d.fase !== 'espera'){ d.rerender = true; return; } return _renderOrcItensOrd.apply(this, arguments); }; }
 // fechar o editor ou limpar o prontuário (logout, conta, perfil, OS) invalida qualquer arrasto em curso
-if(typeof coOrcFecharJanela === 'function'){ var _coOrcFecharJanelaOrd = coOrcFecharJanela; coOrcFecharJanela = function(){ coOrdAbortar(); return _coOrcFecharJanelaOrd.apply(this, arguments); }; }
-if(typeof _limparEstadoProntReal === 'function'){ var _limparEstadoOrd = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _limparEstadoOrd.apply(this, arguments); coOrdAbortar(); return r; }; }
-// END 1.2.0.0 ORDEM DOS ITENS
+if(typeof coOrcFecharJanela === 'function'){ var _coOrcFecharJanelaOrd = coOrcFecharJanela; coOrcFecharJanela = function(){ coOrdAbortar(true); return _coOrcFecharJanelaOrd.apply(this, arguments); }; }
+if(typeof _limparEstadoProntReal === 'function'){ var _limparEstadoOrd = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _limparEstadoOrd.apply(this, arguments); coOrdAbortar(true); return r; }; }
+// END 1.2.0.1 ORDEM DOS ITENS
 // BEGIN 1.2.0.0 TEMPLATES (item 4): modelo = descrição do item do CATÁLOGO + quantidade + ordem. Sem cliente, preço, fornecedor, desconto, taxa, comissão ou autoridade.
 // Ao aplicar, os preços e a condição de custo vêm do catálogo ATUAL (relido e validado agora); item ausente/duplicado no catálogo bloqueia TUDO (nada é aplicado pela metade).
 var CO_RPC_TPL_LISTAR = 'orcamento_template_listar', CO_RPC_TPL_SALVAR = 'orcamento_template_salvar', CO_RPC_TPL_EXCLUIR = 'orcamento_template_excluir';
@@ -43358,7 +43539,7 @@ function coRevPayload(f){   // formulário da janela → parâmetros/itens para 
 // Habilitar "Aplicar": só com prévia do servidor FRESCA (mesma versão de linha, sem edição pendente, mesma data de parcela), sem impedimentos, com confirmação e perfil de aplicação.
 function coRevPodeConfirmar(p, e){
   if(!p || !p.d || p.d.status !== 'ok') return { ok: false, motivo: 'Sem prévia do servidor.' };
-  if(!e.podeAplicar) return { ok: false, motivo: 'Somente Sócio ou Admin aplicam uma revisão.' };
+  if(!e.podeAplicar) return { ok: false, motivo: 'Você não tem permissão para aplicar esta nova versão.' };
   if(e.alterado) return { ok: false, motivo: 'Há alterações não salvas: salve e veja a prévia de novo.' };
   if(p.vl !== e.versaoLinha) return { ok: false, motivo: 'O rascunho mudou depois desta prévia: atualize a prévia.' };
   if((p.data || '') !== (e.dataNova || '')) return { ok: false, motivo: 'Atualize a prévia com a data informada.' };
@@ -43374,27 +43555,29 @@ function coRevNovaChave(op, assin){   // MESMO conteúdo → MESMA chave (retry 
   return p.chave;
 }
 var CO_REV_TEXTOS = {
-  rascunho_existente: 'Já existe um rascunho de revisão para este projeto: ele foi aberto.', revisao_nao_aberta: 'Esta revisão não está mais em rascunho.', base_desatualizada: 'O orçamento mudou depois que este rascunho foi criado. Descarte e crie outra revisão.',
+  rascunho_existente: 'Já existe um rascunho de nova versão para este projeto: ele foi aberto.', revisao_nao_aberta: 'Esta nova versão não está mais em rascunho.', base_desatualizada: 'O orçamento mudou depois que este rascunho foi criado. Descarte e crie outra nova versão.',
   confirmacao_ausente: 'A confirmação explícita é obrigatória.', data_nova_parcela_obrigatoria: 'Informe o vencimento da nova parcela e atualize a prévia.', sem_aliquota: 'A alíquota do orçamento não está configurada.',
   sem_orcamento: 'Este projeto não tem orçamento vinculado para revisar.', sem_snapshot: 'A versão atual do orçamento não tem registro suficiente para revisar.',
-  projeto_finalizado: 'Projeto encerrado, arquivado ou perdido: a revisão não se aplica.', projeto_recorrente: 'Projeto recorrente, contrato-pai ou ciclo: a revisão ainda não tem regra segura para isso.',
+  projeto_finalizado: 'Projeto encerrado, arquivado ou perdido: a nova versão não se aplica.', projeto_recorrente: 'Projeto recorrente, contrato-pai ou ciclo: a nova versão ainda não tem regra segura para isso.',
   versao_contratada_divergente: 'A versão contratada do projeto não é a versão atual do orçamento.', custo_extra_inconsistente: 'O custo extra do orçamento não fecha com o custo comercial + custos pós-orçamento.'
 };
 function coRevErroTexto(r){
   var e = r && r.error, c = String((e && e.code) || '');
-  if(c === 'PGRST202' || c === '42883') return 'O recurso de revisão ainda não está instalado no banco. Nada foi alterado.';
+  if(c === 'PGRST202' || c === '42883') return 'O recurso de nova versão do orçamento ainda não está instalado no banco. Nada foi alterado.';
   if(c === '42501') return 'Seu perfil ou este atendimento não permite esta ação.';
   if(c === '22023' && e && e.message) return String(e.message).slice(0, 220) + ' Nada foi alterado.';
   return 'O banco recusou a operação. Nada foi alterado.';
 }
 function coRevStatusTexto(d){
   if(!d) return '';
-  if(d.status === 'impedido') return CO_REV_TEXTOS[d.codigo] || 'A revisão está impedida (' + String(d.codigo || '') + ').';
+  if(d.status === 'impedido') return CO_REV_TEXTOS[d.codigo] || 'A nova versão está impedida (' + String(d.codigo || '') + ').';
   return CO_REV_TEXTOS[d.status] || '';
 }
 // ---- contexto / comunicação ------------------------------------------------------------------------------------------------------------------
 function coRevPerfis(){ return currentUser && Array.isArray(currentUser.profiles) ? currentUser.profiles : []; }
-function coRevPodeAplicar(){ var p = coRevPerfis(); return p.indexOf('socio') >= 0 || p.indexOf('admin') >= 0; }
+function coRevPodeAplicar(){   // 1.2.0.1: Sócio/Admin ou o Atendimento RESPONSÁVEL por este atendimento (a mesma regra de edição do prontuário). Só orientação da tela: quem decide é o servidor (RPC)
+  var s = coS(); return !!s && !!s.lead && _podeEditarLeadProntReal(s.lead);
+}
 function coRevProjetoId(){ var sp = coS().sub && coS().sub.projetos, d = sp && sp.status === 'ok' && Array.isArray(sp.dados) ? sp.dados : []; return d.length === 1 && coUuidOk(String(d[0].id)) ? String(d[0].id) : ''; }
 function coRevCtx(globalTok){ var c = _ctxProntReal(); c.tok = globalTok ? null : coRev.tok; c.uid = currentUser ? String(currentUser.id) : ''; c.projeto = coRevProjetoId(); return c; }
 function coRevCtxOk(c){ return !!c && (c.tok === null || c.tok === coRev.tok) && !!currentUser && c.uid === String(currentUser.id) && c.projeto !== '' && c.projeto === coRevProjetoId() && _ctxProntValido(c); }
@@ -43474,10 +43657,10 @@ function coRevPintarBarra(){
   if(!coRevAtivoOk()){ b.style.display = 'none'; return; }
   b.style.display = 'block';
   var r = coRev.revisao, t = document.createElement('div'); t.style.cssText = 'font-size:13px;font-weight:700;margin-bottom:6px';
-  t.textContent = '🔁 Revisão #' + r.numero + ' em rascunho · a proposta vigente (V' + r.base_versao + ') continua valendo até um Sócio ou Admin aplicar. O contrato anterior é preservado (aditivo quando necessário).';
+  t.textContent = '🔁 Nova versão do orçamento (rascunho n.º ' + r.numero + ') · o orçamento atual (V' + r.base_versao + ') continua valendo até você aplicar a nova versão. O contrato e os recebimentos anteriores são preservados (aditivo quando necessário).';
   b.appendChild(t);
   var l = document.createElement('div'); l.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
-  l.appendChild(coRevBtn('👁️ Prévia e aplicar', function(){ coRevPrevia(); }, 'btn', coRev.busy));
+  l.appendChild(coRevBtn('👁️ Ver prévia e aplicar nova versão', function(){ coRevPrevia(); }, 'btn', coRev.busy));
   l.appendChild(coRevBtn('↻ Recarregar do servidor', function(){ coRevRecarregarConfirmado(); }, 'btn btn2', coRev.busy));
   l.appendChild(coRevBtn('🗑️ Descartar rascunho', function(){ coRevModalAbrir('descartar'); }, 'btn btn2', coRev.busy));
   b.appendChild(l);
@@ -43492,8 +43675,8 @@ function coRevTravar(on){
 }
 function coRevCustomizarEditor(){
   var r = coRev.revisao, l = coS().lead || {};
-  coOrcDefinirTexto('orcTitulo', 'Revisão da proposta — ' + String(l.cliente_nome || ''));
-  coOrcDefinirTexto('orcSubtitulo', String(coS().os || '') + ' • rascunho #' + r.numero + ' • base V' + r.base_versao + ' • Resp: ' + coOrcResponsavelNome());
+  coOrcDefinirTexto('orcTitulo', 'Nova versão do orçamento — ' + String(l.cliente_nome || ''));
+  coOrcDefinirTexto('orcSubtitulo', String(coS().os || '') + ' • rascunho n.º ' + r.numero + ' • baseada na V' + r.base_versao + ' • Resp: ' + coOrcResponsavelNome());
   coRevRotuloExtra(true);
   coRevPintarBarra(); coRevAjustarBotaoSalvar(); calcOrc();
 }
@@ -43529,12 +43712,12 @@ function coRevAbrirEditor(rid){
   if(!coRevPodeEditar() || !coUuidOk(String(rid))) return;
   coRevReset(true);
   var ctx = coRevCtx(); coRev.busy = true;
-  _mensagemProntReal('info', 'Abrindo a revisão…');
+  _mensagemProntReal('info', 'Abrindo a nova versão do orçamento…');
   coRevLer(rid, ctx, function(ok, rev, itens){
     coRev.busy = false;
     if(!ok){ _mensagemProntReal('erro', 'Não foi possível ler o rascunho agora. Nada foi alterado.'); return; }
-    if(rev.estado !== 'rascunho'){ _mensagemProntReal('aviso', 'Esta revisão não está mais em rascunho.'); coRevHistInvalidar(); coRevHistCarregar(true); return; }
-    if(s.acao || s.painel){ _mensagemProntReal('aviso', 'Conclua ou feche o painel aberto antes de abrir a revisão.'); return; }
+    if(rev.estado !== 'rascunho'){ _mensagemProntReal('aviso', 'Esta nova versão não está mais em rascunho.'); coRevHistInvalidar(); coRevHistCarregar(true); return; }
+    if(s.acao || s.painel){ _mensagemProntReal('aviso', 'Conclua ou feche o painel aberto antes de abrir a nova versão.'); return; }
     coRev.ativo = true; coRev.revisao = rev; coRev.calculo = rev.calculo || null; coRev.projetoId = ctx.projeto; coRev.form = coRevFormDe(rev, itens);
     s.painel = 'orcamento'; s.form = coRev.form; s.formDados = {}; s.mensagem = { tipo: '', texto: '' };
     _renderProntuarioAtendReal('tudo');   // coSincronizar abre a janela existente; coOrcAbrirJanela é complementada abaixo
@@ -43546,7 +43729,7 @@ function coRevRecarregar(msgOk){   // relê o rascunho do servidor e reconstrói
   coRevLer(rid, ctx, function(ok, rev, itens){
     coRev.busy = false;
     if(!ok || !coRevAtivoOk()){ coRevTravar(false); coRevAviso('erro', 'Não consegui reler o rascunho. Seus campos foram mantidos; tente "Recarregar do servidor".'); return; }
-    if(rev.estado !== 'rascunho'){ coRevTravar(false); coRevAviso('aviso', 'Esta revisão não está mais em rascunho.'); return; }
+    if(rev.estado !== 'rascunho'){ coRevTravar(false); coRevAviso('aviso', 'Esta nova versão não está mais em rascunho.'); return; }
     coRev.revisao = rev; coRev.calculo = rev.calculo || null; coRev.previa = null; coRev.confirmado = false;
     var f = coRevFormDe(rev, itens); Object.keys(f).forEach(function(k){ coRev.form[k] = f[k]; });
     orcItens = coRev.form.itens.map(coItemParaLinha); fornBuscaAberta = -1;
@@ -43603,7 +43786,7 @@ function coRevAplicar(){
   var conf = { confirmo: true }; if(coRev.dataNova) conf.data_nova_parcela = coRev.dataNova;
   var chave = coRevNovaChave('aplicar', JSON.stringify([r.id, p.vl, p.d.estado_hash, conf]));
   if(!chave){ coRevAvisoModal('erro', 'Não foi possível gerar a chave do envio. Nada foi aplicado.'); return; }
-  coRev.busy = true; coRevAvisoModal('info', 'Aplicando a revisão…'); coRevRenderPrevia();
+  coRev.busy = true; coRevAvisoModal('info', 'Aplicando a nova versão…'); coRevRenderPrevia();
   coRevRpc('orcamento_revisao_aplicar', { p_chave: chave, p_revisao_id: r.id, p_versao_linha: p.vl, p_hash_estado: p.d.estado_hash, p_confirmacao: conf }, ctx, function(tipo, resp){
     coRev.busy = false;
     var d = tipo === 'resposta' && resp && !resp.error ? resp.data : null;
@@ -43611,7 +43794,7 @@ function coRevAplicar(){
       delete coRev.pend.aplicar;
       var v = d.versao_resultante, aditivo = d.exige_aditivo === true;
       coRevModalFechar(true); coRevReset(true); coRevHistInvalidar();
-      try { _concluirRev3ProntReal('Revisão aplicada: o orçamento agora está na V' + v + (aditivo ? '. Preço, escopo ou condição mudaram: providencie o aditivo contratual (o contrato não foi alterado nem assinado).' : '.'), 'projeto', 'ok'); } catch(_e){}
+      try { _concluirRev3ProntReal('Nova versão aplicada: o orçamento agora está na V' + v + (aditivo ? '. Preço, escopo ou condição mudaram: providencie o aditivo contratual (o contrato não foi alterado nem assinado).' : '.'), 'projeto', 'ok'); } catch(_e){}
       coRevHistCarregar(true);   // se o projeto ainda está sendo relido, fica 'idle' e a próxima pintura dos botões recarrega sozinha
       return;
     }
@@ -43622,7 +43805,7 @@ function coRevAplicar(){
       coRevPreviaPedir(true); return;   // relê e refaz hash/prévia antes de permitir nova confirmação
     }
     if(tipo === 'resposta' && resp && resp.error){ delete coRev.pend.aplicar; coRevAvisoModal('erro', coRevErroTexto(resp)); coRevRenderPrevia(); return; }
-    coRevAvisoModal('erro', 'Não consegui confirmar se a revisão foi aplicada. NÃO é seguro assumir nada: use "Conferir estado" (lê o histórico e refaz a prévia) ou "Repetir com a mesma chave" (idempotente).');
+    coRevAvisoModal('erro', 'Não consegui confirmar se a nova versão foi aplicada. NÃO é seguro assumir nada: use "Conferir estado" (lê o histórico e refaz a prévia) ou "Repetir com a mesma chave" (idempotente).');
     coRev.incertoAplicar = true; coRevRenderPrevia();
   });
 }
@@ -43631,7 +43814,7 @@ function coRevConferirEstado(){ coRev.incertoAplicar = false; coRevHistInvalidar
 function coRevCriar(){
   if(coRev.busy || coRev.ativo) return;
   var ta = coEl('coRevMotivo'), mot = String(ta ? ta.value : '').trim();
-  if(mot.length < 3 || mot.length > 500){ coRevAvisoModal('erro', 'Informe o motivo da revisão (3 a 500 caracteres).'); return; }
+  if(mot.length < 3 || mot.length > 500){ coRevAvisoModal('erro', 'Informe o motivo da nova versão (3 a 500 caracteres).'); return; }
   var ctx = coRevCtx(), chave = coRevNovaChave('criar', JSON.stringify([ctx.projeto, mot]));
   if(!chave){ coRevAvisoModal('erro', 'Não foi possível gerar a chave do envio. Nada foi criado.'); return; }
   coRev.busy = true; coRevAvisoModal('info', 'Criando o rascunho…'); coRevRenderCriar();
@@ -43706,10 +43889,10 @@ function coRevModalFechar(silencioso){
 function coRevTitulo(t){ coOrcDefinirTexto('coRevTitulo', t); }
 function coRevRenderCriar(){
   var c = coEl('coRevConteudo'); if(!c) return; var ta0 = coEl('coRevMotivo'), v0 = ta0 ? ta0.value : ''; c.textContent = '';
-  coRevTitulo('🔁 Nova revisão da proposta');
+  coRevTitulo('🔁 Nova versão do orçamento');
   var vs = coRev.hist.dados && coRev.hist.dados.versoes ? coRev.hist.dados.versoes : [], atual = vs.length ? vs[vs.length - 1].versao : '';
-  c.appendChild(coRevEl('p', 'font-size:13px;margin:0 0 8px', 'A proposta atual' + (atual ? ' (V' + atual + ')' : '') + ', o contrato, os recebimentos e os pagamentos continuam intactos até um Sócio ou Admin aplicar a revisão. O rascunho nasce como cópia dos itens e valores vigentes.'));
-  var l = coRevEl('label', 'font-size:12px;font-weight:700;display:block', 'Motivo da revisão (aparece no histórico)'); var ta = document.createElement('textarea'); ta.id = 'coRevMotivo'; ta.setAttribute('maxlength', '500'); ta.rows = 3; ta.value = v0; ta.disabled = coRev.busy; l.appendChild(ta); c.appendChild(l);
+  c.appendChild(coRevEl('p', 'font-size:13px;margin:0 0 8px', 'O orçamento atual' + (atual ? ' (V' + atual + ')' : '') + ', o contrato, os recebimentos e os pagamentos continuam intactos até você aplicar a nova versão. O rascunho nasce como cópia dos itens e valores vigentes.'));
+  var l = coRevEl('label', 'font-size:12px;font-weight:700;display:block', 'Motivo da nova versão (aparece no histórico)'); var ta = document.createElement('textarea'); ta.id = 'coRevMotivo'; ta.setAttribute('maxlength', '500'); ta.rows = 3; ta.value = v0; ta.disabled = coRev.busy; l.appendChild(ta); c.appendChild(l);
   var b = coRevEl('div', 'display:flex;gap:8px;margin-top:10px'); b.appendChild(coRevBtn('Criar rascunho e abrir o editor', coRevCriar, 'btn', coRev.busy)); b.appendChild(coRevBtn('Cancelar', function(){ coRevModalFechar(false); }, 'btn btn2', false)); c.appendChild(b);
 }
 function coRevRenderDescartar(){
@@ -43765,10 +43948,10 @@ function coRevRenderValores(c, val){
 }
 function coRevRenderPrevia(){
   var c = coEl('coRevConteudo'); if(!c) return; c.textContent = '';
-  var r = coRev.revisao, p = coRev.previa; coRevTitulo('👁️ Prévia da revisão' + (r ? ' #' + r.numero : ''));
+  var r = coRev.revisao, p = coRev.previa; coRevTitulo('👁️ Prévia da nova versão do orçamento');
   if(!p){ c.appendChild(coRevEl('p', 'font-size:13px', coRev.busy ? 'Pedindo a prévia ao servidor…' : 'Sem prévia. Use "Atualizar prévia".')); c.appendChild(coRevBtn('Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy)); return; }
   var d = p.d, dif = d.diferencas || {}, val = dif.valores || {}, pl = d.plano_parcelas || {};
-  c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-bottom:8px', 'Valores calculados pelo servidor com o que está salvo. A proposta atual é V' + d.revisao.versao_atual + '; aplicar cria a V' + (Number(d.revisao.versao_atual) + 1) + ' (a V' + d.revisao.versao_atual + ' e o contrato ficam preservados).'));
+  c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-bottom:8px', 'Confira o que muda antes de aplicar (valores calculados pelo servidor com o que está salvo). Aplicar cria a V' + (Number(d.revisao.versao_atual) + 1) + '; a V' + d.revisao.versao_atual + ' e o contrato ficam preservados.'));
   if(Array.isArray(d.impedimentos) && d.impedimentos.length){
     var im = coRevEl('div', 'border:1px solid #fecdd3;background:#fff1f2;color:#9f1239;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px');
     im.appendChild(coRevEl('div', 'font-weight:800;margin-bottom:4px', '⛔ Não é possível aplicar agora (o rascunho foi mantido):'));
@@ -43803,9 +43986,9 @@ function coRevRenderPrevia(){
   var h = coRevAplicarHabilitado(), rodape = coRevEl('div', 'margin-top:14px;border-top:1px solid var(--line);padding-top:10px');
   if(coRevPodeAplicar()){
     var lc = coRevEl('label', 'display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:600;margin-bottom:8px'); var cb = document.createElement('input'); cb.type = 'checkbox'; cb.style.cssText = 'width:auto;margin-top:2px'; cb.checked = coRev.confirmado; cb.disabled = coRev.busy;
-    lc.appendChild(cb); lc.appendChild(document.createTextNode('Conferi as diferenças acima e confirmo aplicar esta revisão ao projeto (cria a V' + (Number(d.revisao.versao_atual) + 1) + ').'));
+    lc.appendChild(cb); lc.appendChild(document.createTextNode('Conferi as diferenças acima e confirmo aplicar esta nova versão ao projeto (cria a V' + (Number(d.revisao.versao_atual) + 1) + ').'));
     rodape.appendChild(lc);
-    var bAp = coRevBtn('✅ Aplicar revisão', coRevAplicar, 'btn', !h.ok); bAp.setAttribute('data-rev', 'aplicar');
+    var bAp = coRevBtn('✅ Aplicar nova versão', coRevAplicar, 'btn', !h.ok); bAp.setAttribute('data-rev', 'aplicar');
     cb.addEventListener('change', function(){ coRev.confirmado = cb.checked; bAp.disabled = !coRevAplicarHabilitado().ok; });
     var bl = coRevEl('div', 'display:flex;gap:8px;flex-wrap:wrap'); bl.appendChild(bAp);
     bl.appendChild(coRevBtn('↻ Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy));
@@ -43813,7 +43996,7 @@ function coRevRenderPrevia(){
     rodape.appendChild(bl);
     if(!h.ok && h.motivo) rodape.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-top:6px', h.motivo));
   } else {
-    rodape.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Somente Sócio ou Admin aplicam uma revisão. Você pode salvar o rascunho; um Sócio ou Admin confere esta prévia e aplica.'));
+    rodape.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Você não tem permissão para aplicar esta nova versão.'));
     rodape.appendChild(coRevBtn('↻ Atualizar prévia', function(){ coRevPreviaPedir(true); }, 'btn btn2', coRev.busy));
   }
   c.appendChild(rodape);
@@ -43832,16 +44015,16 @@ function coRevRenderHistorico(){
   d.versoes.forEach(function(v){
     var l = coRevEl('div', 'display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;padding:3px 0;border-bottom:1px solid var(--line)');
     l.appendChild(coRevEl('span', '', 'V' + v.versao + (v.contratada ? ' · contratada pelo projeto' : '') + ' · ' + data(v.criado_em) + ' · ' + (v.valor_total !== null && v.valor_total !== undefined ? coBRL(v.valor_total) : '—')
-      + (v.origem === 'revisao_v2' ? ' · veio da revisão' : (v.versao === 1 ? ' · versão original (preservada)' : ''))));
+      + (v.origem === 'revisao_v2' ? ' · criada como nova versão' : (v.versao === 1 ? ' · versão original (preservada)' : ''))));
     l.appendChild(coRevBtn('Ver proposta', function(){ coRevVerVersao(String(v.id)); }, 'btn btn2', coRev.busy));
     c.appendChild(l);
   });
-  c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Revisões (o número da revisão não é o número da versão)'));
-  if(!d.revisoes.length) c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Nenhuma revisão ainda.'));
+  c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Novas versões (o número do rascunho não é o número da versão)'));
+  if(!d.revisoes.length) c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'Nenhuma nova versão ainda.'));
   d.revisoes.forEach(function(r){
     var bx = coRevEl('div', 'border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px');
     var estado = r.estado === 'aplicada' ? '✅ aplicada → V' + r.versao_resultante : (r.estado === 'descartada' ? '🗑️ descartada (não gerou versão)' : '✏️ rascunho');
-    bx.appendChild(coRevEl('div', 'font-size:13px;font-weight:700', 'Revisão #' + r.numero + ' · ' + estado + ' · base V' + r.base_versao));
+    bx.appendChild(coRevEl('div', 'font-size:13px;font-weight:700', 'Nova versão (rascunho n.º ' + r.numero + ') · ' + estado + ' · base V' + r.base_versao));
     bx.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted)', 'Motivo: ' + String(r.motivo) + ' · criada por ' + coRevNomeUsuario(r.criado_por) + ' em ' + coRevDataHora(r.criado_em)));
     (r.eventos || []).forEach(function(e){
       var tipo = { criada: 'criada', salva: 'rascunho salvo', aplicada: 'aplicada', descartada: 'descartada' }[e.tipo] || 'registro', linha = tipo + ' · ' + coRevNomeUsuario(e.autor) + ' · ' + coRevDataHora(e.em);
@@ -43861,14 +44044,14 @@ function coRevRenderHistorico(){
 function coRevRenderDetalheRevisao(c, r){
   c.appendChild(coRevBtn('← Voltar ao histórico', function(){ coRev.detalhe = ''; coRevRenderHistorico(); }, 'btn btn2', false));
   var ev = (r.eventos || []).filter(function(e){ return e.tipo === 'aplicada'; })[0], dep = ev && ev.depois ? ev.depois : {}, ant = ev && ev.antes ? ev.antes : {}, dif = dep.diferencas || {};
-  c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Revisão #' + r.numero + ' · V' + r.base_versao + ' → V' + r.versao_resultante));
+  c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Nova versão V' + r.versao_resultante + ' (rascunho n.º ' + r.numero + ', a partir da V' + r.base_versao + ')'));
   c.appendChild(coRevEl('div', 'font-size:13px', 'Motivo: ' + String(r.motivo)));
   c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted);margin-bottom:6px', 'Criada por ' + coRevNomeUsuario(r.criado_por) + ' em ' + coRevDataHora(r.criado_em) + ' · aplicada por ' + coRevNomeUsuario(r.aplicada_por || (ev && ev.autor)) + ' em ' + coRevDataHora(r.aplicada_em || (ev && ev.em))));
-  if(!ev){ c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'O registro das diferenças desta revisão não está disponível.')); return; }
+  if(!ev){ c.appendChild(coRevEl('div', 'font-size:13px;color:var(--muted)', 'O registro das diferenças desta nova versão não está disponível.')); return; }
   c.appendChild(coRevEl('h3', 'margin:10px 0 4px;font-size:15px', 'Valores (antes → depois)'));
   coRevRenderValores(c, dif.valores || {});
   if(Array.isArray(ant.parcelas) && ant.parcelas.length){
-    c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Recebimentos do cliente (antes da revisão)'));
+    c.appendChild(coRevEl('h3', 'margin:12px 0 4px;font-size:15px', 'Recebimentos do cliente (antes da nova versão)'));
     ant.parcelas.forEach(function(x){ c.appendChild(coRevEl('div', 'font-size:13px', 'Parcela ' + String(x.parcela) + (x.vencimento ? ' · vence ' + crDataBR(x.vencimento) : '') + ' · previsto ' + coBRL(x.previsto_antes) + (Number(x.previsto_depois) !== Number(x.previsto_antes) ? ' → ' + coBRL(x.previsto_depois) : '') + ' · recebido ' + coBRL(x.recebido))); });
     c.appendChild(coRevEl('div', 'font-size:12px;color:var(--muted)', 'Os valores já recebidos foram preservados; nenhum lançamento de caixa foi criado.'));
   }
@@ -43944,7 +44127,7 @@ function coRevAcoes(el){
   var rasc = coRev.hist.dados.revisoes.filter(function(r){ return r.estado === 'rascunho'; })[0];
   var linha = el.querySelector('[data-pa="acoes-linha"]');
   if(!linha){ linha = _elProntReal('div', 'display:flex;gap:8px;flex-wrap:wrap;margin-top:14px'); linha.setAttribute('data-pa', 'acoes-linha'); el.appendChild(linha); }
-  linha.appendChild(_botaoProntReal(rasc ? '🔁 Continuar revisão (#' + rasc.numero + ')' : '🔁 Nova revisão', 'rev-abrir', function(){ coRevClicarAbrir(); }, true));
+  linha.appendChild(_botaoProntReal(rasc ? '🔁 Continuar nova versão do orçamento' + (isFinite(Number(rasc.base_versao)) ? ' (V' + (Number(rasc.base_versao) + 1) + ' em rascunho)' : ' (rascunho n.º ' + rasc.numero + ')') : '🔁 Criar nova versão do orçamento', 'rev-abrir', function(){ coRevClicarAbrir(); }, true));
   linha.appendChild(_botaoProntReal('📜 Histórico de versões', 'rev-historico', function(){ coRevModalAbrir('historico'); }, true));
 }
 function coRevHistoricoAbrir(){ if(coRevProjetoId()) coRevModalAbrir('historico'); }   // Financeiro (somente leitura) usa o mesmo histórico; o servidor decide
@@ -43968,7 +44151,7 @@ calcOrc = function(){
   if(coRevAtivoOk()){
     var el = coEl('orcResumo');
     if(el && typeof el.innerHTML === 'string' && el.innerHTML){
-      var h = el.innerHTML.split('Custo extra pós-orçamento').join('Custo extra comercial').split('Salvar criará uma nova versão').join('Aplicar esta revisão criará uma nova versão');
+      var h = el.innerHTML.split('Custo extra pós-orçamento').join('Custo extra comercial').split('Salvar criará uma nova versão').join('Aplicar a nova versão criará a próxima versão do orçamento');
       var nota = coOrcAlterado() ? 'Estimativa com o que você digitou (ainda não salvo). A prévia do servidor, com o rascunho salvo, é que decide a aplicação.' : 'Estimativa com o rascunho salvo. A prévia do servidor decide a aplicação.';
       el.innerHTML = h + '<div data-rev="nota-estimativa" style="font-size:11px;color:var(--muted);margin-top:6px">' + nota + '</div>';
     }
@@ -43981,14 +44164,14 @@ function coRevPdfO(){
   var c = coRev.calculo, r = coRev.revisao; if(!c || !r || !coRevAtivoOk()) return null;
   return { id: String(r.id), versao: 0, desconto: c.desconto, subtotal_itens: c.subtotal_itens, valor_total: c.valor_total, revisao_numero: r.numero };
 }
-function coRevPdfVersao(o){ return (o && o.revisao_numero) ? 'Rev. #' + Number(o.revisao_numero) + ' (rascunho)' : (Number(o && o.versao) || 1); }
-function coRevPdfOs(os){ return coRev.ativo && coRev.revisao ? os + ' &nbsp;&bull;&nbsp; PROPOSTA REVISADA — RASCUNHO, AINDA NÃO APLICADA' : os; }
+function coRevPdfVersao(o){ return (o && o.revisao_numero) ? 'Rascunho n.º ' + Number(o.revisao_numero) : (Number(o && o.versao) || 1); }
+function coRevPdfOs(os){ return coRev.ativo && coRev.revisao ? os + ' &nbsp;&bull;&nbsp; NOVA VERSÃO DO ORÇAMENTO — RASCUNHO, AINDA NÃO APLICADA' : os; }
 var _coRevPdf = exportarPDFOrcamento;
 exportarPDFOrcamento = function(){
   if(coRev.ativo){
     if(!coRevAtivoOk() || coRev.busy) return;
-    if(!coRev.calculo){ alert('⚠️ Salve o rascunho antes de gerar o PDF da proposta revisada: o documento usa os valores salvos.'); return; }
-    if(coOrcAlterado()){ alert('⚠️ Há alterações não salvas nesta revisão. Salve o rascunho para gerar o PDF da proposta revisada com esses valores.'); return; }
+    if(!coRev.calculo){ alert('⚠️ Salve o rascunho antes de gerar o PDF da nova versão: o documento usa os valores salvos.'); return; }
+    if(coOrcAlterado()){ alert('⚠️ Há alterações não salvas nesta nova versão. Salve o rascunho para gerar o PDF da nova versão com esses valores.'); return; }
   }
   return _coRevPdf.apply(this, arguments);
 };

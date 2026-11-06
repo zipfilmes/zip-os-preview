@@ -269,6 +269,35 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 #bkHistorico .bk-hist-scroll table{min-width:640px}
 #bkHistorico .bk-hist-scroll thead th{position:sticky;top:0;z-index:1;background:var(--panel);box-shadow:0 1px 0 var(--line)}
 #bkHistorico .bk-hist-nota{font-size:12px;margin:0 0 6px}
+/* 1.3.0.0 · Checklists e TV — itens extras (amarelos) e checkbox "Enviar para a TV" (azul). Só acrescenta classes novas (ct*); nenhuma regra existente foi alterada. */
+.ctExtras{margin-top:10px}
+.ctExtra{display:flex;align-items:center;gap:10px;padding:7px 9px;margin-top:6px;border:1px solid #f1d36b;background:#fff5c2;border-radius:10px}
+.ctExtra.ctSujo{border-color:#d9a400;box-shadow:0 0 0 2px rgba(217,164,0,.22)}
+.ctChk{width:22px;height:22px;border-radius:6px;border:2px solid #9aa4b2;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0}
+.ctChk.ctFechado{cursor:default}
+.ctChk:focus-visible{outline:2px solid #1e3a5f;outline-offset:2px}
+.ctTexto{flex:1;min-width:0;border:1px solid transparent;background:transparent;font:inherit;font-size:13px;padding:5px 7px;border-radius:7px}
+.ctTexto[readonly]{cursor:default}
+/* Extras: caixa E texto sempre AMARELOS (marrom-âmbar legível no claro), marcados ou não; concluído continua riscado, nunca verde nem cinza. Seletores estreitos: não tocam a TV nem o checklist padrão. */
+.ctExtra .ctChk{border-color:#d49a00;background:#fff8d6;color:#4a3200;font-weight:800}
+.ctExtra .ctChk.ctOn{background:#f2b705;border-color:#b98200;color:#3d2a00}
+.ctExtra input.ctTexto{color:#5c3d00}
+.ctExtra input.ctTexto:focus{outline:none;border-color:#d49a00;background:#fffdf0;color:#5c3d00}
+.ctExtra input.ctTexto.ctFeito{color:#6b4700;text-decoration:line-through}
+.ctSalvarBtn{padding:4px 10px;font-size:12px;flex-shrink:0}
+.ctMini{padding:3px 8px;font-size:11px}
+.ctAvisoLinha{font-size:11px;margin:4px 2px 0;color:#92400e}
+.ctAddBtn{margin-top:8px;font-size:12px;padding:6px 12px}
+.ctNota{font-size:12px;margin-top:8px}
+.ctTv{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-top:10px;border:1px solid #93c5fd;background:#dbeafe;border-radius:10px}
+.ctTv .ctChk{border-color:#2563eb}
+.ctTv.ctTvOn .ctChk,.ctTv .ctChk.ctOn{background:#2563eb;border-color:#2563eb}
+.ctTvTitulo{font-size:13px;font-weight:700;color:#1e3a8a}
+.ctTvSub{font-size:11px;color:#1e40af;margin-top:2px}
+.ctTvNota{font-size:12px;margin-top:10px}
+.ctTvAlerta .ctTvAlertaSub{font-size:12px;color:var(--muted);margin-top:2px}
+.ctTvBtn{margin-top:6px;font-size:12px;padding:5px 12px}
+@media(max-width:700px){.ctExtra{flex-wrap:wrap}.ctTexto{flex-basis:100%}}
 </style>
 <style id="zosTemaCss">
 /* ===== V1.1.0.0 TEMA ESCURO — bloco ADICIONAL e escopado (html[data-theme="dark"]). O Tema Claro (padrão) não recebe nenhuma regra daqui,
@@ -419,6 +448,21 @@ html[data-theme="dark"] [style*="background:#dbeafe;border:2px solid #93c5fd" i]
 html[data-theme="dark"] [style*="background:#ede9fe;border:2px solid #a78bfa" i]:not(:is(.c-a4-page,.c-editor-page) *){background:#2f2a42!important;border-color:#66559c!important}
 html[data-theme="dark"] [style*="background:#fef9c3;border:2px solid #fbbf24" i]:not(:is(.c-a4-page,.c-editor-page) *){background:#383121!important;border-color:#7a6630!important}
 html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]:not(:is(.c-a4-page,.c-editor-page) *){background:#233529!important;border-color:#3f7a56!important}
+/* --- 1.3.0.0 Checklists e TV (tema escuro): extras em amarelo claro sobre âmbar escuro (caixa e texto, marcados ou não); envio para a TV azul escuro --- */
+html[data-theme="dark"] .ctExtra{background:#3d3422;border-color:#6b5a2a}
+html[data-theme="dark"] .ctExtra.ctSujo{border-color:#c99a1e;box-shadow:0 0 0 2px rgba(201,154,30,.25)}
+html[data-theme="dark"] .ctChk{background:#272b35;border-color:#9aa4b2;color:#fff}
+html[data-theme="dark"] .ctExtra .ctChk{background:#3d3422;border-color:#e0b020;color:#ffe9a0}
+html[data-theme="dark"] .ctExtra .ctChk.ctOn{background:#e0b020;border-color:#f5d060;color:#2b1f00}
+html[data-theme="dark"] .ctExtra input.ctTexto{background:transparent!important;color:#ffe08a!important;border-color:transparent!important}
+html[data-theme="dark"] .ctExtra input.ctTexto:focus{background:#2f2a1a!important;border-color:#c99a1e!important;color:#ffe08a!important}
+html[data-theme="dark"] .ctExtra input.ctTexto.ctFeito{color:#f3d36b!important}
+html[data-theme="dark"] .ctAvisoLinha{color:#f4d58b}
+html[data-theme="dark"] .ctTv{background:#26364d;border-color:#3c5a86}
+html[data-theme="dark"] .ctTv .ctChk{background:#1d2027;border-color:#60a5fa}
+html[data-theme="dark"] .ctTv.ctTvOn .ctChk,html[data-theme="dark"] .ctTv .ctChk.ctOn{background:#3b82f6;border-color:#60a5fa}
+html[data-theme="dark"] .ctTvTitulo{color:#bfdbfe}
+html[data-theme="dark"] .ctTvSub{color:#93c5fd}
 </style>
 <script id="zosTemaJs">
 /* V1.1.0.1 Tema por Usuário — rotina SEPARADA dos scripts de negócio/autenticação.
@@ -822,7 +866,7 @@ html[data-theme="dark"] [style*="background:#dcfce7;border:2px solid #4ade80" i]
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.2.0.2 · Refinos da Operação</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.0 · Checklists e TV</div>
 </aside>
 
 <main class="main">
@@ -40074,6 +40118,7 @@ function opCriarRenderizadores(projects, leads){
     row.appendChild(box);row.appendChild(lbl);
     checkEl.appendChild(row);
    });
+   try{ctOpInserir(checkEl,p,tipo);}catch(_e){}
   
    // Advance buttons
    const btnDiv=document.createElement('div');
@@ -40275,7 +40320,7 @@ function opCriarRenderizadores(projects, leads){
    const el=document.getElementById('operacaoProntuario');
    if(el){
     el.style.display='block';
-    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+    if(!window.ctSemRolar)setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);
    }
   }
   return { renderOperacao: renderOperacaoLocal, renderHistoricoOper: renderHistoricoOper, abrirOperacaoProntuario: abrirOperacaoProntuarioLocal };
@@ -40718,9 +40763,9 @@ function pjAbrir(chave, opts){
   var l0 = pjAcha(chave);
   if(!l0){ var sec = pjDom('projetos'); if(sec && sec.classList.contains('active')){ pjMsg('aviso', 'Projeto não encontrado entre os que a sua conta enxerga.'); pjRenderStatus(); } return; }
   try { pjFinDesospedar(); } catch(_e){}
-  var dctx = pjCtxAtual(); dctx.dseq = ++e.dseq; dctx.id = l0.id; e.abertoId = l0.id; e.det = { id: l0.id, status: 'carregando', d: null, l: null };
+  var dctx = pjCtxAtual(); dctx.dseq = ++e.dseq; dctx.id = l0.id; e.abertoId = l0.id; var detAnt = e.det; if(!opts.silencioso) e.det = { id: l0.id, status: 'carregando', d: null, l: null };
   if(!opts.manterMsg && !e.msg) pjMsg(null);
-  pjRenderProntuario();
+  if(!opts.silencioso) pjRenderProntuario();
   if(!opts.semRolar){ var box = pjDom('projetoAberto'); setTimeout(function(){ try { if(box && typeof box.scrollIntoView === 'function') box.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(_e){} }, 50); }
   var ok = function(){ return pjDetOk(dctx); }, cap0 = pjCap(l0), id = l0.id, R = {}, cli = vgPodeClientes();
   var T = function(t){ return supabaseClient.from(t); };
@@ -40739,22 +40784,26 @@ function pjAbrir(chave, opts){
     passos.push(['rec', function(){ return T('recebimentos_cliente').select(VG_COL_REC).eq('projeto_id', id).order('parcela', { ascending: true }).limit(PJ_LIMITE_LISTA + 1); }]);
     passos.push(['fin', function(){ return T('projetos_financeiro').select('projeto_id,valor_vendido,desconto,bv_percentual,condicao_pagamento,imposto_congelado,bv_congelado,comissao_congelada').eq('projeto_id', id); }]);
   }
-  passos.reduce(function(prom, par){
+  if(cap0.chkVer){
+    passos.push(['cex', function(){ return T('checklist_extras').select(CT_COL_EXTRA).eq('projeto_id', id).order('fase', { ascending: true }).order('ordem', { ascending: true }).limit(PJ_LIMITE_LISTA + 1); }]);
+    passos.push(['ctv', function(){ return T('projeto_tv').select(CT_COL_TV).eq('projeto_id', id); }]);
+  }
+  return passos.reduce(function(prom, par){
     return prom.then(function(){ if(!ok()) return; return pjConsulta(ok, par[1]()).then(function(r){ if(r !== null) R[par[0]] = r; }); });
   }, Promise.resolve()).then(function(){
     if(!ok()) return;
-    if(R.proj && R.proj.st === 'sessao'){ e.det = { id: id, status: 'erro', d: null, l: null }; pjRenderProntuario(); return; }
+    if(R.proj && R.proj.st === 'sessao'){ e.det = { id: id, status: 'erro', d: null, l: null }; ctPjPinta(opts, detAnt); return; }
     var um = R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 1 && String(R.proj.data[0].id) === id ? R.proj.data[0] : null;
-    if(!um){ e.det = { id: id, status: R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 0 ? 'ausente' : 'erro', d: null, l: null }; pjRenderProntuario(); return; }
+    if(!um){ e.det = { id: id, status: R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 0 ? 'ausente' : 'erro', d: null, l: null }; ctPjPinta(opts, detAnt); return; }
     var lf = pjLinha(um);
-    if(!lf.ok){ e.det = { id: id, status: 'erro', d: null, l: null }; pjRenderProntuario(); return; }
+    if(!lf.ok){ e.det = { id: id, status: 'erro', d: null, l: null }; ctPjPinta(opts, detAnt); return; }
     var lista = function(k, desc){ var r = R[k]; if(!r) return { st: 'indisponivel', linhas: [] }; if(r.st !== 'ok' || !Array.isArray(r.data)) return { st: r.st === 'sem_permissao' ? 'sem_permissao' : 'erro', linhas: [] };
       var n = r.data.length > PJ_LIMITE_LISTA; var l2 = n ? r.data.slice(0, PJ_LIMITE_LISTA) : r.data; return { st: n ? 'limite' : 'ok', linhas: desc ? l2.slice().reverse() : l2 }; };
-    var d = { raw: um, chk: lista('chk'), grav: lista('grav'), hop: lista('hop', true), forn: lista('forn'), hco: lista('hco', true), hfi: lista('hfi', true), fchk: lista('fchk'), rec: lista('rec'), ver: R.ver, fin: R.fin && R.fin.st === 'ok' && Array.isArray(R.fin.data) && R.fin.data.length === 1 ? R.fin.data[0] : null, finSt: R.fin ? R.fin.st : 'indisponivel', lido: new Date().toISOString() };
+    var d = { raw: um, chk: lista('chk'), grav: lista('grav'), hop: lista('hop', true), forn: lista('forn'), hco: lista('hco', true), hfi: lista('hfi', true), fchk: lista('fchk'), rec: lista('rec'), ver: R.ver, fin: R.fin && R.fin.st === 'ok' && Array.isArray(R.fin.data) && R.fin.data.length === 1 ? R.fin.data[0] : null, finSt: R.fin ? R.fin.st : 'indisponivel', lido: new Date().toISOString(), cex: lista('cex'), ctvR: R.ctv };
     e.det = { id: id, status: 'ok', d: d, l: lf };
-    if(pjCap(lf).finVer) pjFinHospedar(lf, um);   // financeiro/sócio/admin: cartão financeiro REAL (serviços da 8.17.0) dentro do prontuário
-    pjRenderProntuario();
-  }, function(){ if(ok()){ e.det = { id: id, status: 'erro', d: null, l: null }; pjRenderProntuario(); } });
+    if(pjCap(lf).finVer && !opts.silencioso) pjFinHospedar(lf, um);   // financeiro/sócio/admin: cartão financeiro REAL (serviços da 8.17.0) dentro do prontuário
+    ctPjPinta(opts, detAnt);
+  }, function(){ if(ok()){ e.det = { id: id, status: 'erro', d: null, l: null }; ctPjPinta(opts, detAnt); } });
 }
 // ---------------- derivados ----------------
 function pjConcluido(s){ return PJ_CONCLUIDOS.indexOf(s) >= 0; }
@@ -40869,7 +40918,7 @@ function pjCardFase(l, d, tipo){
     else if(c.entrega && (l.status === 'Ajuste' || l.status === 'Ajuste e Entrega' || l.status === 'Entrega')) adv = '<button class="btn" data-pa="pj-entrega" style="width:100%;margin-top:12px;padding:9px;font-size:13px;background:var(--green);color:white" ' + (ocupado ? 'disabled ' : '') + 'onclick="pjAvancar(\'' + l.id + '\',\'entrega\')">📦 Notificar Entrega Realizada</button>';
   }
   return '<div class="card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="margin:0">' + icon + ' ' + titulo + (respId ? ' — ' + pjEsc(pjNome(respId)) : '') + '</h3>'
-    + '<div style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12px">' + done + '/' + itens.length + '</span>' + atBtn + '</div></div>' + drive + linhas + adv + '</div>';
+    + '<div style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12px">' + done + '/' + itens.length + '</span>' + atBtn + '</div></div>' + drive + linhas + ctSecaoHtml(l, fase) + adv + '</div>';
 }
 function pjLinhaComp(rot, valor, ultima){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:6px 0;' + (ultima ? '' : 'border-bottom:1px solid var(--line)') + '"><span class="muted">' + rot + '</span>' + valor + '</div>'; }
 // Resumo Comercial com a MARCAÇÃO da referência; números do orçamento CONTRATADO (versão congelada do projeto), reaproveitando a prova de versão do Financeiro (foVerContratada/foOrcamentoDoContrato)
@@ -40977,7 +41026,7 @@ function pjContarPendentes(id, fase){   // → Promise<número | null>
     if(!pjCtxOk(ctx)) return null;
     if(!r || r.error || !Array.isArray(r.data) || r.data.length > PJ_LIMITE_LISTA) return null;
     var seguintes = ['Edição finalizada', 'Alterações prontas', 'Entrega final realizada'];   // itens que só podem ser feitos DEPOIS desta ação
-    return r.data.filter(function(x){ return x.concluido !== true && !(fase === 'edicao' && seguintes.indexOf(x.titulo) >= 0); }).length;
+    return r.data.filter(function(x){ return x.concluido !== true && !(fase === 'edicao' && seguintes.indexOf(x.titulo) >= 0); }).length + ctPendentesExtras(id, fase);
   }, function(){ return null; });
 }
 // ---- avançar etapa (card do Kanban e botões do prontuário) ----
@@ -44735,6 +44784,761 @@ function co2MascararTelefoneForn(el, ev){
   el.__co2TelDigitos = String(el.value || '').replace(/\D/g, '');
 }
 // END 1.2.0.2 TELEFONE DO FORNECEDOR
+// BEGIN 1.3.0.0 CHECKLISTS E TV: (1) itens extras por PROJETO e ETAPA (Produção/Edição) e (2) checkbox azul "Enviar para a TV" (só Edição) com pendência na Visão Geral e confirmação por sócio/admin;
+// (3) atualização automática única de 120 s, silenciosa, só com a aba visível e nada em edição. Os dados vivem em tabelas novas (SQL CT-1, instalação manual) e TODA gravação passa por RPC que reconfere conta, perfil,
+// etapa e versão no banco. A tela só espelha a regra (pjCap/ctCapacidade); o banco é a autoridade. Textos de usuário só entram no DOM por pjEsc/textContent. Não toca custos, fornecedores, financeiro nem status.
+// Reaproveita o executor existente (pjAcao: uma ação por vez, resposta incerta ⇒ Conferir, releitura depois) e as leituras existentes (vgLerFonte).
+var CT_INTERVALO_MS = 120000;
+var CT_MAX_TEXTO = 300, CT_MAX_POR_FASE = 50;
+var CT_COL_EXTRA = 'id,projeto_id,fase,ordem,texto,concluido,versao,criado_por,criado_em,atualizado_por,atualizado_em,concluido_por,concluido_em';
+var CT_COL_TV = 'projeto_id,estado,ciclo,versao,solicitado_por,solicitado_em,confirmado_por,confirmado_em,cancelado_por,cancelado_em';
+var ctEstado = { uid: '', epoch: -1, por: {}, rasc: {}, novos: {}, tvChaves: {}, tocados: [], visaoPendente: false, opSt: 'idle', repintando: false, seqPend: 0, pendBusy: false, pendMsg: '',
+  pend: { st: 'idle', linhas: [], stale: false, limite: false }, poll: { timer: 0, emCurso: false, ult: {}, imp: {}, motivo: '', falha: '', n: 0 } };
+window.ctSemRolar = false;
+
+// ---------------- identidade / limpeza ----------------
+function ctSincronizarIdentidade(){
+  var e = ctEstado;
+  if(!crSessao()){ if(e.uid !== '' || e.epoch !== -1) ctLimpar(); return false; }
+  var uid = String(currentUser.id), ep = crEpoch();
+  if(e.uid !== uid || e.epoch !== ep){ ctZerarDados(); e.uid = uid; e.epoch = ep; }
+  return true;
+}
+function ctZerarDados(){
+  var e = ctEstado; e.por = {}; e.rasc = {}; e.novos = {}; e.tvChaves = {}; e.tocados = []; e.visaoPendente = false; e.opSt = 'idle'; e.seqPend++; e.pendBusy = false; e.pendMsg = '';
+  e.pend = { st: 'idle', linhas: [], stale: false, limite: false }; e.poll.ult = {}; e.poll.imp = {}; e.poll.motivo = ''; e.poll.falha = '';
+}
+function ctLimpar(){   // logout / troca de conta: dados, rascunhos, pendências e o ÚNICO timer
+  var e = ctEstado; ctZerarDados(); e.uid = ''; e.epoch = -1; ctPollParar();
+}
+function ctNovaChave(){
+  try { if(window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID(); } catch(_e){}
+  var b = new Uint8Array(16); window.crypto.getRandomValues(b); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  var h = Array.prototype.map.call(b, function(x){ return ('0' + x.toString(16)).slice(-2); }).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+}
+function ctQuando(iso){ try { return (typeof iso === 'string' && iso && vgDataHora(iso)) || ''; } catch(_e){ return ''; } }
+
+// ---------------- validação das leituras ----------------
+function ctInt(v){ return typeof v === 'number' && isFinite(v) && Math.floor(v) === v; }
+function ctExtraValido(r){
+  return !!r && pjUuid(r.id) && pjUuid(r.projeto_id) && (r.fase === 'producao' || r.fase === 'edicao') && ctInt(r.ordem) && typeof r.texto === 'string' && r.texto.length > 0
+    && typeof r.concluido === 'boolean' && ctInt(r.versao) && r.versao >= 1;
+}
+function ctTvValido(r){
+  return !!r && pjUuid(r.projeto_id) && (r.estado === 'pendente' || r.estado === 'enviado' || r.estado === 'cancelado') && ctInt(r.ciclo) && r.ciclo >= 1 && ctInt(r.versao) && r.versao >= 1
+    && pjUuid(r.solicitado_por) && typeof r.solicitado_em === 'string' && (r.estado !== 'enviado' || (pjUuid(r.confirmado_por) && typeof r.confirmado_em === 'string'));
+}
+function ctNormLista(x){   // { st, linhas } vindo de lista('cex') (prontuário) → store
+  if(!x || x.st === 'indisponivel') return { st: 'indisponivel', linhas: [] };
+  if((x.st !== 'ok' && x.st !== 'limite') || !Array.isArray(x.linhas)) return { st: 'erro', linhas: [] };
+  for(var i = 0; i < x.linhas.length; i++) if(!ctExtraValido(x.linhas[i])) return { st: 'erro', linhas: [] };
+  return { st: x.st, linhas: x.linhas.slice().sort(function(a, b){ return a.fase < b.fase ? -1 : a.fase > b.fase ? 1 : a.ordem - b.ordem; }) };
+}
+function ctNormTv(r){   // resultado de pjConsulta ({ st, data }) → store
+  if(!r) return { st: 'indisponivel', row: null };
+  if(r.st !== 'ok' || !Array.isArray(r.data) || r.data.length > 1) return { st: 'erro', row: null };
+  if(r.data.length === 0) return { st: 'ok', row: null };
+  return ctTvValido(r.data[0]) ? { st: 'ok', row: r.data[0] } : { st: 'erro', row: null };
+}
+function ctRegistrarDetalhe(id, d){
+  if(!ctSincronizarIdentidade() || !pjUuid(id) || !d) return;
+  ctEstado.por[id] = { cex: ctNormLista(d.cex), ctv: ctNormTv(d.ctvR), lido: Date.now() };
+}
+// leitura em bloco (Operação): linhas de checklist_extras / projeto_tv de todos os projetos visíveis → store por projeto
+function ctMontarStore(cex, ctv){   // cex/ctv: { st, linhas } | null
+  var por = {}, bom = function(f){ return !!f && f.st === 'ok' && Array.isArray(f.linhas); };
+  var todos = estadoPJ.todos.filter(function(l){ return !l.ehPai; });
+  var okEx = bom(cex), okTv = bom(ctv), mEx = {}, mTv = {};
+  if(okEx){ for(var i = 0; i < cex.linhas.length; i++){ if(!ctExtraValido(cex.linhas[i])){ okEx = false; break; } (mEx[cex.linhas[i].projeto_id] = mEx[cex.linhas[i].projeto_id] || []).push(cex.linhas[i]); } }
+  if(okTv){ for(var j = 0; j < ctv.linhas.length; j++){ if(!ctTvValido(ctv.linhas[j])){ okTv = false; break; } mTv[ctv.linhas[j].projeto_id] = ctv.linhas[j]; } }
+  todos.forEach(function(l){
+    por[l.id] = { cex: okEx ? ctNormLista({ st: 'ok', linhas: mEx[l.id] || [] }) : { st: cex ? 'erro' : 'indisponivel', linhas: [] },
+      ctv: okTv ? { st: 'ok', row: mTv[l.id] || null } : { st: ctv ? 'erro' : 'indisponivel', row: null }, lido: Date.now() };
+  });
+  return por;
+}
+
+// ---------------- leituras ----------------
+function ctProvider(){
+  var tabela = { chk: 'checklist_itens', grav: 'gravacoes', cex: 'checklist_extras', ctv: 'projeto_tv' };
+  return { contagem: function(n){ return supabaseClient.from(tabela[n]).select(n === 'ctv' ? 'projeto_id' : 'id', { count: 'exact', head: true }); } };
+}
+function ctPagina(tabela, colunas, ordem){ return function(a, b){ return supabaseClient.from(tabela).select(colunas, { count: 'exact' }).order(ordem, { ascending: true }).range(a, b); }; }
+function ctLerCt(ctx, ok){   // → Promise<{ por } | null>  (null = descartado; falha de leitura vira estado honesto, nunca zero)
+  var prov = ctProvider();
+  return vgLerFonte(ctx, ok, 'cex', ctPagina('checklist_extras', CT_COL_EXTRA, 'id'), prov).then(function(f1){
+    if(f1 === null || !ok()) return null;
+    return vgLerFonte(ctx, ok, 'ctv', ctPagina('projeto_tv', CT_COL_TV, 'projeto_id'), prov).then(function(f2){
+      if(f2 === null || !ok()) return null;
+      return { por: ctMontarStore(f1.st === 'ok' ? f1 : { st: 'erro' }, f2.st === 'ok' ? f2 : { st: 'erro' }) };
+    });
+  });
+}
+// acopla a leitura à Operação (a repintura da Operação só acontece depois das duas leituras)
+var _ctOpLerExtras = opLerExtras;
+opLerExtras = function(ctx){
+  return _ctOpLerExtras.apply(this, arguments).then(function(){
+    var ok = function(){ return pjCtxOk(ctx); };
+    if(!ok() || !ctSincronizarIdentidade()) return;
+    ctEstado.opSt = 'carregando';
+    return ctLerCt(ctx, ok).then(function(r){
+      if(r === null || !ok()) return;
+      ctEstado.por = r.por; ctEstado.opSt = 'ok';
+    }, function(){ if(ok()) ctEstado.opSt = 'erro'; });
+  });
+};
+function ctPendentesExtras(id, fase){ return ctExtrasDe(id, fase).filter(function(x){ return x.concluido !== true; }).length; }
+function ctExtrasDe(id, fase){
+  var s = ctEstado.por[id]; if(!s || !s.cex || (s.cex.st !== 'ok' && s.cex.st !== 'limite')) return [];
+  return s.cex.linhas.filter(function(x){ return x.fase === fase; }).sort(function(a, b){ return a.ordem - b.ordem; });
+}
+function ctAchaExtra(id){
+  for(var k in ctEstado.por){ if(!Object.prototype.hasOwnProperty.call(ctEstado.por, k)) continue; var c = ctEstado.por[k].cex; if(!c) continue;
+    for(var i = 0; i < c.linhas.length; i++) if(c.linhas[i].id === id) return c.linhas[i]; }
+  return null;
+}
+
+// ---------------- capacidades (espelho; o banco confere de novo) ----------------
+function ctCapacidade(l, fase){
+  var c = pjCap(l), prod = fase === 'producao', pode = !!(prod ? c.prod : c.ed), sem = prod ? l.semProd : l.semEd, fin = prod ? l.prodFin : l.edFin;
+  return { escrever: pode && !fin && !sem, tv: !prod && !!c.ed && !l.semEd,
+    motivoFechado: pode && fin ? 'Etapa finalizada: os itens extras ficam fechados (a etapa não reabre automaticamente).' : '' };
+}
+
+// ---------------- desenho (strings HTML; todo texto de usuário passa por pjEsc) ----------------
+function ctLinhaHtml(x, cap){
+  var rasc = ctEstado.rasc[x.id], txt = rasc ? rasc.texto : x.texto, conflito = !!rasc && rasc.base !== x.texto, lib = cap.escrever && !estadoPJ.acao;
+  var h = '<div class="ctExtra' + (rasc ? ' ctSujo' : '') + '" data-ct-linha="' + x.id + '">'
+    + '<div class="ctChk' + (x.concluido ? ' ctOn' : '') + (lib ? '' : ' ctFechado') + '" role="checkbox" aria-checked="' + (x.concluido ? 'true' : 'false') + '" aria-label="Concluir item extra" tabindex="0" data-ct-id="' + x.id + '" data-pa="ct-chk-' + x.id + '" '
+    + (lib ? 'onclick="ctExtraChk(this)" onkeydown="ctExtraChkTecla(event,this)"' : 'title="Fechado"') + '>' + (x.concluido ? '✓' : '') + '</div>'
+    + '<input type="text" class="ctTexto' + (x.concluido ? ' ctFeito' : '') + '" maxlength="' + CT_MAX_TEXTO + '" autocomplete="off" aria-label="Texto do item extra" data-ct-id="' + x.id + '" data-pa="ct-texto-' + x.id + '" value="' + pjEsc(txt) + '"'
+    + (cap.escrever ? '' : ' readonly') + ' oninput="ctExtraInput(this)" onblur="ctExtraBlur(this)" onkeydown="ctExtraTecla(event,this)">'
+    + (rasc && !conflito && cap.escrever ? '<button type="button" class="btn ctSalvarBtn" style="background:#1e3a5f;color:white" data-ct-id="' + x.id + '" data-pa="ct-salvar-' + x.id + '" onclick="ctExtraSalvarBtn(this)">Salvar</button>' : '') + '</div>';
+  if(conflito) h += '<div class="ctAvisoLinha" data-pa="ct-conflito-' + x.id + '">⚠️ Outra pessoa alterou este item para “' + pjEsc(x.texto) + '”. O seu texto NÃO foi salvo. '
+    + '<button type="button" class="btn btn2 ctMini" data-ct-id="' + x.id + '" data-pa="ct-usar-meu-' + x.id + '" onclick="ctExtraUsarMeu(this)">Salvar o meu texto</button> '
+    + '<button type="button" class="btn btn2 ctMini" data-ct-id="' + x.id + '" data-pa="ct-usar-banco-' + x.id + '" onclick="ctExtraDescartar(this)">Usar o do banco</button></div>';
+  return h;
+}
+function ctNovoHtml(nv){
+  return '<div class="ctExtra ctNovo" data-ct-linha="novo"><div class="ctChk ctFechado" aria-hidden="true"></div>'
+    + '<input type="text" class="ctTexto" maxlength="' + CT_MAX_TEXTO + '" autocomplete="off" placeholder="Novo item extra…" aria-label="Texto do novo item extra" data-ct-novo="1" data-pa="ct-novo-texto" value="' + pjEsc(nv.texto) + '" oninput="ctNovoInput(this)" onblur="ctNovoBlur(this)" onkeydown="ctNovoTecla(event,this)"></div>';
+}
+function ctTvTextoSub(row, lib){
+  if(!row) return '';
+  if(row.estado === 'pendente') return 'Aguardando um sócio marcar como enviado • pedido por ' + pjNome(row.solicitado_por) + (ctQuando(row.solicitado_em) ? ' em ' + ctQuando(row.solicitado_em) : '');
+  if(row.estado === 'enviado') return 'Enviado' + (ctQuando(row.confirmado_em) ? ' em ' + ctQuando(row.confirmado_em) : '') + ' • confirmado por ' + pjNome(row.confirmado_por) + (lib ? ' • clique para pedir um novo envio' : '');
+  return 'Pedido anterior cancelado';
+}
+function ctTvHtml(l, s, cap){
+  var t = s.ctv;
+  if(t.st !== 'ok') return '<div class="ctTvNota muted" data-pa="ct-tv-indisp">Envio para a TV indisponível agora.</div>';
+  var row = t.row, est = row ? row.estado : '', on = est === 'pendente' || est === 'enviado', lib = cap.tv && !estadoPJ.acao, sub = ctTvTextoSub(row, cap.tv);
+  return '<div class="ctTv' + (on ? ' ctTvOn' : '') + '" data-ct-proj="' + l.id + '" data-ct-tv="' + est + '" data-pa="ct-tv">'
+    + '<div class="ctChk ctChkAzul' + (on ? ' ctOn' : '') + (lib ? '' : ' ctFechado') + '" role="checkbox" aria-checked="' + (on ? 'true' : 'false') + '" aria-label="Enviar para a TV" tabindex="0" data-pa="ct-tv-chk" '
+    + (lib ? 'onclick="ctTvAlternar(this)" onkeydown="ctTvTecla(event,this)"' : 'title="Indisponível"') + '>' + (on ? '✓' : '') + '</div>'
+    + '<div class="ctTvTexto"><div class="ctTvTitulo">📺 Enviar para a TV</div>' + (sub ? '<div class="ctTvSub" data-pa="ct-tv-sub">' + pjEsc(sub) + '</div>' : '') + '</div></div>';
+}
+// seção completa de um cartão de etapa (Projetos Ativos e Operação usam ESTA função: mesmos dados, mesmo desenho)
+function ctSecaoHtml(l, fase){
+  var e = ctEstado;
+  if(!l || !pjUuid(l.id) || !ctSincronizarIdentidade()) return '';
+  var s = e.por[l.id];
+  if(!s) return e.opSt === 'erro' ? '<div class="ctNota muted" data-pa="ct-indisp">Itens extras indisponíveis agora.</div>' : '';
+  var cap = ctCapacidade(l, fase), ex = s.cex, h = '<div class="ctExtras" data-ct-proj="' + l.id + '" data-ct-fase="' + fase + '">';
+  if(ex.st !== 'ok' && ex.st !== 'limite') h += '<div class="ctNota muted" data-pa="ct-extras-indisp">Itens extras indisponíveis agora.</div>';
+  else {
+    var itens = ctExtrasDe(l.id, fase), nv = e.novos[l.id + '|' + fase];
+    h += '<div class="ctLista">' + itens.map(function(x){ return ctLinhaHtml(x, cap); }).join('') + (nv ? ctNovoHtml(nv) : '') + '</div>';
+    if(cap.escrever && itens.length + (nv ? 1 : 0) < CT_MAX_POR_FASE) h += '<button type="button" class="btn btn2 ctAddBtn" data-pa="ct-add-' + fase + '"' + (estadoPJ.acao ? ' disabled' : '') + ' onclick="ctExtraAdicionar(this)">＋ Adicionar item extra</button>';
+    if(cap.motivoFechado) h += '<div class="ctNota muted" data-pa="ct-fechado">' + pjEsc(cap.motivoFechado) + '</div>';
+    if(ex.st === 'limite') h += '<div class="ctNota muted">Mostrando os primeiros itens extras (limite de leitura).</div>';
+  }
+  h += '</div>';
+  if(fase === 'edicao') h += ctTvHtml(l, s, cap);
+  return h;
+}
+// ganchos de desenho
+function ctOpInserir(checkEl, p, tipo){   // Operação: chamado pela cópia local do prontuário (opCriarRenderizadores) depois dos itens padrão
+  try {
+    var l = p && p.__uuid ? pjAcha(p.__uuid) : null; if(!l) return;
+    var h = ctSecaoHtml(l, tipo === 'prod' ? 'producao' : 'edicao'); if(!h) return;
+    var d = document.createElement('div'); d.innerHTML = h; while(d.firstChild) checkEl.appendChild(d.firstChild);
+  } catch(_e){}
+}
+// foco/seleção sobrevivem a qualquer repintura do prontuário (inclusive a causada por outra ação)
+function ctCapturarFoco(raizId){
+  try {
+    var raiz = document.getElementById(raizId), a = document.activeElement; if(!raiz || !a || a === document.body || !raiz.contains(a)) return null;
+    var id = a.getAttribute('data-ct-id'), novo = a.getAttribute('data-ct-novo'); if(!id && !novo) return null;
+    return { raiz: raizId, id: id, novo: novo, ini: a.selectionStart, fim: a.selectionEnd };
+  } catch(_e){ return null; }
+}
+function ctRestaurarFoco(f){
+  if(!f) return;
+  try {
+    var raiz = document.getElementById(f.raiz); if(!raiz) return;
+    var el = f.novo ? raiz.querySelector('input[data-ct-novo]') : raiz.querySelector('input[data-ct-id="' + f.id + '"]');
+    if(!el) return; el.focus();
+    if(typeof f.ini === 'number' && typeof el.setSelectionRange === 'function') el.setSelectionRange(f.ini, f.fim);
+  } catch(_e){}
+}
+function ctComFoco(raizId, fn, self, args){
+  var f = ctCapturarFoco(raizId), ant = ctEstado.repintando; ctEstado.repintando = true;
+  try { return fn.apply(self, args); } finally { ctEstado.repintando = ant; ctRestaurarFoco(f); }
+}
+var _ctRenderPront = pjRenderProntuario;
+pjRenderProntuario = function(){ return ctComFoco('projetoAbertoConteudo', _ctRenderPront, this, arguments); };
+var _ctAbrirOp = abrirOperacaoProntuario;
+abrirOperacaoProntuario = function(){ return ctComFoco('operacaoProntuarioConteudo', _ctAbrirOp, this, arguments); };
+function ctRepintarAberto(){   // repinta o(s) prontuário(s) abertos depois de uma mudança local de rascunho
+  try { if(estadoPJ.abertoId) pjRenderProntuario(); } catch(_e){}
+  try { var o = estadoPJ.op; if(o && o.abertoOs && o.ativo){ window.ctSemRolar = true; try { abrirOperacaoProntuario(o.abertoOs, o.abertoTipo); } finally { window.ctSemRolar = false; } } } catch(_e2){}
+}
+
+// ---------------- itens extras: ações ----------------
+function ctDoEl(el){   // → { projId, fase, id } a partir do elemento clicado
+  var wrap = el && el.closest ? el.closest('.ctExtras') : null;
+  return { projId: wrap ? wrap.getAttribute('data-ct-proj') : '', fase: wrap ? wrap.getAttribute('data-ct-fase') : '', id: el && el.getAttribute ? (el.getAttribute('data-ct-id') || '') : '' };
+}
+function ctProjetoDoItem(x){ return x ? x.projeto_id : ''; }
+function ctMsgAviso(txt){ pjMsg('aviso', txt); try { pjRenderStatus(); pjRefazerMsgPront(); } catch(_e){} }
+function ctExtraAdicionar(el){
+  var r = ctDoEl(el), l = pjAcha(r.projId); if(!l || (r.fase !== 'producao' && r.fase !== 'edicao') || estadoPJ.acao) return;
+  var cap = ctCapacidade(l, r.fase); if(!cap.escrever){ ctMsgAviso(cap.motivoFechado || 'Sem permissão para adicionar item extra nesta etapa.'); return; }
+  var k = r.projId + '|' + r.fase, wrap = el.closest('.ctExtras'), lista = wrap ? wrap.querySelector('.ctLista') : null; if(!lista) return;
+  if(!ctEstado.novos[k]) ctEstado.novos[k] = { chave: ctNovaChave(), texto: '' };
+  var ja = lista.querySelector('input[data-ct-novo]');
+  if(!ja){ lista.insertAdjacentHTML('beforeend', ctNovoHtml(ctEstado.novos[k])); ja = lista.querySelector('input[data-ct-novo]'); }
+  if(ja) ja.focus();
+}
+function ctLimparTexto(v){ return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]+/g, ' ').trim(); }
+function ctNovoInput(inp){
+  var r = ctDoEl(inp), k = r.projId + '|' + r.fase, n = ctEstado.novos[k]; if(n) n.texto = inp.value;
+}
+function ctNovoTecla(ev, inp){
+  if(ev.isComposing) return;
+  if(ev.key === 'Enter'){ ev.preventDefault(); inp.blur(); }
+  else if(ev.key === 'Escape'){ var r = ctDoEl(inp); delete ctEstado.novos[r.projId + '|' + r.fase]; var row = inp.closest('.ctExtra'); ctEstado.repintando = true; try { if(row && row.parentNode) row.parentNode.removeChild(row); } finally { ctEstado.repintando = false; } }
+}
+function ctNovoBlur(inp){
+  if(ctEstado.repintando || !inp.isConnected) return;
+  var r = ctDoEl(inp), k = r.projId + '|' + r.fase, n = ctEstado.novos[k]; if(!n) return;
+  var texto = ctLimparTexto(inp.value);
+  if(!texto){ delete ctEstado.novos[k]; var row = inp.closest('.ctExtra'); if(row && row.parentNode) row.parentNode.removeChild(row); return; }
+  var l = pjAcha(r.projId); if(!l) return;
+  if(!ctCapacidade(l, r.fase).escrever){ ctMsgAviso('Sem permissão para adicionar item extra nesta etapa.'); return; }
+  n.texto = texto; var chave = n.chave;
+  pjAcao({ kind: 'ctnovo', id: r.projId, sucesso: 'Item extra adicionado.',
+    executar: function(){ return pjRpc('ct_extra_criar', { p_projeto_id: r.projId, p_fase: r.fase, p_texto: texto, p_chave: chave }).then(function(res){ if(res && !res.error && ctEstado.novos[k] && ctEstado.novos[k].chave === chave) delete ctEstado.novos[k]; return res; }); },
+    conferir: function(){
+      var ctx = pjCtxAtual();
+      return crComTempo(supabaseClient.from('checklist_extras').select('id').eq('projeto_id', r.projId).eq('fase', r.fase).eq('texto', texto).limit(2)).then(function(q){
+        if(!pjCtxOk(ctx) || !q || q.error || !Array.isArray(q.data)) return 'indefinido';
+        if(q.data.length) { if(ctEstado.novos[k] && ctEstado.novos[k].chave === chave) delete ctEstado.novos[k]; return 'aplicado'; }
+        return 'nao_aplicado';
+      }, function(){ return 'indefinido'; });
+    } });
+}
+function ctExtraInput(inp){
+  var id = inp.getAttribute('data-ct-id'), x = ctAchaExtra(id); if(!x) return;
+  var v = inp.value, atual = ctEstado.rasc[id];
+  if(v === x.texto && !(atual && atual.base !== x.texto)) delete ctEstado.rasc[id]; else ctEstado.rasc[id] = { texto: v, base: atual ? atual.base : x.texto };
+  var row = inp.closest('.ctExtra'); if(row && row.classList) row.classList.toggle('ctSujo', !!ctEstado.rasc[id]);
+}
+function ctExtraTecla(ev, inp){
+  if(ev.isComposing) return;
+  if(ev.key === 'Enter'){ ev.preventDefault(); inp.blur(); }
+  else if(ev.key === 'Escape'){ var id = inp.getAttribute('data-ct-id'), x = ctAchaExtra(id); if(x){ delete ctEstado.rasc[id]; inp.value = x.texto; var row = inp.closest('.ctExtra'); if(row && row.classList) row.classList.remove('ctSujo'); } }
+}
+function ctExtraBlur(inp){
+  if(ctEstado.repintando || !inp.isConnected) return;
+  ctExtraSalvarId(inp.getAttribute('data-ct-id'), false);
+}
+function ctExtraSalvarBtn(btn){ ctExtraSalvarId(btn.getAttribute('data-ct-id'), false); }
+function ctExtraUsarMeu(btn){
+  var id = btn.getAttribute('data-ct-id'), r = ctEstado.rasc[id], x = ctAchaExtra(id); if(!r || !x) return;
+  r.base = x.texto;   // o usuário VIU o texto novo e decidiu manter o dele: só então vale a versão atual
+  ctExtraSalvarId(id, true);
+}
+function ctExtraDescartar(btn){ delete ctEstado.rasc[btn.getAttribute('data-ct-id')]; ctRepintarAberto(); }
+function ctExtraSalvarId(id, explicito){
+  var r = ctEstado.rasc[id], x = ctAchaExtra(id); if(!r || !x) return;
+  var l = pjAcha(ctProjetoDoItem(x)); if(!l) return;
+  var texto = ctLimparTexto(r.texto);
+  if(texto === x.texto){ delete ctEstado.rasc[id]; ctRepintarAberto(); return; }
+  if(!ctCapacidade(l, x.fase).escrever){ ctMsgAviso(ctCapacidade(l, x.fase).motivoFechado || 'Sem permissão para alterar este item.'); return; }
+  if(!texto){ ctMsgAviso('O texto do item não pode ficar vazio. Digite o texto ou use Esc para voltar ao anterior.'); return; }
+  if(r.base !== x.texto){ ctMsgAviso('Este item foi alterado por outra pessoa. Seu texto não foi salvo; escolha abaixo do item.'); ctRepintarAberto(); return; }
+  var versao = x.versao, projId = l.id;
+  pjAcao({ kind: 'ctedit', id: projId, sucesso: 'Item extra salvo.',
+    executar: function(){ return pjRpc('ct_extra_editar', { p_id: id, p_texto: texto, p_versao: versao }).then(function(res){ if(res && !res.error && ctEstado.rasc[id] && ctEstado.rasc[id].texto === r.texto) delete ctEstado.rasc[id]; return res; }); },
+    conferir: function(){
+      var ctx = pjCtxAtual();
+      return crComTempo(supabaseClient.from('checklist_extras').select('id,texto,versao').eq('id', id)).then(function(q){
+        if(!pjCtxOk(ctx) || !q || q.error || !Array.isArray(q.data) || q.data.length !== 1) return 'indefinido';
+        if(q.data[0].texto === texto){ if(ctEstado.rasc[id]) delete ctEstado.rasc[id]; return 'aplicado'; }
+        return q.data[0].versao === versao ? 'nao_aplicado' : 'indefinido';
+      }, function(){ return 'indefinido'; });
+    } });
+}
+function ctExtraChkTecla(ev, el){ if(ev.key === ' ' || ev.key === 'Enter'){ ev.preventDefault(); ctExtraChk(el); } }
+function ctExtraChk(el){
+  var id = el.getAttribute('data-ct-id'), x = ctAchaExtra(id); if(!x || estadoPJ.acao) return;
+  var l = pjAcha(x.projeto_id); if(!l) return;
+  var cap = ctCapacidade(l, x.fase); if(!cap.escrever){ ctMsgAviso(cap.motivoFechado || 'Sem permissão para alterar este item.'); return; }
+  var novo = x.concluido !== true, versao = x.versao;
+  pjAcao({ kind: 'ctmarca', id: l.id, sucesso: '"' + x.texto + '": ' + (novo ? 'concluído.' : 'reaberto.'),
+    executar: function(){ return pjRpc('ct_extra_marcar', { p_id: id, p_concluido: novo, p_versao: versao }); },
+    conferir: function(){
+      var ctx = pjCtxAtual();
+      return crComTempo(supabaseClient.from('checklist_extras').select('id,concluido').eq('id', id)).then(function(q){
+        if(!pjCtxOk(ctx) || !q || q.error || !Array.isArray(q.data) || q.data.length !== 1) return 'indefinido';
+        return q.data[0].concluido === novo ? 'aplicado' : 'nao_aplicado';
+      }, function(){ return 'indefinido'; });
+    } });
+}
+
+// ---------------- Enviar para a TV (Edição): pedir / cancelar / pedir de novo ----------------
+function ctTvConferirPor(id, aplicado, naoAplicado){
+  return function(){
+    var ctx = pjCtxAtual();
+    return crComTempo(supabaseClient.from('projeto_tv').select(CT_COL_TV).eq('projeto_id', id)).then(function(q){
+      if(!pjCtxOk(ctx) || !q || q.error || !Array.isArray(q.data) || q.data.length > 1) return 'indefinido';
+      var row = q.data.length === 1 && ctTvValido(q.data[0]) ? q.data[0] : null;
+      if(q.data.length === 1 && !row) return 'indefinido';
+      return aplicado(row) ? 'aplicado' : (naoAplicado(row) ? 'nao_aplicado' : 'indefinido');
+    }, function(){ return 'indefinido'; });
+  };
+}
+// nonce do pedido: o MESMO pedido (projeto + ciclo que a tela viu + intenção) reusa a chave em duplo clique/nova tentativa; outro ciclo ou outra intenção gera chave nova
+function ctChaveTv(id, ciclo, novo){
+  var k = id + '|' + ciclo + '|' + (novo ? 'n' : 'p'), m = ctEstado.tvChaves;
+  if(!m[k]) m[k] = ctNovaChave();
+  return m[k];
+}
+function ctTvTecla(ev, el){ if(ev.key === ' ' || ev.key === 'Enter'){ ev.preventDefault(); ctTvAlternar(el); } }
+function ctTvAlternar(el){
+  var wrap = el && el.closest ? el.closest('.ctTv') : null, id = wrap ? wrap.getAttribute('data-ct-proj') : '', l = pjAcha(id); if(!l || estadoPJ.acao) return;
+  var s = ctEstado.por[id]; if(!s || !s.ctv || s.ctv.st !== 'ok') { ctMsgAviso('O estado do envio para a TV não pôde ser lido agora. Use Atualizar.'); return; }
+  var cap = ctCapacidade(l, 'edicao'); if(!cap.tv){ ctMsgAviso('Sem permissão para pedir o envio deste projeto para a TV.'); return; }
+  var row = s.ctv.row, est = row ? row.estado : '', os = l.os;
+  if(est === 'pendente'){
+    var cicloP = row.ciclo;
+    pjConfirmar('Cancelar pedido de envio para a TV', 'Cancelar o pedido de envio para a TV de ' + os + '? O aviso some da Visão Geral dos sócios.', 'Cancelar pedido', function(){
+      pjAcao({ kind: 'tvcancela', id: id, executar: function(){ return pjRpc('tv_cancelar', { p_projeto_id: id, p_ciclo: cicloP }); }, sucesso: 'Pedido de envio para a TV cancelado.',
+        conferir: ctTvConferirPor(id, function(r){ return !!r && r.estado === 'cancelado'; }, function(r){ return !!r && r.estado === 'pendente' && r.ciclo === cicloP; }) });
+    });
+  } else if(est === 'enviado'){
+    var cicloE = row.ciclo;
+    pjConfirmar('Pedir um novo envio para a TV', 'Este vídeo já foi enviado para a TV' + (ctQuando(row.confirmado_em) ? ' em ' + ctQuando(row.confirmado_em) : '') + '. Pedir um NOVO envio de ' + os + '? O histórico do envio anterior é mantido.', 'Pedir novo envio', function(){
+      pjAcao({ kind: 'tvnovo', id: id, executar: function(){ return pjRpc('tv_solicitar', { p_projeto_id: id, p_ciclo_esperado: cicloE, p_novo_envio: true, p_chave: ctChaveTv(id, cicloE, true) }); }, sucesso: 'Novo envio para a TV solicitado.',
+        conferir: ctTvConferirPor(id, function(r){ return !!r && r.estado === 'pendente' && r.ciclo > cicloE; }, function(r){ return !!r && r.estado === 'enviado' && r.ciclo === cicloE; }) });
+    });
+  } else {
+    var cicloA = row ? row.ciclo : 0;
+    pjConfirmar('Enviar para a TV', 'Pedir o envio de ' + os + ' para a TV? Os sócios recebem um aviso azul na Visão Geral até alguém marcar como enviado.', 'Pedir envio', function(){
+      pjAcao({ kind: 'tvpede', id: id, executar: function(){ return pjRpc('tv_solicitar', { p_projeto_id: id, p_ciclo_esperado: cicloA, p_novo_envio: false, p_chave: ctChaveTv(id, cicloA, false) }); }, sucesso: 'Envio para a TV solicitado. Os sócios foram avisados na Visão Geral.',
+        conferir: ctTvConferirPor(id, function(r){ return !!r && r.estado === 'pendente' && r.ciclo > cicloA; }, function(r){ return (!r && cicloA === 0) || (!!r && r.estado !== 'pendente' && r.ciclo === cicloA); }) });
+    });
+  }
+}
+
+// ---------------- Visão Geral: pendência azul (Informação) para sócio/admin ----------------
+function ctGestao(){ try { return crSessao() && voModo(voPerfil()) === 'gestao'; } catch(_e){ return false; } }
+function ctPendValida(r){
+  return !!r && pjUuid(r.projeto_id) && ctInt(r.ciclo) && r.ciclo >= 1 && typeof r.os === 'string' && typeof r.editor_nome === 'string' && typeof r.solicitado_por_nome === 'string' && typeof r.solicitado_em === 'string'
+    && (r.cliente == null || typeof r.cliente === 'string') && (r.servico == null || typeof r.servico === 'string');
+}
+function ctLerPend(opts){
+  opts = opts || {};
+  var e = ctEstado; if(!ctSincronizarIdentidade()) return Promise.resolve(false);
+  if(!ctGestao()){ e.seqPend++; e.pend = { st: 'na', linhas: [], stale: false, limite: false }; return Promise.resolve(false); }
+  var seq = ++e.seqPend, uid = pjUid(), ep = crEpoch();
+  if(opts.limparMsg) e.pendMsg = '';
+  if(e.pend.st === 'idle' || e.pend.st === 'na') e.pend = { st: 'carregando', linhas: [], stale: false, limite: false };
+  var vivo = function(){ return seq === e.seqPend && pjUid() === uid && crEpoch() === ep && ctGestao(); };
+  var falhou = function(){ if(!vivo()) return false; if(e.pend.st === 'ok') e.pend.stale = true; else e.pend = { st: 'erro', linhas: [], stale: false, limite: false }; ctRepintarVisao(); return false; };
+  var q; try { q = supabaseClient.rpc('tv_pendencias_listar'); } catch(_e){ return Promise.resolve(falhou()); }
+  return crComTempo(q).then(function(r){
+    if(!vivo()) return false;
+    if(!r || r.error || !Array.isArray(r.data)) return falhou();
+    for(var i = 0; i < r.data.length; i++) if(!ctPendValida(r.data[i])) return falhou();
+    e.pend = { st: 'ok', linhas: r.data.slice().sort(function(a, b){ return a.os < b.os ? -1 : a.os > b.os ? 1 : 0; }), stale: false, limite: r.data.length >= 200 };
+    ctRepintarVisao(); return true;
+  }, function(){ return falhou(); });
+}
+function ctRepintarVisao(){
+  try {
+    var d = document.getElementById('dashboard'); if(!d || !d.classList.contains('active')) return;
+    if(ctEditandoMotivo({ ignorarPend: true })){ ctEstado.visaoPendente = true; return; }   // não apaga formulário aberto nem texto digitado: pinta depois
+    ctEstado.visaoPendente = false; voRenderDashboard();
+  } catch(_e){}
+}
+function ctFlushVisao(){ if(ctEstado.visaoPendente && !ctEditandoMotivo({ ignorarPend: true })) ctRepintarVisao(); }
+function ctTvTitulo(x){
+  return '&#128250; <b>' + voEsc(x.os) + '</b> ' + voEsc(x.cliente || '') + ' &#8212; ' + voEsc(x.servico || '') + ' &#8212; <b>enviar para a TV</b>';
+}
+function ctTvItemHtml(x){
+  var busy = ctEstado.pendBusy;
+  return '<div class="dash-alert-item ctTvAlerta" data-pa="ct-tv-alerta" data-ct-tv-proj="' + voEsc(x.projeto_id) + '"><div>' + ctTvTitulo(x) + '</div>'
+    + '<div class="ctTvAlertaSub">Editor: ' + voEsc(x.editor_nome) + ' &#8226; pedido por ' + voEsc(x.solicitado_por_nome) + (ctQuando(x.solicitado_em) ? ' em ' + voEsc(ctQuando(x.solicitado_em)) : '') + '</div>'
+    + '<button type="button" class="btn ctTvBtn" style="background:#2563eb;color:white" data-pa="ct-tv-enviado" ' + (busy ? 'disabled ' : '') + 'onclick="ctTvMarcarEnviado(\'' + voEsc(x.projeto_id) + '\',' + x.ciclo + ')">Marcar como enviado</button></div>';
+}
+var _ctAlertasGestao = voAlertasGestao;
+voAlertasGestao = function(g, hoje, e){
+  var r = _ctAlertasGestao.apply(this, arguments);
+  try {
+    var p = ctEstado.pend;
+    if(p.st === 'ok'){
+      p.linhas.forEach(function(x){ r.inf.push({ titulo: ctTvTitulo(x), os: x.os, dest: '', tv: x }); });
+      if(p.limite) r.falhas.push('pedidos de envio para a TV (mostrando os primeiros 200)');
+      if(p.stale) r.falhas.push('pedidos de envio para a TV (não foi possível atualizar agora)');
+    } else if(p.st === 'erro') r.falhas.push('pedidos de envio para a TV');
+    if(ctEstado.pendMsg) r.inf.unshift({ titulo: '&#128250; ' + voEsc(ctEstado.pendMsg), os: '', dest: '' });
+    r.inf.sort(function(a, b){ return a.os < b.os ? -1 : a.os > b.os ? 1 : 0; });
+  } catch(_e){}
+  return r;
+};
+var _ctItemAlerta = voItemAlerta;
+voItemAlerta = function(a, idx){ return a && a.tv ? ctTvItemHtml(a.tv) : _ctItemAlerta.apply(this, arguments); };
+function ctTvMarcarEnviado(projId, ciclo){
+  var e = ctEstado; if(e.pendBusy || !ctGestao() || !pjUuid(projId) || !ctInt(ciclo)) return;
+  var x = e.pend.linhas.filter(function(y){ return y.projeto_id === projId && y.ciclo === ciclo; })[0]; if(!x) return;
+  pjConfirmar('Marcar como enviado', 'Confirmar que o vídeo de ' + x.os + (x.cliente ? ' (' + x.cliente + ')' : '') + ' foi enviado para a TV?', 'Marcar como enviado', function(){
+    if(e.pendBusy) return;
+    var uid = pjUid(), ep = crEpoch(), seq = e.seqPend;
+    e.pendBusy = true; e.pendMsg = ''; ctRepintarVisao();
+    var fim = function(msg){
+      e.pendBusy = false;
+      if(pjUid() !== uid || crEpoch() !== ep) return;
+      e.pendMsg = msg; ctRepintarVisao();
+      return ctLerPend();
+    };
+    var q; try { q = supabaseClient.rpc('tv_confirmar_envio', { p_projeto_id: projId, p_ciclo: ciclo }); } catch(_e){ return fim(PJ_MSG.generica); }
+    crComTempo(q).then(function(r){
+      if(!r) return fim('Não foi possível confirmar se o envio foi registrado. A lista foi relida: confira antes de tentar de novo.');
+      if(r.error) return fim(pjErroDefinitivo(r.error) ? pjErroTexto(r.error) : 'Não foi possível confirmar se o envio foi registrado. A lista foi relida: confira antes de tentar de novo.');
+      return fim('Envio para a TV registrado: ' + x.os + '.');
+    }, function(){ return fim('Não foi possível confirmar se o envio foi registrado. A lista foi relida: confira antes de tentar de novo.'); });
+  });
+}
+var _ctEntrarVg = aoEntrarVisaoGeralReal;
+aoEntrarVisaoGeralReal = function(){ var p = _ctEntrarVg.apply(this, arguments); try { ctPollArmar(); ctLerPend({ limparMsg: true }); } catch(_e){} return p; };
+
+// ---------------- proteção: nada em edição é tocado pela atualização automática ----------------
+function ctEhEditavel(a){
+  if(!a || !a.tagName) return false;
+  var t = String(a.tagName).toUpperCase();
+  if(t === 'TEXTAREA' || t === 'SELECT') return true;
+  if(t === 'INPUT'){ var ty = String(a.type || 'text').toLowerCase(); return ['checkbox', 'radio', 'button', 'submit', 'reset', 'image', 'range', 'color', 'file'].indexOf(ty) < 0; }
+  return !!a.isContentEditable;
+}
+// Campos de filtro/busca não contam como "formulário em edição" (são só visão); todo o resto digitado pelo usuário conta enquanto o valor for diferente do que tinha ao receber o foco.
+function ctEhFiltro(a){ var s = (String(a.id || '') + ' ' + String(a.name || '') + ' ' + String(a.className || '')).toLowerCase(); return String(a.tagName).toUpperCase() === 'SELECT' || String(a.type || '') === 'search' || /search|busca|filtro|filter/.test(s); }
+function ctMarcarTocado(a){ if(ctEhEditavel(a) && !ctEhFiltro(a) && ctEstado.tocados.indexOf(a) < 0) ctEstado.tocados.push(a); }
+function ctFormularioAlterado(){
+  var t = ctEstado.tocados;
+  for(var i = t.length - 1; i >= 0; i--){
+    var a = t[i];
+    if(!a || a.isConnected === false || a.value === a.__ctOrig){ t.splice(i, 1); continue; }
+    if(a.offsetParent !== null) return true;   // visível (campo de seção escondida não conta)
+  }
+  return false;
+}
+function ctEditandoMotivo(opts){   // '' = pode atualizar. Qualquer dúvida ou erro de leitura da guarda ⇒ NÃO atualiza.
+  opts = opts || {};
+  try {
+    if(document.querySelector('.modal.open')) return 'modal';
+    var pr = document.getElementById('modalPresets'); if(pr && pr.style && pr.style.display && pr.style.display !== 'none') return 'modal';
+    if(ctEhEditavel(document.activeElement)) return 'foco';
+    if(ctFormularioAlterado()) return 'formulario-alterado';
+    if(Object.keys(ctEstado.rasc).length) return 'texto-extra';
+    var nk = Object.keys(ctEstado.novos); for(var i = 0; i < nk.length; i++) if(ctEstado.novos[nk[i]].texto) return 'texto-extra';
+    if(estadoPJ.acao || estadoPJ.confirmar || estadoPJ.atribuir || (!opts.ignorarPend && ctEstado.pendBusy)) return 'acao';
+    var x = estadoPJ.op && estadoPJ.op.x; if(x && (x.acao || (x.rasc && Object.keys(x.rasc).length))) return 'operacao-texto';
+    var cps = document.querySelectorAll('#operacaoProntuarioConteudo input[id^="cpInput-"]'); for(var j = 0; j < cps.length; j++) if(cps[j].value) return 'checklist-pessoal';
+    if(typeof cronogramaEditorSujo !== 'undefined' && cronogramaEditorSujo) return 'cronograma';
+    if(typeof coOrcAlterado === 'function' && coOrcAlterado()) return 'orcamento';
+    if(typeof finOp !== 'undefined' && finOp && finOp.ativo) return 'financeiro';
+    if(typeof estadoFinPront !== 'undefined' && estadoFinPront && estadoFinPront.acao) return 'financeiro';
+    if(typeof estadoServicosFormForn !== 'undefined' && estadoServicosFormForn && estadoServicosFormForn.rascunhoEdicaoServico) return 'fornecedor-servico';
+    if(typeof estadoCadastroFornecedor !== 'undefined' && estadoCadastroFornecedor && estadoCadastroFornecedor.editandoUuid) return 'fornecedor-cadastro';
+    return '';
+  } catch(_e){ return 'guarda-indisponivel'; }
+}
+function ctSecaoAtiva(){ try { var el = document.querySelector('.section.active'); return el ? String(el.id || '') : ''; } catch(_e){ return ''; } }
+function ctRestaurar(estado, snap){ Object.keys(snap).forEach(function(k){ if(k !== 'seq') estado[k] = snap[k]; }); }
+
+// ---------------- atualização automática: adaptadores por seção ----------------
+// Visão Geral: as leituras existentes rodam com a pintura SUSPENSA; se terminarem bem e nada estiver em edição, pinta uma vez; se falharem, o estado anterior volta e a tela nunca é apagada.
+function ctDashSilencioso(){
+  var g = estadoVisaoGeralReal, o = estadoVisaoOriginal;
+  if(!crSessao() || g.status !== 'ok' || o.status !== 'ok') return Promise.resolve('pulou');
+  var uid = pjUid(), ep = crEpoch(), perfil = voPerfil(), snapG = Object.assign({}, g), snapO = Object.assign({}, o), nomes = ['vgRender', 'voRenderTudo', 'voRenderDashboard', 'voRenderPlacarComercial'], orig = {}, stub = {};
+  nomes.forEach(function(n){ orig[n] = window[n]; stub[n] = function(){}; window[n] = stub[n]; });
+  // só desfaz a suspensão se a função global ainda é o stub desta rodada (outro contexto que registrou função nova não é sobrescrito)
+  var restaurar = function(){ nomes.forEach(function(n){ if(window[n] === stub[n]) window[n] = orig[n]; }); };
+  var seqG, seqO, pintar = function(){ try { window.vgRender(); } catch(_e){} try { window.voRenderTudo(); } catch(_e2){} };
+  var mesmoContexto = function(){ return pjUid() === uid && crEpoch() === ep && voPerfil() === perfil; };
+  var proprio = function(){ return mesmoContexto() && g.seq === seqG && (seqO === undefined || o.seq === seqO); };   // nenhum outro carregamento assumiu os estados
+  var desfaz = function(){ ctRestaurar(g, snapG); ctRestaurar(o, snapO); };
+  var fim = function(){
+    restaurar();
+    if(!mesmoContexto()) return 'descartado';              // outra conta/época/perfil: estados e tela pertencem a ELA; nada é restaurado nem pintado aqui
+    if(!proprio()){ pintar(); return 'superado'; }
+    if(g.status === 'ok' && o.status === 'ok'){
+      if(ctEditandoMotivo() || ctSecaoAtiva() !== 'dashboard'){ desfaz(); return 'adiado'; }
+      pintar(); return 'ok';
+    }
+    if(g.status === 'sessao' || o.status === 'sessao' || g.status === 'sem_permissao' || o.status === 'sem_permissao' || g.status === 'sem_sessao'){ pintar(); return 'estado'; }
+    desfaz(); return 'falha';
+  };
+  var erro = function(){ restaurar(); if(!mesmoContexto()) return 'descartado'; if(proprio()){ desfaz(); return 'falha'; } return 'superado'; };
+  var p1;
+  try { p1 = window.vgCarregar(); seqG = g.seq; } catch(_e){ restaurar(); if(mesmoContexto()) desfaz(); return Promise.resolve('falha'); }
+  return Promise.resolve(p1).then(function(){
+    if(!mesmoContexto() || g.seq !== seqG) return;
+    var q = window.voCarregar('visao'); seqO = o.seq; return q;
+  }).then(function(){ return fim(); }, function(){ return erro(); }).then(function(res){
+    if((res === 'ok' || res === 'adiado' || res === 'superado') && mesmoContexto()) return ctLerPend({ limparMsg: true }).then(function(){ return res; });
+    return res;
+  });
+}
+// Projetos Ativos / Operação: a lista é relida SEM zerar o estado (pjCarregar zera) e só substitui o modelo no fim, se nada estiver em edição.
+function ctOpDetLer(l, ok){
+  var R = {}, T = function(t){ return supabaseClient.from(t); };
+  var passos = [
+    ['proj', function(){ return T('projetos').select('id,locacao,briefing,formato,terceirizados,roteiro_url,referencia_url,equipamentos_extras,contato_extra').eq('id', l.id).limit(2); }],
+    ['hist', function(){ return T('historicos').select('id,descricao,data_evento,criado_em').eq('projeto_id', l.id).eq('area', 'operacional').order('id', { ascending: false }).limit(PJ_LIMITE_LISTA + 1); }],
+    ['forn', function(){ return T('projeto_fornecedores').select('id,tipo_vinculo,nome_manual,snapshot,item_descricao,quantidade,ordem').eq('projeto_id', l.id).order('ordem', { ascending: true }).limit(PJ_LIMITE_LISTA + 1); }]
+  ];
+  return passos.reduce(function(prom, par){ return prom.then(function(){ if(!ok()) return; return pjConsulta(ok, par[1]()).then(function(r){ if(r !== null) R[par[0]] = r; }); }); }, Promise.resolve()).then(function(){
+    if(!ok()) return null;
+    var um = R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 1 && String(R.proj.data[0].id) === l.id ? R.proj.data[0] : null;
+    if(!um) return null;
+    var lista = function(k){ var r = R[k]; return r && r.st === 'ok' && Array.isArray(r.data) ? r.data.slice(0, PJ_LIMITE_LISTA) : []; };
+    return { raw: um, hist: lista('hist').reverse(), forn: lista('forn') };
+  }, function(){ return null; });
+}
+function ctOpLerSilencioso(ctx, ok){   // → null (descartado) | { falha } | { dados }
+  var o = estadoPJ.op;
+  if(!o || !o.ativo || o.status !== 'ok') return Promise.resolve({ dados: null });
+  var prov = ctProvider(), acc = {};
+  var ler = function(nome, fab){ return vgLerFonte(ctx, ok, nome, fab, prov); };
+  return ler('chk', ctPagina('checklist_itens', 'id,projeto_id,fase,ordem,titulo,concluido', 'id')).then(function(f1){
+    if(f1 === null || !ok()) return null; if(f1.st !== 'ok') return { falha: true }; acc.chk = f1.linhas;
+    return ler('grav', ctPagina('gravacoes', 'id,projeto_id,dia,data,horario', 'id')).then(function(f2){
+      if(f2 === null || !ok()) return null; if(f2.st !== 'ok') return { falha: true }; acc.grav = f2.linhas;
+      return ler('cex', ctPagina('checklist_extras', CT_COL_EXTRA, 'id')).then(function(f3){
+        if(f3 === null || !ok()) return null; acc.cex = f3.st === 'ok' ? f3 : { st: 'erro' };
+        return ler('ctv', ctPagina('projeto_tv', CT_COL_TV, 'projeto_id')).then(function(f4){
+          if(f4 === null || !ok()) return null; acc.ctv = f4.st === 'ok' ? f4 : { st: 'erro' };
+          var ab = o.abertoOs ? pjAcha(o.abertoOs) : null;
+          if(!ab) return { dados: acc };
+          return ctOpDetLer(ab, ok).then(function(det){ if(!ok()) return null; if(det) acc.det = { id: ab.id, valor: det }; return { dados: acc }; });
+        });
+      });
+    });
+  });
+}
+function ctOpAplicar(dados){   // síncrono: atualiza checklist/gravações/extras/TV da Operação
+  var o = estadoPJ.op, chk = {}, grav = {};
+  dados.chk.forEach(function(x){ if(pjUuid(x.id) && pjUuid(x.projeto_id) && typeof x.titulo === 'string') (chk[x.projeto_id] = chk[x.projeto_id] || []).push(x); });
+  Object.keys(chk).forEach(function(k){ chk[k].sort(function(a, b){ return a.fase < b.fase ? -1 : a.fase > b.fase ? 1 : (a.ordem - b.ordem) || (a.titulo < b.titulo ? -1 : 1); }); });
+  dados.grav.forEach(function(x){ if(pjUuid(x.projeto_id)) (grav[x.projeto_id] = grav[x.projeto_id] || []).push(x); });
+  Object.keys(grav).forEach(function(k){ grav[k].sort(function(a, b){ return a.dia - b.dia; }); });
+  o.chk = chk; o.grav = grav;
+  ctEstado.por = ctMontarStore(dados.cex, dados.ctv); ctEstado.opSt = 'ok';
+  var aberto = dados.det ? dados.det.id : '';
+  Object.keys(o.det).forEach(function(k){ if(k !== aberto) delete o.det[k]; });   // os demais são relidos ao abrir
+  if(aberto) o.det[aberto] = dados.det.valor;
+}
+function ctPjSilencioso(comOp){
+  var e = estadoPJ, sec = comOp ? 'operacao' : 'projetos';
+  if(!crSessao() || !vgPodeVer() || e.status !== 'ok' || e.acao) return Promise.resolve('pulou');
+  var ctx = pjCtxAtual(), cli = vgPodeClientes(), prov = pjProvider(), abertoId = e.abertoId;
+  var ok = function(){ return pjCtxOk(ctx) && !estadoPJ.acao && ctSecaoAtiva() === sec; };
+  return vgLerFonte(ctx, ok, 'proj', function(a, b){ return prov.projetos(a, b, cli); }, prov).then(function(f){
+    if(f === null || !ok()) return 'descartado';
+    if(f.st === 'sessao') return pjCarregar().then(function(){ return 'estado'; });   // sessão caiu: o fluxo normal mostra a mensagem existente
+    if(f.st !== 'ok') return 'falha';
+    return pjLerEquipe(ok).then(function(eq){
+      if(eq === null || !ok()) return 'descartado';
+      var c; try { c = pjClassificar(f.linhas); } catch(_e){ return 'falha'; }
+      return (comOp ? ctOpLerSilencioso(ctx, ok) : Promise.resolve({ dados: null })).then(function(extra){
+        if(extra === null || !ok()) return 'descartado';
+        if(extra.falha) return 'falha';
+        if(ctEditandoMotivo()){ ctEstado.poll.motivo = 'edicao'; return 'adiado'; }   // modelo intacto enquanto algo é editado
+        // aplicação síncrona (nenhum await entre a guarda e a troca do modelo)
+        e.todos = c.todos; e.ativos = c.ativos; e.invalidas = c.invalidas; e.total = f.total || 0; if(eq.st === 'ok') e.equipe = eq; e.carregadoEm = new Date().toISOString();
+        if(comOp && extra.dados) ctOpAplicar(extra.dados);
+        try { pjRenderStatus(); pjRenderKanban(); pjRenderHist(); } catch(_e2){}
+        var reabre = null;
+        if(abertoId && e.abertoId === abertoId && pjAcha(abertoId)) reabre = pjAbrir(abertoId, { silencioso: true, semRolar: true, manterMsg: true });
+        if(comOp && extra.dados){ window.ctSemRolar = true; try { opRepintar(); } catch(_e3){} finally { window.ctSemRolar = false; } }
+        return Promise.resolve(reabre).then(function(){ return 'ok'; });
+      });
+    });
+  }, function(){ return 'falha'; });
+}
+// ---- listas Comercial / Clientes / Fornecedores: leitura silenciosa pela MESMA consulta e pelo MESMO "aplicar" da carga normal da seção (sem tela de "carregando", sem fechar detalhe, sem limpar filtro) ----
+function ctSecaoDom(id){ try { var s = document.getElementById(id); return !!(s && s.classList && s.classList.contains('active')); } catch(_e){ return false; } }
+function ctListaSilenciosa(c){   // c: { ativa, pronto, ctx, valido, consultar, aplicar }
+  if(!crSessao() || !c.ativa() || !c.pronto()) return Promise.resolve('pulou');
+  var uid = pjUid(), ep = crEpoch(), perfil = voPerfil(), ctx, q;
+  try { ctx = c.ctx(); } catch(_e){ return Promise.resolve('pulou'); }
+  var vivo = function(){ return pjUid() === uid && crEpoch() === ep && voPerfil() === perfil && c.ativa() && c.valido(ctx); };   // requestId/época/perfil da seção: carga normal posterior invalida esta
+  try { q = c.consultar(); } catch(_e2){ return Promise.resolve('falha'); }
+  return crComTempo(q).then(function(res){
+    if(!vivo()) return 'descartado';
+    if(!res || res.error || !Array.isArray(res.data)) return 'falha';   // erro: tela e modelo anteriores permanecem
+    if(ctEditandoMotivo()){ ctEstado.poll.motivo = 'edicao'; return 'adiado'; }
+    c.aplicar(ctx, res.data);   // síncrono logo após a guarda: troca do modelo + pintura única da própria seção
+    return 'ok';
+  }, function(){ return vivo() ? 'falha' : 'descartado'; });
+}
+function ctComercialSil(){
+  return ctListaSilenciosa({
+    ativa: function(){ return ctSecaoDom('comercial') && typeof estadoComercialLeadsReais !== 'undefined'; },
+    pronto: function(){ var st = estadoComercialLeadsReais; return st.sourceMode === 'real' && (st.loadStatus === 'loaded' || st.loadStatus === 'empty') && st.ownerUserId === currentUser.id && _PERFIS_COMERCIAL.indexOf(_perfilAtivoComercial()) >= 0; },
+    ctx: function(){ return { epoch: _authContextEpoch, ownerUserId: currentUser.id, activeProfileAtRequest: _perfilAtivoComercial(), requestId: estadoComercialLeadsReais.requestId }; },
+    valido: function(ctx){ return _retornoComercialValido(ctx); },
+    consultar: function(){ return _consultarLeadsReais(); },
+    aplicar: function(ctx, rows){ _aplicarLeadsCarregados(ctx, rows); } });
+}
+function ctClientesSil(){
+  return ctListaSilenciosa({
+    ativa: function(){ return ctSecaoDom('clientes') && typeof estadoClientesReais !== 'undefined'; },
+    pronto: function(){ var st = estadoClientesReais; return st.sourceMode === 'real' && (st.loadStatus === 'loaded' || st.loadStatus === 'empty') && st.ownerUserId === currentUser.id && perfilAtualPodeLerClientesReal(); },
+    ctx: function(){ return _snapshotCtxClientes(); },
+    valido: function(ctx){ return _retornoClientesValido(ctx); },
+    consultar: function(){ return _consultarClientesReais(); },
+    aplicar: function(ctx, rows){ _aplicarClientesCarregados(ctx, rows, _chaveCacheClientes(ctx.ownerUserId, ctx.epoch, ctx.activeProfileAtRequest)); } });
+}
+function ctFornecedoresSil(){
+  return ctListaSilenciosa({
+    ativa: function(){ return ctSecaoDom('fornecedores') && typeof estadoFornecedoresReais !== 'undefined'; },
+    pronto: function(){ var st = estadoFornecedoresReais; return st.sourceMode === 'real' && (st.loadStatus === 'loaded' || st.loadStatus === 'empty') && st.ownerUserId === currentUser.id && perfilAtualPodeLerFornecedoresReal(); },
+    ctx: function(){ return _ctxFornecedoresAtual(); },
+    valido: function(ctx){ return _retornoFornecedoresValido(ctx); },
+    consultar: function(){ return supabaseClient.from('fornecedores').select(_FORN_COLUNAS).order('nome', { ascending: true }).order('id', { ascending: true }); },
+    aplicar: function(ctx, linhas){   // mesmo desfecho do ramo de sucesso de carregarFornecedoresReal
+      var st = estadoFornecedoresReais, chave = _chaveCacheForn(ctx.ownerUserId, ctx.epoch, ctx.activeProfileAtRequest);
+      st.rawRows = linhas.slice(); st.adapted = []; st.rawById = new Map();
+      linhas.forEach(function(r){ var a = adaptarFornecedorReal(r); if(a){ st.adapted.push(a); st.rawById.set(a.id, a); } });
+      st.loadStatus = st.adapted.length ? 'loaded' : 'empty';
+      _fornCacheLista.set(chave, { rawRows: st.rawRows.slice(), adapted: st.adapted.slice(), loadStatus: st.loadStatus });
+      _pintarFornecedoresSeAtivo();
+    } });
+}
+// ---- Financeiro e Arquivos: telas montadas por muitas fontes. Uma "impressão" barata (contagem + data mais recente de poucas tabelas) detecta mudança; só quando mudou e nada está em edição
+//      a seção roda a SUA entrada oficial de carga. Falha da impressão ⇒ nada acontece (a tela fica como está). Limite: a entrada oficial mostra o próprio "carregando" enquanto relê.
+function ctImpressao(specs, ok){   // [{ t, col }] → Promise<string|null>
+  var partes = [];
+  return specs.reduce(function(prom, sp){
+    return prom.then(function(acc){
+      if(acc === null || !ok()) return null;
+      var col = sp.col || 'id', q;
+      try { q = supabaseClient.from(sp.t).select(col, { count: 'exact' }).order(col, { ascending: false }).limit(1); } catch(_e){ return null; }
+      return crComTempo(q).then(function(r){
+        if(!ok()) return null;
+        if(!r || r.error || !Array.isArray(r.data) || typeof r.count !== 'number') return null;
+        acc.push(sp.t + ':' + r.count + ':' + (r.data[0] ? String(r.data[0][col]) : '')); return acc;
+      }, function(){ return null; });
+    });
+  }, Promise.resolve(partes)).then(function(acc){ return acc === null ? null : acc.join('|'); });
+}
+var CT_IMPRESSAO = {
+  financeiro: [{ t: 'recebimentos_cliente', col: 'atualizado_em' }, { t: 'projetos_financeiro', col: 'atualizado_em' }, { t: 'financeiro_lancamentos', col: 'criado_em' }, { t: 'financeiro_lancamento_operacoes', col: 'criado_em' },
+    { t: 'notas_fiscais', col: 'criado_em' }, { t: 'historicos', col: 'criado_em' }],
+  arquivos: [{ t: 'notas_fiscais', col: 'criado_em' }, { t: 'arquivos', col: 'criado_em' }, { t: 'historicos', col: 'criado_em' }]
+};
+function ctPorImpressao(sec, chave, pode, recarregar){
+  if(!crSessao() || !pode()) return Promise.resolve('pulou');
+  var uid = pjUid(), ep = crEpoch(), perfil = voPerfil(), ok = function(){ return pjUid() === uid && crEpoch() === ep && voPerfil() === perfil && ctSecaoAtiva() === sec; };
+  return ctImpressao(CT_IMPRESSAO[sec], ok).then(function(imp){
+    if(!ok()) return 'descartado';
+    if(imp === null) return 'falha';
+    var mapa = ctEstado.poll.imp;
+    if(mapa[chave] === imp) return 'ok';                      // nada mudou
+    if(ctEditandoMotivo() || !pode()){ ctEstado.poll.motivo = 'edicao'; return 'adiado'; }   // mantém a impressão antiga: tenta de novo no próximo ciclo
+    try { recarregar(); } catch(_e){ return 'falha'; }
+    mapa[chave] = imp; return 'ok';
+  }, function(){ return 'falha'; });
+}
+function ctFinanceiroSil(){
+  var aba = '';
+  try { aba = String(estadoFinOriginal.abaAtual || ''); } catch(_e){}
+  return ctPorImpressao('financeiro', 'financeiro|' + aba, function(){
+    try { var pr = document.getElementById('finProntuario'); if(pr && pr.style && pr.style.display && pr.style.display !== 'none') return false; } catch(_e){}   // prontuário financeiro aberto: em consulta/edição, não relê por baixo
+    return aba !== '' && aba !== 'finSemAtend' && typeof FO_ENTRADAS[aba] === 'function' && foPode() && String(estadoFinOriginal.abaAtual || '') === aba;
+  }, function(){ FO_ENTRADAS[aba](); });
+}
+function ctArquivosSil(){
+  return ctPorImpressao('arquivos', 'arquivos', function(){ return foArqPodeVer() && !estadoAI.acao; }, function(){ aiAtualizar(); });
+}
+var CT_ADAPT = { dashboard: ctDashSilencioso, projetos: function(){ return ctPjSilencioso(false); }, operacao: function(){ return ctPjSilencioso(true); },
+  comercial: ctComercialSil, clientes: ctClientesSil, fornecedores: ctFornecedoresSil, financeiro: ctFinanceiroSil, arquivos: ctArquivosSil };
+// Fora de propósito: "config" (Administração) fica sem leitura automática — o backup/recuperação tem timer próprio que não pode ser tocado e usuários/permissões são só consulta manual.
+
+// repinta o prontuário de Projetos depois de uma leitura: normal (como antes) ou silenciosa (só se nada estiver em edição; senão o modelo anterior volta)
+function ctPjPinta(opts, detAnt){
+  var e = estadoPJ;
+  if(!opts || !opts.silencioso){
+    if(e.det && e.det.status === 'ok') ctRegistrarDetalhe(e.det.id, e.det.d);
+    return pjRenderProntuario();
+  }
+  if(!e.det || e.det.status !== 'ok' || ctEditandoMotivo()){ e.det = detAnt; ctEstado.poll.motivo = 'edicao'; return; }
+  ctRegistrarDetalhe(e.det.id, e.det.d);
+  return pjRenderProntuario();
+}
+
+// ---------------- o ÚNICO timer ----------------
+function ctPollArmar(){ var p = ctEstado.poll; if(p.timer) return; p.timer = setInterval(function(){ ctPollTick('timer'); }, CT_INTERVALO_MS); }
+function ctPollParar(){ var p = ctEstado.poll; if(p.timer){ clearInterval(p.timer); p.timer = 0; } p.emCurso = false; }
+function ctPollTick(origem){
+  var p = ctEstado.poll;
+  if(!ctSincronizarIdentidade()) { ctPollParar(); return Promise.resolve('sem-sessao'); }
+  if(typeof document !== 'undefined' && document.visibilityState !== 'visible') return Promise.resolve('oculta');
+  if(p.emCurso) return Promise.resolve('em-curso');
+  if(estadoPJ.acao || ctEstado.pendBusy) return Promise.resolve('acao');
+  try { ctFlushVisao(); } catch(_e){}
+  var sec = ctSecaoAtiva(), ad = CT_ADAPT[sec]; if(!ad) return Promise.resolve('sem-adaptador');
+  var m = ctEditandoMotivo(); if(m){ p.motivo = m; return Promise.resolve('adiado'); }
+  p.emCurso = true; p.motivo = '';
+  var uid = pjUid(), ep = crEpoch();
+  return Promise.resolve().then(ad).then(function(res){
+    p.emCurso = false; p.n++;
+    if(pjUid() !== uid || crEpoch() !== ep) return 'descartado';
+    if(res === 'ok'){ p.ult[sec] = Date.now(); p.falha = ''; } else if(res === 'falha') p.falha = sec;
+    return res;
+  }, function(){ p.emCurso = false; p.falha = sec; return 'falha'; });
+}
+function ctPollVoltou(){   // aba voltou a ficar visível: se a seção em consulta está antiga, confere agora
+  try {
+    if(!crSessao() || document.visibilityState !== 'visible') return Promise.resolve('nada');
+    ctPollArmar();
+    var sec = ctSecaoAtiva(), u = ctEstado.poll.ult[sec];
+    if(CT_ADAPT[sec] && (!u || Date.now() - u >= CT_INTERVALO_MS)) return ctPollTick('volta');
+  } catch(_e){}
+  return Promise.resolve('nada');
+}
+document.addEventListener('visibilitychange', function(){ ctPollVoltou(); });
+document.addEventListener('focusin', function(ev){ try { var a = ev.target; if(ctEhEditavel(a) && !ctEhFiltro(a) && ctEstado.tocados.indexOf(a) < 0) a.__ctOrig = a.value; } catch(_e){} }, true);
+document.addEventListener('input', function(ev){ try { var a = ev.target; if(a && a.__ctOrig === undefined) a.__ctOrig = ''; ctMarcarTocado(a); } catch(_e){} }, true);
+document.addEventListener('focusout', function(){ setTimeout(function(){ try { ctFlushVisao(); } catch(_e){} }, 0); }, true);
+window.addEventListener('focus', function(){ ctPollVoltou(); });
+var _ctShow = show;
+show = function(id, btn){ var r = _ctShow.apply(this, arguments); try { ctEstado.poll.ult[id] = Date.now(); ctPollArmar(); } catch(_e){} return r; };
+var _ctLimpaAuth = limparVisaoGeralRealPorAuth;
+limparVisaoGeralRealPorAuth = function(){ try { ctLimpar(); } catch(_e){} return _ctLimpaAuth.apply(this, arguments); };
+(function(){
+  var ps = document.getElementById('profileSelect');
+  if(ps && typeof ps.addEventListener === 'function') ps.addEventListener('change', function(){ try { ctZerarDados(); ctEstado.opSt = 'idle'; ctLerPend(); } catch(_e){} });
+  if(crSessao()) ctPollArmar();
+})();
+// END 1.3.0.0 CHECKLISTS E TV
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

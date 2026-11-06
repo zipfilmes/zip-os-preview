@@ -298,6 +298,13 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 .ctTvAlerta .ctTvAlertaSub{font-size:12px;color:var(--muted);margin-top:2px}
 .ctTvBtn{margin-top:6px;font-size:12px;padding:5px 12px}
 @media(max-width:700px){.ctExtra{flex-wrap:wrap}.ctTexto{flex-basis:100%}}
+/* 1.3.0.1 · Refinos da Operação — só classes novas (hv*, ctSep, ctDemTitulo, fornNaoAplicaBtn); nenhuma regra existente foi alterada. */
+.fornNaoAplicaBtn{background:#fee2e2!important;color:#991b1b!important}
+.ctSep{border-top:1px solid var(--line);margin:14px 0 10px}
+.ctDemTitulo{margin:0 0 6px}
+.hvEtapaIdent{margin-top:12px;font-size:13px;line-height:1.4}
+.hvEtapaIdent b{display:block;font-size:14px;color:var(--ink)}
+.hvEtapaIdent span{color:var(--muted)}
 </style>
 <style id="zosTemaCss">
 /* ===== V1.1.0.0 TEMA ESCURO — bloco ADICIONAL e escopado (html[data-theme="dark"]). O Tema Claro (padrão) não recebe nenhuma regra daqui,
@@ -463,6 +470,9 @@ html[data-theme="dark"] .ctTv .ctChk{background:#1d2027;border-color:#60a5fa}
 html[data-theme="dark"] .ctTv.ctTvOn .ctChk,html[data-theme="dark"] .ctTv .ctChk.ctOn{background:#3b82f6;border-color:#60a5fa}
 html[data-theme="dark"] .ctTvTitulo{color:#bfdbfe}
 html[data-theme="dark"] .ctTvSub{color:#93c5fd}
+/* --- 1.3.0.1 Refinos da Operação (tema escuro): "Não se aplica" em vermelho suave legível; separador neutro --- */
+html[data-theme="dark"] .fornNaoAplicaBtn{background:#4a2629!important;color:#fecaca!important}
+html[data-theme="dark"] .ctSep{border-top-color:var(--line)}
 </style>
 <script id="zosTemaJs">
 /* V1.1.0.1 Tema por Usuário — rotina SEPARADA dos scripts de negócio/autenticação.
@@ -866,7 +876,7 @@ html[data-theme="dark"] .ctTvSub{color:#93c5fd}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.0 · Checklists e TV</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.1 · Refinos da Operação</div>
 </aside>
 
 <main class="main">
@@ -916,6 +926,7 @@ html[data-theme="dark"] .ctTvSub{color:#93c5fd}
 <label>Título / interesse *<input id="caTitulo" maxlength="200" autocomplete="off" placeholder="Ex.: Vídeo institucional"></label>
 <label>Responsável *<select id="caResponsavel"></select><span id="caResponsavelAjuda" style="display:block;font-weight:400;margin-top:4px"></span></label>
 <label>Origem *<input id="caOrigem" maxlength="120" autocomplete="off" placeholder="Ex.: Indicação, Instagram, Site"></label>
+<label>Temperatura<select id="caTemperatura"><option value="quente">🔴 Quente</option><option value="morno" selected>🟠 Morno</option><option value="frio">🔵 Frio</option></select></label>
 <label style="grid-column:1/-1">Observações<textarea id="caObs" maxlength="4000" placeholder="Resumo do primeiro contato, o que o cliente precisa..."></textarea></label>
 <div id="caListasAviso" style="grid-column:1/-1;display:none;font-size:12px;color:#b45309"><span id="caListasAvisoTexto"></span> <button type="button" class="btn btn2" id="caListasRecarregar" style="padding:3px 8px;font-size:11px" onclick="recarregarListasCriacaoAtendReal()">Tentar novamente</button></div>
 </div>
@@ -8067,7 +8078,7 @@ function renderBuscaFornecedorItem(i){
   +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
   +'<button onclick="aplicarFornecedorManual('+idx+')" style="flex:1;background:#e0e7ff;color:#3730a3;border:none;border-radius:6px;font-size:11px;padding:6px;cursor:pointer;font-weight:700">✏️ Manual</button>'
   +'<button onclick="aplicarFornecedorADefinir('+idx+')" style="flex:1;background:#fef3c7;color:#b45309;border:none;border-radius:6px;font-size:11px;padding:6px;cursor:pointer;font-weight:700">⏳ A definir</button>'
-  +'<button onclick="aplicarFornecedorNaoSeAplica('+idx+')" style="flex:1;background:#f1f5f9;color:#475467;border:none;border-radius:6px;font-size:11px;padding:6px;cursor:pointer;font-weight:700">➖ Não se aplica</button>'
+  +'<button class="fornNaoAplicaBtn" onclick="aplicarFornecedorNaoSeAplica('+idx+')" style="flex:1;border:none;border-radius:6px;font-size:11px;padding:6px;cursor:pointer;font-weight:700">➖ Não se aplica</button>'
   +'</div>'
   +renderInputManualForn(idx)
   +'</div>';
@@ -13123,6 +13134,9 @@ function validarCamposCriacaoAtendimentoReal(c, perfil, listas){
   texto('agencia', 'Agência ou Direto', true);          // obrigatórios como no fluxo de criação anterior
   texto('origem', 'Origem', true);
   texto('observacoes', 'Observações', false);
+  var tempEsc = String(c.temperatura === null || c.temperatura === undefined || c.temperatura === '' ? TEMPERATURA_PADRAO_CRIACAO_ATEND : c.temperatura);
+  if(['quente', 'morno', 'frio'].indexOf(tempEsc) < 0) erros.push('Escolha a temperatura.');
+  v.temperatura = tempEsc;
   // Cliente cadastrado (opcional). Vinculado: o nome gravado é o CANÔNICO da lista
   // validada, nunca o texto do campo; id fora da lista = recusado (nunca vincula
   // seleção obsoleta nem nome antigo).
@@ -13181,7 +13195,7 @@ function montarPayloadCriacaoAtendimentoReal(id, valores, atendimentoId, dataCon
   if(!valores.agencia || !valores.origem) return null;  // obrigatórios
   p.agencia = valores.agencia;
   p.origem = valores.origem;
-  p.temperatura = TEMPERATURA_PADRAO_CRIACAO_ATEND;       // fixa na criação, sempre explícita
+  p.temperatura = (valores.temperatura === 'quente' || valores.temperatura === 'morno' || valores.temperatura === 'frio') ? valores.temperatura : TEMPERATURA_PADRAO_CRIACAO_ATEND;       // escolhida no formulário (padrão morno), sempre explícita, no MESMO insert
   if(valores.observacoes) p.observacoes = valores.observacoes;           // opcional: omitida se vazia
   var ks = Object.keys(p);
   for(var i=0;i<ks.length;i++){ if(CHAVES_INSERT_LEAD_REAL.indexOf(ks[i]) < 0) return null; }
@@ -13348,7 +13362,7 @@ function _ctxCriacaoAtendRealValido(ctx){
 }
 
 // ---- DOM do formulário (somente textContent / createElement) -----------------
-var IDS_CAMPOS_CRIACAO_ATEND_REAL = ['caClienteId','caCliente','caAgencia','caTitulo','caResponsavel','caOrigem','caObs'];
+var IDS_CAMPOS_CRIACAO_ATEND_REAL = ['caClienteId','caCliente','caAgencia','caTitulo','caResponsavel','caOrigem','caTemperatura','caObs'];
 function _elCriacaoAtend(id){ return document.getElementById(id); }
 function _valorCampoCriacaoAtend(id){
   var e = _elCriacaoAtend(id);
@@ -13362,6 +13376,7 @@ function _lerCamposCriacaoAtendReal(){
     titulo:       _valorCampoCriacaoAtend('caTitulo'),
     responsavel:  _valorCampoCriacaoAtend('caResponsavel'),
     origem:       _valorCampoCriacaoAtend('caOrigem'),
+    temperatura:  _valorCampoCriacaoAtend('caTemperatura'),
     observacoes:  _valorCampoCriacaoAtend('caObs')
   };
 }
@@ -13371,7 +13386,7 @@ function _limparCamposCriacaoAtendReal(){
     var e = _elCriacaoAtend(id);
     if(!e) return;
     if(id === 'caResponsavel'){ e.textContent = ''; }
-    e.value = '';
+    e.value = (id === 'caTemperatura') ? TEMPERATURA_PADRAO_CRIACAO_ATEND : '';
     e.disabled = false;
   });
   _mensagemCriacaoAtendReal('', '');
@@ -40811,11 +40826,8 @@ function pjItensFase(d, fase){ return d.chk.st === 'ok' || d.chk.st === 'limite'
 // item trancado pela guarda do banco: fase finalizada tranca tudo; na edição, depois do marco "Edição finalizada" só os itens POSTERIORES seguem livres até a entrega
 function pjItemLiberado(l, it, itens, tipo){
   var c = pjCap(l);
-  if(tipo === 'prod') return c.prod && !l.prodFin;
-  if(!c.ed) return false;
-  if(!l.edFin) return true;
-  var marco = itens.filter(function(x){ return x.titulo === PJ_ITEM_ED_MARCO; })[0];
-  return !!marco && it.ordem > marco.ordem && !l.entregue && (l.status === 'Ajuste' || l.status === 'Ajuste e Entrega' || l.status === 'Entrega');
+  // 1.3.0.1: finalização/entrega não fecha o item (mesmos perfis/UID; projeto terminal já zera pjCap). O banco reconfere tudo.
+  return tipo === 'prod' ? !!c.prod : !!c.ed;
 }
 // ---------------- desenho ----------------
 function pjTrilhoHtml(l){
@@ -41094,7 +41106,7 @@ function pjToggleItemCom(l, it, itens, tipo){
   var id = l.id, itemId = it.id;
   if(!pjItemLiberado(l, it, itens, tipo)){ pjMsg('aviso', 'Este item está fechado: a fase já foi finalizada.'); pjRender(); return; }
   var novo = it.concluido !== true, marco = it.fase === 'edicao' && it.titulo === PJ_ITEM_ED_MARCO && novo && l.status === 'Edição';
-  pjConfirmar(novo ? 'Confirmar item' : 'Desmarcar item', (novo ? 'Confirmar' : 'Desmarcar') + ' "' + it.titulo + '"?' + (marco ? '\nO projeto vai avançar para Ajuste e Entrega.' : ''), 'Confirmar', function(){
+  var executarItem = function(){
     pjAcao({ kind: 'item', id: id, executar: function(){ return it.fase === 'producao' ? pjRpc('atualizar_item_checklist', { p_item_id: itemId, p_concluido: novo }) : pjRpc('pa_checklist_marcar', { p_item_id: itemId, p_concluido: novo }); },
       sucesso: marco ? 'Edição finalizada → Ajuste e Entrega.' : '"' + it.titulo + '": ' + (novo ? 'concluído.' : 'reaberto.') + (novo && it.fase === 'producao' && it.titulo === 'Material no Drive' && l.edic ? ' O prontuário de ' + pjNome(l.edic) + ' passa a mostrar o aviso (não há envio de mensagem).' : ''),
       conferir: function(){
@@ -41104,7 +41116,9 @@ function pjToggleItemCom(l, it, itens, tipo){
           return r.data[0].concluido === novo ? 'aplicado' : 'nao_aplicado';
         }, function(){ return 'indefinido'; });
       } });
-  });
+  };
+  if(marco) pjConfirmar('Confirmar item', 'Confirmar "' + it.titulo + '"?\nO projeto vai avançar para Ajuste e Entrega.', 'Confirmar', executarItem);   // finalização de etapa: confirmação mantida
+  else executarItem();   // 1.3.0.1: marcar/desmarcar item padrão é direto
 }
 // ---- atribuir / reatribuir / ativar fase ----
 var _pjSeqAtrib = 0;
@@ -44902,8 +44916,8 @@ function ctAchaExtra(id){
 // ---------------- capacidades (espelho; o banco confere de novo) ----------------
 function ctCapacidade(l, fase){
   var c = pjCap(l), prod = fase === 'producao', pode = !!(prod ? c.prod : c.ed), sem = prod ? l.semProd : l.semEd, fin = prod ? l.prodFin : l.edFin;
-  return { escrever: pode && !fin && !sem, tv: !prod && !!c.ed && !l.semEd,
-    motivoFechado: pode && fin ? 'Etapa finalizada: os itens extras ficam fechados (a etapa não reabre automaticamente).' : '' };
+  return { escrever: pode && !sem, tv: !prod && !!c.ed && !l.semEd,   // 1.3.0.1: etapa finalizada não fecha os extras
+    motivoFechado: '' };
 }
 
 // ---------------- desenho (strings HTML; todo texto de usuário passa por pjEsc) ----------------
@@ -44949,6 +44963,7 @@ function ctSecaoHtml(l, fase){
   if(ex.st !== 'ok' && ex.st !== 'limite') h += '<div class="ctNota muted" data-pa="ct-extras-indisp">Itens extras indisponíveis agora.</div>';
   else {
     var itens = ctExtrasDe(l.id, fase), nv = e.novos[l.id + '|' + fase];
+    if(itens.length || nv || cap.escrever) h += '<div class="ctSep" data-pa="ct-sep"></div><h3 class="ctDemTitulo" data-pa="ct-demandas-titulo">Demandas</h3>';
     h += '<div class="ctLista">' + itens.map(function(x){ return ctLinhaHtml(x, cap); }).join('') + (nv ? ctNovoHtml(nv) : '') + '</div>';
     if(cap.escrever && itens.length + (nv ? 1 : 0) < CT_MAX_POR_FASE) h += '<button type="button" class="btn btn2 ctAddBtn" data-pa="ct-add-' + fase + '"' + (estadoPJ.acao ? ' disabled' : '') + ' onclick="ctExtraAdicionar(this)">＋ Adicionar item extra</button>';
     if(cap.motivoFechado) h += '<div class="ctNota muted" data-pa="ct-fechado">' + pjEsc(cap.motivoFechado) + '</div>';
@@ -45539,6 +45554,123 @@ limparVisaoGeralRealPorAuth = function(){ try { ctLimpar(); } catch(_e){} return
   if(crSessao()) ctPollArmar();
 })();
 // END 1.3.0.0 CHECKLISTS E TV
+// BEGIN 1.3.0.1 REFINOS DA OPERAÇÃO: (3) Histórico Comercial · "Valor estimado" mostra o VALOR AO CLIENTE do orçamento vigente salvo; (4) confirmação de mudança de etapa logo abaixo do Kanban.
+// (3) Fonte: public.orcamentos (RLS da conta), última versão por atendimento (mesma regra/validação voOrcPorLead do placar); nunca custos, estimativa do atendimento (leads.valor_estimado) nem rascunhos/revisões V2.
+//     Leitura em LOTES por lead_id (poucas consultas, não uma por linha). Sem orçamento ⇒ "—"; valor 0 ⇒ R$ 0; carregando ⇒ "…"; erro/ambíguo ⇒ "—". Só leitura, nada é gravado.
+// (4) O contêiner do painel (o MESMO nó do prontuário, com todos os botões/validações/RPCs) passa a ficar logo abaixo do Kanban para Confirmar avanço/recuperação, com OS, cliente e destino. Nada de regra muda.
+var hvOrc = { base: '', pedido: '', status: 'idle', mapa: {}, falhos: {}, inconsistentes: {}, gen: 0 };
+var HV_LOTE = 50;
+function hvIdsLeads(){
+  var st = estadoComercialLeadsReais, rows = st && Array.isArray(st.rawRows) ? st.rawRows : [];
+  return rows.filter(function(r){ return r && typeof r.id === 'string' && RE_UUID_PRONT_REAL.test(r.id); }).map(function(r){ return String(r.id); });
+}
+function hvGarantir(){
+  var st = estadoComercialLeadsReais, base = co2KbBase();
+  if(!base || st.sourceMode !== 'real' || st.loadStatus !== 'loaded' || typeof supabaseClient === 'undefined' || !supabaseClient) return;
+  if(hvOrc.base !== base) hvOrc = { base: base, pedido: '', status: 'idle', mapa: {}, falhos: {}, inconsistentes: {}, gen: hvOrc.gen + 1 };
+  var ids = hvIdsLeads(); if(!ids.length) return;
+  var pedido = String(st.requestId) + '#' + Math.floor(Date.now() / 120000) + '#' + ids.slice().sort().join(',');
+  if(hvOrc.pedido === pedido) return;   // já pedido (em andamento, pronto ou com erro) nesta janela de 2 min
+  var gen = ++hvOrc.gen, todas = [], falhos = {}, seq = Promise.resolve();
+  hvOrc.pedido = pedido; hvOrc.status = 'carregando';
+  var reqId = st.requestId;   // a lista foi relida (outra requisição) antes da resposta ⇒ resposta descartada; conta/época/perfil também (co2KbBase)
+  var vivo = function(){ var e = estadoComercialLeadsReais; return gen === hvOrc.gen && hvOrc.base === co2KbBase() && e.sourceMode === 'real' && e.loadStatus === 'loaded' && e.requestId === reqId; };
+  co2KbEmLotes(ids, HV_LOTE).forEach(function(lote){
+    seq = seq.then(function(){
+      if(!vivo()) return;
+      return co2KbLer(function(){ return supabaseClient.from('orcamentos').select(VO_COL_ORC).in('lead_id', lote).range(0, CO2_KB_LIMITE_LEITURA - 1); }).then(function(r){
+        if(!vivo()) return;
+        if(!r.ok) lote.forEach(function(id){ falhos[id] = true; }); else r.rows.forEach(function(o){ todas.push(o); });
+      });
+    });
+  });
+  seq.then(function(){
+    if(!vivo()) return;
+    var calc = voOrcPorLead(todas), qtdFalhos = Object.keys(falhos).length;
+    hvOrc.mapa = calc.mapa; hvOrc.inconsistentes = calc.inconsistentes; hvOrc.falhos = falhos;
+    hvOrc.status = qtdFalhos >= ids.length ? 'erro' : (qtdFalhos ? 'parcial' : 'ok');
+    hvAplicarCelulas();
+  }, function(){ if(vivo()){ hvOrc.status = 'erro'; hvAplicarCelulas(); } });
+}
+var HV_DICA_VALOR = 'Valor ao cliente do orçamento vigente salvo (última versão). Não é custo, nem estimativa do atendimento, nem rascunho de revisão.';
+function hvAplicarCelulas(){
+  var tbl = document.getElementById('tabelaHistorico'); if(!tbl) return;
+  var st = estadoComercialLeadsReais, mesmoCtx = hvOrc.base === co2KbBase();
+  var ths = tbl.querySelectorAll('th'); for(var i = 0; i < ths.length; i++){ if(ths[i].textContent === 'Valor estimado') ths[i].title = HV_DICA_VALOR; }
+  var linhas = tbl.querySelectorAll('tr[data-os]');
+  for(var j = 0; j < linhas.length; j++){
+    var tds = linhas[j].children, td = tds[tds.length - 1]; if(!td) continue;
+    var raw = st.rawByOs && typeof st.rawByOs.get === 'function' ? st.rawByOs.get(String(linhas[j].getAttribute('data-os'))) : null, id = raw ? String(raw.id || '') : '';
+    var texto = '…', dica = 'Lendo o orçamento vigente…';
+    if(mesmoCtx && (hvOrc.status === 'ok' || hvOrc.status === 'parcial' || hvOrc.status === 'erro')){
+      var m = id ? hvOrc.mapa[id] : null;
+      if(!id || hvOrc.falhos[id] || hvOrc.inconsistentes[id] || hvOrc.status === 'erro'){ texto = '—'; dica = 'Não foi possível ler o orçamento deste atendimento agora.'; }
+      else if(m){ texto = voReais(m.valorC); dica = HV_DICA_VALOR + ' Versão ' + m.versao + '.'; }
+      else { texto = '—'; dica = 'Sem orçamento salvo.'; }
+    }
+    td.textContent = texto; td.title = dica;
+  }
+}
+var _hvRenderHist = renderHistoricoComercialReal;
+renderHistoricoComercialReal = function(){
+  var r = _hvRenderHist.apply(this, arguments);
+  try { hvGarantir(); hvAplicarCelulas(); } catch(e){ try { console.error('ZIP OS · Histórico/valor ao cliente:', e && e.message); } catch(_e){} }
+  return r;
+};
+var _hvLimpaAuth = limparVisaoGeralRealPorAuth;
+limparVisaoGeralRealPorAuth = function(){ try { hvOrc = { base: '', pedido: '', status: 'idle', mapa: {}, falhos: {}, inconsistentes: {}, gen: hvOrc.gen + 1 }; } catch(_e){} return _hvLimpaAuth.apply(this, arguments); };
+
+// ---- (4) confirmação de mudança de etapa logo abaixo do Kanban ----
+function hvSlotEtapa(criar){
+  var s = document.getElementById('hvEtapaSlot');
+  if(!s && criar){
+    var k = document.querySelector('.kanban.commercial4'); if(!k || !k.parentNode) return null;
+    s = document.createElement('div'); s.id = 'hvEtapaSlot'; s.setAttribute('data-pa', 'etapa-confirmacao'); s.style.display = 'none';
+    k.parentNode.insertBefore(s, k.nextSibling);
+  }
+  return s;
+}
+function hvEtapaEsvaziar(){ var s = document.getElementById('hvEtapaSlot'); if(s){ s.textContent = ''; s.style.display = 'none'; } }
+function hvEtapaPosicionar(){
+  var st = estadoProntuarioAtendReal, r = st._refs;
+  // só age com o Comercial ATIVO e o prontuário do próprio Comercial (o Financeiro hospeda outro prontuário: nunca extrair o painel dele para um Kanban oculto)
+  var noComercial = false;
+  try { noComercial = !!(_comercialSecaoAtiva() && r && r.box && r.box === document.getElementById('detalheLeadComercialReal')); } catch(_e){}
+  var quer = !!(noComercial && r.painel && r.raiz && r.raiz.isConnected && (st.painel === 'avancar' || st.painel === 'recuperar') && r.painel.firstChild);
+  var slot = hvSlotEtapa(quer);
+  if(!quer){
+    if(slot && r && r.painel && r.painel.parentNode === slot && r.raiz && r.raiz.isConnected) r.raiz.insertBefore(r.painel, r.acoes);   // painel fechado/outro: volta para o prontuário
+    hvEtapaEsvaziar(); return;
+  }
+  if(!slot) return;
+  var l = st.lead || st.leadLista || {}, a = {}, destino = '—';
+  try { a = acoesDisponiveisProntReal() || {}; destino = ROTULO_ETAPA_PRONT_REAL[st.painel === 'avancar' ? a.alvoAvanco : a.alvoRecuperar] || '—'; } catch(_e){}
+  var atual = ROTULO_ETAPA_PRONT_REAL[_textoProntReal(l.etapa)] || _textoProntReal(l.etapa) || '—';
+  var ident = slot.querySelector('.hvEtapaIdent');
+  if(!ident){ ident = document.createElement('div'); ident.className = 'hvEtapaIdent'; ident.setAttribute('data-pa', 'etapa-ident'); }
+  var t1 = 'Confirmar mudança de etapa — ' + (st.os || '') + (l.cliente_nome ? ' · ' + _textoProntReal(l.cliente_nome) : ''), t2 = atual + ' → ' + destino;
+  if(ident.getAttribute('data-t') !== t1 + '|' + t2){
+    ident.textContent = ''; ident.setAttribute('data-t', t1 + '|' + t2);
+    var b = document.createElement('b'); b.textContent = t1; var sp = document.createElement('span'); sp.textContent = 'Etapa: ' + t2;
+    ident.appendChild(b); ident.appendChild(sp);
+  }
+  if(r.painel.parentNode !== slot){ slot.textContent = ''; slot.appendChild(ident); slot.appendChild(r.painel); }
+  else if(ident.parentNode !== slot) slot.insertBefore(ident, r.painel);
+  slot.style.display = '';
+}
+var _hvRenderPront = _renderProntuarioAtendReal;
+_renderProntuarioAtendReal = function(){
+  try {
+    var s = estadoProntuarioAtendReal, box = document.getElementById('detalheLeadComercialReal');
+    if(!s._refs || !s._refs.raiz || s._refs.box !== box) hvEtapaEsvaziar();   // o prontuário será reconstruído: o painel antigo é descartado junto
+  } catch(_e){}
+  var r = _hvRenderPront.apply(this, arguments);
+  try { hvEtapaPosicionar(); } catch(e){ try { console.error('ZIP OS · confirmação de etapa:', e && e.message); } catch(_e){} }
+  return r;
+};
+var _hvLimpaPront = _limparEstadoProntReal;
+_limparEstadoProntReal = function(){ try { hvEtapaEsvaziar(); } catch(_e){} return _hvLimpaPront.apply(this, arguments); };
+// END 1.3.0.1 REFINOS DA OPERAÇÃO
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

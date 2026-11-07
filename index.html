@@ -305,6 +305,28 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 .hvEtapaIdent{margin-top:12px;font-size:13px;line-height:1.4}
 .hvEtapaIdent b{display:block;font-size:14px;color:var(--ink)}
 .hvEtapaIdent span{color:var(--muted)}
+/* 1.3.0.2 · Demandas no Histórico — só classes novas (hvDem*); nenhuma regra existente foi alterada. Controle neutro (mesmas variáveis dos filtros); a lista é um popover flutuante (position:fixed no body) no amarelo das demandas. */
+.hvDemTabela td:first-child,.hvDemTabela td.hvDemTd{white-space:nowrap}
+.hvDemTd{min-width:150px;vertical-align:middle}
+.hvDemWrap{display:block}
+.hvDemBtn{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font-family:Arial;font-size:13px;white-space:nowrap;cursor:pointer}
+.hvDemBtn:hover{border-color:#d49a00}
+.hvDemBtn:focus-visible{outline:2px solid #1e3a5f;outline-offset:2px}
+.hvDemBtn[aria-expanded="true"] .hvDemSeta{transform:rotate(180deg)}
+.hvDemSeta{font-size:10px;line-height:1}
+.hvDemPainel{position:fixed;z-index:950;box-sizing:border-box;width:300px;max-width:calc(100vw - 16px);max-height:190px;overflow-y:auto;overscroll-behavior:contain;border:1px solid #f1d36b;background:#fff5c2;border-radius:10px;padding:2px 10px;box-shadow:0 8px 24px rgba(0,0,0,.18);cursor:default;text-align:left;font-family:Arial}
+.hvDemPainel:focus-visible{outline:2px solid #1e3a5f;outline-offset:2px}
+.hvDemLista{list-style:none;margin:0;padding:0}
+.hvDemLista li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f1d36b;font-size:13px;line-height:1.35;color:#5c3d00}
+.hvDemLista li:last-child{border-bottom:0}
+.hvDemSt{flex:0 0 16px;text-align:center;font-weight:800;color:#8a5a00}
+.hvDemSt.hvDemOk{color:#4a3200}
+.hvDemTxt{flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.hvDemSr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.hvDemParcial{font-size:11px;padding:4px 0 6px}
+.hvDemVazio{font-size:12px}
+.hvDemNota{font-size:12px;margin:0 0 8px}
+@media(max-width:700px){.hvDemTd{min-width:130px}.hvDemBtn{min-height:40px}}
 </style>
 <style id="zosTemaCss">
 /* ===== V1.1.0.0 TEMA ESCURO — bloco ADICIONAL e escopado (html[data-theme="dark"]). O Tema Claro (padrão) não recebe nenhuma regra daqui,
@@ -473,6 +495,12 @@ html[data-theme="dark"] .ctTvSub{color:#93c5fd}
 /* --- 1.3.0.1 Refinos da Operação (tema escuro): "Não se aplica" em vermelho suave legível; separador neutro --- */
 html[data-theme="dark"] .fornNaoAplicaBtn{background:#4a2629!important;color:#fecaca!important}
 html[data-theme="dark"] .ctSep{border-top-color:var(--line)}
+/* --- 1.3.0.2 Demandas no Histórico (tema escuro): lista aberta no mesmo âmbar escuro das demandas; controle usa as variáveis escuras dos filtros --- */
+html[data-theme="dark"] .hvDemBtn:hover{border-color:#c99a1e}
+html[data-theme="dark"] .hvDemPainel{background:#3d3422;border-color:#6b5a2a}
+html[data-theme="dark"] .hvDemLista li{color:#ffe08a;border-bottom-color:#6b5a2a}
+html[data-theme="dark"] .hvDemSt{color:#e0b020}
+html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </style>
 <script id="zosTemaJs">
 /* V1.1.0.1 Tema por Usuário — rotina SEPARADA dos scripts de negócio/autenticação.
@@ -876,7 +904,7 @@ html[data-theme="dark"] .ctSep{border-top-color:var(--line)}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.1 · Refinos da Operação</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.2 · Demandas no Histórico</div>
 </aside>
 
 <main class="main">
@@ -40009,7 +40037,8 @@ function opCriarRenderizadores(projects, leads){
    });
    return Math.max(0,xp);
   }
-  function renderHistoricoOper(){
+  function renderHistoricoOper(){var __hvS=opHistDemSnapshot();try{renderHistoricoOperBase();}finally{opHistDemRestaurar(__hvS);}}
+  function renderHistoricoOperBase(){
    var el=document.getElementById('histOperContainer');if(!el)return;
    var nome=histOperNome;var tipo=histOperTipo;
    var rows=projects.filter(function(p){
@@ -40017,7 +40046,7 @@ function opCriarRenderizadores(projects, leads){
     var isDele=tipo==='prod'?p[8]===nome:p[9]===nome;
     return opHistDono(p,tipo,isDele)&&(isEnc||opHistEtapaConcluida(p,tipo));
    });
-   var q=normalizeText(document.getElementById('histOperSearch')?.value||'');
+   var q=opHistNorm(document.getElementById('histOperSearch')?.value||'');
    var mes=document.getElementById('histOperMes')?.value||'';
    var ano=document.getElementById('histOperAno')?.value||'';
    var resp=document.getElementById('histOperResp')?.value||'';
@@ -40037,26 +40066,29 @@ function opCriarRenderizadores(projects, leads){
    }
    var status=document.getElementById('histOperStatus')?.value||'';
    var filtered=rows.filter(function(p){
-    var txt=normalizeText([p[0],p[1],p[4]].join(' '));
+    var txt=opHistBuscaTexto(p,tipo);
     var dc=(p[17]&&p[17][0]&&p[17][0].dataCriacao)||p[6]||'';
     var pts=dc.split('/');
     return(!q||txt.includes(q))&&(!status||p[5]===status)&&(!resp||p[7]===resp)&&(!mes||pts[1]===mes)&&(!ano||(pts[2]&&pts[2].substring(0,4)===ano));
    });
    el.innerHTML='';
-   if(!filtered.length){el.innerHTML='<p class="muted" style="padding:12px;font-size:14px">Nenhum projeto no histórico encontrado.</p>';return;}
+   if(!filtered.length){el.innerHTML='<p class="muted" style="padding:12px;font-size:14px">Nenhum projeto no histórico encontrado.</p>';var __hvN0=opHistDemNota(rows,tipo,q);if(__hvN0)el.appendChild(__hvN0);return;}
    var wrap=document.createElement('div');wrap.style.cssText='overflow-x:auto';
-   var tbl=document.createElement('table');tbl.className='table';tbl.style.cssText='width:100%';
-   tbl.innerHTML='<tr><th>OS</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Data do projeto</th><th>Atendimento</th></tr>';
+   var tbl=document.createElement('table');tbl.className='table hvDemTabela';tbl.style.cssText='width:100%';
+   tbl.innerHTML='<tr><th>OS</th><th>Cliente</th><th>Tipo</th><th>Demandas</th><th>Status</th><th>Data do projeto</th><th>Atendimento</th></tr>';
    filtered.forEach(function(p){
     var dc=(p[17]&&p[17][0]&&p[17][0].dataCriacao)||p[6]||'—';
     var sc=p[5]==='Encerrado'?'ok':'danger';
     var tr=document.createElement('tr');tr.style.cssText='cursor:pointer';
     tr.innerHTML='<td><b>'+pjEsc(p[0])+'</b></td><td>'+pjEsc(p[1])+'</td><td>'+pjEsc(p[4])+'</td>'
+     +'<td class="hvDemTd"></td>'
      +'<td>'+opHistStatusHtml(p,tipo,sc)+'</td>'
      +'<td>'+pjEsc(dc)+'</td><td>'+pjEsc(p[7])+'</td>';
+    opHistDemCelula(tr.children[3],p,tipo);
     tr.addEventListener('click',(function(os,t){return function(){abrirOperacaoProntuario(os,t);};})(p[0],tipo));
     tbl.appendChild(tr);
    });
+   var __hvN1=opHistDemNota(rows,tipo,q);if(__hvN1)el.appendChild(__hvN1);
    wrap.appendChild(tbl);el.appendChild(wrap);
   }
   function abrirOperacaoProntuarioLocal(os,tipo){
@@ -45671,6 +45703,183 @@ _renderProntuarioAtendReal = function(){
 var _hvLimpaPront = _limparEstadoProntReal;
 _limparEstadoProntReal = function(){ try { hvEtapaEsvaziar(); } catch(_e){} return _hvLimpaPront.apply(this, arguments); };
 // END 1.3.0.1 REFINOS DA OPERAÇÃO
+// BEGIN 1.3.0.2 DEMANDAS NO HISTÓRICO: "Meu histórico de projetos" (Produção/Edição) ganha a coluna Demandas entre Tipo e Status, com controle compacto SOMENTE de consulta que abre/fecha a lista das demandas
+// personalizadas (amarelas, checklist_extras) da OS naquela etapa (Produção só 'producao', Edição só 'edicao'), e a busca do histórico passa a incluir os títulos delas (sem acento e sem diferenciar maiúsculas).
+// A lista é um POPOVER flutuante (como o dropdown dos filtros): vive em document.body com position:fixed calculado pelo retângulo do botão, SOBRE a tabela — não empurra linhas (uma linha por OS) e não é cortado
+// pelo overflow-x da tabela. Um único popover existe por vez; é removido ao fechar, ao repintar (é recriado), na troca de conta/época/perfil e quando a linha some (sem órfãos).
+// Nenhuma leitura nova: usa o store ctEstado.por já carregado em bloco por ctLerCt / polling de 120 s (RLS: só projetos da conta). Não grava, não cria cópia, não toca itens verdes padrão, checklist pessoal, TV nem financeiro.
+// Texto de usuário só entra no DOM por textContent. Um único conjunto de listeners no documento/janela (clique fora, Esc, rolagem da página, resize).
+var opHistDem = { ident: '', aberto: '', wrap: null, painel: null, ligado: false };
+function opHistNorm(t){ return normalizeText(t == null ? '' : t).replace(/\s+/g, ' ').trim(); }   // NFD sem acentos/cedilha/til + minúsculas + espaços únicos
+function opHistDemIdent(){ try { return crSessao() ? pjUid() + '|' + crEpoch() + '|' + pjPerfilAtivo() : ''; } catch(_e){ return ''; } }
+function opHistDemSincronizar(){   // outra conta/época/perfil (ou sem sessão) ⇒ nada permanece aberto
+  var id = opHistDemIdent();
+  if(opHistDem.ident !== id || !id){ opHistDem.ident = id; opHistDemFechar(false); }
+  return id !== '';
+}
+function opHistDemFase(tipo){ return tipo === 'prod' ? 'producao' : tipo === 'ed' ? 'edicao' : ''; }
+// leitura do store: { st: 'ok' | 'parcial' | 'lendo' | 'indisp', itens: [{ id, texto, concluido }] } — falha/leitura em curso NUNCA vira "sem demandas"
+function opHistDemLer(id, tipo){
+  var fase = opHistDemFase(tipo), vazio = function(st){ return { st: st, itens: [] }; };
+  if(!fase || typeof id !== 'string' || !pjUuid(id)) return vazio('indisp');
+  try { if(!ctSincronizarIdentidade()) return vazio('indisp'); } catch(_e){ return vazio('indisp'); }
+  var s = ctEstado.por[id];
+  if(!s || !s.cex) return vazio(ctEstado.opSt === 'carregando' || ctEstado.opSt === 'idle' ? 'lendo' : 'indisp');
+  if(s.cex.st !== 'ok' && s.cex.st !== 'limite') return vazio('indisp');
+  var itens = ctExtrasDe(id, fase).map(function(x){ return { id: String(x.id), texto: String(x.texto), concluido: x.concluido === true }; });
+  if(s.cex.st === 'limite' && !itens.length) return vazio('indisp');   // leitura cortada pelo limite: ausência não prova "sem demandas"
+  return { st: s.cex.st === 'limite' ? 'parcial' : 'ok', itens: itens };
+}
+// texto pesquisável da linha: campos que já eram pesquisados + TODOS os títulos das demandas (abertas ou fechadas, pendentes ou concluídas); '\u0001' separa itens para uma busca não atravessar dois títulos
+function opHistBuscaTexto(p, tipo){
+  var base = opHistNorm([p[0], p[1], p[4]].join(' ')), d = opHistDemLer(p && p.__uuid, tipo);
+  return base + d.itens.map(function(x){ return '\u0001' + opHistNorm(x.texto); }).join('');
+}
+// aviso honesto acima da tabela (ou junto de "nenhum projeto") quando há busca e a fonte das demandas está incompleta
+function opHistDemNota(rows, tipo, q){
+  if(!q) return null;
+  var lendo = 0, indisp = 0, parcial = 0;
+  (rows || []).forEach(function(p){ var d = opHistDemLer(p && p.__uuid, tipo); if(d.st === 'lendo') lendo++; else if(d.st === 'indisp') indisp++; else if(d.st === 'parcial') parcial++; });
+  var msg = '';
+  if(lendo) msg = 'Ainda lendo as demandas: a busca por demandas pode estar incompleta.';
+  else if(indisp) msg = 'As demandas de ' + indisp + (indisp === 1 ? ' projeto' : ' projetos') + ' estão indisponíveis agora: a busca por demandas está incompleta. Use Atualizar.';
+  else if(parcial) msg = 'Algumas listas de demandas foram lidas só em parte (limite de leitura): a busca por demandas pode estar incompleta.';
+  if(!msg) return null;
+  var n = document.createElement('p'); n.className = 'muted hvDemNota'; n.setAttribute('data-pa', 'hv-dem-nota'); n.textContent = msg; return n;
+}
+// ---- popover ----
+function opHistDemFechar(devolverFoco){   // remove o popover do body (se existir) e zera o estado; idempotente
+  var w = opHistDem.wrap, pn = opHistDem.painel; opHistDem.aberto = ''; opHistDem.wrap = null; opHistDem.painel = null;
+  if(pn && pn.parentNode) pn.parentNode.removeChild(pn);
+  if(!w) return;
+  var b = w.querySelector('.hvDemBtn');
+  if(b){ b.setAttribute('aria-expanded', 'false'); if(devolverFoco && b.focus) b.focus(); }
+}
+function opHistDemPosicionar(){   // posição fixa pelo retângulo do botão: abaixo, ou acima se faltar espaço; sempre dentro da janela; lista rola por dentro (máx. 190 px)
+  var w = opHistDem.wrap, pn = opHistDem.painel; if(!w || !pn) return;
+  var b = w.querySelector('.hvDemBtn'), r = b && b.getBoundingClientRect ? b.getBoundingClientRect() : null;
+  var vw = (document.documentElement && document.documentElement.clientWidth) || window.innerWidth || 0, vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
+  if(!r || (!r.width && !r.height) || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw){ opHistDemFechar(false); return; }   // botão sumiu (outra tela/rolou para fora): não deixa popover solto
+  var m = 8, g = 4, larg = Math.max(120, Math.min(360, Math.max(r.width, 260), vw - 2 * m));
+  pn.style.width = larg + 'px'; pn.style.left = Math.max(m, Math.min(r.left, vw - larg - m)) + 'px'; pn.style.maxHeight = '190px';
+  var h = Math.min(pn.offsetHeight || pn.scrollHeight || 190, 190), abaixo = vh - r.bottom - g - m, acima = r.top - g - m, sobe = h > abaixo && acima > abaixo;
+  var mh = Math.min(190, Math.max(sobe ? acima : abaixo, 60)); pn.style.maxHeight = mh + 'px';
+  var h2 = Math.min(h, mh); pn.style.top = Math.max(m, sobe ? r.top - g - h2 : r.bottom + g) + 'px';
+}
+function opHistDemAbrirDom(wrap, d, id, focarPainel){
+  var btn = wrap.querySelector('.hvDemBtn'); if(!btn) return;
+  if(opHistDem.painel && opHistDem.painel.parentNode) opHistDem.painel.parentNode.removeChild(opHistDem.painel);   // nunca dois (nem órfão de repintura)
+  var pn = document.createElement('div'); pn.className = 'hvDemPainel'; pn.id = 'hvDemPainel-' + id; pn.setAttribute('role', 'region'); pn.setAttribute('tabindex', '0');
+  pn.setAttribute('aria-label', 'Demandas da OS ' + (wrap.getAttribute('data-hv-os') || '')); pn.setAttribute('data-pa', 'hv-dem-painel');
+  var ul = document.createElement('ul'); ul.className = 'hvDemLista';
+  d.itens.forEach(function(x){
+    var li = document.createElement('li'), st = document.createElement('span'), sr = document.createElement('span'), tx = document.createElement('span');
+    st.className = 'hvDemSt' + (x.concluido ? ' hvDemOk' : ''); st.setAttribute('aria-hidden', 'true'); st.textContent = x.concluido ? '✓' : '○';
+    sr.className = 'hvDemSr'; sr.textContent = x.concluido ? 'Concluída: ' : 'Pendente: ';
+    tx.className = 'hvDemTxt'; tx.textContent = x.texto;
+    li.appendChild(st); li.appendChild(sr); li.appendChild(tx); ul.appendChild(li);
+  });
+  pn.appendChild(ul);
+  if(d.st === 'parcial'){ var nt = document.createElement('div'); nt.className = 'muted hvDemParcial'; nt.textContent = 'Mostrando só parte das demandas (limite de leitura).'; pn.appendChild(nt); }
+  pn.addEventListener('click', function(ev){ if(ev && ev.stopPropagation) ev.stopPropagation(); });   // mexer na lista nunca a fecha nem abre prontuário
+  pn.addEventListener('keydown', function(ev){ if(ev && ev.key === 'Tab') opHistDemFechar(true); });   // Tab/Shift+Tab saem da lista: fecha e segue a partir do botão
+  document.body.appendChild(pn); btn.setAttribute('aria-expanded', 'true');
+  opHistDem.aberto = id; opHistDem.wrap = wrap; opHistDem.painel = pn;
+  opHistDemPosicionar();
+  if(focarPainel && pn.focus) pn.focus({ preventScroll: true });
+}
+function opHistDemAlternar(wrap, porTeclado){
+  if(!wrap || !opHistDemSincronizar()) return;
+  var id = wrap.getAttribute('data-hv-id'), ja = opHistDem.aberto === id;
+  opHistDemFechar(false);
+  if(ja) return;
+  var d = opHistDemLer(id, wrap.getAttribute('data-hv-tipo'));
+  if((d.st !== 'ok' && d.st !== 'parcial') || !d.itens.length) return;
+  opHistDemAbrirDom(wrap, d, id, !!porTeclado);   // aberto pelo teclado: foco vai para a lista (rolagem por setas)
+}
+function opHistDemDentro(t){ var w = opHistDem.wrap, p = opHistDem.painel; return !!(t && ((w && w.contains && w.contains(t)) || (p && p.contains && p.contains(t)))); }
+function opHistDemGlobais(){   // UM conjunto de listeners (idempotente): clique fora, Esc, rolagem da página e resize
+  if(opHistDem.ligado) return; opHistDem.ligado = true;
+  document.addEventListener('click', function(ev){
+    if(!opHistDem.aberto) return;
+    if(opHistDemDentro(ev && ev.target)) return;
+    opHistDemFechar(false);
+  });
+  document.addEventListener('keydown', function(ev){
+    if(!opHistDem.aberto || !ev || (ev.key !== 'Escape' && ev.key !== 'Esc')) return;
+    opHistDemFechar(opHistDemDentro(document.activeElement));
+  });
+  document.addEventListener('scroll', function(ev){   // rolagem da página/da tabela reposiciona; a rolagem INTERNA da lista é ignorada (e preservada)
+    if(!opHistDem.aberto) return;
+    var t = ev && ev.target; if(opHistDem.painel && t && opHistDem.painel.contains && opHistDem.painel.contains(t)) return;
+    opHistDemPosicionar();
+  }, true);
+  window.addEventListener('resize', function(){ if(opHistDem.aberto) opHistDemPosicionar(); });
+}
+function opHistDemCelula(td, p, tipo){   // preenche a célula da coluna Demandas de UMA linha (a linha continua abrindo o prontuário; só o controle não)
+  if(!td) return;
+  opHistDemGlobais(); opHistDemSincronizar();
+  var id = p && p.__uuid ? String(p.__uuid) : '', d = opHistDemLer(id, tipo), os = String(p && p[0] != null ? p[0] : '');
+  td.textContent = '';
+  var msg = d.st === 'lendo' ? 'Lendo…' : d.st === 'indisp' ? 'Indisponível' : !d.itens.length ? 'Nenhuma' : '';
+  if(msg){
+    var m = document.createElement('span'); m.className = 'muted hvDemVazio'; m.setAttribute('data-pa', 'hv-dem-' + d.st); m.textContent = msg;
+    if(d.st === 'indisp') m.title = 'Não foi possível ler as demandas agora. Use Atualizar.';
+    td.appendChild(m); return;
+  }
+  var n = d.itens.length, pend = d.itens.filter(function(x){ return !x.concluido; }).length;
+  var wrap = document.createElement('div'); wrap.className = 'hvDemWrap'; wrap.setAttribute('data-hv-id', id); wrap.setAttribute('data-hv-tipo', tipo); wrap.setAttribute('data-hv-os', os);
+  var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hvDemBtn'; btn.setAttribute('data-hv-btn', id); btn.setAttribute('data-pa', 'hv-dem-btn');
+  btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-haspopup', 'true'); btn.setAttribute('aria-controls', 'hvDemPainel-' + id);
+  btn.setAttribute('aria-label', 'Demandas da OS ' + os + ': ' + n + (n === 1 ? ' item' : ' itens') + ', ' + pend + (pend === 1 ? ' pendente' : ' pendentes'));
+  var tx = document.createElement('span'); tx.textContent = 'Demandas (' + n + (d.st === 'parcial' ? '+' : '') + ')';
+  var seta = document.createElement('span'); seta.className = 'hvDemSeta'; seta.setAttribute('aria-hidden', 'true'); seta.textContent = '▾';
+  btn.appendChild(tx); btn.appendChild(seta); wrap.appendChild(btn);
+  wrap.addEventListener('click', function(ev){ if(ev && ev.stopPropagation) ev.stopPropagation(); });   // mexer no controle nunca abre o prontuário
+  btn.addEventListener('click', function(ev){ if(ev && ev.stopPropagation) ev.stopPropagation(); opHistDemAlternar(wrap, !!ev && ev.detail === 0); });   // detail 0 = ativado pelo teclado
+  td.appendChild(wrap);
+  if(opHistDem.aberto === id) opHistDem.wrap = wrap;   // repintura: só retém o id e o NOVO wrap. O botão ainda está fora do documento (a linha é anexada depois): o popover é recriado/posicionado em opHistDemRestaurar
+}
+// foco e rolagem sobrevivem à repintura do histórico (polling de 120 s reconstrói a tabela)
+function opHistDemSnapshot(){
+  var s = { foco: '', painel: false, rolagem: 0 };
+  try {
+    var ae = document.activeElement, pn = opHistDem.painel;
+    if(ae && ae.getAttribute && ae.getAttribute('data-hv-btn')) s.foco = ae.getAttribute('data-hv-btn');
+    if(pn && opHistDem.aberto){ s.rolagem = pn.scrollTop || 0; if(ae === pn) s.painel = true; }
+  } catch(_e){}
+  return s;
+}
+function opHistDemRestaurar(s){
+  try {
+    var cont = document.getElementById('histOperContainer'); if(!cont) return;
+    var w = opHistDem.wrap, id = opHistDem.aberto;
+    if(id){   // só AGORA a tabela já está anexada: o botão novo tem retângulo real
+      if(!w || !(cont.contains && cont.contains(w))) opHistDemFechar(false);   // a linha aberta saiu da lista (filtro/dados/tela): o popover vai junto
+      else {
+        var d = opHistDemLer(id, w.getAttribute('data-hv-tipo'));
+        if((d.st === 'ok' || d.st === 'parcial') && d.itens.length) opHistDemAbrirDom(w, d, id, false);   // remove o popover antigo e cria o novo já posicionado
+        else opHistDemFechar(false);
+      }
+    }
+    var pn = opHistDem.painel;
+    if(pn && s.rolagem) pn.scrollTop = s.rolagem;
+    if(s.painel && pn && pn.focus) pn.focus({ preventScroll: true });
+    else if(s.foco && pjUuid(s.foco)){ var b = cont.querySelector('[data-hv-btn="' + s.foco + '"]'); if(b && b.focus) b.focus({ preventScroll: true }); }
+  } catch(_e){}
+}
+var _hvDemLimpaFiltros = opLimparFiltrosHistorico;
+opLimparFiltrosHistorico = function(){ opHistDemFechar(false); return _hvDemLimpaFiltros.apply(this, arguments); };   // logout/troca de conta/perfil
+// Atualização automática na ENTRADA DIRETA da Operação pessoal: o timer único de 120 s (ctPollArmar) só era armado no carregamento (se já houvesse sessão), em show() e na Visão Geral; quem entra logado direto em
+// Produção/Edição (sem passar por show) ficava sem atualização. Depois de renderizar a Operação com sessão e Operação ativa, chama o MESMO armador idempotente (nunca cria segundo timer; ctPollTick, ctEditandoMotivo,
+// guardas de seção/visibilidade/UID e o executor ficam como estão). Logout (ctLimpar) para o timer; a próxima entrada o arma de novo.
+var _hvDemRenderOperacao = renderOperacao;
+renderOperacao = function(){
+  var r = _hvDemRenderOperacao.apply(this, arguments);
+  try { if(crSessao() && estadoPJ.op && estadoPJ.op.ativo && ctSincronizarIdentidade()) ctPollArmar(); } catch(_e){}
+  return r;
+};
+// END 1.3.0.2 DEMANDAS NO HISTÓRICO
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

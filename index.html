@@ -904,7 +904,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.4 · Editor e Propostas</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.5 · Modelos no Editor</div>
 </aside>
 
 <main class="main">
@@ -1932,7 +1932,6 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <span style="font-size:22px">📄</span>
    <h2 style="margin:0">Templates de contrato</h2>
   </div>
-  <button class="btn" onclick="abrirModalTemplate('')">+ Novo template</button>
  </div>
  <p class="muted" style="font-size:13px;margin-bottom:14px">Modelos reutilizáveis com cláusulas pré-definidas. Ao gerar um contrato, o modelo é copiado e os campos entre chaves são preenchidos automaticamente. Editar ou remover um modelo não altera contratos já gerados.</p>
  <div id="templatesTable"></div>
@@ -2100,6 +2099,39 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </div>
 </div></div>
 
+<div id="modalModelos88" class="modal" style="z-index:20"><div class="modalbox" style="max-width:860px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+ <h2 style="margin:0">📑 Modelos de contrato</h2>
+ <button class="btn btn2" type="button" style="padding:8px 14px" onclick="co88Fechar()">✕ Fechar</button>
+</div>
+<p class="muted" style="font-size:13px;margin:0 0 10px">Modelos compartilhados por toda a equipe. Aqui nada do contrato em edição é gravado. Quem criou o modelo, um Sócio ou um Admin pode renomear ou excluir.</p>
+<div id="co88Aviso" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-bottom:8px"></div>
+<div id="co88VistaLista">
+ <div id="co88Lista" style="max-height:320px;overflow-y:auto"></div>
+ <div id="co88Confirma"></div>
+ <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px">
+  <button id="co88NovoBtn" class="btn" type="button" onclick="co88AbrirRevisao()">💾 Salvar o contrato atual como novo modelo…</button>
+  <button id="co88AtualizarBtn" class="btn btn2" type="button" style="font-size:12px;padding:6px 12px" onclick="co88Carregar()">↻ Atualizar lista</button>
+ </div>
+</div>
+<div id="co88VistaRev" style="display:none">
+ <p class="muted" style="font-size:13px;margin:0 0 6px">Revise o modelo antes de salvar. Os dados desta OS reconhecidos foram trocados por marcadores (azul); trechos que ainda parecem dados de cliente ficam em amarelo. Você pode editar o texto e trocar a seleção por um marcador.</p>
+ <label style="font-size:13px;font-weight:700;display:block">Nome do modelo<input id="co88Nome" class="co88-input" maxlength="80" autocomplete="off" placeholder="Ex.: Contrato de produção — vídeo institucional"></label>
+ <div id="co88Resumo" class="muted" style="font-size:12px;margin-top:6px"></div>
+ <div id="co88Achados" style="display:none;font-size:13px;border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:8px 12px;margin-top:6px"></div>
+ <div id="co88Papel" class="co88-papel" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Texto do modelo"></div>
+ <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+  <select id="co88MarcSel" style="min-width:200px"><option value="OS">{{OS}}</option><option value="CLIENTE">{{CLIENTE}}</option><option value="AGENCIA">{{AGENCIA}}</option><option value="SERVICO">{{SERVICO}}</option><option value="RESPONSAVEL">{{RESPONSAVEL}}</option><option value="DATA">{{DATA}}</option><option value="VALOR">{{VALOR}}</option><option value="VALOR_EXTENSO">{{VALOR_EXTENSO}}</option><option value="CONDICAO">{{CONDICAO}}</option><option value="ITENS_ORCAMENTO">{{ITENS_ORCAMENTO}}</option><option value="RAZAO_SOCIAL">{{RAZAO_SOCIAL}}</option><option value="CNPJ">{{CNPJ}}</option><option value="ENDERECO">{{ENDERECO}}</option><option value="CEP">{{CEP}}</option><option value="TELEFONE">{{TELEFONE}}</option><option value="EMAIL">{{EMAIL}}</option><option value="EMAIL_NF">{{EMAIL_NF}}</option><option value="CIDADE_UF">{{CIDADE_UF}}</option><option value="CONTATO_CLIENTE">{{CONTATO_CLIENTE}}</option><option value="REPRESENTANTE_LEGAL">{{REPRESENTANTE_LEGAL}}</option><option value="CPF_REPRESENTANTE">{{CPF_REPRESENTANTE}}</option><option value="CONTRATADA_NOME">{{CONTRATADA_NOME}}</option><option value="CONTRATADA_RAZAO">{{CONTRATADA_RAZAO}}</option><option value="CONTRATADA_CNPJ">{{CONTRATADA_CNPJ}}</option><option value="CONTRATADA_ENDERECO">{{CONTRATADA_ENDERECO}}</option><option value="CONTRATADA_TELEFONE">{{CONTRATADA_TELEFONE}}</option><option value="CONTRATADA_REPRESENTANTE">{{CONTRATADA_REPRESENTANTE}}</option></select>
+  <button class="btn btn2" type="button" style="font-size:12px;padding:6px 12px" onmousedown="event.preventDefault()" onclick="co88InserirMarcador()">Trocar seleção por marcador</button>
+  <button class="btn btn2" type="button" style="font-size:12px;padding:6px 12px" onclick="co88Reanalisar()">↻ Reanalisar dados</button>
+ </div>
+ <label id="co88ConfLinha" style="display:none;gap:8px;align-items:center;margin-top:8px;font-weight:400;font-size:13px"><input type="checkbox" id="co88Conf" style="width:16px;height:16px;margin:0"><span>Revisei: os trechos destacados em amarelo podem permanecer no modelo.</span></label>
+ <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+  <button class="btn btn2" type="button" onclick="co88Vista('lista')">← Voltar à lista</button>
+  <button class="btn" type="button" onclick="co88SalvarModelo()">💾 Salvar modelo</button>
+ </div>
+</div>
+</div></div>
 <div id="modalAvancar" class="modal"><div class="modalbox">
 <h2 id="avancarTitle">Avançar lead</h2>
 <div class="formgrid">
@@ -2751,6 +2783,8 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <option value="">Nenhum (texto atual)</option>
   </select></div>
  <button type="button" class="c-tbtn" onclick="aplicarTemplateNoEditor()">Aplicar template</button>
+ <button type="button" class="c-tbtn" title="Ver, aplicar, copiar, renomear e excluir modelos" onmousedown="event.preventDefault()" onclick="co88Abrir()">📑 Modelos</button>
+ <button type="button" class="c-tbtn" title="Salvar o contrato atual como novo modelo (com revisão)" onmousedown="event.preventDefault()" onclick="co88Abrir('revisao')">💾 Salvar como modelo</button>
  <span class="c-sep"></span>
  <div class="c-group"><label>Fonte</label>
   <select id="contratoLayoutFonte" onchange="contratoLayoutAlterado()">
@@ -2787,8 +2821,6 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="zpEdPagina" role="status" aria-live="polite">Página 1 de 1</span>
  <span class="c-sep"></span>
  <input type="file" id="contratoFullCabecalhoInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="contratoUploadCabecalho(this)">
- <button type="button" class="c-tbtn" onclick="document.getElementById('contratoFullCabecalhoInput').click()">🖼️ Enviar cabeçalho</button>
- <button type="button" class="c-tbtn c-danger" onclick="contratoRemoverCabecalho()">Remover cabeçalho</button>
  <span id="contratoFullCabecalhoNome" style="display:none"></span>
 </div>
 
@@ -47198,6 +47230,565 @@ coCtrSalvarEditor = function(){
 };
 try { zpEdIniciar(); } catch(_e){}
 // END 1.3.0.4 EDITOR · PARTE B
+// BEGIN 1.3.0.5 MODELOS NO EDITOR
+// Modelos de contrato geridos DENTRO da janela do editor (mesma liberdade dos templates de orçamento): selecionar/aplicar, salvar o contrato editado como NOVO modelo,
+// copiar, renomear e excluir. Persistência real em public.contrato_templates, SOMENTE pelas RPCs contrato_modelo_* (autor, Sócio ou Admin alteram; Atendimento/Sócio/Admin criam).
+// Formato do corpo (coluna corpo): "ZIPOS_MODELO_V1\n" + JSON {"v":1,"html":<HTML canônico com {{MARCADORES}}>,"layout":{fonte,entrelinhas,margem,alinhamento,cabecalho vazio}}.
+// Modelos antigos em texto puro continuam válidos (caminho anterior). Nada aqui grava contrato; salvar contrato continua só no botão "Salvar contrato".
+// Dados do cliente NUNCA entram em HTML sem escape: marcadores são trocados em UMA passada, com valores escapados como texto.
+var CO88_CAB = 'ZIPOS_MODELO_V1\n';
+var CO88_RPC_LISTAR = 'contrato_modelo_listar', CO88_RPC_SALVAR = 'contrato_modelo_salvar', CO88_RPC_RENOMEAR = 'contrato_modelo_renomear', CO88_RPC_EXCLUIR = 'contrato_modelo_excluir';
+var CO88_NOME_MAX = 80, CO88_LIMITE_MS = 20000, CO88_MAX_ACHADOS = 40, CO88_LINHA = '______________________________';
+var CO88_MARCADORES = ['OS', 'CLIENTE', 'AGENCIA', 'SERVICO', 'RESPONSAVEL', 'DATA', 'VALOR', 'VALOR_EXTENSO', 'CONDICAO', 'ITENS_ORCAMENTO', 'RAZAO_SOCIAL', 'CNPJ', 'ENDERECO', 'CEP',
+  'TELEFONE', 'EMAIL', 'EMAIL_NF', 'CIDADE_UF', 'CONTATO_CLIENTE', 'REPRESENTANTE_LEGAL', 'CPF_REPRESENTANTE', 'CONTRATADA_NOME', 'CONTRATADA_RAZAO', 'CONTRATADA_CNPJ',
+  'CONTRATADA_ENDERECO', 'CONTRATADA_TELEFONE', 'CONTRATADA_REPRESENTANTE'];
+// Ordem = prioridade. t:1 troca em qualquer lugar (valor inequívoco); t:2 só em campo "Rótulo: valor" (valor descritivo que pode aparecer em cláusulas legítimas).
+var CO88_REGRAS = [
+  { k: 'ITENS_ORCAMENTO', t: 1, min: 10 }, { k: 'VALOR_EXTENSO', t: 1, min: 10 }, { k: 'CLIENTE', t: 1, min: 8 }, { k: 'RAZAO_SOCIAL', t: 1, min: 8 }, { k: 'ENDERECO', t: 1, min: 8 },
+  { k: 'CNPJ', t: 1, tipo: 'cnpj', min: 14 }, { k: 'EMAIL', t: 1, tipo: 'email', min: 6 }, { k: 'EMAIL_NF', t: 1, tipo: 'email', min: 6 }, { k: 'TELEFONE', t: 1, tipo: 'fone', min: 8 },
+  { k: 'VALOR', t: 1, tipo: 'valor', min: 5 }, { k: 'OS', t: 1, tipo: 'os', min: 4 }, { k: 'DATA', t: 1, tipo: 'data', min: 10 },
+  { k: 'SERVICO', t: 2, min: 3, rot: 'servi[çc]os?|objeto|projeto|produ[çc][ãa]o|t[íi]tulo' }, { k: 'RESPONSAVEL', t: 2, min: 3, rot: 'respons[áa]vel|atendimento' },
+  { k: 'AGENCIA', t: 2, min: 3, rot: 'ag[êe]ncia' }, { k: 'CIDADE_UF', t: 2, min: 3, rot: 'cidade|munic[íi]pio|uf|local' },
+  { k: 'CONTATO_CLIENTE', t: 2, min: 3, rot: 'contato|representante|aos cuidados|a\\/c' }, { k: 'CONDICAO', t: 2, min: 8, rot: 'condi[çc][ãa]o|pagamento' }
+];
+var CO88_PADROES = { AGENCIA: 'não se aplica', CONDICAO: 'a combinar entre as partes' };   // valores padrão do sistema: não identificam cliente
+
+// ---- lógica pura (testada em Node a partir deste mesmo código) --------------------------------------------------------------------------------
+function co88Strip(s){ return String(s === null || s === undefined ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+function co88NomeLimpo(n){
+  var s = String(n === null || n === undefined ? '' : n).replace(/\s+/g, ' ').trim();
+  if(!s || s.length > CO88_NOME_MAX || /[\u0000-\u001f\u007f]/.test(s) || /[<>]/.test(s)) return null;
+  return s;
+}
+function co88NomeReservado(n){ return co88Strip(n) === 'contrato mestre'; }
+// escape ESTRITO de valor (dados do cliente): & < > sempre; controle removido
+function co88EscValor(v){
+  return String(v === null || v === undefined ? '' : v).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function co88EscRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function co88Digitos(s){ return String(s).replace(/\D/g, ''); }
+function co88LayoutModelo(l){
+  var s = coLayoutSeguro(l);
+  return { fonte: s.fonte, entrelinhas: s.entrelinhas, margem: s.margem, alinhamento: s.alinhamento, cabecalhoDataUrl: '', cabecalhoNome: '' };
+}
+function co88Empacotar(html, layout){
+  return CO88_CAB + JSON.stringify({ v: 1, html: String(html), layout: co88LayoutModelo(layout) });
+}
+// corpo → { formato:'html1', html, layout } | { formato:'texto', texto } | null (formato novo corrompido)
+function co88Desempacotar(corpo){
+  var c = String(corpo === null || corpo === undefined ? '' : corpo);
+  if(c.indexOf(CO88_CAB) !== 0) return { formato: 'texto', texto: c };
+  var o;
+  try { o = JSON.parse(c.slice(CO88_CAB.length)); } catch(_e){ return null; }
+  if(!o || typeof o !== 'object' || Array.isArray(o) || o.v !== 1 || typeof o.html !== 'string' || o.html.length > CO_LIM.htmlContrato) return null;
+  return { formato: 'html1', html: coHtmlLimpo(o.html), layout: co88LayoutModelo(o.layout) };
+}
+// Preenche os marcadores de um modelo em HTML: UMA passada, valores como TEXTO escapado (quebra de linha vira <br>); marcador sem dado vira linha em branco.
+function co88PreencherHtml(html, dados){
+  return coHtmlLimpo(String(html).replace(/\{\{([A-Z0-9_]+)\}\}/g, function(m, k){
+    var v = dados ? dados['{{' + k + '}}'] : undefined;
+    if(v === undefined || v === null) v = CO88_LINHA;
+    return String(v).split('\n').map(co88EscValor).join('<br>');
+  }));
+}
+// regras ativas para os dados desta OS (só valores presentes, não em branco e não padrão do sistema)
+function co88Regras(dados, relaxado){
+  var out = [];
+  CO88_REGRAS.forEach(function(def){
+    var v = dados ? dados['{{' + def.k + '}}'] : undefined;
+    if(typeof v !== 'string') return;
+    v = v.trim();
+    if(!v || /^_+$/.test(v)) return;
+    if(CO88_PADROES[def.k] && co88Strip(v) === CO88_PADROES[def.k]) return;
+    if(def.tipo === 'valor' && !/^R\$\s?\d/.test(v)) return;
+    if(def.tipo === 'os' && !/\d/.test(v) && !relaxado) return;
+    if(def.tipo === 'email' && v.indexOf('@') < 0) return;
+    if(def.tipo === 'cnpj' && co88Digitos(v).length !== 14 && !relaxado) return;
+    if(def.tipo === 'data' && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return;
+    if(v.length < (relaxado ? 3 : def.min)) return;
+    out.push({ k: def.k, t: def.t, tipo: def.tipo || '', rot: def.rot || '', valor: v, needle: v.split('\n').map(co88EscValor).join('<br>') });
+  });
+  return out;
+}
+function co88Letra(ch){ return !!ch && /[\p{L}\p{N}]/u.test(ch); }
+function co88BlocoTag(t){ return /^<\/?(p|div|li|ul|ol|h1|h2|h3)[\s>]/i.test(t); }
+function co88AposBr(s){ var i = s.lastIndexOf('<br>'); return i < 0 ? s : s.slice(i + 4); }
+// ocorrências de uma regra num trecho de texto (sem tags, exceto <br>); prefixo = texto da linha atual antes do trecho
+function co88Candidatos(seg, prefixoLinha, regra, regras){
+  var out = [], re, m, i;
+  function add(ini, fim){ out.push({ ini: ini, fim: fim, k: regra.k, len: fim - ini, prio: regras.indexOf(regra) }); }
+  if(regra.tipo === 'cnpj'){
+    re = /\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}/g;
+    while((m = re.exec(seg))){ if(co88Digitos(m[0]) === co88Digitos(regra.valor) && !/\d/.test(seg.charAt(m.index - 1)) && !/\d/.test(seg.charAt(m.index + m[0].length))) add(m.index, m.index + m[0].length); }
+    return out;
+  }
+  if(regra.tipo === 'fone' && co88Digitos(regra.valor).length >= 10){
+    re = /\(?\d{2}\)?\s?9?\d{4}-?\d{4}/g;
+    var dk = co88Digitos(regra.valor);
+    while((m = re.exec(seg))){
+      var d = co88Digitos(m[0]);
+      if(d.length >= 10 && d.slice(-10) === dk.slice(-10) && !/\d/.test(seg.charAt(m.index - 1)) && !/\d/.test(seg.charAt(m.index + m[0].length))) add(m.index, m.index + m[0].length);
+    }
+    return out;
+  }
+  re = new RegExp(co88EscRe(regra.needle), 'gi');
+  while((m = re.exec(seg))){
+    var ini = m.index, fim = ini + m[0].length;
+    if(m[0].length === 0){ re.lastIndex++; continue; }
+    if(co88Letra(seg.charAt(ini - 1)) && co88Letra(m[0].charAt(0))) continue;
+    if(co88Letra(seg.charAt(fim)) && co88Letra(m[0].charAt(m[0].length - 1))) continue;
+    if(regra.t === 2){
+      var pre = co88AposBr(prefixoLinha + seg.slice(0, ini)).replace(/\s+$/, '');
+      if(!new RegExp('(' + regra.rot + ')[^:<]{0,40}:$', 'i').test(pre)) continue;
+      var resto = seg.slice(fim), b = resto.indexOf('<br>');
+      if(b >= 0) resto = resto.slice(0, b);
+      if(!/^\s*[.;,]?\s*$/.test(resto)) continue;
+    }
+    add(ini, fim);
+  }
+  return out;
+}
+// HTML canônico (com os dados desta OS preenchidos) → HTML do modelo (dados trocados por marcadores). Só trechos inequívocos ou em campo; o resto vira "achado" para revisão.
+function co88Neutralizar(html, dados){
+  var regras = co88Regras(dados, false), partes = String(html).split(/(<(?!br>)[^>]*>)/), out = [], linha = '', trocas = {};
+  for(var p = 0; p < partes.length; p++){
+    var seg = partes[p];
+    if(p % 2 === 1){ if(co88BlocoTag(seg)) linha = ''; out.push(seg); continue; }
+    var cands = [];
+    regras.forEach(function(r){ co88Candidatos(seg, linha, r, regras).forEach(function(c){ cands.push(c); }); });
+    // mesmo valor em CLIENTE e RAZAO_SOCIAL: em campo de parte contratual ("Contratante:", "Razão social:") vale RAZAO_SOCIAL (nome legal); fora disso, CLIENTE
+    var razao = /(raz[ãa]o\s+social|contratante)[^<]*$/i;
+    cands.forEach(function(c){ c.score = c.prio; if(c.k === 'RAZAO_SOCIAL' && razao.test(co88AposBr(linha + seg.slice(0, c.ini)))) c.score = -1; });
+    cands.sort(function(a, b){ return (b.len - a.len) || (a.ini - b.ini) || (a.score - b.score); });
+    var aceitos = [];
+    cands.forEach(function(c){ if(!aceitos.some(function(a){ return c.ini < a.fim && a.ini < c.fim; })) aceitos.push(c); });
+    aceitos.sort(function(a, b){ return a.ini - b.ini; });
+    var res = '', pos = 0;
+    aceitos.forEach(function(a){ res += seg.slice(pos, a.ini) + '{{' + a.k + '}}'; pos = a.fim; trocas[a.k] = (trocas[a.k] || 0) + 1; });
+    res += seg.slice(pos);
+    out.push(res);
+    linha = co88AposBr(linha + seg);
+  }
+  return { html: out.join(''), trocas: trocas };
+}
+// Revisão: o que ainda parece dado específico num HTML de modelo. { achados:[{tipo,texto,marcador}], avisos:[texto] }
+function co88Achados(html, dados){
+  var textoComMarcadores = coHtmlParaTexto(html), texto = textoComMarcadores.replace(/\{\{[A-Z0-9_]+\}\}/g, ' '), achados = [], vistos = {}, avisos = [], contratada = [];
+  Object.keys(dados || {}).forEach(function(k){ if(k.indexOf('{{CONTRATADA_') === 0 && typeof dados[k] === 'string') contratada.push(dados[k]); });
+  function add(tipo, t, marcador){
+    var chave = tipo + '|' + t;
+    if(vistos[chave] || achados.length >= CO88_MAX_ACHADOS) return;
+    vistos[chave] = 1; achados.push({ tipo: tipo, texto: t, marcador: marcador || '' });
+  }
+  co88Regras(dados, true).forEach(function(r){
+    var re = new RegExp(co88EscRe(r.valor.split('\n').join(' ')), 'gi'), m, t = texto.replace(/\n/g, ' ');
+    while((m = re.exec(t))){
+      if(m[0].length && co88Letra(t.charAt(m.index - 1)) && co88Letra(m[0].charAt(0))) continue;
+      if(m[0].length && co88Letra(t.charAt(m.index + m[0].length)) && co88Letra(m[0].charAt(m[0].length - 1))) continue;
+      add('dado desta OS', r.valor.split('\n')[0], r.k);
+      break;
+    }
+  });
+  function ehContratada(t){
+    var d = co88Digitos(t);
+    return contratada.some(function(c){ var dc = co88Digitos(c); return c.indexOf(t) >= 0 || (d.length >= 8 && dc.indexOf(d) >= 0); });
+  }
+  [['CNPJ', /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g], ['CNPJ (14 dígitos)', /\b\d{14}\b/g], ['CPF', /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g],
+   ['e-mail', /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g], ['telefone', /(?:\(\d{2}\)\s?|\b\d{2}\s)9?\d{4}-?\d{4}\b/g], ['CEP', /\b\d{5}-\d{3}\b/g],
+   ['valor em reais', /R\$\s?\d[\d.]*(?:,\d{2})?/g], ['data', /\b\d{2}\/\d{2}\/\d{4}\b/g]].forEach(function(par){
+    var m, re = par[1];
+    while((m = re.exec(texto))){ if(!ehContratada(m[0])) add(par[0], m[0], ''); }
+  });
+  var mk, rm = /\{\{([A-Z0-9_]+)\}\}/g, desc = {};
+  while((mk = rm.exec(textoComMarcadores))){ if(CO88_MARCADORES.indexOf(mk[1]) < 0 && !desc[mk[1]]){ desc[mk[1]] = 1; avisos.push('Marcador desconhecido {{' + mk[1] + '}}: ao aplicar, vira uma linha em branco.'); } }
+  return { achados: achados, avisos: avisos };
+}
+// corpo de um modelo qualquer (html1 / texto / Mestre) → corpo V1 para "Copiar"
+function co88CorpoParaV1(tpl){
+  if(tpl.formato === 'html1') return co88Empacotar(tpl.html, tpl.layoutModelo);
+  var texto = String(tpl.corpo || '');
+  if(co88Strip(tpl.nome) === 'contrato mestre') return co88Empacotar(coHtmlLimpo(coDocEstruturar(texto)), Object.assign(coLayoutSeguro(null), { alinhamento: 'esquerda' }));
+  return co88Empacotar(coHtmlLimpo(contratoTextoParaHTMLBasico(texto)), coLayoutSeguro(null));
+}
+function co88ResumoTrocas(trocas){
+  var ks = Object.keys(trocas || {});
+  if(!ks.length) return 'Nenhum dado desta OS foi reconhecido automaticamente.';
+  return ks.map(function(k){ return '{{' + k + '}} ×' + trocas[k]; }).join(' · ');
+}
+
+// ---- modelos reais no formato novo ficam legíveis para o resto do sistema (texto) e carregam html/layout para aplicar ----------------------------
+var _co88ModelosOrig = _modelosContratoProntReal;
+_modelosContratoProntReal = function(){
+  return _co88ModelosOrig.apply(this, arguments).map(function(t){
+    if(!t || t.fonte !== 'real' || typeof t.corpo !== 'string' || t.corpo.indexOf(CO88_CAB) !== 0) return t;
+    var p = co88Desempacotar(t.corpo), o = Object.assign({}, t);
+    if(p && p.formato === 'html1'){ o.formato = 'html1'; o.html = p.html; o.layoutModelo = p.layout; o.corpo = coHtmlParaTexto(p.html); }
+    else { o.formato = 'invalido'; o.corpo = ''; }
+    return o;
+  });
+};
+var _co88Aplicar = aplicarTemplateNoEditor;
+aplicarTemplateNoEditor = function(semConfirmar){
+  var modal = coEl('modalContratoFull'), sel = coEl('contratoEditorTemplateSelect'), conteudo = coEl('contratoEditorConteudo');
+  var tpl = (sel && sel.value && coCtr.aberta) ? coCtrModeloPorId(sel.value) : null;
+  if(!tpl || (tpl.formato !== 'html1' && tpl.formato !== 'invalido')) return _co88Aplicar.apply(this, arguments);
+  if(!modal || !conteudo || !coCtr.aberta || !coCtr.l) return;
+  if(tpl.formato === 'invalido'){ alert('O conteúdo deste modelo está inválido e não pode ser aplicado. Nada foi alterado.'); return; }
+  var temConteudo = contratoHTMLParaTexto(conteudo.innerHTML).trim().length > 0;
+  if(semConfirmar !== true && temConteudo && modal.dataset.alterado === '1'){
+    if(!confirm('Aplicar este modelo vai substituir o texto atual do contrato. Deseja continuar?')) return;
+  }
+  conteudo.innerHTML = co88PreencherHtml(tpl.html, getDadosContrato(coCtr.l));
+  var lay = tpl.layoutModelo;
+  [['contratoLayoutFonte', lay.fonte], ['contratoLayoutEntrelinhas', lay.entrelinhas], ['contratoLayoutMargem', lay.margem], ['contratoLayoutAlinhamento', lay.alinhamento]].forEach(function(p){
+    var e = coEl(p[0]); if(e) e.value = String(p[1]);   // o cabeçalho do contrato nunca é tocado
+  });
+  modal.dataset.templateId = tpl.id; modal.dataset.templateNome = tpl.nome;
+  contratoAtualizarEditorLayout();
+  contratoEditorAlterado();
+  var vp = coEl('contratoEditorViewport'); if(vp) vp.scrollTop = 0;
+};
+
+// ---- estado, comunicação ----------------------------------------------------------------------------------------------------------------------
+var co88 = { seq: 0, req: 0, status: 'idle', lista: [], ocupado: false, confirma: null, pend: null, vista: 'lista', rev: null, range: null, aberto: false };
+function co88Editavel(){ return !!coCtr.aberta && coCtr.tela === 'editor' && !(typeof coRO !== 'undefined' && coRO.aberta) && !coS().acao && coCtrContextoOk(); }
+function co88CtxAtual(){ return { c: _ctxProntReal(), tok: coCtr.token, form: coCtr.form, seq: co88.seq }; }
+function co88Vivo(c){
+  var m = coEl('modalModelos88');
+  return !!c && c.seq === co88.seq && !!co88.aberto && !!m && m.classList.contains('open') && !!coCtr.aberta && coCtr.tela === 'editor' && coCtr.token === c.tok && coCtr.form === c.form
+    && !(typeof coRO !== 'undefined' && coRO.aberta) && _ctxProntValido(c.c) && coCtrContextoOk();
+}
+function co88Resetar(fechar){   // invalida respostas em voo e confirmações; nada herdado de outra janela/conta/OS
+  co88.seq++; co88.req++; co88.ocupado = false; co88.confirma = null; co88.pend = null; co88.lista = []; co88.status = 'idle'; co88.vista = 'lista'; co88.rev = null; co88.range = null; co88.aberto = false;
+  if(fechar){ var m = coEl('modalModelos88'); if(m) m.classList.remove('open'); }
+}
+function co88Rpc(nome, args, cb){
+  var ctx = co88CtxAtual(), feito = false, timer = null, ctrl = null, q;
+  function fim(tipo, r){
+    if(feito) return; feito = true; if(timer !== null){ try { clearTimeout(timer); } catch(_e){} }
+    if(ctx.seq !== co88.seq) return;                          // resposta de uma janela antiga: ignorada por inteiro
+    if(!co88Vivo(ctx)){ co88Resetar(true); return; }          // editor fechado/trocado, conta/perfil/OS mudou: descarta e destrava
+    cb(tipo, r);
+  }
+  try { if(typeof AbortController === 'function') ctrl = new AbortController(); q = _comSinalProntReal(supabaseClient.rpc(nome, args || {}), ctrl ? ctrl.signal : null); }
+  catch(_e){ fim('falha', null); return; }
+  timer = setTimeout(function(){ if(ctrl){ try { ctrl.abort(); } catch(_e){} } fim('tempo', null); }, CO88_LIMITE_MS);
+  try { q.then(function(r){ fim('resposta', r); }, function(){ fim('falha', null); }); } catch(_e){ fim('falha', null); }
+}
+function co88ErroTexto(r){
+  var c = String((r && r.error && r.error.code) || ''), m = String((r && r.error && r.error.message) || '').slice(0, 200);
+  if(c === 'PGRST202' || c === '42883') return 'Os modelos de contrato ainda não estão instalados no banco. Nada foi alterado.';
+  if(c === '42501') return m && !/^permission denied/i.test(m) ? m : 'Seu perfil não permite esta ação neste modelo.';
+  if(c === '22023') return 'O servidor recusou o modelo: ' + (m || 'dados inválidos') + ' Nada foi alterado.';
+  return 'Não foi possível concluir agora. Nada foi alterado no contrato.';
+}
+function co88Aviso(texto, tipo){
+  var a = coEl('co88Aviso'); if(!a) return;
+  a.textContent = texto || ''; a.style.display = texto ? 'block' : 'none';
+  var cor = tipo === 'erro' ? ['#fff1f2', '#9f1239'] : (tipo === 'ok' ? ['#f0fdf4', '#166534'] : ['#f1f5f9', '#334155']);
+  a.style.background = cor[0]; a.style.color = cor[1];
+}
+function co88Normalizar(lista){
+  return (Array.isArray(lista) ? lista : []).filter(function(t){ return _objetoProntReal(t) && typeof t.id === 'string' && typeof t.nome === 'string' && typeof t.corpo === 'string'; })
+    .map(function(t){ return { id: String(t.id), nome: String(t.nome), tipoServico: t.tipo_servico ? String(t.tipo_servico) : '', corpo: t.corpo, ehContratoMae: t.eh_contrato_mae === true, fonte: 'real',
+      versao: Number(t.versao), criadoEm: t.criado_em ? String(t.criado_em) : '', autor: t.criado_por_nome ? String(t.criado_por_nome) : '', podeGerir: t.pode_gerir === true && isFinite(Number(t.versao)) }; });
+}
+// a lista relida vira a lista do seletor do editor (mesmo formato do carregamento original)
+function co88Sincronizar(){
+  var s = coS(), m = s.formDados && s.formDados.modelos;
+  if(!m || m.status === 'carregando') return;
+  m.status = 'ok';
+  m.lista = co88.lista.map(function(t){ return { id: t.id, nome: t.nome, tipoServico: t.tipoServico, corpo: t.corpo, ehContratoMae: t.ehContratoMae, fonte: 'real' }; });
+  if(coCtr.tela === 'editor'){ try { popularSelectTemplatesEditor(); } catch(_e){} }
+}
+function co88Carregar(cb){
+  if(!co88.aberto) return;
+  var meu = ++co88.req;
+  co88.status = 'carregando'; co88Render();
+  co88Rpc(CO88_RPC_LISTAR, {}, function(tipo, r){
+    if(meu !== co88.req) return;                              // resposta fora de ordem
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && d.status === 'ok' && Array.isArray(d.modelos)){ co88.lista = co88Normalizar(d.modelos); co88.status = 'ok'; co88Sincronizar(); }
+    else { co88.lista = []; co88.status = 'erro'; co88Aviso(tipo === 'resposta' ? co88ErroTexto(r) : 'Não foi possível ler os modelos agora.', 'erro'); }
+    co88Render();
+    if(typeof cb === 'function') cb(co88.status === 'ok');
+  });
+}
+
+// ---- abrir / fechar -----------------------------------------------------------------------------------------------------------------------------
+function co88Abrir(vista){
+  if(!co88Editavel()) return;
+  var cont = coEl('contratoEditorConteudo'), sel = window.getSelection ? window.getSelection() : null, range = null;
+  try { if(sel && sel.rangeCount && cont && cont.contains(sel.getRangeAt(0).commonAncestorContainer)) range = sel.getRangeAt(0).cloneRange(); } catch(_e){}
+  co88Resetar(false);
+  co88.aberto = true; co88.range = range;
+  co88Aviso('', 'info'); co88Vista('lista');
+  openModal('modalModelos88');
+  co88Carregar(function(ok){ if(vista === 'revisao' && ok) co88AbrirRevisao(); });   // lista com erro: a janela fica na lista, com a mensagem de erro, e nada novo pode ser criado
+}
+// criar/copiar só com a lista do servidor lida COM SUCESSO e atualizada (nome duplicado e autoria dependem dela)
+function co88ListaOk(){
+  if(co88.status === 'ok') return true;
+  co88Aviso('A lista de modelos não foi lida (ou está sendo lida). Use “Atualizar lista” antes de salvar um modelo novo; nada foi salvo.', 'erro');
+  return false;
+}
+function co88Fechar(manterEditor){
+  if(co88.ocupado) return;
+  var range = co88.range, m = coEl('modalModelos88');
+  co88Resetar(true);
+  if(m) m.classList.remove('open');
+  if(!manterEditor && range && coCtr.aberta && coCtr.tela === 'editor'){   // devolve o cursor ao ponto em que estava (só se o texto não foi substituído)
+    try { var cont = coEl('contratoEditorConteudo'), sel = window.getSelection(); if(cont && cont.contains(range.commonAncestorContainer)){ cont.focus(); sel.removeAllRanges(); sel.addRange(range); } } catch(_e){}
+  }
+}
+function co88Vista(v){
+  co88.vista = v;
+  var a = coEl('co88VistaLista'), b = coEl('co88VistaRev');
+  if(a) a.style.display = v === 'lista' ? '' : 'none';
+  if(b) b.style.display = v === 'revisao' ? '' : 'none';
+}
+function co88Botao(txt, fn, cls, desab){ var b = document.createElement('button'); b.type = 'button'; b.className = cls || 'btn btn2'; b.textContent = txt; b.disabled = !!desab; b.addEventListener('click', fn); return b; }
+function co88DataBR(iso){ return String(iso || '').slice(0, 10).split('-').reverse().join('/'); }
+function co88Render(){
+  var box = coEl('co88Lista'), cf = coEl('co88Confirma'); if(!box || !cf) return;
+  box.textContent = ''; cf.textContent = '';
+  var at = coEl('co88AtualizarBtn'), nv = coEl('co88NovoBtn');
+  if(at) at.disabled = co88.ocupado; if(nv) nv.disabled = co88.ocupado || co88.status !== 'ok';
+  if(co88.status === 'carregando'){ var p = document.createElement('p'); p.className = 'muted'; p.textContent = 'Lendo os modelos…'; box.appendChild(p); }
+  function linha(nome, sub, acoes){
+    var l = document.createElement('div'); l.className = 'co88-linha';
+    var info = document.createElement('div'), n = document.createElement('div'), s2 = document.createElement('div');
+    n.style.cssText = 'font-weight:700;font-size:14px'; n.textContent = nome; s2.className = 'muted'; s2.style.fontSize = '12px'; s2.textContent = sub;
+    info.appendChild(n); info.appendChild(s2);
+    var ac = document.createElement('div'); ac.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
+    acoes.forEach(function(b){ ac.appendChild(b); });
+    l.appendChild(info); l.appendChild(ac); box.appendChild(l);
+  }
+  // modelos embutidos (locais, ex.: Contrato Mestre): protegidos — só aplicar/copiar
+  coCtrModelos().filter(function(t){ return t.fonte === 'local'; }).forEach(function(t){
+    linha(t.nome, 'Modelo padrão do sistema · protegido (aplicar ou copiar)', [co88Botao('Aplicar', function(){ co88Aplicar(t.id); }, 'btn', co88.ocupado), co88Botao('Copiar', function(){ co88Copiar(t.id); }, 'btn btn2', co88.ocupado)]);
+  });
+  if(co88.status === 'ok' && !co88.lista.length){ var p2 = document.createElement('p'); p2.className = 'muted'; p2.style.fontSize = '13px'; p2.textContent = 'Nenhum modelo salvo ainda. Edite um contrato e use “Salvar o contrato atual como novo modelo”.'; box.appendChild(p2); }
+  co88.lista.forEach(function(t){
+    var ac = [co88Botao('Aplicar', function(){ co88Aplicar(t.id); }, 'btn', co88.ocupado), co88Botao('Copiar', function(){ co88Copiar(t.id); }, 'btn btn2', co88.ocupado)];
+    if(t.podeGerir){
+      ac.push(co88Botao('Renomear', function(){ co88PedirRenomear(t.id); }, 'btn btn2', co88.ocupado));
+      ac.push(co88Botao('Excluir', function(){ co88PedirExcluir(t.id); }, 'btn btn2', co88.ocupado));
+    }
+    linha(t.nome, (t.ehContratoMae ? 'Modelo mãe · protegido' : (t.autor ? 'Por ' + t.autor : 'Sem autor registrado (só Sócio/Admin alteram)')) + (t.criadoEm ? ' · ' + co88DataBR(t.criadoEm) : ''), ac);
+  });
+  var c = co88.confirma;
+  if(c){
+    var q = document.createElement('div'); q.className = 'co88-confirma';
+    var t1 = document.createElement('div'); t1.style.fontWeight = '700';
+    t1.textContent = c.tipo === 'renomear' ? 'Novo nome para “' + c.nome + '”:' : 'Excluir o modelo “' + c.nome + '”? Contratos que o usaram não mudam.';
+    q.appendChild(t1);
+    if(c.tipo === 'renomear'){
+      var inp = document.createElement('input'); inp.id = 'co88NovoNome'; inp.maxLength = CO88_NOME_MAX; inp.value = c.nome; inp.className = 'co88-input'; q.appendChild(inp);
+    }
+    var bs = document.createElement('div'); bs.style.cssText = 'display:flex;gap:6px;margin-top:8px';
+    bs.appendChild(co88Botao(c.tipo === 'renomear' ? 'Renomear' : 'Excluir modelo', c.tipo === 'renomear' ? co88ConfirmarRenomear : co88ConfirmarExcluir, 'btn', co88.ocupado));
+    bs.appendChild(co88Botao('Cancelar', function(){ co88.confirma = null; co88Render(); }, 'btn btn2', co88.ocupado));
+    q.appendChild(bs); cf.appendChild(q);
+  }
+}
+
+// ---- aplicar / copiar -------------------------------------------------------------------------------------------------------------------------
+function co88Aplicar(id){
+  if(co88.ocupado || !co88Editavel()) return;
+  var local = coCtrModelos().filter(function(t){ return t.id === id && t.fonte === 'local'; })[0];
+  function efetivar(){
+    var sel = coEl('contratoEditorTemplateSelect'), modal = coEl('modalContratoFull');
+    if(!sel || !modal || !coCtrModeloPorId(id)){ co88Aviso('Este modelo não está mais disponível. Nada foi aplicado.', 'erro'); co88Render(); return; }
+    try { popularSelectTemplatesEditor(); } catch(_e){}
+    sel.value = id;
+    aplicarTemplateNoEditor();
+    if(modal.dataset.templateId === id) co88Fechar(true);   // aplicado: fecha a janela (o texto foi trocado); cancelado na confirmação: continua aberta
+  }
+  if(local){ efetivar(); return; }
+  co88.ocupado = true; co88Aviso('Conferindo o modelo…', 'info'); co88Render();
+  co88Carregar(function(ok){
+    co88.ocupado = false;
+    if(!ok){ co88Aviso('Não foi possível reler os modelos. Nada foi aplicado.', 'erro'); co88Render(); return; }
+    if(!co88.lista.some(function(t){ return t.id === id; })){ co88Aviso('Este modelo foi excluído por outra pessoa. A lista foi atualizada; nada foi aplicado.', 'erro'); co88Render(); return; }
+    co88Aviso('', 'info');
+    efetivar();
+  });
+}
+function co88Copiar(id){
+  if(co88.ocupado || !co88Editavel()) return;
+  var t = coCtrModeloPorId(id);
+  if(!t){ co88Aviso('Modelo não encontrado.', 'erro'); return; }
+  var nome = co88NomeLimpo((t.nome + ' (cópia)').slice(0, CO88_NOME_MAX));
+  if(nome === null){ co88Aviso('Não foi possível gerar o nome da cópia.', 'erro'); return; }
+  var corpo;
+  try { corpo = co88CorpoParaV1(t); } catch(_e){ co88Aviso('Não foi possível copiar este modelo. Nada foi salvo.', 'erro'); return; }
+  co88Enviar(nome, corpo, 'copia');
+}
+
+// ---- salvar o contrato atual como NOVO modelo (revisão editável) -------------------------------------------------------------------------
+function co88AbrirRevisao(){
+  if(!co88.aberto){ co88Abrir('revisao'); return; }
+  if(co88.ocupado || !co88Editavel() || !co88ListaOk()) return;
+  var html;
+  try { html = zpEdHtmlSalvavel(); }
+  catch(_e){ co88Aviso('Não foi possível preparar o texto do contrato sem risco de perder conteúdo. Nada foi salvo e o editor foi mantido como está.', 'erro'); return; }
+  try { zpEdAgendar(true); } catch(_e){}
+  html = coHtmlLimpo(html);
+  if(!coHtmlParaTexto(html).trim()){ co88Aviso('O contrato está vazio: não há o que salvar como modelo.', 'erro'); return; }
+  if(html.length > CO_LIM.htmlContrato){ co88Aviso('Contrato longo demais para virar modelo.', 'erro'); return; }
+  var dados = getDadosContrato(coCtr.l), layout = co88LayoutModelo(lerContratoLayoutControls()), n = co88Neutralizar(html, dados);
+  co88.rev = { dados: dados, layout: layout, trocas: n.trocas };
+  var papel = coEl('co88Papel'), nome = coEl('co88Nome'), conf = coEl('co88Conf');
+  if(nome) nome.value = ''; if(conf) conf.checked = false;
+  if(papel) papel.innerHTML = coHtmlLimpo(n.html);
+  co88Aviso('', 'info'); co88Vista('revisao');
+  co88Reanalisar(true);
+}
+// achados e destaques são recalculados a partir do que está na área editável AGORA (sempre re-sanitizado)
+function co88Reanalisar(manterTexto){
+  var papel = coEl('co88Papel'), rev = co88.rev; if(!papel || !rev) return null;
+  var html = coHtmlLimpo(papel.innerHTML);
+  if(!manterTexto || papel.innerHTML !== html) papel.innerHTML = html;
+  var a = co88Achados(html, rev.dados);
+  co88.rev.achados = a;
+  co88Destacar(papel, a);
+  var rs = coEl('co88Resumo'); if(rs) rs.textContent = 'Trocados automaticamente: ' + co88ResumoTrocas(rev.trocas);
+  var ch = coEl('co88Achados');
+  if(ch){
+    ch.textContent = '';
+    if(a.achados.length){
+      var t = document.createElement('div'); t.style.fontWeight = '700'; t.textContent = 'Ainda parecem dados específicos (destacados no texto). Troque por um marcador ou confirme que devem ficar:'; ch.appendChild(t);
+      a.achados.forEach(function(x){ var li = document.createElement('div'); li.style.fontSize = '12px'; li.textContent = '• ' + x.tipo + ': ' + x.texto + (x.marcador ? ' (sugestão: {{' + x.marcador + '}})' : ''); ch.appendChild(li); });
+    }
+    a.avisos.forEach(function(x){ var li = document.createElement('div'); li.style.cssText = 'font-size:12px;color:#92400e'; li.textContent = '⚠ ' + x; ch.appendChild(li); });
+    ch.style.display = (a.achados.length || a.avisos.length) ? 'block' : 'none';
+  }
+  var cl = coEl('co88ConfLinha'); if(cl) cl.style.display = a.achados.length ? 'flex' : 'none';
+  return a;
+}
+// destaca (<mark>) marcadores e achados dentro da área editável; <mark> some na re-sanitização (tag desconhecida é desembrulhada)
+function co88Destacar(raiz, a){
+  var tw = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT), nos = [], n;
+  while((n = tw.nextNode())) nos.push(n);
+  var alvos = a.achados.map(function(x){ return x.texto; }).filter(function(t){ return t && t.length >= 3; });
+  var partes = ['\\{\\{[A-Z0-9_]+\\}\\}'].concat(alvos.map(co88EscRe)), re = new RegExp('(' + partes.join('|') + ')', 'gi');
+  nos.forEach(function(no){
+    var txt = no.nodeValue; re.lastIndex = 0;
+    if(!re.test(txt)) return;
+    var frag = document.createDocumentFragment(), pos = 0, m; re.lastIndex = 0;
+    while((m = re.exec(txt))){
+      if(m[0].length === 0){ re.lastIndex++; continue; }
+      if(m.index > pos) frag.appendChild(document.createTextNode(txt.slice(pos, m.index)));
+      var mk = document.createElement('mark'); mk.className = /^\{\{/.test(m[0]) ? 'co88-m' : 'co88-a'; mk.textContent = m[0]; frag.appendChild(mk);
+      pos = m.index + m[0].length;
+    }
+    if(pos < txt.length) frag.appendChild(document.createTextNode(txt.slice(pos)));
+    no.parentNode.replaceChild(frag, no);
+  });
+}
+function co88InserirMarcador(){
+  var papel = coEl('co88Papel'), sel = coEl('co88MarcSel'), s = window.getSelection ? window.getSelection() : null;
+  if(!papel || !sel || !sel.value) return;
+  if(!s || !s.rangeCount || !papel.contains(s.getRangeAt(0).commonAncestorContainer)){ co88Aviso('Selecione no texto do modelo o trecho que deve virar o marcador.', 'info'); return; }
+  papel.focus();
+  try { document.execCommand('insertText', false, '{{' + sel.value + '}}'); } catch(_e){}
+  co88Aviso('', 'info');
+}
+function co88SalvarModelo(){
+  if(co88.ocupado || !co88Editavel() || !co88.rev || !co88ListaOk()) return;
+  var inp = coEl('co88Nome'), nome = co88NomeLimpo(inp ? inp.value : '');
+  if(nome === null){ co88Aviso('Informe um nome de até ' + CO88_NOME_MAX + ' caracteres, sem caracteres de controle nem < >.', 'erro'); return; }
+  if(co88NomeReservado(nome)){ co88Aviso('O nome “Contrato Mestre” é reservado ao modelo padrão. Escolha outro nome.', 'erro'); return; }
+  if(co88.lista.some(function(t){ return co88Strip(t.nome) === co88Strip(nome); })){ co88Aviso('Já existe um modelo com este nome. Escolha outro nome.', 'erro'); return; }
+  var papel = coEl('co88Papel'), html = coHtmlLimpo(papel ? papel.innerHTML : '');
+  if(!coHtmlParaTexto(html).trim()){ co88Aviso('O modelo está vazio.', 'erro'); return; }
+  if(html.length > CO_LIM.htmlContrato){ co88Aviso('Modelo longo demais.', 'erro'); return; }
+  var a = co88Reanalisar(true), conf = coEl('co88Conf');
+  if(a && a.achados.length && !(conf && conf.checked)){ co88Aviso('Há trechos que parecem dados de um cliente. Troque-os por marcadores ou marque a confirmação de que podem permanecer no modelo.', 'erro'); return; }
+  co88Enviar(nome, co88Empacotar(coHtmlLimpo(papel.innerHTML), co88.rev.layout), 'novo');
+}
+function co88Enviar(nome, corpo, origem){
+  if(co88.ocupado || !co88Editavel() || !co88ListaOk()) return;
+  var assin = nome + '\u0001' + corpo;
+  if(!co88.pend || co88.pend.assin !== assin) co88.pend = { assin: assin, chave: _novoUuidAtendimentoReal() };   // repetição do MESMO envio reaproveita a chave (idempotente)
+  if(!co88.pend.chave){ co88.pend = null; co88Aviso('Não foi possível gerar a chave do envio. Nada foi salvo.', 'erro'); return; }
+  co88.ocupado = true; co88Aviso('Salvando o modelo…', 'info'); co88Render();
+  co88Rpc(CO88_RPC_SALVAR, { p_chave: co88.pend.chave, p_nome: nome, p_corpo: corpo }, function(tipo, r){
+    co88.ocupado = false;
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_aplicado')){
+      co88.pend = null; co88.rev = null; co88Vista('lista');
+      co88Aviso('Modelo “' + nome + '” salvo' + (origem === 'copia' ? ' (cópia).' : '. O contrato em edição não foi alterado nem salvo.'), 'ok'); co88Carregar(); return;
+    }
+    if(_objetoProntReal(d) && d.status === 'ja_excluido'){ co88.pend = null; co88Aviso('Este envio já tinha sido salvo e o modelo foi excluído depois. Nada novo foi salvo.', 'info'); co88Render(); return; }
+    if(_objetoProntReal(d) && (d.status === 'nome_duplicado' || d.status === 'nome_reservado')){ co88.pend = null; co88Aviso(d.status === 'nome_reservado' ? 'Este nome é reservado. Escolha outro.' : 'Já existe um modelo com este nome. Escolha outro nome.', 'erro'); co88Render(); return; }
+    if(tipo === 'resposta' && r && r.error){ co88.pend = null; co88Aviso(co88ErroTexto(r), 'erro'); co88Render(); return; }
+    co88Aviso('Não consegui confirmar se o modelo foi salvo. Use “Atualizar lista”; se ele aparecer, foi salvo. Se não, tente salvar de novo (o envio é repetido com segurança).', 'erro'); co88Render();
+  });
+}
+
+// ---- renomear / excluir (autor, Sócio ou Admin: a decisão final é do servidor) ---------------------------------------------------------------------
+function co88PorId(id){ return co88.lista.filter(function(t){ return t.id === id; })[0] || null; }
+function co88PedirRenomear(id){ var t = co88PorId(id); if(co88.ocupado || !t || !t.podeGerir) return; co88.confirma = { tipo: 'renomear', id: id, nome: t.nome, versao: t.versao }; co88Aviso('', 'info'); co88Render(); }
+function co88PedirExcluir(id){ var t = co88PorId(id); if(co88.ocupado || !t || !t.podeGerir) return; co88.confirma = { tipo: 'excluir', id: id, nome: t.nome, versao: t.versao }; co88Aviso('', 'info'); co88Render(); }
+function co88Conflito(){ co88.confirma = null; co88Aviso('Este modelo foi alterado ou excluído por outra pessoa. A lista foi atualizada; refaça a ação se ainda fizer sentido.', 'erro'); co88Carregar(); }
+function co88ConfirmarRenomear(){
+  var c = co88.confirma; if(!c || c.tipo !== 'renomear' || co88.ocupado || !co88Editavel()) return;
+  var inp = coEl('co88NovoNome'), nome = co88NomeLimpo(inp ? inp.value : '');
+  if(nome === null){ co88Aviso('Informe um nome de até ' + CO88_NOME_MAX + ' caracteres, sem caracteres de controle nem < >.', 'erro'); return; }
+  if(co88NomeReservado(nome)){ co88Aviso('O nome “Contrato Mestre” é reservado ao modelo padrão.', 'erro'); return; }
+  if(co88.lista.some(function(t){ return t.id !== c.id && co88Strip(t.nome) === co88Strip(nome); })){ co88Aviso('Já existe um modelo com este nome.', 'erro'); return; }
+  co88.ocupado = true; co88Aviso('Renomeando…', 'info'); co88Render();
+  co88Rpc(CO88_RPC_RENOMEAR, { p_id: c.id, p_nome: nome, p_versao_esperada: c.versao }, function(tipo, r){
+    co88.ocupado = false;
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && d.status === 'ok'){ co88.confirma = null; co88Aviso('Modelo renomeado para “' + nome + '”.', 'ok'); co88Carregar(); return; }
+    if(_objetoProntReal(d) && (d.status === 'conflito' || d.status === 'ausente')){ co88Conflito(); return; }
+    if(_objetoProntReal(d) && (d.status === 'nome_duplicado' || d.status === 'nome_reservado')){ co88Aviso('Este nome não pode ser usado (já existe ou é reservado).', 'erro'); co88Render(); return; }
+    co88Aviso(tipo === 'resposta' && r && r.error ? co88ErroTexto(r) : 'Não consegui confirmar o resultado. Use “Atualizar lista” para conferir.', 'erro'); co88Render();
+  });
+}
+function co88ConfirmarExcluir(){
+  var c = co88.confirma; if(!c || c.tipo !== 'excluir' || co88.ocupado || !co88Editavel()) return;
+  co88.ocupado = true; co88Aviso('Excluindo…', 'info'); co88Render();
+  co88Rpc(CO88_RPC_EXCLUIR, { p_id: c.id, p_versao_esperada: c.versao }, function(tipo, r){
+    co88.ocupado = false;
+    var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
+    if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_excluido' || d.status === 'ausente')){
+      co88.confirma = null; co88Aviso('Modelo excluído. Contratos que o usaram não foram alterados.', 'ok');
+      co88Carregar(); return;   // o contrato aberto mantém o texto atual; o servidor reconfere o modelo ao salvar
+    }
+    if(_objetoProntReal(d) && d.status === 'conflito'){ co88Conflito(); return; }
+    co88Aviso(tipo === 'resposta' && r && r.error ? co88ErroTexto(r) : 'Não consegui confirmar a exclusão. Use “Atualizar lista”.', 'erro'); co88Render();
+  });
+}
+
+// ---- integração (únicos pontos que tocam o que já existia) -----------------------------------------------------------------------------------
+var _co88CtrFechar = coCtrFechar;
+coCtrFechar = function(){ co88Resetar(true); return _co88CtrFechar.apply(this, arguments); };
+if(typeof _limparEstadoProntReal === 'function'){ var _co88Limpar = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _co88Limpar.apply(this, arguments); co88Resetar(true); return r; }; }
+// Administração antiga (memória local) NÃO cria mais modelos: a entrada obsoleta é substituída por um aviso; o resto de Configurações continua igual.
+renderTemplatesContrato = function(){
+  var el = document.getElementById('templatesTable'); if(!el) return;
+  el.textContent = '';
+  var p = document.createElement('p'); p.className = 'muted'; p.style.cssText = 'font-size:13px;padding:8px 0';
+  p.textContent = 'Os modelos de contrato agora são criados, aplicados, renomeados e excluídos dentro do editor de contrato (botão “📑 Modelos”), com os mesmos dados para toda a equipe.';
+  el.appendChild(p);
+};
+(function(){
+  if(document.getElementById('co88Estilo')) return;
+  var st = document.createElement('style'); st.id = 'co88Estilo';
+  st.textContent = '.co88-linha{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;flex-wrap:wrap}'
+    + '.co88-confirma{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px}'
+    + '.co88-input{display:block;width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;box-sizing:border-box}'
+    + '.co88-papel{background:#fff;color:#1a1a1a;border:1px solid #cbd5e1;border-radius:10px;padding:14px;min-height:180px;max-height:360px;overflow:auto;font-family:Georgia,"Times New Roman",serif;font-size:13px;line-height:1.5;margin:8px 0}'
+    + '.co88-papel mark.co88-m{background:#dbeafe;color:#1e3a8a;border-radius:3px;padding:0 2px}.co88-papel mark.co88-a{background:#fde68a;color:#78350f;border-radius:3px;padding:0 2px}'
+    + '.co88-papel p,.co88-papel h1,.co88-papel h2,.co88-papel h3{margin:0 0 6px}'
+    + 'html[data-theme="dark"] .co88-confirma{background:#3b3320;border-color:#6b5a1f;color:#f3d98b}';
+  document.head.appendChild(st);
+})();
+// END 1.3.0.5 MODELOS NO EDITOR
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

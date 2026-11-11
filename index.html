@@ -904,7 +904,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.3 · Documentos A4</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.4 · Editor e Propostas</div>
 </aside>
 
 <main class="main">
@@ -2725,7 +2725,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </div>
 </div></div>
 
-<div id="modalContratoFull" class="modal"><div class="modalbox" style="max-width:1180px">
+<div id="modalContratoFull" class="modal"><div class="modalbox" style="max-width:min(1700px,95vw);width:95vw;height:90vh;display:flex;flex-direction:column">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)">
  <div style="min-width:0">
   <div style="display:flex;align-items:center;gap:10px">
@@ -2768,7 +2768,23 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <select id="contratoLayoutAlinhamento" onchange="contratoLayoutAlterado()">
    <option value="esquerda">Esquerda</option><option value="justificado">Justificado</option>
   </select></div>
- <button type="button" class="c-tbtn" style="font-weight:800" title="Negrito" onmousedown="event.preventDefault()" onclick="contratoExecFormato('bold')">B</button>
+ <button type="button" class="c-tbtn" style="font-weight:800" title="Negrito" aria-label="Negrito" onmousedown="event.preventDefault()" onclick="contratoExecFormato('bold')">B</button>
+ <button type="button" class="c-tbtn" style="font-style:italic;font-weight:700" title="Itálico" aria-label="Itálico" onmousedown="event.preventDefault()" onclick="contratoExecFormato('italic')">I</button>
+ <span class="c-sep"></span>
+ <button type="button" class="c-tbtn" title="Texto normal" aria-label="Texto normal" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<p>')">¶ Texto</button>
+ <button type="button" class="c-tbtn" title="Título (nível 1)" aria-label="Título" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h1>')">Título</button>
+ <button type="button" class="c-tbtn" title="Seção (nível 2)" aria-label="Seção" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h2>')">Seção</button>
+ <button type="button" class="c-tbtn" title="Cláusula (nível 3)" aria-label="Cláusula" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h3>')">Cláusula</button>
+ <span class="c-sep"></span>
+ <button type="button" class="c-tbtn" title="Lista com marcadores" aria-label="Lista com marcadores" onmousedown="event.preventDefault()" onclick="contratoExecFormato('insertUnorderedList')">• Lista</button>
+ <button type="button" class="c-tbtn" title="Lista numerada" aria-label="Lista numerada" onmousedown="event.preventDefault()" onclick="contratoExecFormato('insertOrderedList')">1. Lista</button>
+ <button type="button" class="c-tbtn" title="Alinhar à esquerda" aria-label="Alinhar à esquerda" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyLeft')">⇤</button>
+ <button type="button" class="c-tbtn" title="Centralizar" aria-label="Centralizar" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyCenter')">↔</button>
+ <button type="button" class="c-tbtn" title="Justificar" aria-label="Justificar" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyFull')">☰</button>
+ <span class="c-sep"></span>
+ <button type="button" class="c-tbtn" title="Desfazer" aria-label="Desfazer" onmousedown="event.preventDefault()" onclick="contratoExecFormato('undo')">↶</button>
+ <button type="button" class="c-tbtn" title="Refazer" aria-label="Refazer" onmousedown="event.preventDefault()" onclick="contratoExecFormato('redo')">↷</button>
+ <span id="zpEdPagina" role="status" aria-live="polite">Página 1 de 1</span>
  <span class="c-sep"></span>
  <input type="file" id="contratoFullCabecalhoInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="contratoUploadCabecalho(this)">
  <button type="button" class="c-tbtn" onclick="document.getElementById('contratoFullCabecalhoInput').click()">🖼️ Enviar cabeçalho</button>
@@ -2778,9 +2794,13 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 
 <!-- Área única de edição visual (a folha A4 é o editor) -->
 <div id="contratoEditorViewport" class="c-editor-viewport">
- <div id="contratoEditorFolha" class="c-editor-page">
-  <div id="contratoEditorCabecalho" class="c-editor-cabecalho"></div>
-  <div id="contratoEditorConteudo" class="c-editor-conteudo" contenteditable="true" spellcheck="false"></div>
+ <div id="zpEdStack" class="c-editor-page">
+  <div id="zpEdPaginas" aria-hidden="true"></div>
+  <div id="zpEdMed" aria-hidden="true"></div>
+  <div id="contratoEditorFolha">
+   <div id="contratoEditorCabecalho" class="c-editor-cabecalho" style="display:none"></div>
+   <div id="contratoEditorConteudo" class="c-editor-conteudo" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Texto do contrato em folhas A4"></div>
+  </div>
  </div>
 </div>
 
@@ -45681,7 +45701,7 @@ renderOperacao = function(){
 // A paginação roda DENTRO da janela (coDocJanelaMain) e usa as mesmas funções puras testadas em Node (coDocDistribuir/coDocPartirHtml/coDocTokens), injetadas por String(fn).
 var CO_DOC_LOGO = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjU0IiBoZWlnaHQ9IjEyNTQiIHZpZXdCb3g9IjAgMCAxMjU0IDEyNTQiCiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlpJUCBGaWxtZXMg4oCUIGZ1bmRvIHRyYW5zcGFyZW50ZSI+Cjx0aXRsZT5aSVAgRmlsbWVzPC90aXRsZT4KPGRlZnM+CiA8bGluZWFyR3JhZGllbnQgaWQ9ImRlZ3JhZGVaaXAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCIgeTE9IjAiIHgyPSI4MzUiIHkyPSIxMzgwIj4KICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDdlZjYwIi8+CiAgPHN0b3Agb2Zmc2V0PSIyNCUiIHN0b3AtY29sb3I9IiMzY2YxNWIiLz4KICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzc5ZjQ1NCIvPgogIDxzdG9wIG9mZnNldD0iNzYlIiBzdG9wLWNvbG9yPSIjYjNmNzRmIi8+CiAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTFmYTRiIi8+CiA8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjwhLS0gUGxheTogY2VudGVyLWxpbmUgd2l0aCBhbiBldmVuIHN0cm9rZSBhbmQgbWF0aGVtYXRpY2FsbHkgc21vb3RoIGN1YmljIEJlemllciBjdXJ2ZXMgLS0+CjxwYXRoIGQ9Ik0gMzAyIDIyLjUKQyAxNTEgMjIuNSAzOCAxMzUgMzggMjc4CkwgMzggOTQ1CkMgMzggMTA5NSAxNTMgMTIxNy41IDMwNSAxMjE3LjUKQyAzNjAgMTIxNy41IDQwNSAxMjAxIDQ1OSAxMTcxCkwgMTAxNyA4NTAKQyAxMDk1IDgwMyAxMTQwLjUgNzIwIDExNDAuNSA2MjIKQyAxMTQwLjUgNTIyIDEwOTYgNDM5IDEwMTAgMzgzCkwgNDQ0IDYxCkMgMzk4IDM1IDM0NyAyMi41IDMwMiAyMi41IFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNkZWdyYWRlWmlwKSIgc3Ryb2tlLXdpZHRoPSI0MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwhLS0gWklQOiBjdXN0b20gZmlsbGVkIHZlY3RvciBsZXR0ZXIgc2hhcGVzLCB6ZXJvIGRlcGVuZGVuY2Ugb24gaW5zdGFsbGVkIGZvbnRzIC0tPgo8ZyBmaWxsPSIjRkZGRkZGIj4KIDxwYXRoIGQ9Ik0gMTQwIDYwOQpMIDMwNiA2MDkKQyAzMzAgNjA5IDM0OS41IDYyOCAzNDkuNSA2NDkKQyAzNDkuNSA2NjQgMzQzLjUgNjc3IDMzMy41IDY4OQpMIDE5NS41IDg1Mi41CkwgMzE1LjUgODUyLjUKQyAzMzcgODUyLjUgMzUwIDg2NyAzNTAgODg3CkMgMzUwIDkwNyAzMzUgOTIzIDMxNCA5MjMKTCAxNDkgOTIzCkMgMTI1IDkyMyAxMDcgOTA5IDEwNyA4ODgKQyAxMDcgODc0IDExMSA4NjYgMTIxIDg1NApMIDI1OSA2NzYKTCAxMzkuNSA2NzYKQyAxMTkgNjc2IDEwNi41IDY2MSAxMDYuNSA2NDIuNQpDIDEwNi41IDYyMy41IDEyMC41IDYwOSAxNDAgNjA5IFoiLz4KIDxjaXJjbGUgY3g9IjQyNC41IiBjeT0iNTUxLjUiIHI9IjQxLjUiLz4KIDxyZWN0IHg9IjM4OS41IiB5PSI2MDMuNSIgd2lkdGg9IjY5IiBoZWlnaHQ9IjMyMy41IiByeD0iMzQuNSIvPgogPHBhdGggZD0iTSA1MDAuNSA2NTgKQyA1MDAuNSA2NDAgNTA5IDYyNiA1MjUgNjE5CkMgNTYwIDYwNCA1OTYgNjAwIDYyOSA2MDAKQyA3MTQgNjAwIDc2MyA2NTkgNzYzIDc2MgpDIDc2MyA4NjYgNzE1IDkyOSA2MzcgOTI5CkMgNjEzIDkyOSA1ODkgOTI2IDU2NS41IDkxNgpMIDU2NS41IDEwMjMuNQpDIDU2NS41IDEwNDQgNTUyIDEwNTcgNTMzIDEwNTcKQyA1MTMuNSAxMDU3IDUwMC41IDEwNDMgNTAwLjUgMTAyMy41IFoKTSA1NjUuNSA2ODQuNQpMIDU2NS41IDg0MwpDIDU4NCA4NTMgNjA5IDg2MCA2MjkgODYwCkMgNjc0IDg2MCA2OTYgODI4IDY5NiA3NjUKQyA2OTYgNzAwIDY3NCA2NjggNjI3LjUgNjY4CkMgNjA1IDY2OCA1ODMgNjc0IDU2NS41IDY4NC41IFoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPgo8L2c+CjwhLS0gRklMTUVTOiB0cnVlIHN0cm9rZWQgdmVjdG9yIHBhdGhzLCB3aXRoIHJvdW5kIGpvaW5zIGFuZCBjbGVhbiBlbmRwb2ludHMgLS0+CjxnIHN0cm9rZT0iI0ZGRkZGRiIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSI4LjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiA8cGF0aCBkPSJNIDcyNi41IDEyMTMuNSBMIDcyNi41IDExMzcuNSBMIDc3My41IDExMzcuNSBNIDcyNi41IDExNzYgTCA3NzMgMTE3NiIgLz4KPHBhdGggZD0iTSA4MDUuNSAxMTM3IEwgODA1LjUgMTIxMy41IiAvPgo8cGF0aCBkPSJNIDg0Ny41IDExMzcgTCA4NDcuNSAxMjEzLjUgTCA4OTMgMTIxMy41IiAvPgo8cGF0aCBkPSJNIDkxNi41IDEyMTMgTCA5MjguNSAxMTQxIEMgOTI5LjIgMTEzNyA5MzAuNyAxMTM1LjUgOTMzLjggMTEzNS41IEMgOTM2LjggMTEzNS41IDkzOC41IDExMzcuNyA5MzkuNCAxMTQxLjUgTCA5NTguNSAxMTk5IEMgOTU5LjkgMTIwMy42IDk2MS43IDEyMDYgOTY0LjMgMTIwNiBDIDk2Ni45IDEyMDYgOTY4LjggMTIwMy43IDk3MC4yIDExOTkuMyBMIDk4NC44IDExNDIgQyA5ODUuOCAxMTM3LjQgOTg4LjMgMTEzNS41IDk5MS40IDExMzUuNSBDIDk5NC41IDExMzUuNSA5OTYuMiAxMTM4IDk5Ni43IDExNDIgTCAxMDA1LjIgMTIxMyIgLz4KPHBhdGggZD0iTSAxMDkxLjUgMTEzNy41IEwgMTA0NS41IDExMzcuNSBMIDEwNDUuNSAxMjEzLjUgTCAxMDkxLjUgMTIxMy41IE0gMTA0NS41IDExNzUuNSBMIDEwOTEgMTE3NS41IiAvPgo8cGF0aCBkPSJNIDExNjUgMTE0Mi41IEMgMTE1My4zIDExMzQuOSAxMTQwLjMgMTEzMy45IDExMjkuOSAxMTQwLjcgQyAxMTIxLjcgMTE0NS45IDExMjAuNiAxMTUzLjMgMTEyMiAxMTYxLjUgQyAxMTI0LjEgMTE3NC40IDExMzcuMiAxMTc2LjIgMTE1MSAxMTgwLjQgQyAxMTY5IDExODUuOCAxMTc3IDExOTMuMiAxMTc1LjUgMTIwNCBDIDExNzQgMTIxNy4yIDExNTkuOSAxMjIwIDExNDcuOCAxMjE4IEMgMTEzNy4yIDEyMTYuNiAxMTI5IDEyMTEuOCAxMTIyIDEyMDUiIC8+CjwvZz4KPC9zdmc+Cg==';   // ZIP_Filmes_Colorida.svg (transparente) embutido pelo gerador; img-src data: já é permitido pela CSP
 var CO_DOC_LIMAO = '#b3f74f';                      // verde-limão da nova logo (parada 76% do degradê): só sobre fundo AZUL escuro (botão da barra, linha do cabeçalho de continuação)
-var CO_DOC_VERDE = '#26800b';                      // verde mais escuro da marca para linha/títulos sobre fundo CLARO (contraste ≈5:1 com branco)
+var CO_DOC_VERDE = '#508200';                      // 1.3.0.4: verde intermediário (entre o limão #b3f74f, claro demais, e o #26800b, escuro demais) para linha/títulos sobre fundo CLARO (#508200, contraste ≈4,6:1 com branco)
 var CO_DOC_AZUL = '#1e3a5f';
 var CO_DOC_TEL = '(35) 3222-4888';
 var CO_DOC_SITE = 'www.zipfilmes.com.br';
@@ -45871,7 +45891,7 @@ function coDocJanelaMain(){
       destino.textContent = '';
       paginas.forEach(function(ids, p){
         var pg = doc.createElement('div'); pg.className = 'pg';
-        if(marca){ var wm = doc.createElement('div'); wm.className = 'wm'; wm.textContent = 'ZIP FILMES'; pg.appendChild(wm); }
+        /* 1.3.0.4: a marca d'água entra DENTRO do corpo (abaixo) — só entre cabeçalho e rodapé */
         var cab = p === 0 ? cab1 : cabN;
         if(cab){ var c = cab.cloneNode(true); c.removeAttribute('id'); pg.appendChild(c); }
         var corpo = doc.createElement('div'); corpo.className = 'corpo ' + cls;
@@ -45879,6 +45899,7 @@ function coDocJanelaMain(){
         // folha de continuação que abre com itens do pacote repete a tarja "Descrição"
         if(p > 0 && tarja && ids.length && String(blocos[ids[0]].className).indexOf('b-row') >= 0){ var t = tarja.cloneNode(true); t.removeAttribute('id'); corpo.appendChild(t); }
         ids.forEach(function(ix){ corpo.appendChild(blocos[ix].cloneNode(true)); colocados++; });
+        if(marca){ var wm = doc.createElement('div'); wm.className = 'wm'; wm.setAttribute('aria-hidden', 'true'); var wt = doc.createElement('span'); wt.textContent = 'ZIP FILMES'; wm.appendChild(wt); corpo.appendChild(wm); }
         pg.appendChild(corpo);
         if(p === total - 1 && fim){ var f = fim.cloneNode(true); f.removeAttribute('id'); pg.appendChild(f); }
         if(numerar){ var n = doc.createElement('div'); n.className = 'pgn'; n.textContent = 'Página ' + (p + 1) + ' de ' + total; pg.appendChild(n); }
@@ -45923,12 +45944,14 @@ function coDocCssBase(){
     '.pg:last-child{break-after:auto;page-break-after:auto;margin-bottom:0}',
     '#erro{display:none;max-width:210mm;margin:10mm auto;background:#fff1f2;border:1px solid #fecdd3;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;color:#9f1239;font:14px Arial,sans-serif}',
     '.corpo{flex:1 1 auto;position:relative;z-index:1}',
-    '.wm{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:88px;font-weight:900;color:rgba(30,58,95,0.04);white-space:nowrap;pointer-events:none;letter-spacing:-2px;z-index:0}',
+    '.wm{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;z-index:2;display:flex;align-items:center;justify-content:center}',
+    '.wm span{display:block;transform:rotate(-25deg);font-size:104px;line-height:1;font-weight:900;color:rgba(30,58,95,0.03);white-space:nowrap;letter-spacing:-2px;pointer-events:none}',
     '.pgn{position:absolute;left:0;right:0;bottom:8mm;text-align:center;font:8pt Arial,sans-serif;color:#8a94a3}',
     '@media print{html{background:#fff}#paginas{padding:0}.pg{margin:0;box-shadow:none;height:296.6mm}.tbar,#erro{display:none!important}}',
     '.hdr{background:' + A + ';display:flex;justify-content:space-between;align-items:center;padding:4mm 14mm}',
     '.hdr-logo{display:block;width:22mm;height:22mm}',
-    '.hdr-info{text-align:right;font-size:11px;color:#7fb3d3;line-height:1.9}',
+    '.hdr-info{text-align:right;font-size:22px;color:#7fb3d3;line-height:1.25;white-space:nowrap;min-width:0}',
+    '.hdr-logo{flex:0 0 auto}',
     '.faixa{background:#f0f4f8;padding:2.6mm 14mm;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid ' + CO_DOC_VERDE + '}',
     '.faixa-title{font-size:10px;font-weight:700;color:' + A + ';letter-spacing:3px;text-transform:uppercase}',
     '.faixa-meta{font-size:9px;color:#6b7280}',
@@ -46014,7 +46037,7 @@ function coDocOrcamentoHtml(d){
     + '<div class="footer"><div><img class="footer-logo" alt="Zip Filmes" src="' + CO_DOC_LOGO + '"></div>'
     + '<div class="footer-info">ZIPMÍDIA SERVIÇOS DE PRODUÇÃO AUDIOVISUAL &nbsp;&bull;&nbsp; CNPJ 07.473.162/0001-96<br>Alameda Olívio Bregalda, 275, 3&deg; andar &mdash; Varginha/MG &nbsp;&bull;&nbsp; (35) 3222-4888</div></div></div>';
   var blocos = [];
-  blocos.push('<div class="blk b-cli"><div class="cli-row"><div><div class="cli-lbl">Proposta para</div><div class="cli-val">' + E(d.cliente) + '</div><div class="cli-sub">' + (agencia && agencia !== 'Direto' ? 'via ' + E(agencia) : 'Contato direto') + '</div></div>'
+  blocos.push('<div class="blk b-cli"><div class="cli-row"><div><div class="cli-lbl">Proposta para</div><div class="cli-val">' + E(d.cliente) + '</div><div class="cli-sub">' + E(coDocAgenciaTexto(d.agencia)) + '</div></div>'
     + '<div class="cli-right"><div class="cli-lbl">Tipo de serviço</div><div class="cli-val" style="font-size:13px">' + E(d.tipoServico) + '</div><div class="cli-sub">Responsável: ' + E(d.responsavel) + '</div></div></div></div>');
   blocos.push('<div class="blk b-sec" data-keep="1"><div class="sec-lbl">Conteúdo do Pacote</div></div>');
   var tarja = '<div class="tarja">Descrição</div>';   // identificação da coluna (a coluna de descrição do layout original); repetida nas folhas de continuação
@@ -46179,7 +46202,7 @@ function coDocContratoBlocos(html){
   var els = coDocExpandir(coHtmlLimpo(html)), out = [], modo = '', primeiro = true, pend = null, ass = null, k, el;
   function add(cls, inner, keep){ out.push('<div class="blk ' + cls + '"' + (keep ? ' data-keep="1"' : '') + '>' + inner + '</div>'); }
   function campo(rot, val){ add('b-campo', '<div class="ct-campo"><div class="ct-rot">' + rot + '</div><div class="ct-val sp">' + (val || '&nbsp;') + '</div></div>', false); }
-  function fecharPend(){ if(pend){ campo(pend.rot, pend.vals.join('<br>')); pend = null; } }
+  function fecharPend(){ if(pend){ while(pend.vals.length && !String(pend.vals[pend.vals.length - 1]).trim()) pend.vals.pop(); campo(pend.rot, pend.vals.join('<br>')); pend = null; } }
   for(k = 0; k < els.length; k++){
     el = els[k];
     if(modo !== 'assin' && coDocIniciaAssin(el)){ fecharPend(); modo = 'assin'; ass = []; }
@@ -46207,7 +46230,7 @@ function coDocContratoBlocos(html){
       acc = [];
     };
     el.lines.forEach(function(ln){
-      if(!ln.t){ flushP(); return; }
+      if(!ln.t){ if(modo === 'resumo' && pend && pend.vals.length){ pend.vals.push(''); return; } flushP(); return; }   // 1.3.0.4: linha em branco interna do valor do campo fica (as do fim são removidas em fecharPend)
       var cls = coDocClasse(ln.t, primeiro); primeiro = false;
       if(cls === 'titulo'){ flushP(); fecharPend(); add('b-tit', '<h1 class="ct-titulo sp">' + ln.h + '</h1>', true); return; }
       if(cls === 'secao'){ flushP(); fecharPend(); modo = /^QUADRO\s+RESUMO/i.test(ln.t) ? 'resumo' : (/^CL[ÁA]USULAS/i.test(ln.t) ? 'clausulas' : modo); add('b-sec', '<h2 class="ct-sec sp">' + ln.h + '</h2>', true); return; }
@@ -46278,6 +46301,7 @@ function coDocContratoCss(lay, marg){
     '.b-cl{padding:3mm 0 1.2mm}',
     '.ct-cl{font-size:1em;font-weight:700;color:' + A + ';line-height:1.35}',
     '.ct-p{margin:0;text-align:' + al + ';text-align-last:left}',
+    '.ct-p[style*="text-align"]{text-align-last:auto}',
     '.b-campo{padding-bottom:0}',
     '.ct-campo{display:flex;gap:4mm;border-bottom:.25mm solid #dbe3ec;padding:1.5mm 1mm}',
     '.ct-rot{flex:0 0 44mm;font-weight:700;color:' + A + ';font-size:.88em}',
@@ -46336,7 +46360,7 @@ function coDocNomeNorm(n){ return String(n === null || n === undefined ? '' : n)
   var mae = null;
   contratoTemplates.forEach(function(t){ if(t && t.id === 'contrato_mae_zip_v1') mae = t; });
   if(mae && !contratoTemplates.some(function(t){ return t && t.id === CO_DOC_MESTRE_ID; }))
-    contratoTemplates.unshift({ id: CO_DOC_MESTRE_ID, nome: 'Contrato Mestre', tipoServico: 'Geral / Contrato Mestre', ativo: true, corpo: mae.corpo });
+    contratoTemplates.unshift({ id: CO_DOC_MESTRE_ID, nome: 'Contrato Mestre', tipoServico: 'Geral / Contrato Mestre', ativo: true, corpo: coDocMestreCorpo(mae.corpo) });
   contratoTemplates.forEach(function(t){ if(t && CO_DOC_LOCAIS_OBSOLETOS[t.id] === 1) t.ativo = false; });
 })();
 // Se o banco passar a ter um "Contrato Mestre" real (nome exato), o local não aparece duplicado na seleção. O local continua existindo no array.
@@ -46375,6 +46399,805 @@ popularSelectTemplatesEditor = function(){
   return r;
 };
 // END 1.3.0.3 DOCUMENTOS A4
+// BEGIN 1.3.0.4 PROPOSTAS: dica de subtotal por item do orçamento e texto de agência do PDF da proposta.
+// Só apresentação: nada aqui grava, recalcula valores salvos, muda snapshot, ACL ou histórico. Os números da dica usam as MESMAS funções de leitura do desenho original.
+
+// "Agência: Nome" sempre; vazio/espaços/Direto (qualquer caixa) => "Agência: Direto". Prefixo "Agência:" já existente não é duplicado. Devolve texto CRU (quem chama escapa).
+function coDocAgenciaTexto(v){
+  var s = String(v === null || v === undefined ? '' : v).replace(/\s+/g, ' ').trim();
+  while(/^ag[eê]ncia\s*:\s*/i.test(s)) s = s.replace(/^ag[eê]ncia\s*:\s*/i, '').trim();
+  if(!s || s.toLowerCase() === 'direto') return 'Agência: Direto';
+  return 'Agência: ' + s;
+}
+
+// Dados da dica "qtd× R$ unit = R$ total" a partir dos textos digitados. null = sem dica (campo vazio/ inválido / total zero).
+function coOrcDicaDados(qtd, valor){
+  var qn = _numCampoProntReal(coQtdLinhaParaForm(qtd), NaN), un = _numCampoProntReal(valor, NaN);
+  if(!isFinite(qn) || !isFinite(un)) return null;
+  if(!(qn > 0)) return null;   // quantidade 0/negativa: sem dica (o cálculo do sistema continua o de sempre; a dica só não afirma um total enganoso)
+  var q = qn;
+  var total = _arred2ProntReal(q * Math.max(0, un));
+  if(!isFinite(total) || !(total > 0)) return null;
+  return { qtd: q, un: Math.max(0, un), total: total };
+}
+function coOrcDicaHtml(d){
+  if(!d) return '';
+  var q = String(Math.round(d.qtd * 1000) / 1000).replace('.', ',');
+  return q + '× ' + coDocBRL(d.un) + ' = <b>' + coDocBRL(d.total) + '</b>';
+}
+// Atualiza (sem recriar linhas, então foco/seleção/arraste/fornecedor ficam intactos) a dica de cada item editável. Linhas somente-leitura não têm data-orc-item e não são tocadas.
+function coOrcSincronizarDicas(){
+  var lista = coEl('orcItensLista');
+  if(!lista || typeof orcItens === 'undefined' || !orcItens) return;
+  Array.prototype.forEach.call(lista.querySelectorAll('.coOrcItem[data-orc-item]'), function(box){
+    var i = Number(box.getAttribute('data-orc-item')), it = orcItens[i], ln = box.querySelector('.coOrcLn');
+    if(!it || !ln) return;
+    var dica = box.querySelector('.coOrcDica');
+    if(!dica){   // a dica desenhada pela renderização original (div logo após a linha, alinhada à direita) passa a ser a gerenciada aqui
+      var nx = ln.nextElementSibling;
+      if(nx && !nx.className && /text-align:\s*right/.test(nx.getAttribute('style') || '') && nx.querySelector('b')){ dica = nx; dica.className = 'coOrcDica'; }
+    }
+    var d = coOrcDicaDados(it[1], it[2]);
+    if(!d){ if(dica) dica.style.display = 'none'; return; }
+    if(!dica){
+      dica = document.createElement('div'); dica.className = 'coOrcDica';
+      dica.style.cssText = 'text-align:right;font-size:11px;color:var(--muted);margin-top:4px;padding-right:46px';
+      ln.parentNode.insertBefore(dica, ln.nextSibling);
+    }
+    dica.style.display = '';
+    var h = coOrcDicaHtml(d);
+    if(dica.innerHTML !== h) dica.innerHTML = h;
+  });
+}
+// Envolve a versão EFETIVA (a já protegida pelo modo somente-leitura): o cálculo e o resumo continuam os de antes; depois deles, só a dica é sincronizada.
+var _coOrcAtualizarTotal87 = atualizarTotalOrc;
+atualizarTotalOrc = function(){
+  var r = _coOrcAtualizarTotal87.apply(this, arguments);
+  try { coOrcSincronizarDicas(); } catch(_e){}
+  return r;
+};
+// END 1.3.0.4 PROPOSTAS
+// BEGIN 1.3.0.4 EDITOR · PARTE A (funções puras: sem DOM, sem rede, sem banco)
+// Função declarada (içada): o módulo 1.3.0.3 usa coDocMestreCorpo ao carregar, antes desta parte ser executada.
+// DESENHO (renderizador ÚNICO): o editor mostra exatamente os blocos que o PDF monta (coDocContratoBlocos → mesmo HTML, mesmo CSS escopado, mesma distribuição em folhas).
+// O que o usuário edita é esse HTML de blocos; zpEdSerializar o converte de volta ao HTML canônico permitido (p/div/br/b/strong/em/i/ul/ol/li/span/h1-h3 + style enumerado),
+// com ponto fixo: PDF(serializar(blocos(S))) tem os mesmos blocos e as mesmas palavras de PDF(S). zpEdProva confere isso (palavras) antes de salvar; se falhar, NÃO salva.
+// O sanitizador e a gramática do servidor não mudam. Tabela continua descartada (o servidor rejeita <table>): o "quadro" do contrato é o bloco rótulo/valor, que já está na gramática.
+
+var CO_DOC_CTR_TOPO = 9;
+var CO_DOC_CTR_BASE = 20;
+
+// ---------------------------------------------------------------------------------------------------------------
+// Contrato Mestre NOVO: quadro resumo só com os 7 campos pedidos. Trocas exatas e tudo-ou-nada (se o texto do modelo não for o esperado, devolve o corpo original sem tocar em nada).
+// As frases de uso, brutos/editáveis e portfólio NÃO são apagadas nem reescritas: mudam para as cláusulas 12, 14 e 15. Dados de cliente/contato saem do resumo (já constam nas partes).
+// Só o Mestre aplicado explicitamente recebe isto; contratos antigos e modelos reais do banco não passam por aqui.
+// ---------------------------------------------------------------------------------------------------------------
+function coDocMestreCorpo(corpo){
+  var original = String(corpo === null || corpo === undefined ? '' : corpo), s = original;
+  var antigoCampos = ['Número da OS / Contrato: {{OS}}', 'Data: {{DATA}}', 'Cliente / Nome fantasia: {{CLIENTE}}', 'Razão social: {{RAZAO_SOCIAL}}', 'CNPJ/CPF: {{CNPJ}}', 'Endereço: {{ENDERECO}}', 'Cidade/UF: {{CIDADE_UF}}',
+    'Contato do cliente: {{CONTATO_CLIENTE}}', 'E-mail: {{EMAIL}}', 'Telefone: {{TELEFONE}}', 'Agência / Intermediadora: {{AGENCIA}}', 'Responsável Zip: {{RESPONSAVEL}}', 'Projeto / Campanha: {{SERVICO}}'].join('\n');
+  var usoFrase = 'Uso institucional, comercial e/ou publicitário conforme finalidade do projeto aprovado e limites estabelecidos neste contrato.';
+  var brutosL1 = 'Arquivos brutos incluídos? Não, salvo previsão expressa em sentido contrário.';
+  var brutosL2 = 'Projetos editáveis incluídos? Não, salvo previsão expressa em sentido contrário.';
+  var portfolio = 'Uso em portfólio autorizado? Sim, salvo restrição expressa informada pela CONTRATANTE.';
+  var antigoBloco = ['Uso autorizado do material:', usoFrase, '', brutosL1, brutosL2, portfolio, '', 'Observações comerciais:', '____________________________________'].join('\n') + '\n\n';
+  var trocas = [
+    [antigoCampos, 'Número da OS / Contrato: {{OS}}\nProjeto / Campanha: {{SERVICO}}'],
+    [antigoBloco, ''],
+    ['salvo autorização expressa em sentido diverso.', 'salvo autorização expressa em sentido diverso.\n\nUso autorizado do material: ' + usoFrase],
+    ['não integram o objeto, salvo contratação expressa.', 'não integram o objeto, salvo contratação expressa.\n\n' + brutosL1 + '\n' + brutosL2],
+    ['informados pela CONTRATANTE.\n\n16. DA CONFIDENCIALIDADE', 'informados pela CONTRATANTE.\n\n' + portfolio + '\n\n16. DA CONFIDENCIALIDADE']
+  ], i;
+  for(i = 0; i < trocas.length; i++){ if(s.split(trocas[i][0]).length !== 2) return original; }
+  for(i = 0; i < trocas.length; i++) s = s.split(trocas[i][0]).join(trocas[i][1]);
+  return s;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// CSS compartilhado: o mesmo CSS do PDF (coDocContratoCss) restringido a um escopo. Descarta @page/@media e a regra de html; body vira o escopo; * vira :where(escopo) * (especificidade 0, como no PDF).
+// zpEdCssParaLayout recompõe com fonte/espaçamento/margem/alinhamento do layout atual: os MESMOS valores que o PDF recebe.
+// ---------------------------------------------------------------------------------------------------------------
+function coDocEscoparCss(css, escopo){
+  var s = String(css), i = 0, n = s.length, out = '', j, k, prof, sel, corpo, c, lista;
+  while(i < n){
+    j = s.indexOf('{', i); if(j < 0) break;
+    sel = s.slice(i, j).trim();
+    prof = 1; k = j + 1;
+    while(k < n && prof > 0){ c = s.charAt(k); if(c === '{') prof++; else if(c === '}') prof--; k++; }
+    corpo = s.slice(j + 1, k - 1); i = k;
+    if(!sel || sel.charAt(0) === '@' || sel === 'html') continue;
+    lista = sel.split(',').map(function(x){
+      x = x.trim();
+      if(x === '*') return ':where(' + escopo + ') *';
+      if(x === 'body') return escopo;
+      return escopo + ' ' + x;
+    });
+    out += lista.join(',') + '{' + corpo + '}';
+  }
+  return out;
+}
+function zpEdCssParaLayout(lay, marg){ return coDocEscoparCss(coDocContratoCss(lay, marg), '#zpEdStack'); }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Une duas metades produzidas por coDocPartirHtml (a fecha as tags abertas; b as reabre). Junta com UM espaço (o espaço do corte foi descartado ao dividir).
+// ---------------------------------------------------------------------------------------------------------------
+function coDocJuntarHtml(a, b){
+  a = String(a === null || a === undefined ? '' : a); b = String(b === null || b === undefined ? '' : b);
+  var abre = [], rest = b, m, re = /^\s*<([a-zA-Z0-9]+)(?:\s[^>]*)?>/, ra = a.replace(/\s+$/, ''), k = 0, f, rf = /<\/([a-zA-Z0-9]+)>\s*$/;
+  while((m = re.exec(rest)) !== null && m[1].toLowerCase() !== 'br'){ abre.push({ nome: m[1].toLowerCase(), len: m[0].length }); rest = rest.slice(m[0].length); }
+  while(k < abre.length){
+    f = rf.exec(ra);
+    if(!f || f[1].toLowerCase() !== abre[k].nome) break;
+    ra = ra.slice(0, ra.length - f[0].length); k++;
+  }
+  var resto = b, t;
+  for(t = 0; t < k; t++){ m = re.exec(resto); resto = resto.slice(m[0].length); }
+  if(!ra.replace(/<[^>]*>/g, '').trim() && !k) return resto.replace(/^\s+/, '');
+  return ra + ' ' + resto.replace(/^\s+/, '');
+}
+
+// Cabeçalhos do contrato (1ª folha e continuação) — o MESMO HTML que coDocContratoHtml monta.
+function coDocContratoCabs(os, lay){
+  var osE = coEsc(coDecodificar(os === null || os === undefined ? '' : os));
+  var logo = '<img class="hdr-logo" alt="Zip Filmes" src="' + CO_DOC_LOGO + '">';
+  var custom = lay && lay.cabecalhoDataUrl ? '<div class="cab-custom"><img alt="" src="' + lay.cabecalhoDataUrl + '"></div>' : '';
+  return {
+    cab1: '<div><div class="hdr">' + logo + '<div class="hdr-info">' + coEsc(CO_DOC_TEL) + ' &nbsp;|&nbsp; ' + coEsc(CO_DOC_SITE) + '</div></div>'
+      + '<div class="faixa"><div class="faixa-title">Contrato de prestação de serviços</div><div class="faixa-meta">' + osE + '</div></div>' + custom + '</div>',
+    cabN: '<div class="hdr2"><img class="hdr2-logo" alt="Zip Filmes" src="' + CO_DOC_LOGO + '"><div class="hdr2-txt">Contrato de prestação de serviços' + (osE ? ' &nbsp;&bull;&nbsp; ' + osE : '') + '</div></div>'
+  };
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Planejamento das folhas: un[i] = { nat (topo natural em px, sem margens), h, keep }; cfg = { mm, hdr0, hdrN, topo, base (mm), pagina (297), gap (8) }.
+// Usa coDocDistribuir (a MESMA regra do PDF). Devolve { paginas, margens (margin-top do 1º bloco de cada folha), total, P (passo entre folhas) }.
+// ---------------------------------------------------------------------------------------------------------------
+function zpEdPlanejar(un, cfg){
+  var mm = cfg.mm, H = (cfg.pagina || 297) * mm, G = (cfg.gap === undefined ? 8 : cfg.gap) * mm, P = H + G, topo = cfg.topo * mm, base = cfg.base * mm;
+  var cap = function(p){ return H - (p === 0 ? cfg.hdr0 : cfg.hdrN) - topo - base; };
+  var itens = un.map(function(u){ return { h: Number(u.h) || 0, keep: u.keep === true }; });
+  var paginas = coDocDistribuir(itens, cap, 0, 0);
+  var margens = un.map(function(){ return 0; }), shift = 0;
+  paginas.forEach(function(ids, k){
+    if(!ids.length) return;
+    var f = ids[0], desejado = k * P + (k === 0 ? cfg.hdr0 : cfg.hdrN) + topo, m = Math.max(0, desejado - (Number(un[f].nat) + shift));
+    margens[f] = m; shift += m;
+  });
+  return { paginas: paginas, margens: margens, total: Math.max(1, paginas.length), P: P, cap0: cap(0), cap1: cap(1) };
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Renderização (a mesma do PDF) e leitura de volta
+// ---------------------------------------------------------------------------------------------------------------
+// HTML canônico → blocos do PDF. Partes sem texto da assinatura (espaço e linha) ficam não editáveis. Documento vazio = um parágrafo em branco para digitar.
+function zpEdRenderHtml(S){
+  var blocos = coDocContratoBlocos(S);
+  if(!blocos.length) return '<div class="blk b-p"><p class="ct-p sp"><br></p></div>';
+  return blocos.join('').split('<div class="ct-ass-esp"></div>').join('<div class="ct-ass-esp" contenteditable="false"></div>')
+    .split('<div class="ct-ass-linha"></div>').join('<div class="ct-ass-linha" contenteditable="false"></div>');
+}
+
+// Analisador mínimo de HTML bem formado (o que o navegador serializa): árvore com posições, para fatiar o texto original sem reescrevê-lo.
+function zpAttrs(txt){
+  var a = {}, re = /([a-zA-Z_:][\w:.-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g, m;
+  while((m = re.exec(txt)) !== null) a[m[1].toLowerCase()] = m[2] !== undefined ? m[2] : m[3];
+  return a;
+}
+function zpParse(s){
+  s = String(s === null || s === undefined ? '' : s);
+  var raiz = { t: 'el', n: '#raiz', a: {}, c: [], ini: 0, ci: 0, cf: s.length, fim: s.length }, pilha = [raiz], VAZIO = { br: 1, img: 1, hr: 1, input: 1, meta: 1, link: 1, wbr: 1 };
+  var re = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/g, m, ult = 0, topo, p, el, x;
+  while((m = re.exec(s)) !== null){
+    topo = pilha[pilha.length - 1];
+    if(m.index > ult) topo.c.push({ t: 'tx', v: s.slice(ult, m.index), ini: ult, fim: m.index });
+    ult = re.lastIndex;
+    var nome = m[2].toLowerCase();
+    if(m[1]){
+      p = pilha.length - 1; while(p > 0 && pilha[p].n !== nome) p--;
+      if(p > 0){ while(pilha.length > p + 1){ x = pilha.pop(); x.cf = m.index; x.fim = m.index; } el = pilha.pop(); el.cf = m.index; el.fim = ult; }
+    } else {
+      el = { t: 'el', n: nome, a: zpAttrs(m[3]), c: [], ini: m.index, ci: ult, cf: ult, fim: ult };
+      topo.c.push(el);
+      if(!VAZIO[nome] && !/\/\s*$/.test(m[3])) pilha.push(el);
+    }
+  }
+  if(ult < s.length) pilha[pilha.length - 1].c.push({ t: 'tx', v: s.slice(ult), ini: ult, fim: s.length });
+  while(pilha.length > 1){ x = pilha.pop(); x.cf = s.length; x.fim = s.length; }
+  return raiz;
+}
+function zpTem(el, cls){ return !!el && el.t === 'el' && (' ' + (el.a['class'] || '') + ' ').indexOf(' ' + cls + ' ') >= 0; }
+function zpAcha(nodes, pred, out){ (nodes || []).forEach(function(n){ if(n.t !== 'el') return; if(pred(n)) out.push(n); zpAcha(n.c, pred, out); }); return out; }
+function zpTexto1(s, el){ return coDocTextoPlano(s.slice(el.ci, el.cf)).replace(/\s+/g, ' ').trim(); }
+function zpLimpa(h){ return coHtmlLimpo(h).replace(/^(?:\s|&nbsp;)+|(?:\s|&nbsp;)+$/g, ''); }
+var ZP_BLK_RX = /^(p|div|h1|h2|h3|ul|ol|li)$/;
+// Linhas (HTML) de um elemento: <br> e fronteiras de bloco separam linhas; texto/inline é copiado literalmente do original.
+function zpLinhas(s, el){
+  var linhas = [], atual = '';
+  function flush(){ linhas.push(atual); atual = ''; }
+  (function ande(nodes){
+    nodes.forEach(function(nd){
+      if(nd.t === 'tx'){ atual += s.slice(nd.ini, nd.fim); return; }
+      if(nd.n === 'br'){ flush(); return; }
+      if(ZP_BLK_RX.test(nd.n)){
+        if(atual.replace(/\s|&nbsp;/gi, '') !== '') flush(); else atual = '';
+        ande(nd.c);
+        if(atual.replace(/\s|&nbsp;/gi, '') !== '') flush(); else atual = '';
+        return;
+      }
+      atual += s.slice(nd.ini, nd.fim);
+    });
+  })(el.c);
+  if(atual.replace(/\s|&nbsp;/gi, '') !== '') flush();
+  var ls = linhas.map(zpLimpa);
+  while(ls.length && !coDocTextoPlano(ls[0]).trim()) ls.shift();
+  while(ls.length && !coDocTextoPlano(ls[ls.length - 1]).trim()) ls.pop();
+  return ls;
+}
+// Itens de uma lista do editor (cada <li> do PDF fica numa lista própria com a classe ct-nN; ct-cont = texto que continua o item depois de uma sublista).
+function zpItensUl(s, ul, itens){
+  var m = /(?:^|\s)ct-n([1-4])(?:\s|$)/.exec(ul.a['class'] || ''), nivel = m ? parseInt(m[1], 10) : 1, cont = zpTem(ul, 'ct-cont'), primeiro = true;
+  ul.c.forEach(function(li){
+    if(li.t !== 'el' || li.n !== 'li') return;
+    var ls = zpLinhas(s, li);
+    if(!ls.length) return;
+    itens.push({ ordered: ul.n === 'ol', nivel: nivel, cont: cont && primeiro, html: ls.join('<br>'), style: coLimparStyle(li.a.style || '') });
+    primeiro = false;
+  });
+}
+// Itens (ordered, nivel, cont, html, style) → listas aninhadas.
+function zpListaHtml(itens){
+  var out = '', pilha = [], i, it, nv, tag;
+  for(i = 0; i < itens.length; i++){
+    it = itens[i]; nv = Math.max(1, Math.min(4, it.nivel || 1));
+    while(pilha.length > nv) out += '</li></' + pilha.pop() + '>';
+    if(it.cont && pilha.length === nv){ out += it.html; continue; }
+    tag = it.ordered ? 'ol' : 'ul';
+    if(pilha.length === nv && pilha[nv - 1] !== tag) out += '</li></' + pilha.pop() + '>';
+    if(pilha.length === nv) out += '</li>';
+    else { while(pilha.length < nv){ pilha.push(tag); out += '<' + tag + '>' + (pilha.length < nv ? '<li>' : ''); } }
+    out += '<li' + (it.style ? ' style="' + it.style + '"' : '') + '>' + it.html;
+  }
+  while(pilha.length) out += '</li></' + pilha.pop() + '>';
+  return out;
+}
+// Conteúdo qualquer (blocos de título/seção/cláusula/parágrafo e o que o navegador criar ao editar): cada elemento de bloco vira o mesmo elemento canônico; texto solto vira <p>. Nada de texto é descartado.
+function zpGenerico(s, nodes, out){
+  var run = '';
+  function fecharRun(){ if(run.replace(/<br\s*\/?>|\s|&nbsp;/gi, '') !== '') out.push('<p>' + zpLimpa(run) + '</p>'); run = ''; }
+  nodes.forEach(function(nd){
+    if(nd.t === 'tx' || !/^(p|div|h1|h2|h3|ul|ol)$/.test(nd.n)){ run += s.slice(nd.ini, nd.fim); return; }
+    fecharRun();
+    if(nd.n === 'ul' || nd.n === 'ol'){ var it = []; zpItensUl(s, nd, it); if(it.length) out.push(zpListaHtml(it)); return; }
+    var aninhado = zpAcha(nd.c, function(x){ return /^(p|div|h1|h2|h3|ul|ol)$/.test(x.n); }, []).length > 0;
+    if(aninhado && (nd.n === 'p' || nd.n === 'div')){ zpGenerico(s, nd.c, out); return; }
+    var ls = zpLinhas(s, nd);
+    if(!ls.length) return;
+    var tag = /^h[123]$/.test(nd.n) ? nd.n : 'p', st = coLimparStyle(nd.a.style || '');
+    out.push('<' + tag + (st ? ' style="' + st + '"' : '') + '>' + ls.join('<br>') + '</' + tag + '>');
+  });
+  fecharRun();
+}
+function zpCampo(s, blk, out){
+  // Enter numa célula faz o navegador CLONAR o div (ct-val/ct-rot): todas as células de cada tipo, em ordem, fazem parte do campo (nada é descartado).
+  var rots = zpAcha(blk.c, function(x){ return zpTem(x, 'ct-rot'); }, []), vals = zpAcha(blk.c, function(x){ return zpTem(x, 'ct-val'); }, []);
+  if(!rots.length || !vals.length){ zpGenerico(s, blk.c, out); return; }
+  var r = rots.map(function(x){ return zpTexto1(s, x); }).join(' ').replace(/\s+/g, ' ').trim().replace(/[:]\s*$/, ''), ls = [], suf = /\?\s*$/.test(r) ? '' : ':';
+  var brancos = 0;   // célula vazia entre células com texto = linha em branco (o valor guarda <br><br>, e o PDF a mostra)
+  vals.forEach(function(v){
+    var cl = zpLinhas(s, v);
+    if(!cl.length){ if(ls.length) brancos++; return; }
+    while(brancos > 0 && ls.length){ ls.push(''); brancos--; }
+    brancos = 0;
+    cl.forEach(function(l){ ls.push(l); });
+  });
+  if(!r){ if(ls.length) out.push('<p>' + ls.join('<br>') + '</p>'); return; }
+  var rh = '<strong>' + coEsc(r) + suf + '</strong>';
+  if(!ls.length) out.push('<p>' + rh + '</p>');
+  else if(ls.length === 1) out.push('<p>' + rh + ' ' + ls[0] + '</p>');
+  else out.push('<p>' + rh + '<br>' + ls.join('<br>') + '</p>');
+}
+function zpParte(s, blk, out){
+  var els = zpAcha(blk.c, function(x){ return zpTem(x, 'ct-parte'); }, []);
+  if(!els.length){ zpGenerico(s, blk.c, out); return; }
+  els.forEach(function(el){   // Enter clona o div: cada um vira sua linha
+    var t = zpTexto1(s, el);
+    if(!t) return;
+    if(!/:\s*$/.test(t) && coDocClasse(t + ':', false) === 'parte') t += ':';
+    out.push('<p>' + coEsc(t) + '</p>');
+  });
+}
+// Assinaturas: colunas → linhas de texto (o formato que coDocAssinHtml entende), um único <p>.
+function zpAssin(s, blk, out){
+  var raiz = zpAcha(blk.c, function(x){ return zpTem(x, 'ct-assin'); }, [])[0];
+  if(!raiz){ zpGenerico(s, blk.c, out); return; }
+  var linhas = [], PAD = '        ', RUL = '____________________________________';
+  function sep(){ if(linhas.length && linhas[linhas.length - 1] !== '') linhas.push(''); }
+  function col(c){
+    var r = { rot: '', rows: [] };
+    c.c.forEach(function(x){
+      if(x.t !== 'el') return;
+      if(zpTem(x, 'ct-ass-rot')) r.rot = (r.rot ? r.rot + ' ' : '') + zpTexto1(s, x);
+      else if(zpTem(x, 'ct-ass-txt')) r.rows.push(zpTexto1(s, x));
+      else if(zpTem(x, 'ct-ass-campo')){ var sp = x.c.filter(function(y){ return y.t === 'el' && y.n === 'span'; })[0]; r.rows.push(zpTexto1(s, sp || x)); }
+    });
+    return r;
+  }
+  function par(p){
+    var cs = p.c.filter(function(x){ return x.t === 'el' && zpTem(x, 'ct-ass-col'); });
+    sep();
+    if(cs.length !== 2){ cs.forEach(function(c){ linhas.push(zpTexto1(s, c)); }); return; }
+    var A = col(cs[0]), B = col(cs[1]), n = Math.max(A.rows.length, B.rows.length), i, a, b;
+    var u = function(t){ return String(t).replace(/\s{2,}/g, ' ').trim(); };
+    linhas.push(u(A.rot) + PAD + u(B.rot)); linhas.push(RUL + PAD + RUL);
+    for(i = 0; i < n; i++){
+      a = u(A.rows[i] || ''); b = u(B.rows[i] || '');
+      if(!a && !b) continue;
+      linhas.push(!a ? PAD + PAD + b : (!b ? a : a + PAD + b));
+    }
+  }
+  (function visita(nodes){
+    nodes.forEach(function(x){
+      if(x.t !== 'el') return;
+      if(zpTem(x, 'ct-ass-tit')){ sep(); linhas.push(zpTexto1(s, x)); }
+      else if(zpTem(x, 'ct-ass-par')) par(x);
+      else if(zpTem(x, 'ct-ass-livre')){ sep(); zpLinhas(s, x).forEach(function(l){ linhas.push(coDocTextoPlano(l).replace(/\s+$/, '')); }); }
+      else visita(x.c);
+    });
+  })(raiz.c);
+  while(linhas.length && linhas[0] === '') linhas.shift();
+  while(linhas.length && linhas[linhas.length - 1] === '') linhas.pop();
+  if(linhas.length) out.push('<p>' + linhas.map(function(l){ return coEsc(l); }).join('<br>') + '</p>');
+}
+// Blocos do editor (HTML do contenteditable) → HTML canônico. Nunca descarta texto; só devolve a gramática permitida.
+function zpEdSerializar(renderizado){
+  var s = String(renderizado === null || renderizado === undefined ? '' : renderizado), raiz = zpParse(s), out = [], itens = null;
+  function fecharLista(){ if(itens){ out.push(zpListaHtml(itens)); itens = null; } }
+  raiz.c.forEach(function(nd){
+    if(nd.t === 'tx'){ if(coDocTextoPlano(nd.v).trim()){ fecharLista(); out.push('<p>' + zpLimpa(nd.v) + '</p>'); } return; }
+    if(!zpTem(nd, 'blk')){ fecharLista(); zpGenerico(s, [nd], out); return; }
+    if(zpTem(nd, 'b-li')){
+      itens = itens || [];
+      var listas = nd.c.filter(function(x){ return x.t === 'el' && (x.n === 'ul' || x.n === 'ol'); });
+      if(listas.length) listas.forEach(function(l){ zpItensUl(s, l, itens); });
+      else { fecharLista(); zpGenerico(s, nd.c, out); }
+      return;
+    }
+    fecharLista();
+    if(zpTem(nd, 'b-campo')) zpCampo(s, nd, out);
+    else if(zpTem(nd, 'b-parte')) zpParte(s, nd, out);
+    else if(zpTem(nd, 'b-assin')) zpAssin(s, nd, out);
+    else zpGenerico(s, nd.c, out);
+  });
+  fecharLista();
+  return coHtmlLimpo(out.join(''));
+}
+// Palavras (sem ':' e sem réguas de sublinhado, que o PDF desenha por layout) — base da prova de que nada se perdeu.
+function zpEdPalavrasDe(h){
+  var t = coDecodificar(String(h).replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, ' ')).replace(/ /g, ' ').replace(/:/g, ' ');
+  return t.split(/\s+/).filter(function(w){ return w && !/^_+$/.test(w); }).sort();
+}
+// Prova: as palavras do que está no editor == as palavras do PDF do HTML que vai ser salvo.
+function zpEdProva(renderizado, canon){
+  var a = zpEdPalavrasDe(renderizado), b = zpEdPalavrasDe(coDocContratoBlocos(canon).join(' ')), i;
+  if(a.length !== b.length) return false;
+  for(i = 0; i < a.length; i++){ if(a[i] !== b[i]) return false; }
+  return true;
+}
+// END 1.3.0.4 EDITOR · PARTE A
+// BEGIN 1.3.0.4 EDITOR · PARTE B (editor A4 paginado: DOM, folhas, divisão/união de blocos grandes, integração)
+// RENDERIZADOR ÚNICO: dentro do contenteditable (#contratoEditorConteudo) ficam os MESMOS blocos que o PDF monta (zpEdRenderHtml → coDocContratoBlocos), com o CSS do PDF escopado (zpEdCssParaLayout).
+// Folhas A4 (cabeçalho, número, sombra) ficam numa camada FORA do editável (#zpEdPaginas) e nunca entram no que é salvo. A paginação só muda o margin-top do 1º bloco de cada folha (coDocDistribuir, mesmas medidas do PDF).
+// Abrir/fechar não grava nada: o HTML salvo só muda quando o usuário edita (zpEd.sujo) e então passa por zpEdSerializar + zpEdProva; se algo falhar, o salvamento é BLOQUEADO com mensagem e o editor fica como está.
+// Bloco maior que a folha é dividido por palavras (como no PDF); os pedaços são reunidos (coDocJuntarHtml) antes de salvar. Nada aqui lê/grava banco, Auth, ACL, histórico ou sanitizador.
+var zpEd = { cont: null, stack: null, pags: null, med: null, vp: null, obs: null, estilo: null, tm: 0, ocupado: false, compondo: false, grupos: [], lento: false, cabTxt: '', cabVer: 0, N: 1, P: 0, aviso: '', ini: false, rafPg: 0, fonte: '', sujo: false };
+
+function zpEdCssExtra(){
+  var C = '#contratoEditorConteudo', B = [];
+  B.push('#zpEdStack.c-editor-page{position:relative;width:210mm;max-width:none;min-height:0;margin:0 auto;padding:0;border:0;background:transparent;box-shadow:none}');
+  B.push('#zpEdMed{position:absolute;left:-10000px;top:0;width:210mm;visibility:hidden;pointer-events:none}');
+  B.push('#zpEdPaginas{position:relative}#zpEdStack .pg{margin:0 auto 8mm;flex:none}#zpEdStack .zpHd{flex:0 0 auto}');
+  B.push('#contratoEditorFolha{position:absolute;left:0;top:0;width:100%;padding:0 var(--zp-lado,25mm);box-sizing:border-box;margin:0;pointer-events:none;background:transparent;border:0;box-shadow:none}');
+  B.push(C + '{pointer-events:auto;position:relative;display:flow-root;width:100%;min-height:40mm;margin:0;padding:0;outline:none;white-space:normal;text-align:left;caret-color:#1a1a1a}');
+  B.push(C + ' p,' + C + ' h1,' + C + ' h2,' + C + ' h3{margin:0}');
+  B.push(C + ' [contenteditable=false]{user-select:none;-webkit-user-select:none}');
+  B.push(C + ':empty:before{content:"Clique aqui e comece a escrever o contrato, ou escolha um modelo acima.";color:#9ca3af}');
+  B.push('#contratoEditorViewport{height:auto;flex:1 1 0;min-height:260px;overflow:auto;overflow-anchor:none;padding:20px;box-sizing:border-box}');
+  B.push('#zpEdPagina{font-size:12px;font-weight:700;color:#475467;margin-left:auto;white-space:nowrap}');
+  B.push('#zpEdAviso{display:none;margin:0 0 8px;padding:8px 12px;border-radius:8px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-size:12px;font-weight:700}');
+  return B.join('\n');
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Seleção: deslocamentos de texto numa sequência de blocos (sobrevivem a reescrever o conteúdo dos blocos)
+// ---------------------------------------------------------------------------------------------------------------
+function zpEdAltura(el){ return el.getBoundingClientRect().height; }
+function zpEdSp(blk){ return blk.querySelector('.sp'); }
+function zpEdOffsets(partes){
+  var s = window.getSelection ? window.getSelection() : null;
+  if(!s || !s.rangeCount) return null;
+  var r = s.getRangeAt(0);
+  function pos(no, off){
+    var acc = 0, i, rg;
+    for(i = 0; i < partes.length; i++){
+      if(partes[i].contains(no)){ rg = document.createRange(); rg.setStart(partes[i], 0); rg.setEnd(no, off); return acc + rg.toString().length; }
+      acc += partes[i].textContent.length + 1;
+    }
+    return -1;
+  }
+  var a = pos(r.startContainer, r.startOffset), b = pos(r.endContainer, r.endOffset);
+  return (a < 0 || b < 0) ? null : { a: a, b: b };
+}
+function zpEdAcharNo(partes, off){
+  var i, len, tw, n, acc;
+  for(i = 0; i < partes.length; i++){
+    len = partes[i].textContent.length;
+    if(off <= len){
+      tw = document.createTreeWalker(partes[i], NodeFilter.SHOW_TEXT); acc = 0;
+      while((n = tw.nextNode())){ if(off <= acc + n.nodeValue.length) return { no: n, off: off - acc }; acc += n.nodeValue.length; }
+      return { no: partes[i], off: partes[i].childNodes.length };
+    }
+    off -= len + 1;
+  }
+  var u = partes[partes.length - 1]; return { no: u, off: u.childNodes.length };
+}
+function zpEdAplicarOffsets(partes, o){
+  if(!o || !partes.length) return;
+  try {
+    var p1 = zpEdAcharNo(partes, o.a), p2 = zpEdAcharNo(partes, o.b), rg = document.createRange(), s = window.getSelection();
+    rg.setStart(p1.no, p1.off); rg.setEnd(p2.no, p2.off); s.removeAllRanges(); s.addRange(rg);
+  } catch(_e){}
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Conteúdo: fonte (HTML canônico) → blocos do PDF; blocos soltos criados pelo navegador voltam a ser blocos
+// ---------------------------------------------------------------------------------------------------------------
+// Quando o conteúdo do editável é HTML canônico (sem classes — o sanitizador as remove), ele é a FONTE: guarda e troca pelos blocos do PDF.
+function zpEdConverter(cont){
+  if(cont.querySelector(':scope > .blk')) return false;
+  var S = coHtmlLimpo(cont.innerHTML), foco = document.activeElement === cont;
+  zpEd.fonte = S; zpEd.sujo = coDocTextoPlano(S).trim() === '';   // vazio: nada a preservar; o que for digitado conta como edição
+  zpEd.grupos = [];
+  cont.innerHTML = zpEdRenderHtml(S);
+  if(foco){ try { var sp = cont.querySelectorAll('.sp'), u = sp[sp.length - 1], rg = document.createRange(), sel = window.getSelection(); rg.selectNodeContents(u); rg.collapse(false); sel.removeAllRanges(); sel.addRange(rg); } catch(_e){} }
+  return true;
+}
+// Texto/elementos soltos no 1º nível (digitado depois de apagar tudo, colado) viram bloco de parágrafo; os nós são MOVIDOS, então a seleção é restaurada.
+function zpEdGarantirBlocos(cont){
+  var nos = Array.prototype.slice.call(cont.childNodes), run = [], mudou = false, i, n, s = window.getSelection ? window.getSelection() : null, salvo = null, blk, p;
+  if(s && s.rangeCount && s.anchorNode && cont.contains(s.anchorNode)) salvo = { a: s.anchorNode, ao: s.anchorOffset, f: s.focusNode, fo: s.focusOffset };
+  function novoBlk(classe, antes){ var b = document.createElement('div'); b.className = 'blk ' + classe; cont.insertBefore(b, antes); mudou = true; return b; }
+  function fechar(){
+    if(!run.length) return;
+    var b = novoBlk('b-p', run[0]), q = document.createElement('p'); q.className = 'ct-p sp'; b.appendChild(q);
+    run.forEach(function(x){ q.appendChild(x); }); run = [];
+  }
+  for(i = 0; i < nos.length; i++){
+    n = nos[i];
+    if(n.nodeType === 1 && n.classList.contains('blk')){ fechar(); continue; }
+    if(n.nodeType === 1 && /^(P|DIV|H1|H2|H3)$/.test(n.tagName)){
+      fechar();
+      blk = novoBlk(n.tagName[0] === 'H' ? 'b-h' : 'b-p', n); p = n;
+      p.className = (n.tagName[0] === 'H' ? 'ct-' + n.tagName.toLowerCase() : 'ct-p') + ' sp';
+      blk.appendChild(p); continue;
+    }
+    if(n.nodeType === 3 && !run.length && !n.nodeValue.trim()) continue;
+    if(n.nodeType === 3 || n.nodeType === 1) run.push(n);
+  }
+  fechar();
+  if(mudou && salvo){ try { s.setBaseAndExtent(salvo.a, salvo.ao, salvo.f, salvo.fo); } catch(_e){} }
+}
+
+// Enter num parágrafo/título/item deixa DOIS elementos no mesmo bloco; o PDF teria DOIS blocos (cada um com seu espaçamento e com chance de quebrar entre eles). Aqui os elementos extras são MOVIDOS
+// (nós preservados, nada de texto é tocado) para blocos irmãos novos, antes de medir. Quadro de campos, assinaturas e partes não passam por aqui (Enter nelas é tratado em beforeinput).
+function zpEdHtmlSp(p){ var sp = zpEdSp(p); return sp ? sp.innerHTML : ''; }
+// Parágrafo dividido por paginação que sofreu Enter no meio: o que vem depois do Enter é OUTRO parágrafo lógico (junto com as partes seguintes). Os dois grupos são marcados como editados (htmls vazios)
+// para serem reunidos e redivididos exatamente como o PDF faria.
+function zpEdDividirGrupoApos(b, ultimo){
+  var g = zpEd.grupos.filter(function(x){ return x.partes.indexOf(b) >= 0; })[0], i, cauda;
+  if(!g) return;
+  i = g.partes.indexOf(b); cauda = g.partes.slice(i + 1);
+  g.partes = g.partes.slice(0, i + 1); g.htmls = [];
+  if(cauda.length) zpEd.grupos.push({ partes: [ultimo].concat(cauda), keep: null, htmls: [] });
+}
+function zpEdNormalizar(cont){
+  var s = window.getSelection ? window.getSelection() : null, salvo = null, mudou = false;
+  if(s && s.rangeCount && s.anchorNode && cont.contains(s.anchorNode)) salvo = { a: s.anchorNode, ao: s.anchorOffset, f: s.focusNode, fo: s.focusOffset };
+  zpEdBlocos(cont).forEach(function(b){
+    var ref = b, ultimo = b, filhos, lista, itens, inicio;
+    if(b.classList.contains('b-campo') || b.classList.contains('b-assin') || b.classList.contains('b-parte')) return;
+    if(!b.firstChild){ if(cont.children.length > 1){ b.parentNode.removeChild(b); mudou = true; } return; }   // bloco que ficou totalmente vazio (ex.: depois de unir com Backspace)
+    if(b.classList.contains('b-li')){
+      lista = Array.prototype.filter.call(b.children, function(x){ return x.tagName === 'UL' || x.tagName === 'OL'; })[0];
+      if(!lista) return;
+      itens = Array.prototype.filter.call(lista.children, function(x){ return x.tagName === 'LI'; });
+      if(itens.length < 2) return;
+      inicio = parseInt(lista.getAttribute('start'), 10);
+      itens.slice(1).forEach(function(li, j){
+        var nb = b.cloneNode(false), nl = lista.cloneNode(false);
+        nb.removeAttribute('data-zp-cont'); nb.removeAttribute('data-keep'); nb.removeAttribute('style');
+        nl.className = String(lista.className).replace(/\s*\bct-cont\b/, '');
+        if(lista.tagName === 'OL' && isFinite(inicio)) nl.setAttribute('start', String(inicio + j + 1)); else nl.removeAttribute('start');
+        nb.appendChild(nl); nl.appendChild(li);
+        ref.parentNode.insertBefore(nb, ref.nextSibling); ref = nb; ultimo = nb; mudou = true;
+      });
+    } else {
+      filhos = Array.prototype.filter.call(b.children, function(x){ return /^(P|DIV|H1|H2|H3)$/.test(x.tagName); });
+      if(filhos.length < 2) return;
+      filhos.slice(1).forEach(function(f){
+        var nb = b.cloneNode(false);
+        nb.removeAttribute('data-zp-cont'); nb.removeAttribute('style');
+        if(f.tagName.charAt(0) !== 'H'){
+          nb.className = 'blk b-p'; nb.removeAttribute('data-keep');
+          if(String(f.className || '').split(/\s+/).indexOf('sp') < 0) f.className = 'ct-p sp';
+        }
+        ref.parentNode.insertBefore(nb, ref.nextSibling); nb.appendChild(f); ref = nb; ultimo = nb; mudou = true;
+      });
+    }
+    if(ultimo !== b) zpEdDividirGrupoApos(b, ultimo);
+  });
+  if(mudou && salvo){ try { s.setBaseAndExtent(salvo.a, salvo.ao, salvo.f, salvo.fo); } catch(_e){} }
+}
+
+// Divide um bloco maior que a folha (por palavras, fechando/reabrindo tags — a MESMA função e o mesmo critério do PDF). Registra o grupo para reunir depois.
+function zpEdDividirGrande(el, limite){
+  var sp = zpEdSp(el);
+  if(!sp || sp.querySelector('ul,ol,div,p,h1,h2,h3,table')) return false;
+  var html = sp.innerHTML, palavras = coDocTokens(html).filter(function(t){ return t.k === 'w'; }).length, ofs, lo, hi, melhor = 0, mid, pr, novo, rr, g, keep = el.getAttribute('data-keep');
+  if(palavras < 2) return false;
+  ofs = zpEdOffsets([el]);
+  lo = 1; hi = palavras - 1;
+  while(lo <= hi){
+    mid = (lo + hi) >> 1; pr = coDocPartirHtml(html, mid); if(!pr) break;
+    sp.innerHTML = pr[0];
+    if(zpEdAltura(el) <= limite){ melhor = mid; lo = mid + 1; } else hi = mid - 1;
+  }
+  if(!melhor){ sp.innerHTML = html; zpEdAplicarOffsets([el], ofs); return false; }
+  pr = coDocPartirHtml(html, melhor);
+  sp.innerHTML = pr[0];
+  novo = el.cloneNode(true); zpEdSp(novo).innerHTML = pr[1]; novo.style.marginTop = '';
+  rr = novo.querySelector('.ct-rot'); if(rr) rr.innerHTML = '&nbsp;';
+  novo.setAttribute('data-zp-cont', '1'); el.removeAttribute('data-keep');
+  el.parentNode.insertBefore(novo, el.nextSibling);
+  g = zpEd.grupos.filter(function(x){ return x.partes.indexOf(el) >= 0; })[0];
+  if(g) g.partes.splice(g.partes.indexOf(el) + 1, 0, novo);
+  else { g = { partes: [el, novo], keep: keep, htmls: [] }; zpEd.grupos.push(g); }
+  g.htmls = g.partes.map(function(p){ return zpEdSp(p).innerHTML; });
+  zpEdAplicarOffsets(g.partes, ofs);
+  return true;
+}
+// Reúne os pedaços de um grupo (todos=true: sempre, para salvar; senão só os que foram editados). Falha = exceção (quem salva bloqueia).
+function zpEdReunirGrupo(g, cont, todos){
+  var vivos = g.partes.filter(function(p){ return p.parentNode && cont.contains(p); }), run, i, inalterado, ofs, head, html;
+  if(!vivos.length) return 'descartar';
+  run = [vivos[0]];
+  for(i = 1; i < vivos.length; i++){ if(vivos[i] === run[run.length - 1].nextElementSibling) run.push(vivos[i]); else break; }
+  inalterado = run.length === g.partes.length && run.every(function(p, k){ var sp = zpEdSp(p); return sp && sp.innerHTML === g.htmls[k]; });
+  if(inalterado && !todos) return 'manter';
+  ofs = zpEdOffsets(run); head = run[0];
+  if(!zpEdSp(head)) throw new Error('bloco sem texto editável');
+  html = zpEdSp(head).innerHTML;
+  for(i = 1; i < run.length; i++){
+    if(!zpEdSp(run[i])) throw new Error('pedaço sem texto editável');
+    html = coDocJuntarHtml(html, zpEdSp(run[i]).innerHTML);
+  }
+  for(i = 1; i < run.length; i++) run[i].parentNode.removeChild(run[i]);
+  zpEdSp(head).innerHTML = html;
+  if(g.keep !== null && g.keep !== undefined) head.setAttribute('data-keep', g.keep);
+  zpEdAplicarOffsets([head], ofs);
+  return 'reunido';
+}
+function zpEdReunirGrupos(cont, todos){
+  var resto = [];
+  zpEd.grupos.forEach(function(g){ if(zpEdReunirGrupo(g, cont, todos) === 'manter') resto.push(g); });
+  zpEd.grupos = resto;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Camada das folhas (cabeçalhos e numeração) — fora do contenteditable
+// ---------------------------------------------------------------------------------------------------------------
+function zpEdLayoutAtual(){ return coLayoutSeguro(lerContratoLayoutControls()); }
+function zpEdMedirCabecalhos(){
+  var modal = coEl('modalContratoFull'), lay = zpEdLayoutAtual(), cabs = coDocContratoCabs(modal ? modal.dataset.os : '', lay), txt = cabs.cab1 + '\u0001' + cabs.cabN, med = zpEd.med;
+  if(txt !== zpEd.cabTxt){
+    zpEd.cabTxt = txt; zpEd.cabVer++;
+    med.innerHTML = '<div class="m-c1">' + cabs.cab1 + '</div><div class="m-cn">' + cabs.cabN + '</div><div class="m-sonda" style="width:100mm;height:1px"></div>';
+    Array.prototype.forEach.call(med.querySelectorAll('img'), function(im){ im.addEventListener('load', function(){ zpEdAgendar(true); }); });
+  }
+  var sonda = med.querySelector('.m-sonda'), larg = sonda ? sonda.getBoundingClientRect().width : 0;
+  return { cab1: cabs.cab1, cabN: cabs.cabN, ver: zpEd.cabVer, mm: larg > 0 ? larg / 100 : 96 / 25.4,
+    hdr0: zpEdAltura(med.querySelector('.m-c1')), hdrN: zpEdAltura(med.querySelector('.m-cn')) };
+}
+function zpEdMontarChrome(total, cab){
+  var box = zpEd.pags, i, pg, hd, nn, chave, tx;
+  while(box.children.length > total) box.removeChild(box.lastChild);
+  while(box.children.length < total){
+    pg = document.createElement('div'); pg.className = 'pg';
+    hd = document.createElement('div'); hd.className = 'zpHd'; pg.appendChild(hd);
+    nn = document.createElement('div'); nn.className = 'pgn'; pg.appendChild(nn);
+    box.appendChild(pg);
+  }
+  for(i = 0; i < total; i++){
+    pg = box.children[i]; chave = (i === 0 ? '1' : 'n') + '|' + cab.ver;
+    if(pg.getAttribute('data-cab') !== chave){ pg.firstChild.innerHTML = i === 0 ? cab.cab1 : cab.cabN; pg.setAttribute('data-cab', chave); }
+    tx = 'Página ' + (i + 1) + ' de ' + total;
+    if(pg.lastChild.textContent !== tx) pg.lastChild.textContent = tx;
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Passada de paginação
+// ---------------------------------------------------------------------------------------------------------------
+function zpEdBlocos(cont){
+  var us = [], k, el;
+  for(k = 0; k < cont.children.length; k++){ el = cont.children[k]; if(el.classList.contains('blk')) us.push(el); }
+  return us;
+}
+function zpEdPassada(){
+  var cont = zpEd.cont, modal = coEl('modalContratoFull');
+  if(!cont || !modal || zpEd.ocupado || !modal.classList.contains('open') || !cont.getClientRects().length) return;
+  zpEd.ocupado = true;
+  var t0 = Date.now(), vp = zpEd.vp, rol = vp ? vp.scrollTop : 0, aviso = '';
+  if(zpEd.obs) zpEd.obs.disconnect();
+  try {
+    zpEdConverter(cont);
+    zpEdGarantirBlocos(cont);
+    zpEdNormalizar(cont);
+    zpEdReunirGrupos(cont, false);
+    var cab = zpEdMedirCabecalhos(), mm = cab.mm, H = 297 * mm;
+    var capMin = Math.min(H - cab.hdr0, H - cab.hdrN) - (CO_DOC_CTR_TOPO + CO_DOC_CTR_BASE) * mm, lim = capMin * 0.94;
+    var falhou = [], us, med, i, idx, volta, plano, ct;
+    for(volta = 0; volta < 120; volta++){
+      us = zpEdBlocos(cont);
+      us.forEach(function(u){ if(u.style.marginTop) u.style.marginTop = ''; });
+      ct = cont.getBoundingClientRect().top;
+      med = us.map(function(u){ var r = u.getBoundingClientRect(); return { nat: r.top - ct, h: r.height, keep: u.getAttribute('data-keep') === '1' }; });
+      idx = -1;
+      for(i = 0; i < us.length; i++){ if(med[i].h > lim && falhou.indexOf(us[i]) < 0){ idx = i; break; } }
+      if(idx < 0) break;
+      if(!zpEdDividirGrande(us[idx], lim)) falhou.push(us[idx]);
+    }
+    if(falhou.length) aviso = 'Um bloco (ex.: assinaturas) é maior que uma folha e não pode ser dividido: ele ultrapassa o limite da folha. Reduza o conteúdo desse bloco; o PDF também não conseguiria montá-lo.';
+    plano = zpEdPlanejar(med, { mm: mm, hdr0: cab.hdr0, hdrN: cab.hdrN, topo: CO_DOC_CTR_TOPO, base: CO_DOC_CTR_BASE, pagina: 297, gap: 8 });
+    us.forEach(function(u, k){ if(plano.margens[k] > 0) u.style.marginTop = plano.margens[k].toFixed(2) + 'px'; });
+    var total = Math.max(plano.total, Math.ceil(cont.getBoundingClientRect().height / plano.P - 0.0001));
+    zpEd.N = total; zpEd.P = plano.P;
+    zpEdMontarChrome(total, cab);
+    if(vp) vp.scrollTop = rol;
+  } catch(e){
+    aviso = 'Não foi possível paginar agora; o texto continua editável e nada foi alterado no contrato salvo.';
+  } finally {
+    zpEd.aviso = aviso; zpEd.ocupado = false;
+    if(zpEd.obs) zpEd.obs.observe(cont, { childList: true, characterData: true, subtree: true });
+    zpEd.lento = (Date.now() - t0) > 60;
+    zpEdAtualizarPagina();
+  }
+}
+function zpEdAgendar(imediato){
+  if(zpEd.tm) clearTimeout(zpEd.tm);
+  zpEd.tm = setTimeout(function(){
+    zpEd.tm = 0;
+    if(zpEd.compondo){ zpEdAgendar(); return; }
+    zpEdPassada();
+  }, imediato === true ? 0 : (zpEd.lento ? 220 : 90));
+}
+function zpEdAtualizarPagina(){
+  var el = coEl('zpEdPagina'), cont = zpEd.cont, vp = zpEd.vp, av = coEl('zpEdAviso'); if(!el || !cont || !vp) return;
+  if(av){ av.textContent = zpEd.aviso; av.style.display = zpEd.aviso ? 'block' : 'none'; }
+  if(!zpEd.P) return;
+  var y = null, s = window.getSelection ? window.getSelection() : null, topo = zpEd.stack.getBoundingClientRect().top, r, rc;
+  if(s && s.rangeCount && cont.contains(s.anchorNode)){
+    r = s.getRangeAt(0).cloneRange(); r.collapse(true); rc = r.getClientRects()[0];
+    if(!rc && s.anchorNode.nodeType === 1 && s.anchorNode.getBoundingClientRect) rc = s.anchorNode.getBoundingClientRect();
+    if(!rc && s.anchorNode.parentNode && s.anchorNode.parentNode.getBoundingClientRect) rc = s.anchorNode.parentNode.getBoundingClientRect();
+    if(rc) y = rc.top - topo;
+  }
+  if(y === null) y = vp.getBoundingClientRect().top + vp.clientHeight / 3 - topo;
+  var pg = Math.min(zpEd.N, Math.max(1, Math.floor(y / zpEd.P) + 1));
+  el.textContent = 'Página ' + pg + ' de ' + zpEd.N + (zpEd.aviso ? ' ⚠' : '');
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Layout (fonte/espaçamento/margem/alinhamento): o CSS do editor é regerado do MESMO coDocContratoCss que o PDF usa
+// ---------------------------------------------------------------------------------------------------------------
+function zpEdAtualizarLayout(){
+  var cont = coEl('contratoEditorConteudo'); if(!cont) return;
+  var lay = zpEdLayoutAtual(), marg = CONTRATO_MARGENS_MM[lay.margem] || 25, stack = coEl('zpEdStack');
+  if(stack) stack.style.setProperty('--zp-lado', marg + 'mm');
+  if(zpEd.estilo) zpEd.estilo.textContent = zpEdCssParaLayout(lay, marg) + '\n' + zpEdCssExtra();
+  zpEdAgendar(true);
+}
+
+function zpEdIniciar(){
+  if(zpEd.ini) return;
+  var cont = coEl('contratoEditorConteudo'), stack = coEl('zpEdStack'), pags = coEl('zpEdPaginas'), med = coEl('zpEdMed'), vp = coEl('contratoEditorViewport');
+  if(!cont || !stack || !pags || !med || !vp) return;
+  zpEd.cont = cont; zpEd.stack = stack; zpEd.pags = pags; zpEd.med = med; zpEd.vp = vp; zpEd.ini = true;
+  var st = document.createElement('style'); st.id = 'zpEdEstilo';
+  st.textContent = zpEdCssParaLayout(coLayoutSeguro(null), 25) + '\n' + zpEdCssExtra();
+  document.head.appendChild(st); zpEd.estilo = st;
+  var av = document.createElement('div'); av.id = 'zpEdAviso'; av.setAttribute('role', 'alert'); vp.parentNode.insertBefore(av, vp);
+  cont.setAttribute('lang', 'pt-BR'); cont.classList.add('txt');
+  cont.addEventListener('input', function(){ zpEd.sujo = true; zpEdAgendar(); });
+  cont.addEventListener('compositionstart', function(){ zpEd.compondo = true; });
+  cont.addEventListener('compositionend', function(){ zpEd.compondo = false; zpEdAgendar(); });
+  // Enter dentro de uma célula do quadro (rótulo/valor), de uma parte ou de um rótulo de assinatura: quebra de linha NA MESMA célula (o navegador, por padrão, clonaria o div).
+  // Só nessas células — Enter em parágrafos, títulos, listas e fora do editor continua nativo. A serialização também aceita células clonadas (defesa), e a prova continua exigindo todo o texto.
+  cont.addEventListener('beforeinput', function(e){
+    var t = e.inputType; if(t !== 'insertParagraph' && t !== 'deleteContentBackward') return;
+    var s = window.getSelection ? window.getSelection() : null; if(!s || !s.rangeCount) return;
+    var no = s.anchorNode, el = no && (no.nodeType === 1 ? no : no.parentNode), cel = el && el.closest ? el.closest('.ct-val,.ct-rot,.ct-parte,.ct-ass-rot') : null;
+    if(!cel || !cont.contains(cel)) return;
+    if(t === 'insertParagraph'){
+      e.preventDefault();
+      try { document.execCommand('insertLineBreak'); } catch(_e){}
+      return;
+    }
+    // Backspace no começo do 1º valor não funde o valor dentro do rótulo
+    if(s.isCollapsed && cel.classList.contains('ct-val') && cel.previousElementSibling && cel.previousElementSibling.classList.contains('ct-rot')){
+      var r = document.createRange(); r.setStart(cel, 0); r.setEnd(s.anchorNode, s.anchorOffset);
+      if(r.toString().length === 0) e.preventDefault();
+    }
+  });
+  cont.addEventListener('focus', function(){ try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch(_e){} });
+  vp.addEventListener('scroll', function(){ if(zpEd.rafPg) return; zpEd.rafPg = setTimeout(function(){ zpEd.rafPg = 0; zpEdAtualizarPagina(); }, 60); });
+  document.addEventListener('selectionchange', function(){ if(zpEd.rafPg) return; zpEd.rafPg = setTimeout(function(){ zpEd.rafPg = 0; zpEdAtualizarPagina(); }, 60); });
+  window.addEventListener('resize', function(){ zpEdAgendar(); });
+  if(typeof MutationObserver === 'function'){
+    zpEd.obs = new MutationObserver(function(){ if(!zpEd.ocupado) zpEdAgendar(); });
+    zpEd.obs.observe(cont, { childList: true, characterData: true, subtree: true });
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Integrações (únicos pontos que tocam o que já existia)
+// ---------------------------------------------------------------------------------------------------------------
+contratoAtualizarEditorLayout = zpEdAtualizarLayout;
+var _zpEdCabecalho = contratoAtualizarCabecalhoNoEditor;
+contratoAtualizarCabecalhoNoEditor = function(){ var r = _zpEdCabecalho.apply(this, arguments); try { zpEdAgendar(true); } catch(_e){} return r; };
+var _zpEdOpenModal = openModal;
+openModal = function(id){
+  var r = _zpEdOpenModal.apply(this, arguments);
+  if(id === 'modalContratoFull'){ try { zpEdIniciar(); zpEdAtualizarLayout(); zpEdPassada(); setTimeout(function(){ zpEdAgendar(true); }, 300); } catch(_e){} }
+  return r;
+};
+// HTML canônico do que está no editor, com PROVA. Lança exceção se não puder garantir que nada se perde.
+function zpEdHtmlSalvavel(){
+  var cont = zpEd.cont;
+  if(!cont) throw new Error('editor não iniciado');
+  if(!cont.querySelector(':scope > .blk')) return coHtmlLimpo(cont.innerHTML);   // ainda sem renderização nossa: conteúdo já é canônico
+  if(!zpEd.sujo) return zpEd.fonte;                                               // nada editado: o HTML salvo volta byte a byte, sem reescrever
+  zpEdReunirGrupos(cont, true);
+  var renderizado = cont.innerHTML, canon = zpEdSerializar(renderizado);
+  if(!zpEdProva(renderizado, canon)) throw new Error('prova de texto falhou');
+  return canon;
+}
+// Salvar: o salvamento original lê o editor; durante a chamada ele recebe o HTML canônico (com prova) e depois os blocos voltam. Falha = nada é salvo.
+var _zpEdSalvarEditor = coCtrSalvarEditor;
+coCtrSalvarEditor = function(){
+  var cont = zpEd.cont;
+  if(!cont) return _zpEdSalvarEditor.apply(this, arguments);
+  var canon;
+  try { canon = zpEdHtmlSalvavel(); }
+  catch(e){
+    try { _mensagemProntReal('erro', 'Não foi possível preparar o contrato para salvar sem risco de perder texto. Nada foi salvo e o editor foi mantido como está. Copie o texto antes de fechar e avise o suporte.'); } catch(_m){ alert('Não foi possível preparar o contrato para salvar. Nada foi salvo.'); }
+    zpEdAgendar(true);
+    return;
+  }
+  var troca = !!cont.querySelector(':scope > .blk'), frag = null;
+  if(troca){
+    zpEd.ocupado = true;
+    frag = document.createDocumentFragment();
+    while(cont.firstChild) frag.appendChild(cont.firstChild);
+    cont.innerHTML = canon;
+  }
+  try { return _zpEdSalvarEditor.apply(this, arguments); }
+  finally {
+    if(troca){ cont.textContent = ''; cont.appendChild(frag); zpEd.ocupado = false; }
+    zpEdAgendar(true);
+  }
+};
+try { zpEdIniciar(); } catch(_e){}
+// END 1.3.0.4 EDITOR · PARTE B
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

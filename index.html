@@ -904,7 +904,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.5 · Modelos no Editor</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.6 · Revisão e Acessos</div>
 </aside>
 
 <main class="main">
@@ -2786,7 +2786,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <button type="button" class="c-tbtn" title="Ver, aplicar, copiar, renomear e excluir modelos" onmousedown="event.preventDefault()" onclick="co88Abrir()">📑 Modelos</button>
  <button type="button" class="c-tbtn" title="Salvar o contrato atual como novo modelo (com revisão)" onmousedown="event.preventDefault()" onclick="co88Abrir('revisao')">💾 Salvar como modelo</button>
  <span class="c-sep"></span>
- <div class="c-group"><label>Fonte</label>
+ <div class="c-group"><label>Tamanho</label>
   <select id="contratoLayoutFonte" onchange="contratoLayoutAlterado()">
    <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option>
   </select></div>
@@ -2798,23 +2798,29 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <select id="contratoLayoutMargem" onchange="contratoLayoutAlterado()">
    <option value="estreita">Estreita</option><option value="normal">Normal</option><option value="ampla">Ampla</option>
   </select></div>
- <div class="c-group"><label>Alinhamento</label>
+ <div class="c-group" style="display:none"><label>Alinhamento</label>
   <select id="contratoLayoutAlinhamento" onchange="contratoLayoutAlterado()">
    <option value="esquerda">Esquerda</option><option value="justificado">Justificado</option>
   </select></div>
  <button type="button" class="c-tbtn" style="font-weight:800" title="Negrito" aria-label="Negrito" onmousedown="event.preventDefault()" onclick="contratoExecFormato('bold')">B</button>
  <button type="button" class="c-tbtn" style="font-style:italic;font-weight:700" title="Itálico" aria-label="Itálico" onmousedown="event.preventDefault()" onclick="contratoExecFormato('italic')">I</button>
  <span class="c-sep"></span>
- <button type="button" class="c-tbtn" title="Texto normal" aria-label="Texto normal" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<p>')">¶ Texto</button>
- <button type="button" class="c-tbtn" title="Título (nível 1)" aria-label="Título" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h1>')">Título</button>
- <button type="button" class="c-tbtn" title="Seção (nível 2)" aria-label="Seção" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h2>')">Seção</button>
- <button type="button" class="c-tbtn" title="Cláusula (nível 3)" aria-label="Cláusula" onmousedown="event.preventDefault()" onclick="contratoExecFormato('formatBlock','<h3>')">Cláusula</button>
+ <div class="c-group"><label>Fonte</label>
+  <select id="contratoFmtFonte" title="Fonte do trecho selecionado (sem seleção, do parágrafo)" onchange="contratoFmtFonteAplicar(this.value)">
+   <option value="">Fonte</option>
+  </select></div>
+ <div class="c-group"><label>Cor</label>
+  <select id="contratoFmtCor" title="Cor do texto do trecho selecionado (sem seleção, do parágrafo)" onchange="contratoFmtCorAplicar(this.value)">
+   <option value="">Cor</option>
+  </select></div>
+ <div class="c-group"><label>Alinhar</label>
+  <select id="contratoFmtAlinhar" title="Alinhamento do parágrafo" onchange="contratoFmtAlinharAplicar(this.value)">
+   <option value="">—</option><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option><option value="justify">Justificado</option>
+  </select></div>
+ <button type="button" class="c-tbtn" title="Faixa de seção (tarja azul com o título em maiúsculas)" aria-label="Faixa de seção" onmousedown="event.preventDefault()" onclick="contratoFaixaSecao()">▬ Faixa de seção</button>
  <span class="c-sep"></span>
  <button type="button" class="c-tbtn" title="Lista com marcadores" aria-label="Lista com marcadores" onmousedown="event.preventDefault()" onclick="contratoExecFormato('insertUnorderedList')">• Lista</button>
  <button type="button" class="c-tbtn" title="Lista numerada" aria-label="Lista numerada" onmousedown="event.preventDefault()" onclick="contratoExecFormato('insertOrderedList')">1. Lista</button>
- <button type="button" class="c-tbtn" title="Alinhar à esquerda" aria-label="Alinhar à esquerda" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyLeft')">⇤</button>
- <button type="button" class="c-tbtn" title="Centralizar" aria-label="Centralizar" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyCenter')">↔</button>
- <button type="button" class="c-tbtn" title="Justificar" aria-label="Justificar" onmousedown="event.preventDefault()" onclick="contratoExecFormato('justifyFull')">☰</button>
  <span class="c-sep"></span>
  <button type="button" class="c-tbtn" title="Desfazer" aria-label="Desfazer" onmousedown="event.preventDefault()" onclick="contratoExecFormato('undo')">↶</button>
  <button type="button" class="c-tbtn" title="Refazer" aria-label="Refazer" onmousedown="event.preventDefault()" onclick="contratoExecFormato('redo')">↷</button>
@@ -16058,8 +16064,8 @@ var MSG_PRONT_REV3 = {
   orcAusente:     'O orçamento ainda não pode ser criado nem editado por aqui. Nada foi gravado.',
   orcRecusado:    'O banco recusou o orçamento: ',
   orcEtapaAtend:  'A revisão do orçamento só é feita em Orçamento ou Negociação. Envie o atendimento para Orçamento antes de revisar.',
-  orcEtapaFech:   'Atendimento fechado: o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
-  orcProjeto:     'Com o projeto iniciado, o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Operações do projeto.',
+  orcEtapaFech:   'Atendimento fechado: o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Custos extras do projeto.',
+  orcProjeto:     'Com o projeto iniciado, o orçamento só muda por uma nova versão do orçamento. Custos pós-orçamento e fornecedores ficam em Financeiro → Custos extras do projeto.',
   orcCriadoAvancou:'Orçamento criado: versão 1. O atendimento avançou para Orçamento.',
   orcCriarAvisa:  'Ao salvar o primeiro orçamento, o atendimento avança automaticamente de Atendimento para Orçamento.',
   orcAliquotaDif: 'A alíquota atual ({atual}) difere da aplicada na versão salva ({aplicada}). Salvar criará uma nova versão com a alíquota atual; a versão anterior continua como está.',
@@ -34659,11 +34665,45 @@ var CO_TAGS_VAZIAS_DESCARTAR = { img:1, input:1, link:1, meta:1, base:1, source:
 var CO_TAGS_BRUTAS = { script:1, style:1, textarea:1, title:1, xmp:1, noembed:1, noframes:1, noscript:1, iframe:1, template:1, plaintext:1 };
 var CO_TAGS_DESCARTAR = { object:1, svg:1, math:1, form:1, table:1, select:1, button:1, video:1, audio:1, canvas:1, map:1, head:1, frameset:1, frame:1, applet:1,
   dialog:1, option:1, optgroup:1, datalist:1, marquee:1, details:1 };
+// 1.3.0.6: família de fonte e cor de texto por LISTAS FECHADAS (nada de valor livre). O sanitizador continua sem href/src/atributos; só mais DUAS propriedades de style, cada uma com valores enumerados:
+//   font-family → um dos pacotes abaixo (o navegador pode devolver "Times New Roman" com aspas, rgb(...) etc.: normaliza pela 1ª família e por hexadecimal; o que não está na lista é descartado);
+//   color → uma das cores da paleta (rgb()/#abc normalizados para #rrggbb; o que não está na paleta é descartado).
+// Funções (e não var) para não depender da ordem de execução do script.
+function coFontesLista(){
+  return [
+    { k: 'georgia', css: 'Georgia,Times New Roman,serif', nome: 'Georgia (padrão)' },
+    { k: 'times new roman', css: 'Times New Roman,Times,serif', nome: 'Times New Roman' },
+    { k: 'arial', css: 'Arial,Helvetica,sans-serif', nome: 'Arial' },
+    { k: 'helvetica', css: 'Helvetica,Arial,sans-serif', nome: 'Helvetica' },
+    { k: 'verdana', css: 'Verdana,Geneva,sans-serif', nome: 'Verdana' }
+  ];
+}
+function coCoresLista(){
+  return [['#1a1a1a', 'Preto (padrão)'], ['#475467', 'Cinza'], ['#1e3a5f', 'Azul escuro'], ['#175cd3', 'Azul'], ['#508200', 'Verde'], ['#b42318', 'Vermelho'], ['#b54708', 'Laranja'], ['#6941c6', 'Roxo']];
+}
+function coFonteCanon(v){
+  var primeira = String(v === null || v === undefined ? '' : v).split(',')[0].replace(/["']/g, '').replace(/\s+/g, ' ').trim().toLowerCase(), l = coFontesLista(), i;
+  if(primeira === 'times') primeira = 'times new roman';
+  for(i = 0; i < l.length; i++){ if(l[i].k === primeira) return l[i].css; }
+  return '';
+}
+function coCorCanon(v){
+  var s = String(v === null || v === undefined ? '' : v).trim().toLowerCase(), m, l = coCoresLista(), i;
+  m = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*1(?:\.0+)?\s*)?\)$/.exec(s);
+  if(m){
+    var q = [m[1], m[2], m[3]].map(function(x){ var n = parseInt(x, 10); return n > 255 ? 'zz' : (n < 16 ? '0' : '') + n.toString(16); });
+    s = '#' + q.join('');
+  } else if(/^#[0-9a-f]{3}$/.test(s)) s = '#' + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2) + s.charAt(3) + s.charAt(3);
+  for(i = 0; i < l.length; i++){ if(l[i][0] === s) return s; }
+  return '';
+}
 function coLimparStyle(v){
   var keep = ['text-align', 'font-weight', 'font-style', 'text-decoration'], out = [];
   String(v === null || v === undefined ? '' : v).split(';').forEach(function(part){
     var i = part.indexOf(':'); if(i < 0) return;
     var prop = part.slice(0, i).trim().toLowerCase(), val = part.slice(i + 1).trim();
+    if(prop === 'font-family'){ var f = coFonteCanon(val); if(f) out.push('font-family:' + f); return; }
+    if(prop === 'color'){ var c = coCorCanon(val); if(c) out.push('color:' + c); return; }
     if(keep.indexOf(prop) > -1 && /^[a-zA-Z0-9 %#.,\-]+$/.test(val)) out.push(prop + ':' + val);
   });
   return out.join(';');
@@ -36718,7 +36758,7 @@ function voCarregar(escopo){
   if(!perfil || !modo){ e.seq++; e.uid = crSessao() ? String(currentUser.id) : ''; e.epoch = crEpoch(); e.perfil = ''; e.escopo = ''; voLimparEstado(crSessao() ? 'sem_permissao' : 'sem_sessao'); voRenderTudo(); return Promise.resolve(); }
   var visao = escopo === 'visao', temCom = voPodeComercial(perfil), temNf = visao && voPodeNotas(perfil), temOp = visao && modo === 'atendimento';
   var ctx = { seq: ++e.seq, uid: String(currentUser.id), epoch: crEpoch(), perfil: perfil, modo: modo };
-  voLimparEstado('carregando'); e.uid = ctx.uid; e.epoch = ctx.epoch; e.perfil = perfil; e.escopo = visao ? 'visao' : 'placar';
+  voLimparEstado('carregando'); try { voAcompInvalidar(); } catch(_e){} e.uid = ctx.uid; e.epoch = ctx.epoch; e.perfil = perfil; e.escopo = visao ? 'visao' : 'placar';
   if(!temCom && !temNf && !temOp){ e.status = 'ok'; e.completo = true; e.carregadoEm = new Date().toISOString(); e.hoje = crHojeSP(); voRenderTudo(); return Promise.resolve(); }
   voRenderTudo();
   var ok = function(){ return voCtxValido(ctx); }, prov;
@@ -37055,7 +37095,7 @@ function voDashAtendimento(g, hoje, e){
     + (radar.length ? radar.map(function(x){ return x.h; }).join('') : '<div style="text-align:center;padding:16px 0"><div style="font-size:28px">&#10003;</div><div class="muted" style="font-size:13px;margin-top:4px">Nenhuma pend&#234;ncia no radar hoje.</div></div>') + (radarNota ? '<div class="muted" style="font-size:12px;margin-top:8px">' + radarNota + '</div>' : '') + '</div>'
     + '<div style="display:flex;flex-direction:column;gap:14px"><div class="card" style="margin:0"><h3 style="margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:16px">&#9200; Prazos pr&#243;ximos' + badge(prazos.length, '#dbeafe', 'var(--blue)') + '</h3>'
     + (projOk ? (prazosHtml || '<div style="text-align:center;padding:12px 0"><div style="font-size:26px">&#128994;</div><div class="muted" style="font-size:12px;margin-top:4px">Nenhuma entrega nos pr&#243;ximos 7 dias.</div></div>') : voPlacarIndisp(g.fontes.proj ? g.fontes.proj.st : 'erro')) + '</div>'
-    + '<div class="card" style="margin:0"><h3 style="margin-bottom:6px;font-size:16px">&#127775; Oportunidades</h3><p class="muted" style="font-size:12px;margin-bottom:10px">Clientes que costumam aparecer nessa &#233;poca.</p><div class="muted" style="font-size:13px">N&#227;o configurado.</div></div></div></div>';
+    + '</div></div>';
   // Faturamento pendente (referência: condicional a haver projeto PRÓPRIO entregue em Financeiro). A conta de Atendimento não lê o checklist (RLS): o cartão fica com estado curto e sem detalhes financeiros; nunca "em ordem" por falta de fonte.
   var emFin = projOk ? meus.filter(function(pj){ return pj.entregue && pj.status === 'Financeiro'; }) : [];
   if(emFin.length){
@@ -37063,12 +37103,69 @@ function voDashAtendimento(g, hoje, e){
     if(voFonteOk('check')){
       var fat = voFaturamento(emFin, voChecklist(e.check), []).semNotificar;
       corpoFat = fat.length ? fat.map(function(pj){ return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:12px;margin-bottom:8px;background:#fff7ed;border:1px solid #fed7aa"><span style="font-size:20px;flex-shrink:0">&#128176;</span><div><div style="font-size:14px;font-weight:700;color:var(--ink)">' + voEsc(pj.os) + ' &#8212; ' + voEsc(pj.cliente || pj.titulo) + '</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Projeto em Financeiro aguardando notifica&#231;&#227;o para faturar</div></div></div>'; }).join('') : '<div class="muted" style="font-size:13px">Nenhuma pend&#234;ncia.</div>';
-    } else corpoFat = '<div class="muted" style="font-size:13px">Indispon&#237;vel para este perfil.</div>';
+    } else corpoFat = voAcompHtml(emFin);
     html += '<div class="card"><h3 style="margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:17px">&#128176; Faturamento pendente</h3>' + corpoFat + '</div>';
   }
   voHtml('dashAtendimentoBody', html);
 }
 
+// BEGIN 1.3.0.6 ACOMPANHAMENTO DO ATENDIMENTO (item 6, UI da Visão Geral): no lugar de "Indisponível para este perfil", o Atendimento vê o andamento REAL das PRÓPRIAS OS em Financeiro, vindo da RPC segura
+// atendimento_acompanhamento_ler (o banco decide: só a própria OS; sem valores, lucro, caixa, custos, número/valor/arquivo de NF nem outros projetos). Estado honesto: lendo / erro / indisponível — nunca "em ordem" sem dado.
+// Ciclo de vida do cache: cada leitura guarda a hora; é relida quando expira (45 s; erro: 10 s), a cada recarga da Visão Geral (voAcompInvalidar, ligado ao voCarregar → botão Atualizar/ciclo) e quando muda
+// a conta OU a época de sessão. Respostas atrasadas de geração anterior são descartadas (seq). Dados de outro UID nunca reaparecem.
+var voAcomp = { chave: '', dados: {}, status: {}, em: {}, buscando: {}, seq: 0 };
+function voAcompChave(){ return (currentUser ? String(currentUser.id) : '') + '|' + (typeof crEpoch === 'function' ? String(crEpoch()) : ''); }
+function voAcompInvalidar(){ voAcomp.seq++; voAcomp.dados = {}; voAcomp.status = {}; voAcomp.em = {}; voAcomp.buscando = {}; }
+function voAcompZerar(chave){ if(voAcomp.chave !== chave){ voAcompInvalidar(); voAcomp.chave = chave; } }
+function voAcompExpirado(id){ var st = voAcomp.status[id]; if(!st) return false; var idade = Date.now() - (voAcomp.em[id] || 0); return st === 'erro' ? idade > 10000 : idade > 45000; }
+function voAcompTexto(d){
+  var m = (d && d.marcos_financeiros) || {}, p = (d && d.projeto) || {}, partes = [];
+  partes.push(m.nf_emitida ? 'NF emitida' + (m.nf_emitida_em ? ' em ' + voDataBR(m.nf_emitida_em) : '') : 'NF ainda não emitida');
+  partes.push(m.nf_enviada ? 'NF enviada' + (m.nf_enviada_em ? ' em ' + voDataBR(m.nf_enviada_em) : '') : 'NF ainda não enviada');
+  if(p.encerramento_solicitado) partes.push('encerramento solicitado');
+  return partes.join(' • ');
+}
+function voAcompLinhaTexto(id){
+  var st = voAcomp.status[id];
+  if(!st) return 'Lendo o acompanhamento…';
+  if(st === 'erro') return 'Não foi possível ler o acompanhamento agora.';
+  if(st === 'ausente') return 'Acompanhamento indisponível para este projeto.';
+  return voAcompTexto(voAcomp.dados[id]);
+}
+function voAcompPintar(id){ var el = document.getElementById('voAcompTxt-' + id); if(el) el.textContent = voAcompLinhaTexto(id); }
+function voAcompBuscar(lista){
+  var chave = voAcomp.chave, seq = voAcomp.seq;
+  lista.forEach(function(pj){
+    var id = String(pj.id);
+    if(voAcomp.buscando[id] || (voAcomp.status[id] && !voAcompExpirado(id))) return;
+    voAcomp.buscando[id] = true;
+    var feito = false, valido = function(){ return voAcompChave() === chave && voAcomp.seq === seq; };
+    var fim = function(st, dados){
+      if(feito) return; feito = true; if(!valido()) return;
+      delete voAcomp.buscando[id]; voAcomp.status[id] = st; voAcomp.em[id] = Date.now();
+      if(dados) voAcomp.dados[id] = dados; else delete voAcomp.dados[id];   // erro/ausente nunca deixa o dado antigo aparecer como atual
+      voAcompPintar(id);
+    };
+    var timer = setTimeout(function(){ fim('erro'); }, 15000);
+    var q; try { q = supabaseClient.rpc('atendimento_acompanhamento_ler', { p_projeto_id: id }); } catch(_e){ clearTimeout(timer); fim('erro'); return; }
+    Promise.resolve(q).then(function(r){
+      clearTimeout(timer);
+      var d = r && !r.error ? r.data : null;
+      if(d && d.status === 'ok') fim('ok', d); else if(d && d.status === 'ausente') fim('ausente'); else fim('erro');
+    }, function(){ clearTimeout(timer); fim('erro'); });
+  });
+}
+function voAcompHtml(emFin){
+  voAcompZerar(voAcompChave());
+  var lista = emFin.slice(0, 20);
+  var html = lista.map(function(pj){
+    return '<div style="padding:10px 12px;border-radius:12px;margin-bottom:8px;background:#f8fafc;border:1px solid var(--line)"><div style="font-size:14px;font-weight:700;color:var(--ink)">' + voEsc(pj.os) + ' &#8212; ' + voEsc(pj.cliente || pj.titulo)
+      + '</div><div id="voAcompTxt-' + voEsc(pj.id) + '" style="font-size:12px;color:var(--muted);margin-top:2px">' + voEsc(voAcompLinhaTexto(String(pj.id))) + '</div></div>';
+  }).join('');
+  setTimeout(function(){ voAcompBuscar(lista); }, 0);
+  return html;
+}
+// END 1.3.0.6 ACOMPANHAMENTO DO ATENDIMENTO
 function voDashOperacao(g, hoje, e){
   voMostrar('dashOperacao');
   var uid = e.uid, projOk = g.fontes.proj && g.fontes.proj.st === 'ok', box = voDom('dashOperacao'); if(!box) return;
@@ -37852,7 +37949,8 @@ function foObsHistHtml(d){
     + '<button class="btn btn2" data-pa="fin-obs-salvar" style="margin-top:8px;font-size:13px" ' + (!f || trava ? 'disabled ' : '') + 'onclick="foSalvarObservacao()">💾 Salvar observação</button>' + (f ? '' : '<div class="muted" style="font-size:11px;margin-top:6px">Projeto sem linha financeira: observação indisponível.</div>') + '</div>'
     + '<div class="card" style="margin:0"><h3 style="margin-bottom:10px">💳 Histórico financeiro</h3>' + hist + '</div></div>';
 }
-function foRenderProntuario(){
+function foRenderProntuario(){ try { return foRenderProntuarioBase.apply(this, arguments); } finally { try { finOpRepouso(); } catch(_e){} } }
+function foRenderProntuarioBase(){
   var el = foDom('finProntuario'); if(!el) return;
   var p = estadoFinPront;
   if(!foPode() || p.status === 'idle'){ el.textContent = ''; if(!foPode()) el.style.display = 'none'; return; }
@@ -37865,7 +37963,7 @@ function foRenderProntuario(){
   var d = p.d, l = foLinhaCr(p.os) || { os: p.os, cliente: '', parcelas: [], atendimentoId: d.proj.atendimento_id || '', situacao: '' }, enc = d.proj.status === 'Encerrado';
   var ag = foStr(d.proj.agencia).trim();
   el.innerHTML = '<div class="card" style="margin:0">' + topo + '<h2 style="margin:0;font-size:20px">' + foEsc(l.cliente || '(cliente não legível)') + '</h2><div class="muted" style="font-size:13px;margin-top:4px">' + foEsc(d.proj.tipo_servico || d.proj.titulo || '') + (ag && ag !== 'Direto' ? ' • via ' + foEsc(ag) : '') + (d.proj.status !== 'Financeiro' ? ' • ' + foEsc(d.proj.status) : '') + '</div></div>'
-    + '<button class="btn btn2" style="font-size:13px;margin-right:6px" data-pa="fin-operacoes" onclick="finOpAbrir()">🧰 Operações do projeto</button><button class="btn btn2" style="font-size:13px" onclick="foFecharProntuario()">✕ Fechar</button></div>' + foMsgPront()
+    + '<button class="btn btn2" style="font-size:13px" onclick="foFecharProntuario()">✕ Fechar</button></div>' + foMsgPront()
     + '<div style="display:flex;align-items:flex-start;margin-bottom:20px;background:#f9fafb;border-radius:14px;padding:14px">' + foTrilhoHtml(foEtapasFeitas(d, l), enc) + '</div>'
     + foResumoHtml(d, l)
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">' + foClienteHtml(d, l) + foStatusFinHtml(d, l)
@@ -38550,23 +38648,61 @@ function foNotaFora(n, custosOk, ano){
   var inc = n.eqOs ? '<p class="muted" style="font-size:12px;margin:0 0 6px">Inclui ' + foEsc(crBRL(n.eqOsC)) + ' de equipe vinculada a OS.</p>' : '';
   return inc + (t.length ? '<p class="muted" style="font-size:12px;margin:0 0 14px">Fora do total: ' + foEsc(t.join('; ')) + '.</p>' : '');
 }
+// Path "M x y C c1x c1y c2x c2y x y …" por PCHIP. Tangentes: média harmônica ponderada nos pontos internos (0 em extremos locais/platôs), fórmula de 3 pontos limitada nas pontas.
+function foMetaCurva(xs, ys){
+  var n = xs.length, h = [], d = [], m = [], i, f = function(v){ return v.toFixed(3); };
+  if(n < 1) return '';
+  if(n === 1) return 'M ' + f(xs[0]) + ' ' + f(ys[0]);
+  for(i = 0; i < n - 1; i++){ h[i] = xs[i + 1] - xs[i]; d[i] = (ys[i + 1] - ys[i]) / h[i]; }
+  var ponta = function(h0, h1, d0, d1){
+    var mm = ((2 * h0 + h1) * d0 - h0 * d1) / (h0 + h1);
+    if(mm * d0 <= 0) return 0;
+    if(d0 * d1 <= 0 && Math.abs(mm) > 3 * Math.abs(d0)) return 3 * d0;
+    return mm;
+  };
+  if(n === 2){ m[0] = d[0]; m[1] = d[0]; }
+  else {
+    for(i = 1; i < n - 1; i++){
+      if(d[i - 1] * d[i] <= 0) m[i] = 0;
+      else { var w1 = 2 * h[i] + h[i - 1], w2 = h[i] + 2 * h[i - 1]; m[i] = (w1 + w2) / (w1 / d[i - 1] + w2 / d[i]); }
+    }
+    m[0] = ponta(h[0], h[1], d[0], d[1]); m[n - 1] = ponta(h[n - 2], h[n - 3], d[n - 2], d[n - 3]);
+  }
+  var p = 'M ' + f(xs[0]) + ' ' + f(ys[0]);
+  for(i = 0; i < n - 1; i++){
+    p += ' C ' + f(xs[i] + h[i] / 3) + ' ' + f(ys[i] + m[i] * h[i] / 3) + ' ' + f(xs[i + 1] - h[i] / 3) + ' ' + f(ys[i + 1] - m[i + 1] * h[i] / 3) + ' ' + f(xs[i + 1]) + ' ' + f(ys[i + 1]);
+  }
+  return p;
+}
 function foGraficoHtml(meses, ano, custosOk){
   var max = 1, temMeta = false; meses.forEach(function(m, i){ var mt = foMetaFin(ano, String(i + 1).padStart(2, '0')); if(m.fatC > max) max = m.fatC; if(mt){ temMeta = true; if(mt > max) max = mt; } });
-  var barras = meses.map(function(m, i){ var pct = Math.round((m.fatC / max) * 100); return '<div class="chartbar" style="height:' + Math.max(pct, 2) + '%"><span>' + FO_MESES_ABREV[i] + '</span></div>'; }).join('');
-  var svg = '', rotulos = '';
+  // 1.3.0.6: barras e linha de meta usam a MESMA escala (valor ÷ max(faturamento, meta)) e o MESMO plot (a área útil do .chart: o overlay é filho do .chart, entre o padding de cima e o de baixo).
+  // Cada mês ocupa exatamente 1/12 da largura (margem de 7px por barra no lugar do gap), então o ponto de meta fica no centro da barra do mês. Linha reta entre pontos: sem overshoot.
+  var barras = meses.map(function(m, i){ var pct = m.fatC > 0 ? Math.max((m.fatC / max) * 100, 0.5) : 2; return '<div class="chartbar" style="margin:0 7px;height:' + pct.toFixed(3) + '%"><span>' + FO_MESES_ABREV[i] + '</span></div>'; }).join('');
+  var ov = '';
   if(temMeta && foMetasOk()){
-    var VB_W = 1000, VB_H = 220, pontos = [];
-    meses.forEach(function(m, i){ var mt = foMetaFin(ano, String(i + 1).padStart(2, '0')); if(!mt) return; pontos.push({ x: ((i + 0.5) / 12) * VB_W, y: VB_H - Math.round((mt / max) * VB_H), pct: Math.round((m.fatC / mt) * 100), fat: m.fatC }); });
+    var pts = meses.map(function(m, i){
+      var mt = foMetaFin(ano, String(i + 1).padStart(2, '0')) || 0, tem = mt > 0;
+      return { xp: ((i + 0.5) / 12) * 100, yp: 100 - (tem ? (mt / max) * 100 : 0), tem: tem, mt: mt, fat: m.fatC, nome: FO_MESES_NOME[i], pct: tem ? Math.round((m.fatC / mt) * 100) : null };   // mês sem meta: ponto na base (0), marcado como ausente
+    });
     var cls = function(p){ return p >= 100 ? 'ok' : p >= 80 ? 'orange' : p >= 50 ? 'warn' : 'danger'; };
-    var rot = function(p){ var curto = p.fat >= 100000 ? Math.round(p.fat / 100000) + 'k' : String(Math.round(p.fat / 100)); return '<div style="position:absolute;left:' + ((p.x / VB_W) * 100) + '%;top:' + ((p.y / VB_H) * 100) + '%;transform:translate(-50%,-46px);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none"><span style="font-size:10px;font-weight:700;color:var(--muted);background:white;padding:0 4px;border-radius:4px;white-space:nowrap">R$ ' + curto + '</span><span class="badge ' + cls(p.pct) + '" style="font-size:11px;padding:3px 8px;white-space:nowrap">' + p.pct + '%</span></div>'; };
-    if(pontos.length >= 2){
-      var d = 'M ' + pontos[0].x + ' ' + pontos[0].y; for(var k = 0; k < pontos.length - 1; k++){ var p0 = pontos[k], p1 = pontos[k + 1]; d += ' Q ' + p0.x + ' ' + p0.y + ' ' + ((p0.x + p1.x) / 2) + ' ' + ((p0.y + p1.y) / 2); } d += ' T ' + pontos[pontos.length - 1].x + ' ' + pontos[pontos.length - 1].y;
-      svg = '<svg viewBox="0 0 ' + VB_W + ' ' + VB_H + '" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"><path d="' + d + '" fill="none" stroke="#175cd3" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>'; rotulos = pontos.map(rot).join('');
-    } else if(pontos.length === 1){ svg = '<svg viewBox="0 0 ' + VB_W + ' ' + VB_H + '" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"><line x1="0" y1="' + pontos[0].y + '" x2="' + VB_W + '" y2="' + pontos[0].y + '" stroke="#175cd3" stroke-width="3" vector-effect="non-scaling-stroke"/></svg>'; rotulos = rot(pontos[0]); }
+    // UMA linha azul contínua, curva suave (cúbicas de Bézier por interpolação monotônica PCHIP/Fritsch–Carlson): passa EXATAMENTE pelos pontos mensais e nunca sai da faixa dos vizinhos (sem overshoot, nada abaixo de zero).
+    var svg = '<svg viewBox="0 0 1000 100" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"><path data-meta-curva="1" d="'
+      + foMetaCurva(pts.map(function(p){ return p.xp * 10; }), pts.map(function(p){ return p.yp; })) + '" fill="none" stroke="#175cd3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>';
+    var pontos = pts.map(function(p){
+      var tip = p.tem ? p.nome + ': meta ' + crBRL(p.mt) + ' • faturamento ' + crBRL(p.fat) + ' • ' + p.pct + '%' : p.nome + ': sem meta definida • faturamento ' + crBRL(p.fat);
+      return '<span data-meta-ponto="' + (p.tem ? 'meta' : 'ausente') + '" title="' + foEsc(tip) + '" style="position:absolute;left:' + p.xp.toFixed(3) + '%;top:' + p.yp.toFixed(3) + '%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;pointer-events:auto;cursor:default;' + (p.tem ? 'background:#175cd3' : 'background:transparent;border:2px solid #98a2b3') + '"></span>';
+    }).join('');
+    var rot = function(p){
+      if(!p.tem) return '<span style="position:absolute;left:' + p.xp.toFixed(3) + '%;top:' + p.yp.toFixed(3) + '%;transform:translate(-50%,-22px);font-size:9px;font-weight:700;color:var(--muted);background:white;padding:0 3px;border-radius:4px;white-space:nowrap;pointer-events:none">s/ meta</span>';
+      var curto = p.fat >= 100000 ? Math.round(p.fat / 100000) + 'k' : String(Math.round(p.fat / 100));
+      return '<div style="position:absolute;left:' + p.xp.toFixed(3) + '%;top:' + p.yp.toFixed(3) + '%;transform:translate(-50%,-46px);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none"><span style="font-size:10px;font-weight:700;color:var(--muted);background:white;padding:0 4px;border-radius:4px;white-space:nowrap">R$ ' + curto + '</span><span class="badge ' + cls(p.pct) + '" style="font-size:11px;padding:3px 8px;white-space:nowrap">' + p.pct + '%</span></div>';
+    };
+    ov = '<div data-meta-overlay="1" style="position:absolute;left:0;right:0;top:15px;bottom:8px;pointer-events:none">' + svg + pontos + pts.map(rot).join('') + '</div>';
   }
-  var legenda = foMetasOk() ? (temMeta ? '<p class="muted" style="font-size:12px;margin-top:32px">📊 Barras = faturamento realizado &nbsp;•&nbsp; <span style="color:#175cd3;font-weight:700">━</span> linha azul = meta &nbsp;•&nbsp; <span class="badge ok" style="font-size:10px">≥100%</span> <span class="badge orange" style="font-size:10px">80–99%</span> <span class="badge warn" style="font-size:10px">50–79%</span> <span class="badge danger" style="font-size:10px">&lt;50%</span></p>'
+  var legenda = foMetasOk() ? (temMeta ? '<p class="muted" style="font-size:12px;margin-top:32px">📊 Barras = faturamento realizado &nbsp;•&nbsp; <span style="color:#175cd3;font-weight:700">━</span> linha azul = meta do mês &nbsp;•&nbsp; <span style="color:#98a2b3;font-weight:700">○</span> ponto vazado = mês sem meta (linha na base) &nbsp;•&nbsp; <span class="badge ok" style="font-size:10px">≥100%</span> <span class="badge orange" style="font-size:10px">80–99%</span> <span class="badge warn" style="font-size:10px">50–79%</span> <span class="badge danger" style="font-size:10px">&lt;50%</span></p>'
       : '<p class="muted" style="font-size:12px;margin-top:10px">💡 Nenhuma meta definida ainda para ' + ano + '. Clique em "Definir Metas" para adicionar.</p>') : '<p class="muted" style="font-size:12px;margin-top:10px">Metas indisponíveis agora.</p>';
-  return '<div style="position:relative;height:220px;padding-top:50px;box-sizing:content-box"><div class="chart" style="height:220px">' + barras + '</div>' + svg + rotulos + '</div>' + legenda;
+  return '<div style="position:relative;height:220px;padding-top:50px;box-sizing:content-box"><div class="chart" style="height:220px;gap:0">' + barras + ov + '</div></div>' + legenda;
 }
 function foRenderMensal(){
   var cards = foDom('finMensalCards'), tab = foDom('finMensalTabela'), chart = foDom('finMensalChart'); if(!cards || !tab) return;
@@ -40257,24 +40393,59 @@ function pjCtxAtual(){ var e = estadoPJ; return { seq: e.seq, uid: pjUid(), epoc
 function pjCtxOk(ctx){ var e = estadoPJ; return !!ctx && ctx.seq === e.seq && crSessao() && String(currentUser.id) === ctx.uid && crEpoch() === ctx.epoch && vgPodeVer() && pjPerfilAtivo() === ctx.perfil; }
 function pjDetOk(dctx){ var e = estadoPJ; return !!dctx && pjCtxOk(dctx) && dctx.dseq === e.dseq && e.abertoId === dctx.id; }
 // capacidades = espelho das guardas do banco (_pode_operar_projeto, atribuir_*, reatribuir_*, encerrar_projeto...). O banco confere de novo e recusa o que não puder.
+// BEGIN 1.3.0.6 PROJETOS ATIVOS · ESCOPO DO ATENDIMENTO (item 6, UI do prontuário) — espelho das guardas do BANCO (que continua a autoridade; a RLS/RPC recusam o que o front errar).
+// Atendimento: só a PRÓPRIA OS (l.atend === uid) — ler checklist de produção/edição/entrega, demandas, TV, histórico operacional e comercial, resumo comercial e acompanhamento financeiro (sem valores);
+// atribuir / arquivar / solicitar encerramento só nela. Escrever em fase, marcar checklist, extras, TV, avançar etapa continua só c.prod / c.ed / c.entrega (Atendimento nunca).
+// O perfil ATIVO decide a visão (multi-perfil: Atendimento+Produção, no perfil Produção, vê as atribuídas pela produção; sem herdar nada por metadata/DOM).
 function pjCap(l){
   var p = pjPerfilAtivo(), uid = pjUid(), g = p === 'socio' || p === 'admin', pr = p === 'producao' && !!l && l.prod === uid, ed = p === 'edicao' && !!l && l.edic === uid;
-  var pai = !!l && l.ehPai, fim = !!l && !l.ativo;
-  return { perfil: p, gestor: g, pai: pai, terminal: fim, atribuir: !pai && !fim && (p === 'atendimento' || g), reatribuir: !pai && !fim && g,
+  var pai = !!l && l.ehPai, fim = !!l && !l.ativo, at = p === 'atendimento' && !!l && !!uid && l.atend === uid;
+  return { perfil: p, gestor: g, at: at, pai: pai, terminal: fim, atribuir: !pai && !fim && (at || g), reatribuir: !pai && !fim && g,
     prod: !pai && !fim && (g || pr), ed: !pai && !fim && (g || ed), entrega: !pai && !fim && (g || pr || ed),
-    arquivar: !pai && !fim && (p === 'atendimento' || g), encerrar: !pai && !fim && (p === 'financeiro' || g),
-    solicitar: !pai && !fim && p !== 'financeiro' && !g && (p === 'atendimento' || pr || ed), chkVer: g || (p === 'producao' && !!l && l.prod === uid) || (p === 'edicao' && !!l && l.edic === uid), hcoVer: p === 'socio' || p === 'admin' || p === 'atendimento',   // quem a RLS deixa ler checklist/histórico operacional (sócio/admin e o produtor/editor atribuído) e histórico comercial
-    finVer: (p === 'financeiro' || g) && crPodeLer(), comVer: ['socio', 'admin', 'atendimento', 'financeiro'].indexOf(p) >= 0 };
+    arquivar: !pai && !fim && (at || g), encerrar: !pai && !fim && (p === 'financeiro' || g),
+    solicitar: !pai && !fim && p !== 'financeiro' && !g && (at || pr || ed), chkVer: g || pr || ed || at, hcoVer: g || at,   // leitura: sócio/admin, o produtor/editor atribuído e (1.3.0.6) o Atendimento da PRÓPRIA OS
+    finVer: (p === 'financeiro' || g) && crPodeLer(), comVer: p === 'socio' || p === 'admin' || p === 'financeiro' || at };
 }
+// Com o perfil ativo Atendimento, listas/contagem/linha pedem só os projetos do próprio UID (a RLS já garante; o filtro evita depender só disso e mantém contagens coerentes).
+function pjFiltroAt(q){ var uid = pjUid(); return (pjPerfilAtivo() === 'atendimento' && uid) ? q.eq('atendimento_id', uid) : q; }
 // ---- provider (leituras sob a RLS; testes injetam respostas pelo cliente falso) ----
 function pjProvider(){
   return {
-    projetos: function(de, ate, comClientes){ return supabaseClient.from('projetos').select(comClientes ? PJ_COL + ',clientes(nome)' : PJ_COL, { count: 'exact' }).order('id', { ascending: true }).range(de, ate); },
-    contagem: function(){ return supabaseClient.from('projetos').select('id', { count: 'exact', head: true }); },
+    projetos: function(de, ate, comClientes){ return pjFiltroAt(supabaseClient.from('projetos').select(comClientes ? PJ_COL + ',clientes(nome)' : PJ_COL, { count: 'exact' })).order('id', { ascending: true }).range(de, ate); },
+    contagem: function(){ return pjFiltroAt(supabaseClient.from('projetos').select('id', { count: 'exact', head: true })); },
     equipe: function(){ return supabaseClient.rpc('listar_equipe_operacional'); },
-    linha: function(id, comClientes){ return supabaseClient.from('projetos').select(comClientes ? PJ_COL_DET + ',clientes(nome)' : PJ_COL_DET).eq('id', id).limit(2); }
+    linha: function(id, comClientes){ return pjFiltroAt(supabaseClient.from('projetos').select(comClientes ? PJ_COL_DET + ',clientes(nome)' : PJ_COL_DET)).eq('id', id).limit(2); }
   };
 }
+// ---- Status financeiro do Atendimento (somente leitura): as 5 etapas PADRÃO do checklist financeiro do app, só etapa/situação/data — nunca valor, NF (número/arquivo), lucro, custos ou caixa ----
+var PJ_FIN_ETAPAS = ['Cliente / Atendimento notificados', 'Liberação para faturamento', 'NF emitida', 'NF enviada', 'Recebimento confirmado'];
+function pjAcompFinHtml(l, d, sol){
+  var a = d && d.acomp, dados = a && a.st === 'ok' && a.data && a.data.status === 'ok' ? a.data : null, corpo = '';
+  var topo = '<div class="card" style="margin:0"><h3 style="margin-bottom:12px">💳 Status financeiro</h3>';
+  if(!dados){
+    var ausente = a && a.st === 'ok' && a.data && a.data.status === 'ausente';
+    corpo = '<p class="muted" style="font-size:13px" data-pa="pj-fin-acomp-estado">' + pjEsc(ausente ? 'Acompanhamento indisponível para este projeto.' : 'Não foi possível ler o acompanhamento financeiro agora. Nada é mostrado como concluído.') + '</p>'
+      + (ausente ? '' : '<button class="btn btn2" data-pa="pj-fin-acomp-tentar" style="font-size:12px;padding:6px 12px" onclick="pjAbrir(\'' + l.id + '\',{semRolar:true})">Tentar de novo</button>');
+    return topo + corpo + (sol || '') + '</div>';
+  }
+  var m = dados.marcos_financeiros || {}, itens = Array.isArray(m.itens) ? m.itens : [], por = {};
+  itens.forEach(function(x){ if(x && typeof x.titulo === 'string' && PJ_FIN_ETAPAS.indexOf(x.titulo) >= 0) por[x.titulo] = x; });
+  var linhas = PJ_FIN_ETAPAS.map(function(t){
+    var x = por[t], sit = x && typeof x.situacao === 'string' ? x.situacao : '', data = x && x.data_evento ? x.data_evento : '';
+    if(!x && t === 'NF emitida' && m.nf_emitida){ sit = 'Sim'; data = m.nf_emitida_em || ''; x = {}; }
+    if(!x && t === 'NF enviada' && m.nf_enviada){ sit = 'Sim'; data = m.nf_enviada_em || ''; x = {}; }
+    var feito = sit === 'Sim' || sit === 'Recebido' || sit === 'Pago', na = sit === 'Não aplicável';
+    var cor = feito ? 'var(--green)' : 'var(--line)';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)" data-pa="pj-fin-etapa"><div style="width:22px;height:22px;border-radius:6px;border:2px solid ' + cor + ';background:' + (feito ? 'var(--green)' : 'white') + ';color:white;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + (feito ? '✓' : '') + '</div>'
+      + '<span style="font-size:13px;flex:1;' + (na ? 'color:var(--muted)' : '') + '">' + pjEsc(t) + '</span>'
+      + '<span style="font-size:12px;color:var(--muted);white-space:nowrap">' + (x ? pjEsc(na ? 'não se aplica' : (sit || '—') + (data ? ' • ' + pjDataBR(data) : '')) : 'não registrado') + '</span></div>';
+  }).join('');
+  var enc = l.status === 'Encerrado';
+  linhas += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0" data-pa="pj-fin-etapa"><div style="width:22px;height:22px;border-radius:6px;border:2px solid ' + (enc ? 'var(--green)' : 'var(--line)') + ';background:' + (enc ? 'var(--green)' : 'white') + ';color:white;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + (enc ? '✓' : '') + '</div>'
+    + '<span style="font-size:13px;flex:1">Projeto encerrado</span><span style="font-size:12px;color:var(--muted)">' + pjEsc(enc ? 'Encerrado' : l.status === 'Financeiro' ? 'em andamento no Financeiro' : pjStatusRotulo(l.status)) + '</span></div>';
+  return topo + linhas + (d && d.acomp && d.lido ? '<div class="muted" style="font-size:11px;margin-top:6px">Lido do banco em ' + pjEsc(crDataBR(crDataSP(d.lido)) || '') + '. Somente consulta; o Financeiro atualiza estas etapas.</div>' : '') + (sol || '') + '</div>';
+}
+// END 1.3.0.6 PROJETOS ATIVOS · ESCOPO DO ATENDIMENTO
 // ---- classificação ----
 function pjLinha(r){
   var l = vgProjetoLinha(r);
@@ -40681,6 +40852,7 @@ function pjAbrir(chave, opts){
   if(cap0.chkVer){
     passos.push(['cex', function(){ return T('checklist_extras').select(CT_COL_EXTRA).eq('projeto_id', id).order('fase', { ascending: true }).order('ordem', { ascending: true }).limit(PJ_LIMITE_LISTA + 1); }]);
     passos.push(['ctv', function(){ return T('projeto_tv').select(CT_COL_TV).eq('projeto_id', id); }]);
+    if(cap0.at && !cap0.finVer) passos.push(['acomp', function(){ return supabaseClient.rpc('atendimento_acompanhamento_ler', { p_projeto_id: id }); }]);
   }
   return passos.reduce(function(prom, par){
     return prom.then(function(){ if(!ok()) return; return pjConsulta(ok, par[1]()).then(function(r){ if(r !== null) R[par[0]] = r; }); });
@@ -40693,7 +40865,7 @@ function pjAbrir(chave, opts){
     if(!lf.ok){ e.det = { id: id, status: 'erro', d: null, l: null }; ctPjPinta(opts, detAnt); return; }
     var lista = function(k, desc){ var r = R[k]; if(!r) return { st: 'indisponivel', linhas: [] }; if(r.st !== 'ok' || !Array.isArray(r.data)) return { st: r.st === 'sem_permissao' ? 'sem_permissao' : 'erro', linhas: [] };
       var n = r.data.length > PJ_LIMITE_LISTA; var l2 = n ? r.data.slice(0, PJ_LIMITE_LISTA) : r.data; return { st: n ? 'limite' : 'ok', linhas: desc ? l2.slice().reverse() : l2 }; };
-    var d = { raw: um, chk: lista('chk'), grav: lista('grav'), hop: lista('hop', true), forn: lista('forn'), hco: lista('hco', true), hfi: lista('hfi', true), fchk: lista('fchk'), rec: lista('rec'), ver: R.ver, fin: R.fin && R.fin.st === 'ok' && Array.isArray(R.fin.data) && R.fin.data.length === 1 ? R.fin.data[0] : null, finSt: R.fin ? R.fin.st : 'indisponivel', lido: new Date().toISOString(), cex: lista('cex'), ctvR: R.ctv };
+    var d = { raw: um, chk: lista('chk'), grav: lista('grav'), hop: lista('hop', true), forn: lista('forn'), hco: lista('hco', true), hfi: lista('hfi', true), fchk: lista('fchk'), rec: lista('rec'), ver: R.ver, fin: R.fin && R.fin.st === 'ok' && Array.isArray(R.fin.data) && R.fin.data.length === 1 ? R.fin.data[0] : null, finSt: R.fin ? R.fin.st : 'indisponivel', lido: new Date().toISOString(), cex: lista('cex'), ctvR: R.ctv, acomp: R.acomp || null };
     e.det = { id: id, status: 'ok', d: d, l: lf };
     if(pjCap(lf).finVer && !opts.silencioso) pjFinHospedar(lf, um);   // financeiro/sócio/admin: cartão financeiro REAL (serviços da 8.17.0) dentro do prontuário
     ctPjPinta(opts, detAnt);
@@ -40768,6 +40940,7 @@ function pjStatusFinHtml(l, d){
   if(!c.finVer){
     var sol = l.encSolicitado ? '<div class="muted" style="font-size:12px;margin-top:10px">📩 Encerramento solicitado em ' + pjEsc(pjDataBR(crDataSP(l.encSolicitado))) + '. Aguarda a conferência do Financeiro.</div>'
       : (c.solicitar ? '<button class="btn" data-pa="pj-solicitar-enc" style="width:100%;margin-top:12px;padding:10px;font-size:14px;background:#1e3a5f;color:white" ' + (ocupado ? 'disabled ' : '') + 'onclick="pjSolicitarEncerramento(\'' + l.id + '\')">📩 Solicitar encerramento</button>' : '');
+    if(c.at) return pjAcompFinHtml(l, d, sol);
     return '<div class="card" style="margin:0"><h3 style="margin-bottom:12px">💳 Status financeiro</h3><p class="muted" style="font-size:13px">O acompanhamento financeiro é feito pelo Financeiro (restrito a financeiro, sócio e admin).</p>' + sol + '</div>';
   }
   // financeiro/sócio/admin: o cartão e os controles são OS DA 8.17 (checklist, recebimento, fornecedores, encerrar, perda), hospedados aqui — bloco 05
@@ -44230,6 +44403,7 @@ function finOpFechar(forcar){
   if(box){ try { _posicionarDetalheProntReal(box); } catch(_e){} }   // devolve o cartão ao lugar do Comercial
   if(host) host.style.display = 'none';
   finOpMsg('');
+  try { finOpRepouso(); } catch(_e){}
   return true;
 }
 function finOpAbrir(){
@@ -44242,7 +44416,7 @@ function finOpAbrir(){
   if(finOp.ativo) finOpFechar(false);
   var req = ++finOp.req, os = String(p.os), leadId = String(p.leadId), uid = String(currentUser.id), epoch = crEpoch(), perfil = _perfilAtivoComercial();
   if(PERFIS_FIN_PRONT_REAL.indexOf(perfil) < 0 || !Array.isArray(currentUser.profiles) || currentUser.profiles.indexOf(perfil) < 0){ finOpMsg('O perfil ativo não tem acesso às operações financeiras do projeto.'); return; }
-  finOpMsg('Abrindo as operações do projeto…');
+  finOpMsg('Abrindo os custos extras…');
   var q; try { q = supabaseClient.from('leads').select('*').eq('id', leadId).limit(2); } catch(_e){ finOpMsg('Não foi possível abrir agora. Nada foi alterado.'); return; }
   var feito = false, timer = setTimeout(function(){ if(feito) return; feito = true; if(req === finOp.req) finOpMsg('A leitura do atendimento demorou demais. Nada foi alterado; tente de novo.'); }, 20000);
   Promise.resolve(q).then(function(r){
@@ -44267,8 +44441,8 @@ function finOpPintarBarra(){
   if(!finOp.ativo) return;
   var s = estadoProntuarioAtendReal, perms = finOpPerms(currentUser && currentUser.profiles), a = acoesDisponiveisProntReal();
   var cab = document.createElement('div'); cab.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px';
-  var h = document.createElement('h3'); h.style.margin = '0'; h.textContent = '🧰 Operações do projeto · OS ' + finOp.os; cab.appendChild(h);
-  var f = document.createElement('button'); f.type = 'button'; f.className = 'btn btn2'; f.style.fontSize = '13px'; f.textContent = '✕ Fechar operações'; f.addEventListener('click', function(){ finOpFechar(false); });
+  var h = document.createElement('h3'); h.style.margin = '0'; h.textContent = 'Custos extras do projeto · OS ' + finOp.os; cab.appendChild(h);
+  var f = document.createElement('button'); f.type = 'button'; f.className = 'btn btn2'; f.style.fontSize = '13px'; f.textContent = '✕ Fechar'; f.addEventListener('click', function(){ finOpFechar(false); });
   cab.appendChild(f);
   if(typeof coRevHistoricoAbrir === 'function'){ var hb = document.createElement('button'); hb.type = 'button'; hb.className = 'btn btn2'; hb.style.fontSize = '13px'; hb.setAttribute('data-pa', 'fo-historico-versoes'); hb.textContent = '📜 Histórico de versões'; hb.addEventListener('click', function(){ coRevHistoricoAbrir(); }); cab.appendChild(hb); }   // leitura; o servidor decide
   barra.appendChild(cab);
@@ -44277,12 +44451,12 @@ function finOpPintarBarra(){
   if(s.leadStatus === 'carregando' || s.leadStatus === 'idle') nota('Lendo os dados do projeto…');
   else if(s.leadStatus !== 'ok') nota('Não foi possível ler o atendimento deste projeto. Use ↻ Atualizar no topo.');
   else if(!s.painel && !s.acao){
-    if(a.custoExtra.ok){ var b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'btn btn2'; b1.setAttribute('data-pa', 'fo-abrir-custo-extra'); b1.textContent = '🔧 Custos pós-orçamento'; b1.addEventListener('click', function(){ abrirPainelRev3ProntReal('custoExtra'); }); linha.appendChild(b1); }
-    else if(!perms.custos) nota('Seu perfil não registra custos pós-orçamento.');
+    if(a.custoExtra.ok){ var b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'btn btn2'; b1.setAttribute('data-pa', 'fo-abrir-custo-extra'); b1.textContent = '🔧 Custos extras'; b1.addEventListener('click', function(){ abrirPainelRev3ProntReal('custoExtra'); }); linha.appendChild(b1); }
+    else if(!perms.custos) nota('Seu perfil não registra custos extras.');
     if(a.fornecedores.ok){ var b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'btn btn2'; b2.setAttribute('data-pa', 'fo-abrir-fornecedores'); b2.textContent = '🎬 Fornecedores'; b2.addEventListener('click', function(){ abrirPainelRev3ProntReal('fornecedores'); }); linha.appendChild(b2); }
     else if(!perms.fornecedores) nota('Trocar fornecedor de um custo exige Sócio ou Admin.');
     if(linha.children.length) barra.appendChild(linha);
-    else if(perms.custos && !a.custoExtra.ok) nota('Custos pós-orçamento e troca de fornecedor não se aplicam a este projeto agora (sem orçamento gravado ou etapa incompatível). O Financeiro do projeto está logo abaixo.');
+    else if(perms.custos && !a.custoExtra.ok) nota('Este projeto não aceita custos extras agora (sem orçamento gravado ou etapa incompatível).');
   }
 }
 // projeto SEM atendimento: o painel existente ("Sem atendimento", aba oculta por decisão de Douglas) abre com o projeto já escolhido; nada reativa a aba.
@@ -44352,6 +44526,65 @@ foFecharProntuario = function(){ if(finOp.ativo && !finOpFechar(false)) return; 
 var _foAbrirPrFinOp = foAbrirProntuario;
 foAbrirProntuario = function(os){ if(finOp.ativo && String(os) !== finOp.os) finOpFechar(true); return _foAbrirPrFinOp.apply(this, arguments); };
 FO_LIMPEZAS.push(function(){ finOp.semSel = ''; if(finOp.ativo) finOpFechar(true); });
+// BEGIN 1.3.0.6 CUSTOS EXTRAS DO PROJETO (item 2): a MESMA mecânica de 1.2.0.0 (finOpAbrir/prontuário hospedado/RPCs/guardas/histórico) com caixa limpa NO FINAL do prontuário financeiro.
+// Nada de lógica nova: só (1) acionador junto da caixa, em repouso, no lugar do botão do topo; (2) rótulos curtos; (3) o texto técnico do painel de custos vira "Saiba mais".
+// Lançar/corrigir/remover custo, fornecedores, histórico de versões, cálculos, validações e o Financeiro do projeto permanecem os mesmos.
+function finOpRepouso(){
+  var host = foDom('finOpHost'), barra = foDom('finOpBarra'), p = estadoFinPront, el = foDom('finProntuario');
+  if(!host || !barra || finOp.ativo) return;   // aberto: a barra e o painel são pintados por finOpPintarBarra
+  barra.textContent = '';
+  var visivel = !!foPode() && !!el && el.style.display !== 'none' && p.status === 'ok' && !!p.d && (!p.uid || (!!currentUser && String(currentUser.id) === p.uid));
+  if(!visivel){ host.style.display = 'none'; host.removeAttribute('data-os'); finOpMsg(''); return; }
+  if(host.getAttribute('data-os') !== String(p.os)){ host.setAttribute('data-os', String(p.os)); finOpMsg(''); }   // mensagem de outro projeto não fica
+  host.style.display = 'block';
+  var cab = document.createElement('div'); cab.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap';
+  var txt = document.createElement('div');
+  var h = document.createElement('h3'); h.style.cssText = 'margin:0 0 2px;font-size:16px'; h.textContent = 'Custos extras do projeto'; txt.appendChild(h);
+  var d = document.createElement('div'); d.className = 'muted'; d.style.fontSize = '12px'; d.textContent = 'Gastos que apareceram depois do orçamento aprovado e troca de fornecedor.'; txt.appendChild(d);
+  cab.appendChild(txt);
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn2'; b.style.fontSize = '13px'; b.setAttribute('data-pa', 'fin-operacoes'); b.title = 'Registrar, corrigir ou remover custos extras deste projeto';
+  b.textContent = '🔧 Abrir custos extras'; b.addEventListener('click', function(){ finOpAbrir(); });
+  cab.appendChild(b); barra.appendChild(cab);
+}
+// Painel de custos no modo hospedado: mesmo painel, texto mais curto. O texto técnico completo continua disponível em "Saiba mais".
+function finOpEnxugarPainelCustos(card, f, x){   // mesmos argumentos de _renderPainelCustoExtraProntReal(card, f, x, h)
+  var ler = (x && x.orcLer) || {}, o = ler.orcamento || {}, cp = _custoPosLerProntReal(x) || {}, i, el, hs;
+  hs = card.querySelectorAll('h3');
+  for(i = 0; i < hs.length; i++){ if(hs[i].textContent.indexOf('Custos pós-orçamento') >= 0){ hs[i].textContent = '🔧 Custos extras do projeto'; break; } }
+  el = card.querySelector('[data-pa="cp-explica"]');
+  if(el && !el.getAttribute('data-enxuto')){
+    var cheio = el.textContent;
+    el.setAttribute('data-enxuto', '1');
+    el.textContent = 'Gastos que apareceram depois do orçamento aprovado. Tudo fica no histórico: corrigir ou remover não apaga o registro anterior.';
+    var det = document.createElement('details'); det.style.cssText = 'font-size:12px;color:var(--muted);margin:0 0 8px';
+    var sm = document.createElement('summary'); sm.style.cursor = 'pointer'; sm.textContent = 'Saiba mais'; det.appendChild(sm);
+    var corpo = document.createElement('div'); corpo.style.marginTop = '4px'; corpo.textContent = cheio; det.appendChild(corpo);
+    el.parentNode.insertBefore(det, el.nextSibling);
+  }
+  el = card.querySelector('[data-pa="cp-resumo"]');
+  if(el) el.textContent = 'Do orçamento: ' + _brlProntReal(Number(cp.custo_extra_comercial) || 0) + ' · Registrados depois: ' + _brlProntReal(Number(cp.total) || 0) + ' · Total de custos extras: ' + _brlProntReal(Number(o.custo_extra) || 0);
+  el = card.querySelector('[data-pa="cp-vigentes"]');
+  if(el){ for(i = 0; i < el.children.length; i++){ if(el.children[i].textContent === 'Nenhum custo pós-orçamento vigente.') el.children[i].textContent = 'Nenhum custo extra registrado.'; } }
+  el = card.querySelector('[data-pa="cp-historico"]');
+  if(el && el.children.length >= 2){
+    var tz = el.children[1].textContent;
+    el.children[0].textContent = 'Histórico dos custos extras (nada é apagado)'; el.children[0].title = tz;
+    if(/^Horários no fuso/.test(tz)) el.removeChild(el.children[1]);
+  }
+}
+var _renderPainelCEFinOp = _renderPainelCustoExtraProntReal;
+_renderPainelCustoExtraProntReal = function(card){
+  var r = _renderPainelCEFinOp.apply(this, arguments);
+  if(finOp.ativo){ try { finOpEnxugarPainelCustos.apply(null, arguments); } catch(_e){} }
+  return r;
+};
+var _prevCEFinOp = _preencherPreviaCustoExtraProntReal;
+_preencherPreviaCustoExtraProntReal = function(pr){
+  var r = _prevCEFinOp.apply(this, arguments);
+  if(finOp.ativo && pr && pr.firstChild) pr.firstChild.textContent = 'Efeito no resultado (o banco recalcula ao registrar)';
+  return r;
+};
+// END 1.3.0.6 CUSTOS EXTRAS DO PROJETO
 // END 1.2.0.0 OPERACOES DO PROJETO
 // BEGIN 1.2.0.2 PRONTUÁRIO: Orçamento (esquerda) e Contrato (direita) lado a lado. Só reorganiza os botões e cartões que já existem: mesmas funções, permissões e leituras.
 // O cartão do Orçamento guarda versão atual, Ver/Editar, nova versão e histórico; o do Contrato guarda Ver/Editar (editor existente), histórico, assinatura e decisão. Nada é duplicado fora dos cartões.
@@ -45982,7 +46215,7 @@ function coDocCssBase(){
     '@media print{html{background:#fff}#paginas{padding:0}.pg{margin:0;box-shadow:none;height:296.6mm}.tbar,#erro{display:none!important}}',
     '.hdr{background:' + A + ';display:flex;justify-content:space-between;align-items:center;padding:4mm 14mm}',
     '.hdr-logo{display:block;width:22mm;height:22mm}',
-    '.hdr-info{text-align:right;font-size:22px;color:#7fb3d3;line-height:1.25;white-space:nowrap;min-width:0}',
+    '.hdr-info{text-align:right;font-size:11px;color:#7fb3d3;line-height:1.25;white-space:nowrap;min-width:0}',
     '.hdr-logo{flex:0 0 auto}',
     '.faixa{background:#f0f4f8;padding:2.6mm 14mm;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid ' + CO_DOC_VERDE + '}',
     '.faixa-title{font-size:10px;font-weight:700;color:' + A + ';letter-spacing:3px;text-transform:uppercase}',
@@ -46500,28 +46733,45 @@ var CO_DOC_CTR_TOPO = 9;
 var CO_DOC_CTR_BASE = 20;
 
 // ---------------------------------------------------------------------------------------------------------------
-// Contrato Mestre NOVO: quadro resumo só com os 7 campos pedidos. Trocas exatas e tudo-ou-nada (se o texto do modelo não for o esperado, devolve o corpo original sem tocar em nada).
-// As frases de uso, brutos/editáveis e portfólio NÃO são apagadas nem reescritas: mudam para as cláusulas 12, 14 e 15. Dados de cliente/contato saem do resumo (já constam nas partes).
-// Só o Mestre aplicado explicitamente recebe isto; contratos antigos e modelos reais do banco não passam por aqui.
-// ---------------------------------------------------------------------------------------------------------------
+// Contrato Mestre 1.3.0.6: SEM quadro resumo. O bloco "QUADRO RESUMO DA CONTRATAÇÃO" sai inteiro e cada conteúdo importante que ele trazia passa, com a MESMA redação, para a cláusula própria:
+//   escopo resumido (itens do orçamento) → cláusula 3; valor e forma de pagamento → cláusula 10; prazo de entrega → cláusula 7; alterações inclusas → cláusula 9;
+//   uso autorizado → cláusula 12; arquivos brutos/projetos editáveis → cláusula 14; portfólio → cláusula 15.
+// OS e projeto/campanha já estão identificados no parágrafo de abertura; os dados das partes ficam só nas partes (nada repetido). As 23 cláusulas, a numeração, o foro e as assinaturas/testemunhas não mudam.
+// As referências "no Quadro Resumo" viram referências às próprias cláusulas (sem texto apontando para quadro inexistente). Nenhuma condição legal muda.
+// Trocas exatas e tudo-ou-nada: se o texto do modelo não for o esperado, devolve o corpo original sem tocar em nada. Só o Mestre aplicado explicitamente recebe isto;
+// contratos já gravados/assinados e modelos reais do banco não passam por aqui. A "Observações comerciais" em branco do quadro antigo não é mais emitida (como já na 1.3.0.4).
 function coDocMestreCorpo(corpo){
-  var original = String(corpo === null || corpo === undefined ? '' : corpo), s = original;
-  var antigoCampos = ['Número da OS / Contrato: {{OS}}', 'Data: {{DATA}}', 'Cliente / Nome fantasia: {{CLIENTE}}', 'Razão social: {{RAZAO_SOCIAL}}', 'CNPJ/CPF: {{CNPJ}}', 'Endereço: {{ENDERECO}}', 'Cidade/UF: {{CIDADE_UF}}',
-    'Contato do cliente: {{CONTATO_CLIENTE}}', 'E-mail: {{EMAIL}}', 'Telefone: {{TELEFONE}}', 'Agência / Intermediadora: {{AGENCIA}}', 'Responsável Zip: {{RESPONSAVEL}}', 'Projeto / Campanha: {{SERVICO}}'].join('\n');
+  var original = String(corpo === null || corpo === undefined ? '' : corpo), s = original, i;
+  var iniQ = s.indexOf('QUADRO RESUMO DA CONTRATAÇÃO\n'), fimQ = s.indexOf('CLÁUSULAS GERAIS\n');
+  if(iniQ < 0 || fimQ <= iniQ || s.indexOf('QUADRO RESUMO DA CONTRATAÇÃO\n', iniQ + 1) >= 0 || s.indexOf('CLÁUSULAS GERAIS\n', fimQ + 1) >= 0) return original;
+  var quadro = s.slice(iniQ, fimQ);
+  var escopo = 'Escopo resumido:\n{{ITENS_ORCAMENTO}}';
+  var valor = 'Valor contratado:\n{{VALOR}} ({{VALOR_EXTENSO}})';
+  var pagto = 'Forma de pagamento:\n{{CONDICAO}}';
+  var prazo = 'Prazo de entrega:\nConforme cronograma combinado entre as partes, contado a partir do recebimento das informações, materiais, aprovações e condições necessárias para execução do serviço.';
+  var altera = 'Alterações inclusas:\nAté 2 rodadas de ajustes pontuais, salvo condição diferente negociada entre as partes.';
   var usoFrase = 'Uso institucional, comercial e/ou publicitário conforme finalidade do projeto aprovado e limites estabelecidos neste contrato.';
   var brutosL1 = 'Arquivos brutos incluídos? Não, salvo previsão expressa em sentido contrário.';
   var brutosL2 = 'Projetos editáveis incluídos? Não, salvo previsão expressa em sentido contrário.';
   var portfolio = 'Uso em portfólio autorizado? Sim, salvo restrição expressa informada pela CONTRATANTE.';
-  var antigoBloco = ['Uso autorizado do material:', usoFrase, '', brutosL1, brutosL2, portfolio, '', 'Observações comerciais:', '____________________________________'].join('\n') + '\n\n';
+  var exigidos = [escopo, valor, pagto, prazo, altera, 'Uso autorizado do material:\n' + usoFrase, brutosL1, brutosL2, portfolio];
+  for(i = 0; i < exigidos.length; i++){ if(quadro.split(exigidos[i]).length !== 2) return original; }   // o quadro tem de ser exatamente o conhecido
+  s = s.slice(0, iniQ) + s.slice(fimQ);
   var trocas = [
-    [antigoCampos, 'Número da OS / Contrato: {{OS}}\nProjeto / Campanha: {{SERVICO}}'],
-    [antigoBloco, ''],
+    ['descritos no Quadro Resumo e no orçamento aprovado da OS {{OS}}', 'descritos na Cláusula 3 e no orçamento aprovado da OS {{OS}}'],
+    ['itens e entregáveis descritos no Quadro Resumo. Serviços, formatos, diárias ou peças não previstos não estão incluídos e dependem de nova negociação.',
+      'itens e entregáveis descritos a seguir. Serviços, formatos, diárias ou peças não previstos não estão incluídos e dependem de nova negociação.\n\n' + escopo],
+    ['liberações/autorizações necessárias.', 'liberações/autorizações necessárias.\n\n' + prazo],
+    ['ou correções decorrentes de informação incorreta fornecida pela CONTRATANTE.', 'ou correções decorrentes de informação incorreta fornecida pela CONTRATANTE.\n\n' + altera],
+    ['são os indicados no Quadro Resumo. O atraso no pagamento', 'são os indicados nesta cláusula. O atraso no pagamento'],
+    ['ou condição específica ajustada entre as partes.', 'ou condição específica ajustada entre as partes.\n\n' + valor + '\n\n' + pagto],
     ['salvo autorização expressa em sentido diverso.', 'salvo autorização expressa em sentido diverso.\n\nUso autorizado do material: ' + usoFrase],
     ['não integram o objeto, salvo contratação expressa.', 'não integram o objeto, salvo contratação expressa.\n\n' + brutosL1 + '\n' + brutosL2],
     ['informados pela CONTRATANTE.\n\n16. DA CONFIDENCIALIDADE', 'informados pela CONTRATANTE.\n\n' + portfolio + '\n\n16. DA CONFIDENCIALIDADE']
-  ], i;
+  ];
   for(i = 0; i < trocas.length; i++){ if(s.split(trocas[i][0]).length !== 2) return original; }
   for(i = 0; i < trocas.length; i++) s = s.split(trocas[i][0]).join(trocas[i][1]);
+  if(/Quadro Resumo|QUADRO RESUMO/i.test(s)) return original;   // nada pode continuar apontando para o quadro
   return s;
 }
 
@@ -47230,6 +47480,233 @@ coCtrSalvarEditor = function(){
 };
 try { zpEdIniciar(); } catch(_e){}
 // END 1.3.0.4 EDITOR · PARTE B
+// BEGIN 1.3.0.6 EDITOR · FONTE, COR, ALINHAMENTO E FAIXA DE SEÇÃO
+// Substitui os botões Texto/Título/Seção/Cláusula (estilo imprevisível) por seletores de Fonte e Cor e UM controle de alinhamento (Esquerda/Centro/Direita/Justificado) que valem para o TRECHO selecionado
+// (sem seleção: o parágrafo/bloco do cursor). Tamanho = o seletor já existente (agora rotulado "Tamanho"). "Faixa de seção" fica como opção simples: vira a tarja azul (h2 em maiúsculas).
+// Tudo passa por execCommand com styleWithCSS e depois pelo MESMO caminho de serialização/sanitização (coLimparStyle aceita só as listas fechadas de m3_estilo). Nada novo lê/grava banco ou Auth.
+var coFmt = { salvo: null, ligado: false };
+function coFmtEditor(){ return coEl('contratoEditorConteudo'); }
+function coFmtDentro(no){ var c = coFmtEditor(); return !!c && !!no && c.contains(no); }
+function coFmtGuardarSelecao(){
+  var s = window.getSelection ? window.getSelection() : null;
+  if(s && s.rangeCount && coFmtDentro(s.anchorNode)) coFmt.salvo = s.getRangeAt(0).cloneRange();
+}
+function coFmtRestaurar(){   // a seleção do editor sobrevive ao clique num <select>; se não, volta a última guardada
+  var c = coFmtEditor(), s = window.getSelection ? window.getSelection() : null;
+  if(!c || !s) return false;
+  c.focus();
+  if(s.rangeCount && coFmtDentro(s.anchorNode)) return true;
+  if(coFmt.salvo && coFmtDentro(coFmt.salvo.startContainer)){ s.removeAllRanges(); s.addRange(coFmt.salvo); }
+  return s.rangeCount > 0 && coFmtDentro(s.anchorNode);
+}
+function coFmtBloco(no){   // elemento editável do parágrafo/título/item (.sp) ou, sem renderização própria, o filho direto do editor
+  var c = coFmtEditor(), el = no && (no.nodeType === 1 ? no : no.parentNode), e2;
+  for(e2 = el; e2 && e2 !== c; e2 = e2.parentNode){ if(e2.classList && e2.classList.contains('sp')) return e2; }
+  for(e2 = el; e2 && e2 !== c; e2 = e2.parentNode){ if(e2.parentNode === c) return e2; }
+  return null;
+}
+function coFmtAplicar(cmd, valor){
+  var c = coFmtEditor(); if(!c) return false;
+  if(!coFmtRestaurar()) return false;
+  var s = window.getSelection();
+  if(s.isCollapsed && (cmd === 'fontName' || cmd === 'foreColor')){   // sem seleção: o parágrafo inteiro
+    var bl = coFmtBloco(s.anchorNode); if(!bl) return false;
+    var r = document.createRange(); r.selectNodeContents(bl); s.removeAllRanges(); s.addRange(r);
+  }
+  var ok = false;
+  try { document.execCommand('styleWithCSS', false, true); } catch(_e){}
+  try { ok = document.execCommand(cmd, false, valor); } catch(_e){}
+  try { document.execCommand('styleWithCSS', false, false); } catch(_e){}
+  try { coFmtNormalizarFonts(c); } catch(_e){}   // se o navegador gerou <font>, vira <span style> da lista fechada (nunca perde fonte/cor ao serializar)
+  coFmtGuardarSelecao(); contratoEditorAlterado(); coFmtRefletir();
+  return ok;
+}
+function coFmtSet(id, v){ var e = coEl(id); if(!e) return; e.value = v; if(e.value !== v) e.selectedIndex = 0; }
+function coFmtRefletir(){   // os seletores mostram o valor do trecho/parágrafo onde está o cursor (fora da lista: o título do seletor)
+  var s = window.getSelection ? window.getSelection() : null;
+  if(!s || !s.rangeCount || !coFmtDentro(s.anchorNode)) return;
+  var no = s.anchorNode, el = no.nodeType === 1 ? no : no.parentNode, cs, bl = coFmtBloco(no) || el, a = '';
+  try { cs = window.getComputedStyle(el); } catch(_e){ return; }
+  try { a = window.getComputedStyle(bl).textAlign; } catch(_e){}
+  a = (a === 'start' || a === 'left' || a === '-webkit-left') ? 'left' : (a === 'end' || a === 'right' || a === '-webkit-right') ? 'right' : a === 'center' ? 'center' : a === 'justify' ? 'justify' : '';
+  coFmtSet('contratoFmtFonte', coFonteCanon(cs.fontFamily)); coFmtSet('contratoFmtCor', coCorCanon(cs.color)); coFmtSet('contratoFmtAlinhar', a);
+}
+// <font face color> (que o navegador pode gerar) → <span style> da lista fechada; o que está fora da lista é descartado (nunca vira estilo livre).
+function coFmtFontParaSpanHtml(html){
+  return String(html).replace(/<font\b([^>]*)>/gi, function(m, a){
+    var f = /face\s*=\s*"([^"]*)"/i.exec(a), c = /color\s*=\s*"([^"]*)"/i.exec(a), st = [], ff = f ? coFonteCanon(f[1]) : '', cc = c ? coCorCanon(c[1]) : '';
+    if(ff) st.push('font-family:' + ff); if(cc) st.push('color:' + cc);
+    return '<span' + (st.length ? ' style="' + st.join(';') + '"' : '') + '>';
+  }).replace(/<\/font>/gi, '</span>');
+}
+function coFmtNormalizarFonts(raiz){   // mesma troca, no DOM, MOVENDO os filhos (seleção/undo dos textos preservados)
+  var l = raiz.querySelectorAll('font'), i, f, sp, st, ff, cc;
+  for(i = 0; i < l.length; i++){
+    f = l[i]; sp = document.createElement('span'); st = [];
+    ff = coFonteCanon(f.getAttribute('face') || ''); cc = coCorCanon(f.getAttribute('color') || '');
+    if(ff) st.push('font-family:' + ff); if(cc) st.push('color:' + cc);
+    if(st.length) sp.setAttribute('style', st.join(';'));
+    while(f.firstChild) sp.appendChild(f.firstChild);
+    f.parentNode.replaceChild(sp, f);
+  }
+}
+// Maiúsculas só no TEXTO (fora de tags e de entidades &amp; &#39; …)
+function coFmtMaiusculasHtml(html){
+  return String(html).split(/(<[^>]*>|&#?[0-9A-Za-z]{1,32};)/).map(function(p, i){ return i % 2 ? p : p.toLocaleUpperCase('pt-BR'); }).join('');
+}
+// Mesmo conjunto de palavras ignorando SÓ a caixa. zpEdPalavrasDe ORDENA as palavras com a caixa original: comparar depois de maiúsculas falha quando o texto tem inicial maiúscula
+// ("Pelo" ordena diferente de "PELO"). Aqui a caixa é normalizada palavra a palavra ANTES de ordenar de novo; a contagem de palavras e o texto continuam sendo conferidos.
+function coFmtChavePalavras(h){ return zpEdPalavrasDe(h).map(function(w){ return w.toLocaleUpperCase('pt-BR'); }).sort().join('|'); }
+function coFmtMesmasPalavras(a, b){ return coFmtChavePalavras(a) === coFmtChavePalavras(b); }
+function coFmtBlocoRaiz(no){   // filho direto do editor que contém o nó
+  var c = coFmtEditor(), e = no && (no.nodeType === 1 ? no : no.parentNode);
+  while(e && e.parentNode !== c) e = e.parentNode;
+  return e && e.parentNode === c ? e : null;
+}
+// FAIXA DE SEÇÃO: o bloco do cursor vira a tarja azul do renderizador único (div.blk.b-sec[data-keep] > h2.ct-sec.sp), imediata e igual ao PDF. O texto vai para maiúsculas e o bloco vira h2 SÓ por execCommand
+// nativo (undo/redo íntegros); depois só atributos. A conferência usa o conteúdo sanitizado (<font>→<span>, coHtmlLimpo) e a prova de palavras local: se não bater, nada fica alterado.
+// Só vale para blocos de texto (parágrafo/título/seção/cláusula); listas, campos rótulo/valor, partes e assinaturas não são convertidos.
+function coFmtFaixaSecao(){
+  var c = coFmtEditor(); if(!c || !coFmtRestaurar()) return;
+  var s = window.getSelection(), bl = coFmtBlocoRaiz(s.anchorNode);
+  if(!bl) return;
+  if(/\bblk\b/.test(bl.className || '') && !/\bb-(p|h|sec|cl|tit)\b/.test(bl.className)) return;   // lista, campo, parte, assinatura: não se aplica
+  var sp = bl.querySelector('.sp'), inner = sp ? sp.innerHTML : bl.innerHTML;
+  inner = coHtmlLimpo(coFmtFontParaSpanHtml(inner)).replace(/(<br\s*\/?>|\s|&nbsp;)+$/gi, '');
+  if(!coDocTextoPlano(inner).trim()) return;
+  var up = coFmtMaiusculasHtml(inner);
+  if(!coFmtMesmasPalavras(up, inner)) return;   // prova antiperda local (a prova global do editor não muda)
+  var ref = zpEdRenderHtml('<h2>' + up + '</h2>');
+  if(!/^<div class="blk b-sec" data-keep="1"><h2 class="ct-sec sp">/.test(ref)) return;   // o renderizador não reconheceu a tarja: nada é alterado
+  // HISTÓRICO NATIVO ÍNTEGRO: nenhum innerHTML, replaceChild, insertHTML nem remoção de nós. Todo texto/markup muda só por execCommand nativo (cada passo entra no undo/redo do navegador):
+  //   (1) cada nó de TEXTO do bloco, selecionado sozinho, é trocado por sua versão em maiúsculas (insertText) — os <span style> (fonte/cor) são preservados porque só o conteúdo do texto muda;
+  //   (2) formatBlock <h2> separado, com o cursor dentro do bloco;
+  //   (3) depois SÓ atributos: classes do renderizador no raiz (b-sec/data-keep) e no h2 (ct-sec sp) — atributos não duplicam nem perdem texto.
+  // Qualquer resultado inesperado desfaz os passos já dados (undo nativo) e deixa o bloco como estava. Redo/undo recolocam as classes pelo ouvinte coFmtPosHistorico.
+  var passos = 0, desfazer = function(){ var k; for(k = 0; k < passos; k++){ try { document.execCommand('undo'); } catch(_e){} } passos = 0; };
+  var lim = sp || bl, textos = coFmtTextosDe(lim), i, nv, v, u, r, est, rr, uni = { fams: [], cores: [], neg: false, ita: false };
+  // estilos EXPLÍCITOS de cada nó, lidos antes (só o que está na allowlist: família/cor das listas fechadas, negrito, itálico); o insertText do navegador pode descartar o <span> do nó substituído
+  var estilos = textos.map(function(t){
+    var e0 = coFmtEstilosDe(t, lim);
+    if(e0.fam && uni.fams.indexOf(e0.fam) < 0) uni.fams.push(e0.fam);
+    if(e0.cor && uni.cores.indexOf(e0.cor) < 0) uni.cores.push(e0.cor);
+    if(e0.neg) uni.neg = true; if(e0.ita) uni.ita = true;
+    return e0;
+  });
+  for(i = textos.length - 1; i >= 0; i--){
+    nv = textos[i]; v = nv.nodeValue; u = String(v).toLocaleUpperCase('pt-BR'); est = estilos[i];
+    if(!v || u === v) continue;
+    r = document.createRange(); r.selectNodeContents(nv); s.removeAllRanges(); s.addRange(r);
+    var okI = false; try { okI = document.execCommand('insertText', false, u); } catch(_e){}
+    if(!okI){ desfazer(); return; }
+    passos++;
+    rr = coFmtReaplicar(s, est, u.length, lim);   // reaplica por comandos NATIVOS (histórico preservado) o que o insertText tiver descartado
+    passos += rr.passos;
+    if(!rr.ok){ desfazer(); return; }
+  }
+  try { coFmtNormalizarFonts(c); } catch(_e){}
+  var ult = coFmtTextosDe(sp || bl).pop();   // cursor DENTRO do bloco (fim do texto) para o formatBlock
+  if(ult){ r = document.createRange(); r.selectNodeContents(ult); r.collapse(false); s.removeAllRanges(); s.addRange(r); }
+  try { document.execCommand('formatBlock', false, '<h2>'); } catch(_e){ desfazer(); return; }
+  var raiz = coFmtBlocoRaiz(s.anchorNode), h2 = raiz && raiz.tagName === 'DIV' ? raiz.querySelector('h2') : null;
+  if(!raiz || raiz.parentNode !== c || !h2 || h2.parentNode !== raiz || !coFmtMesmasPalavras(h2.innerHTML, inner) || coFmtChavePalavras(h2.innerHTML).split('|').length !== coFmtChavePalavras(inner).split('|').length
+     || !coFmtEstilosPreservados(coHtmlLimpo(coFmtFontParaSpanHtml(h2.innerHTML)), uni)){
+    // não é o resultado esperado (ou o texto não bate): volta ao estado anterior pelo histórico. O formatBlock só conta como passo se o bloco realmente virou h2 (nunca desfaz uma edição anterior do usuário).
+    if(raiz && raiz.querySelector && raiz.querySelector('h2')) passos++;
+    desfazer(); return;
+  }
+  passos++;
+  coFmtAdaptarFaixa(raiz, h2);
+  try { zpEd.sujo = true; } catch(_e){}
+  coFmtGuardarSelecao(); contratoEditorAlterado(); try { zpEdAgendar(true); } catch(_e){}
+  coFmtRefletir();
+}
+// Estilos explícitos (allowlist) de um nó de texto, subindo até o bloco editável: família/cor só se estiverem nas listas fechadas (valor computado/aleatório é ignorado), negrito, itálico.
+function coFmtEstilosDe(no, lim){
+  var est = { fam: '', cor: '', neg: false, ita: false }, e = no && no.parentNode, tag, st, ds, i, p, k, v;
+  while(e && e !== lim && e.nodeType === 1){
+    tag = String(e.tagName || '').toLowerCase();
+    if(tag === 'b' || tag === 'strong') est.neg = true;
+    if(tag === 'i' || tag === 'em') est.ita = true;
+    if(tag === 'font'){ if(!est.fam) est.fam = coFonteCanon(e.getAttribute('face') || ''); if(!est.cor) est.cor = coCorCanon(e.getAttribute('color') || ''); }
+    st = e.getAttribute ? e.getAttribute('style') : null;
+    if(st){
+      ds = String(st).split(';');
+      for(i = 0; i < ds.length; i++){
+        p = ds[i].indexOf(':'); if(p < 0) continue;
+        k = ds[i].slice(0, p).trim().toLowerCase(); v = ds[i].slice(p + 1).trim();
+        if(k === 'font-family'){ if(!est.fam) est.fam = coFonteCanon(v); }
+        else if(k === 'color'){ if(!est.cor) est.cor = coCorCanon(v); }
+        else if(k === 'font-weight'){ if(/^(bold|bolder)$/i.test(v) || parseInt(v, 10) >= 600) est.neg = true; }
+        else if(k === 'font-style'){ if(/^(italic|oblique)$/i.test(v)) est.ita = true; }
+      }
+    }
+    e = e.parentNode;
+  }
+  return est;
+}
+// Depois do insertText: seleciona os N caracteres recém-inseridos e aplica, por comandos nativos, SÓ o que faltar (nunca valor fora da allowlist). Devolve { ok, passos } (passos = comandos que entraram no histórico).
+function coFmtReaplicar(s, est, n, lim){
+  var passos = 0, an = s.anchorNode, off = s.anchorOffset, cur, falta, r;
+  var cmd = function(nome, valor){ var ok = false; try { ok = document.execCommand(nome, false, valor); } catch(_e){} return ok; };
+  if(!(est.fam || est.cor || est.neg || est.ita)) return { ok: true, passos: 0 };
+  if(!an || an.nodeType !== 3 || !(off >= n)) return { ok: false, passos: 0 };
+  cur = coFmtEstilosDe(an, lim);
+  falta = { fam: !!est.fam && cur.fam !== est.fam, cor: !!est.cor && cur.cor !== est.cor, neg: est.neg && !cur.neg, ita: est.ita && !cur.ita };
+  if(!(falta.fam || falta.cor || falta.neg || falta.ita)) return { ok: true, passos: 0 };
+  r = document.createRange(); r.setStart(an, off - n); r.setEnd(an, off); s.removeAllRanges(); s.addRange(r);
+  cmd('styleWithCSS', true);
+  var fim = function(ok){ cmd('styleWithCSS', false); return { ok: ok, passos: passos }; };
+  if(falta.fam){ if(!cmd('fontName', est.fam.split(',')[0])) return fim(false); passos++; }
+  if(falta.cor){ if(!cmd('foreColor', est.cor)) return fim(false); passos++; }
+  if(falta.neg){ if(!cmd('bold')) return fim(false); passos++; }
+  if(falta.ita){ if(!cmd('italic')) return fim(false); passos++; }
+  return fim(true);
+}
+function coFmtEstilosPreservados(san, uni){
+  var i; san = String(san);
+  for(i = 0; i < uni.fams.length; i++){ if(san.indexOf('font-family:' + uni.fams[i]) < 0) return false; }
+  for(i = 0; i < uni.cores.length; i++){ if(san.indexOf('color:' + uni.cores[i]) < 0) return false; }
+  if(uni.neg && !/<(b|strong)\b|font-weight:\s*bold/i.test(san)) return false;
+  if(uni.ita && !/<(i|em)\b|font-style:\s*italic/i.test(san)) return false;
+  return true;
+}
+function coFmtTextosDe(raiz){ var w = document.createTreeWalker(raiz, 4, null), out = [], n; while((n = w.nextNode())) out.push(n); return out; }
+// só ATRIBUTOS (nunca conteúdo): raiz b-sec/data-keep e h2.ct-sec.sp — o formato que o renderizador do PDF usa
+function coFmtAdaptarFaixa(raiz, h2){
+  raiz.className = 'blk b-sec'; raiz.setAttribute('data-keep', '1');
+  h2.className = 'ct-sec sp'; if(h2.removeAttribute) h2.removeAttribute('style');
+}
+// undo/redo nativos recriam o h2 sem as classes: reaplica só atributos em h2 que são filho direto de um bloco raiz, com texto todo em maiúsculas e sem faixa ainda. Nunca toca no conteúdo.
+function coFmtPosHistorico(e){
+  var t = e && e.inputType; if(t !== 'historyUndo' && t !== 'historyRedo') return;
+  var c = coFmtEditor(); if(!c) return;
+  var blocos = c.children, i, b, h2, txt;
+  for(i = 0; i < blocos.length; i++){
+    b = blocos[i]; if(!b || b.tagName !== 'DIV' || !/\bblk\b/.test(b.className || '')) continue;
+    h2 = b.querySelector('h2'); if(!h2 || h2.parentNode !== b || /\bct-sec\b/.test(h2.className || '')) continue;
+    txt = (h2.textContent || '').trim();
+    if(txt && txt === txt.toLocaleUpperCase('pt-BR') && txt !== txt.toLocaleLowerCase('pt-BR')) coFmtAdaptarFaixa(b, h2);
+  }
+}
+function contratoFmtFonteAplicar(v){ if(v) coFmtAplicar('fontName', String(v).split(',')[0]); }
+function contratoFmtCorAplicar(v){ if(v) coFmtAplicar('foreColor', v); }
+function contratoFmtAlinharAplicar(v){ var m = { left: 'justifyLeft', center: 'justifyCenter', right: 'justifyRight', justify: 'justifyFull' }; if(m[v]) coFmtAplicar(m[v]); }
+function contratoFaixaSecao(){ coFmtFaixaSecao(); }
+contratoFmtFonteAplicar = coRoGuard(contratoFmtFonteAplicar); contratoFmtCorAplicar = coRoGuard(contratoFmtCorAplicar);
+contratoFmtAlinharAplicar = coRoGuard(contratoFmtAlinharAplicar); contratoFaixaSecao = coRoGuard(contratoFaixaSecao);
+function coFmtIniciar(){
+  var sf = coEl('contratoFmtFonte'), sc = coEl('contratoFmtCor');
+  function opc(sel, v, t){ var o = document.createElement('option'); o.value = v; o.textContent = t; sel.appendChild(o); }
+  if(sf && sf.options.length < 2) coFontesLista().forEach(function(f){ opc(sf, f.css, f.nome); });
+  if(sc && sc.options.length < 2) coCoresLista().forEach(function(c){ opc(sc, c[0], c[1]); });
+  if(!coFmt.ligado){
+    coFmt.ligado = true; document.addEventListener('selectionchange', function(){ coFmtGuardarSelecao(); coFmtRefletir(); });
+    var ed = coFmtEditor(); if(ed && ed.addEventListener) ed.addEventListener('input', coFmtPosHistorico);
+  }
+}
+try { coFmtIniciar(); } catch(_e){}
+// END 1.3.0.6 EDITOR · FONTE, COR, ALINHAMENTO E FAIXA DE SEÇÃO
 // BEGIN 1.3.0.5 MODELOS NO EDITOR
 // Modelos de contrato geridos DENTRO da janela do editor (mesma liberdade dos templates de orçamento): selecionar/aplicar, salvar o contrato editado como NOVO modelo,
 // copiar, renomear e excluir. Persistência real em public.contrato_templates, SOMENTE pelas RPCs contrato_modelo_* (autor, Sócio ou Admin alteram; Atendimento/Sócio/Admin criam).

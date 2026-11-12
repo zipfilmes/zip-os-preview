@@ -101,6 +101,20 @@ textarea.coOrcDesc{display:block;min-height:36px;height:36px;line-height:20px;re
 .c-tbtn:hover{background:#eef2ff;border-color:#c7d2fe}
 .c-tbtn.c-danger{color:#b91c1c}
 .c-tbtn.c-danger:hover{background:#fef2f2;border-color:#fecaca}
+.c-pick{position:relative;display:inline-block}
+.c-pick-btn{display:flex;align-items:center;gap:6px;min-width:112px;max-width:180px;margin:0;padding:5px 7px;font-size:12px;font-family:Arial;line-height:1.2;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fff;color:#1f2937;cursor:pointer}
+.c-pick-btn:focus-visible{outline:2px solid #4f6fa3;outline-offset:1px}
+.c-pick-btn[disabled]{opacity:.55;cursor:default}
+.c-pick-txt{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-pick-seta{flex:0 0 auto;font-size:10px;color:#667085}
+.c-pick-sw{flex:0 0 auto;display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid rgba(71,84,103,.75)}
+.c-pick-vazio .c-pick-btn .c-pick-sw{display:none}
+.c-pick-list{position:absolute;z-index:90;top:calc(100% + 3px);left:0;min-width:100%;max-height:280px;overflow:auto;margin:0;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 22px rgba(16,24,40,.18)}
+.c-pick-list[hidden]{display:none}
+.c-pick-op{display:flex;align-items:center;gap:8px;padding:6px 9px 6px 8px;border-left:3px solid transparent;border-radius:6px;font-size:13px;color:#1f2937;white-space:nowrap;cursor:pointer}
+.c-pick-op.c-pick-ativa{background:#eef2ff}
+.c-pick-op[aria-selected="true"]{border-left-color:#1e3a5f;font-weight:700}
+.c-pick-op[aria-selected="true"]::after{content:"\2713";margin-left:auto;padding-left:12px;color:#1e3a5f}
 #contratoFullCabecalhoNome{font-size:11px;color:#6d28d9;background:#ede9fe;border-radius:6px;padding:3px 8px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Viewport (fundo cinza) */
 .c-a4-viewport{width:100%;height:560px;overflow:auto;padding:16px;border:1px solid var(--line);border-radius:12px;background:#e5e7eb;box-sizing:border-box}
@@ -386,6 +400,15 @@ html[data-theme="dark"] .c-tbtn{background:#303642;color:#d5dbe5}
 html[data-theme="dark"] .c-tbtn:hover{background:#3a4150;border-color:#4a5262}
 html[data-theme="dark"] .c-tbtn.c-danger{color:#ffb4b9}
 html[data-theme="dark"] .c-tbtn.c-danger:hover{background:#422b31;border-color:#7a3a42}
+html[data-theme="dark"] .c-pick-btn{background:#1d2027;color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .c-pick-btn:focus-visible{outline-color:#8fb8ee}
+html[data-theme="dark"] .c-pick-seta{color:#b6bfcc}
+html[data-theme="dark"] .c-pick-sw{border-color:rgba(226,232,240,.75)}
+html[data-theme="dark"] .c-pick-list{background:#272b35;border-color:var(--line);box-shadow:0 10px 26px rgba(0,0,0,.55)}
+html[data-theme="dark"] .c-pick-op{color:var(--ink)}
+html[data-theme="dark"] .c-pick-op.c-pick-ativa{background:#3a4150}
+html[data-theme="dark"] .c-pick-op[aria-selected="true"]{border-left-color:#8fb8ee}
+html[data-theme="dark"] .c-pick-op[aria-selected="true"]::after{color:#8fb8ee}
 html[data-theme="dark"] #contratoFullCabecalhoNome{color:#d3c5ff;background:#2f2a42}
 html[data-theme="dark"] .c-a4-viewport,html[data-theme="dark"] .c-editor-viewport{background:#1d2027}
 html[data-theme="dark"] .di-card-item{background:var(--panel)}
@@ -904,7 +927,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.6 · Revisão e Acessos</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.7 · Editor e Atendimento</div>
 </aside>
 
 <main class="main">
@@ -9871,7 +9894,22 @@ async function garantirContextoUsuario(authUser, forcarRecarregamento){
 }
 
 // Monta as telas do usuário a partir apenas dos perfis reais do banco.
-function montarScreensDoUsuario(perfis, operationalName){
+// 1.3.0.7 ORDEM DAS TELAS: a ordem de ROLE_ORDER (socio, atendimento, financeiro, edicao, producao, admin) continua valendo para TODOS. Única exceção: quando a conta tem Atendimento E Produção,
+// a tela Atendimento passa a vir logo depois de Produção (Admin continua por último). Sem Produção (ex.: Atendimento+Edição, Atendimento+Financeiro) nada é reordenado. Sem UID/e-mail/metadado: só os perfis reais já montados.
+function co90OrdenarTelas(telas){
+  var l = Array.isArray(telas) ? telas.filter(function(x){ return !!x && typeof x === 'object'; }) : [], ip = -1, ia = -1, k, a;   // entradas nulas/não-objeto são descartadas; a ordem das válidas não muda
+  for(k = 0; k < l.length; k++){
+    if(l[k].role === 'producao') ip = k;
+    if(l[k].role === 'atendimento') ia = k;
+  }
+  if(ip < 0 || ia < 0) return l;
+  a = l.splice(ia, 1)[0];
+  for(k = 0; k < l.length; k++){ if(l[k].role === 'producao'){ ip = k; break; } }
+  l.splice(ip + 1, 0, a);
+  return l;
+}
+function montarScreensDoUsuario(perfis, operationalName){ return co90OrdenarTelas(montarScreensDoUsuarioBase(perfis, operationalName)); }
+function montarScreensDoUsuarioBase(perfis, operationalName){
  const unicos=[...new Set(perfis||[])];
  return ROLE_ORDER
   .filter(function(role){return unicos.includes(role) && ROLE_META[role];})
@@ -46649,7 +46687,7 @@ aplicarTemplateNoEditor = function(semConfirmar){
     if(modal && conteudo && conteudo.innerHTML !== antes){   // o original aplicou (não foi cancelado)
       var tpl = coCtrModeloPorId(modal.dataset.templateId);
       if(tpl && coDocNomeNorm(tpl.nome) === 'contrato mestre' && coCtr.l){
-        conteudo.innerHTML = coHtmlLimpo(coDocEstruturar(preencherPlaceholdersV2(tpl.corpo, getDadosContrato(coCtr.l))));
+        conteudo.innerHTML = coHtmlLimpo(coDocEstruturar(co90PreencherMestre(tpl.corpo, getDadosContrato(coCtr.l))));
         if(!coCtr.visual.valido){ var al = coEl('contratoLayoutAlinhamento'); if(al) al.value = 'esquerda'; }
         contratoAtualizarEditorLayout();
       }
@@ -47521,7 +47559,7 @@ function coFmtAplicar(cmd, valor){
   coFmtGuardarSelecao(); contratoEditorAlterado(); coFmtRefletir();
   return ok;
 }
-function coFmtSet(id, v){ var e = coEl(id); if(!e) return; e.value = v; if(e.value !== v) e.selectedIndex = 0; }
+function coFmtSet(id, v){ var e = coEl(id); if(!e) return; e.value = v; if(e.value !== v) e.selectedIndex = 0; try { co90PickSync(id); } catch(_e){} }
 function coFmtRefletir(){   // os seletores mostram o valor do trecho/parágrafo onde está o cursor (fora da lista: o título do seletor)
   var s = window.getSelection ? window.getSelection() : null;
   if(!s || !s.rangeCount || !coFmtDentro(s.anchorNode)) return;
@@ -47706,6 +47744,167 @@ function coFmtIniciar(){
   }
 }
 try { coFmtIniciar(); } catch(_e){}
+// BEGIN 1.3.0.7 CONTRATO MESTRE · DATA FINAL POR EXTENSO
+// A linha final do Contrato Mestre passa de "Varginha/MG, 11/11/2026." para "Varginha, 11 de novembro de 2026." — SÓ quando o Mestre é APLICADO (contrato novo ou escolha explícita do modelo).
+// A data é a MESMA que o documento já usava ({{DATA}} = hoje() no momento da aplicação), só reescrita por extenso: nada de nova fonte de data. Mês em português, minúsculo; dia sem zero à esquerda.
+// A data civil é validada (mês 1–12, dia conforme o mês, anos bissextos). Data inválida/ausente, ou linha de data que não seja exatamente UMA no modelo: nada muda (formato antigo, sem erro).
+// Contratos já salvos/assinados NUNCA passam por aqui (nada é convertido ao abrir, imprimir ou salvar); datas do orçamento, metadados da OS e cláusulas não são tocados.
+var CO90_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+var CO90_LINHA_DATA = /^Varginha(?:\/MG)?, \{\{DATA\}\}\.?[ \t]*$/gm;
+function co90DataExtenso(dmy){
+  var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(dmy === null || dmy === undefined ? '' : dmy).trim()), d, mes, a, dias;
+  if(!m) return '';
+  d = parseInt(m[1], 10); mes = parseInt(m[2], 10); a = parseInt(m[3], 10);
+  if(a < 1900 || a > 2999 || mes < 1 || mes > 12) return '';
+  dias = [31, ((a % 4 === 0 && a % 100 !== 0) || a % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][mes - 1];
+  if(d < 1 || d > dias) return '';
+  return d + ' de ' + CO90_MESES[mes - 1] + ' de ' + a;
+}
+// { corpo, dados, convertido }: com UMA linha de data final e data válida, a linha vira "Varginha, {{DATA_EXTENSO}}." e o placeholder entra numa CÓPIA dos dados (os dados recebidos não são alterados).
+function co90MestreData(corpo, dados){
+  var c = String(corpo === null || corpo === undefined ? '' : corpo), d = dados || {}, ext = co90DataExtenso(d['{{DATA}}']), achados, d2 = {}, k;
+  if(!ext) return { corpo: c, dados: d, convertido: false };
+  achados = c.match(CO90_LINHA_DATA);
+  if(!achados || achados.length !== 1) return { corpo: c, dados: d, convertido: false };
+  for(k in d){ if(Object.prototype.hasOwnProperty.call(d, k)) d2[k] = d[k]; }
+  d2['{{DATA_EXTENSO}}'] = ext;
+  return { corpo: c.replace(CO90_LINHA_DATA, function(){ return 'Varginha, {{DATA_EXTENSO}}.'; }), dados: d2, convertido: true };
+}
+function co90PreencherMestre(corpo, dados){ var r = co90MestreData(corpo, dados); return preencherPlaceholdersV2(r.corpo, r.dados); }
+// END 1.3.0.7 CONTRATO MESTRE · DATA FINAL POR EXTENSO
+// BEGIN 1.3.0.7 EDITOR · SELETORES DE FONTE E COR COM AMOSTRA
+// O <select> nativo não mostra amostras de forma confiável em todos os navegadores. Aqui cada seletor vira UM botão + lista (combobox/listbox acessível). Os <select id="contratoFmtFonte"/"contratoFmtCor">
+// continuam no HTML só como PONTE de valor (ficam ocultos; nada de duas interfaces): o valor escolhido é gravado neles e aplicado pelas MESMAS funções de antes (contratoFmtFonteAplicar/contratoFmtCorAplicar →
+// coFmtAplicar → comandos nativos do editor), então histórico nativo, sanitização, listas fechadas e allowlist do servidor não mudam. Este módulo NÃO altera o DOM do texto do contrato: só a barra de ferramentas.
+// Cor: quadrado com a cor real à esquerda e o nome à direita (a cor vem SÓ de coCoresLista, validada como #rrggbb antes de ir ao estilo). Fonte: o nome de cada família escrito na própria família (de coFontesLista).
+// Seleção do texto: botão e opções usam mousedown+preventDefault (o editor não perde foco/seleção no clique); ao abrir por teclado o foco vai para o botão e coFmtAplicar restaura a seleção guardada, como com o <select>.
+// Teclado: ↓/↑/Alt+↓ abrem; ↓/↑/Home/End movem; Enter/Espaço escolhem; Esc fecha (sem aplicar); Tab fecha e segue; clique fora e perda de foco fecham.
+var co90Sel = { picks: {}, ligado: false };
+// Navegação pura: índice ativo novo (ou -1 se a tecla não navega).
+function co90PickMover(atual, n, tecla){
+  if(!(n > 0)) return -1;
+  if(tecla === 'Home') return 0;
+  if(tecla === 'End') return n - 1;
+  if(tecla === 'ArrowDown') return atual < 0 ? 0 : Math.min(n - 1, atual + 1);
+  if(tecla === 'ArrowUp') return atual < 0 ? n - 1 : Math.max(0, atual - 1);
+  return -1;
+}
+function co90PickItens(tipo){
+  if(tipo === 'cor') return coCoresLista().filter(function(c){ return /^#[0-9a-f]{6}$/.test(c[0]); }).map(function(c){ return { valor: c[0], nome: c[1] }; });
+  return coFontesLista().map(function(f){ return { valor: f.css, nome: f.nome }; });
+}
+function co90PickEl(doc, tag, cls){ var e = doc.createElement(tag); if(cls) e.className = cls; return e; }
+function co90PickCriar(selId, tipo, padrao){
+  var sel = coEl(selId), doc = document, p, i, li, sw, nm, itens;
+  if(!sel || co90Sel.picks[selId] || !sel.parentNode) return null;
+  itens = co90PickItens(tipo);
+  p = { selId: selId, tipo: tipo, sel: sel, padrao: padrao, itens: itens, ativa: -1, aberto: false, ops: [] };
+  p.wrap = co90PickEl(doc, 'div', 'c-pick');
+  p.btn = co90PickEl(doc, 'button', 'c-pick-btn'); p.btn.type = 'button'; p.btn.id = selId + 'Pick';
+  p.btn.setAttribute('role', 'combobox'); p.btn.setAttribute('aria-haspopup', 'listbox'); p.btn.setAttribute('aria-expanded', 'false');
+  p.btn.setAttribute('aria-controls', selId + 'Lista'); p.btn.setAttribute('aria-label', sel.getAttribute('title') || padrao);
+  p.sw = co90PickEl(doc, 'span', 'c-pick-sw'); p.sw.setAttribute('aria-hidden', 'true');
+  p.txt = co90PickEl(doc, 'span', 'c-pick-txt');
+  p.seta = co90PickEl(doc, 'span', 'c-pick-seta'); p.seta.setAttribute('aria-hidden', 'true'); p.seta.textContent = '▾';
+  p.btn.appendChild(p.sw); p.btn.appendChild(p.txt); p.btn.appendChild(p.seta);
+  p.lista = co90PickEl(doc, 'ul', 'c-pick-list'); p.lista.id = selId + 'Lista'; p.lista.setAttribute('role', 'listbox'); p.lista.setAttribute('aria-label', padrao); p.lista.hidden = true;
+  for(i = 0; i < itens.length; i++){
+    li = co90PickEl(doc, 'li', 'c-pick-op'); li.id = selId + 'Op' + i; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+    nm = co90PickEl(doc, 'span', 'c-pick-nome'); nm.textContent = itens[i].nome;
+    if(tipo === 'cor'){ sw = co90PickEl(doc, 'span', 'c-pick-sw'); sw.setAttribute('aria-hidden', 'true'); sw.style.backgroundColor = itens[i].valor; li.appendChild(sw); }
+    else nm.style.fontFamily = itens[i].valor;
+    li.appendChild(nm);
+    li.addEventListener('mousedown', function(e){ e.preventDefault(); });
+    li.addEventListener('mouseenter', (function(k){ return function(){ co90PickAtiva(p, k); }; })(i));
+    li.addEventListener('click', (function(k){ return function(e){ if(e && e.preventDefault) e.preventDefault(); co90PickEscolher(p, k); }; })(i));
+    p.lista.appendChild(li); p.ops.push(li);
+  }
+  p.btn.addEventListener('mousedown', function(e){ e.preventDefault(); });   // o clique não tira o foco/seleção do editor
+  p.btn.addEventListener('click', function(){ if(p.aberto) co90PickFechar(p); else co90PickAbrir(p); });
+  p.btn.addEventListener('keydown', function(e){ co90PickTecla(p, e); });
+  p.btn.addEventListener('blur', function(){ co90PickFechar(p); });
+  p.wrap.appendChild(p.btn); p.wrap.appendChild(p.lista);
+  sel.style.display = 'none'; sel.setAttribute('aria-hidden', 'true'); sel.tabIndex = -1;   // ponte de valor: continua no DOM, não aparece
+  sel.setAttribute('data-pick', '1');
+  sel.parentNode.insertBefore(p.wrap, sel.nextSibling);
+  co90Sel.picks[selId] = p;
+  co90PickSync(selId);
+  return p;
+}
+// Botão e opção marcada refletem o valor do <select> (que o coFmtRefletir ajusta ao cursor/trecho e o coFmtAplicar ao aplicado). Valor fora da lista: o rótulo do seletor, sem amostra.
+function co90PickSync(selId){
+  var p = co90Sel.picks[selId], i, achou = -1, v, it;
+  if(!p) return;
+  v = p.sel.value;
+  for(i = 0; i < p.itens.length; i++){ if(v && p.itens[i].valor === v){ achou = i; break; } }
+  for(i = 0; i < p.ops.length; i++) p.ops[i].setAttribute('aria-selected', i === achou ? 'true' : 'false');
+  it = achou >= 0 ? p.itens[achou] : null;
+  p.txt.textContent = it ? it.nome : p.padrao;
+  p.sw.style.backgroundColor = (it && p.tipo === 'cor') ? it.valor : '';
+  p.txt.style.fontFamily = (it && p.tipo === 'fonte') ? it.valor : '';
+  p.wrap.className = 'c-pick' + (it && p.tipo === 'cor' ? '' : ' c-pick-vazio') + (it ? ' c-pick-com-valor' : '');
+  p.btn.disabled = !!p.sel.disabled;
+  p.certo = achou;
+}
+function co90PickAtiva(p, i){
+  var k;
+  p.ativa = i;
+  for(k = 0; k < p.ops.length; k++){
+    if(k === i) p.ops[k].classList.add('c-pick-ativa'); else p.ops[k].classList.remove('c-pick-ativa');
+  }
+  if(i >= 0 && p.ops[i]){
+    p.btn.setAttribute('aria-activedescendant', p.ops[i].id);
+    if(p.ops[i].scrollIntoView){ try { p.ops[i].scrollIntoView({ block: 'nearest' }); } catch(_e){} }
+  } else p.btn.removeAttribute('aria-activedescendant');
+}
+function co90PickAbrir(p){
+  var o;
+  if(p.sel.disabled || p.aberto) return;
+  co90PickSync(p.selId);   // a ponte pode ter sido ajustada por fora: abre sempre refletindo o valor atual
+  for(o in co90Sel.picks){ if(co90Sel.picks[o] !== p && co90Sel.picks[o].aberto) co90PickFechar(co90Sel.picks[o]); }
+  p.aberto = true; p.lista.hidden = false; p.btn.setAttribute('aria-expanded', 'true');
+  co90PickAtiva(p, p.certo >= 0 ? p.certo : 0);
+  try { p.btn.focus(); } catch(_e){}   // o teclado passa a falar com o seletor; a seleção do editor está guardada (coFmt.salvo) e volta ao aplicar
+}
+function co90PickFechar(p){
+  if(!p.aberto) return;
+  p.aberto = false; p.lista.hidden = true; p.btn.setAttribute('aria-expanded', 'false'); co90PickAtiva(p, -1);
+}
+function co90PickEscolher(p, i){
+  var it = p.itens[i], fn;
+  co90PickFechar(p);
+  if(!it) return;
+  p.sel.value = it.valor;
+  if(p.sel.value !== it.valor) return;   // valor fora da ponte: nada é aplicado
+  co90PickSync(p.selId);
+  fn = p.tipo === 'cor' ? contratoFmtCorAplicar : contratoFmtFonteAplicar;   // lidos AGORA: já são as versões protegidas (somente leitura) do editor
+  fn(it.valor);
+}
+function co90PickTecla(p, e){
+  var k = e.key, n = p.itens.length, novo;
+  if(k === 'Tab'){ co90PickFechar(p); return; }
+  if(!p.aberto){
+    if(k === 'ArrowDown' || k === 'ArrowUp' || k === 'Enter' || k === ' ' || k === 'Spacebar'){ e.preventDefault(); co90PickAbrir(p); }
+    return;
+  }
+  if(k === 'Escape' || k === 'Esc'){ e.preventDefault(); if(e.stopPropagation) e.stopPropagation(); co90PickFechar(p); return; }
+  if(k === 'Enter' || k === ' ' || k === 'Spacebar'){ e.preventDefault(); co90PickEscolher(p, p.ativa); return; }
+  novo = co90PickMover(p.ativa, n, k);
+  if(novo >= 0){ e.preventDefault(); co90PickAtiva(p, novo); }
+}
+function co90PickIniciar(){
+  co90PickCriar('contratoFmtFonte', 'fonte', 'Fonte');
+  co90PickCriar('contratoFmtCor', 'cor', 'Cor');
+  if(!co90Sel.ligado){
+    co90Sel.ligado = true;
+    document.addEventListener('mousedown', function(e){
+      var id, p;
+      for(id in co90Sel.picks){ p = co90Sel.picks[id]; if(p.aberto && !(e && e.target && p.wrap.contains(e.target))) co90PickFechar(p); }
+    }, true);
+  }
+}
+// END 1.3.0.7 EDITOR · SELETORES DE FONTE E COR COM AMOSTRA
+try { co90PickIniciar(); } catch(_e){}
 // END 1.3.0.6 EDITOR · FONTE, COR, ALINHAMENTO E FAIXA DE SEÇÃO
 // BEGIN 1.3.0.5 MODELOS NO EDITOR
 // Modelos de contrato geridos DENTRO da janela do editor (mesma liberdade dos templates de orçamento): selecionar/aplicar, salvar o contrato editado como NOVO modelo,

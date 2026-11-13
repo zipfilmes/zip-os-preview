@@ -101,6 +101,7 @@ textarea.coOrcDesc{display:block;min-height:36px;height:36px;line-height:20px;re
 .c-tbtn:hover{background:#eef2ff;border-color:#c7d2fe}
 .c-tbtn.c-danger{color:#b91c1c}
 .c-tbtn.c-danger:hover{background:#fef2f2;border-color:#fecaca}
+html:not([data-co91-modelos="visivel"]) [data-co91-modelo]{display:none!important}
 .c-pick{position:relative;display:inline-block}
 .c-pick-btn{display:flex;align-items:center;gap:6px;min-width:112px;max-width:180px;margin:0;padding:5px 7px;font-size:12px;font-family:Arial;line-height:1.2;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fff;color:#1f2937;cursor:pointer}
 .c-pick-btn:focus-visible{outline:2px solid #4f6fa3;outline-offset:1px}
@@ -927,7 +928,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.3.0.7 · Editor e Atendimento</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.0 · Marco Zero</div>
 </aside>
 
 <main class="main">
@@ -1949,7 +1950,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  </div>
 </div>
 
-<div class="card" style="margin-top:16px">
+<div class="card" style="margin-top:16px" id="co91CartaoTemplatesContrato" data-co91-modelo="1">
  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
   <div style="display:flex;align-items:center;gap:10px">
    <span style="font-size:22px">📄</span>
@@ -2801,14 +2802,14 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 
 <!-- V7.14.6.1 — Barra de controles do editor visual -->
 <div class="c-toolbar">
- <div class="c-group"><label>Modelo</label>
+ <div class="c-group" data-co91-modelo="1"><label>Modelo</label>
   <select id="contratoEditorTemplateSelect" style="min-width:160px">
    <option value="">Nenhum (texto atual)</option>
   </select></div>
- <button type="button" class="c-tbtn" onclick="aplicarTemplateNoEditor()">Aplicar template</button>
- <button type="button" class="c-tbtn" title="Ver, aplicar, copiar, renomear e excluir modelos" onmousedown="event.preventDefault()" onclick="co88Abrir()">📑 Modelos</button>
- <button type="button" class="c-tbtn" title="Salvar o contrato atual como novo modelo (com revisão)" onmousedown="event.preventDefault()" onclick="co88Abrir('revisao')">💾 Salvar como modelo</button>
- <span class="c-sep"></span>
+ <button type="button" class="c-tbtn" data-co91-modelo="1" onclick="aplicarTemplateNoEditor()">Aplicar template</button>
+ <button type="button" class="c-tbtn" data-co91-modelo="1" title="Ver, aplicar, copiar, renomear e excluir modelos" onmousedown="event.preventDefault()" onclick="co88Abrir()">📑 Modelos</button>
+ <button type="button" class="c-tbtn" data-co91-modelo="1" title="Salvar o contrato atual como novo modelo (com revisão)" onmousedown="event.preventDefault()" onclick="co88Abrir('revisao')">💾 Salvar como modelo</button>
+ <span class="c-sep" data-co91-modelo="1"></span>
  <div class="c-group"><label>Tamanho</label>
   <select id="contratoLayoutFonte" onchange="contratoLayoutAlterado()">
    <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option>
@@ -48465,6 +48466,27 @@ renderTemplatesContrato = function(){
   document.head.appendChild(st);
 })();
 // END 1.3.0.5 MODELOS NO EDITOR
+// BEGIN 1.5.0.0 MODELOS DE CONTRATO OCULTOS
+// Os controles de modelo de contrato (seletor Modelo, Aplicar template, Modelos, Salvar como modelo, separador e o cartão "Templates de contrato" em Admin) ficam ESCONDIDOS, não removidos:
+// funções, DOM, RPC contrato_modelo_* e permissões continuam existindo. Contrato NOVO já abre com o Contrato Mestre (coCtrAbrirEditor → coCtrModeloMae → aplicarTemplateNoEditor); nada aqui toca esse caminho.
+// Para voltar a mostrar os controles: trocar CO91_MOSTRAR_MODELOS para true (só isso).
+var CO91_MOSTRAR_MODELOS = false;
+function co91ModelosAplicar(){
+  var raiz = document.documentElement;
+  raiz.setAttribute('data-co91-modelos', CO91_MOSTRAR_MODELOS ? 'visivel' : 'oculto');
+  var els = document.querySelectorAll('[data-co91-modelo]');
+  for(var i = 0; i < els.length; i++){
+    var e = els[i];
+    if(CO91_MOSTRAR_MODELOS){ e.removeAttribute('hidden'); e.removeAttribute('aria-hidden'); e.removeAttribute('inert'); }
+    else { e.setAttribute('hidden', ''); e.setAttribute('aria-hidden', 'true'); e.setAttribute('inert', ''); }   // fora do teclado e da árvore de acessibilidade
+  }
+}
+// Defesa em profundidade: mesmo que algo chame a janela de modelos, ela não abre enquanto os controles estão ocultos.
+if(typeof co88Abrir === 'function'){ var _co91Abrir = co88Abrir; co88Abrir = function(){ if(!CO91_MOSTRAR_MODELOS) return; return _co91Abrir.apply(this, arguments); }; }
+if(typeof co88AbrirRevisao === 'function'){ var _co91AbrirRev = co88AbrirRevisao; co88AbrirRevisao = function(){ if(!CO91_MOSTRAR_MODELOS) return; return _co91AbrirRev.apply(this, arguments); }; }
+try { co91ModelosAplicar(); } catch(_e){}
+document.addEventListener('DOMContentLoaded', function(){ try { co91ModelosAplicar(); } catch(_e){} });
+// END 1.5.0.0 MODELOS DE CONTRATO OCULTOS
 </script>
 <div id="modalPresets" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
  <div style="background:white;border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">

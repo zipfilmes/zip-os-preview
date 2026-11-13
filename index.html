@@ -928,7 +928,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.0 · Marco Zero</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.1 · Meta da Zip</div>
 </aside>
 
 <main class="main">
@@ -37079,8 +37079,7 @@ function voCardsFinanceiros(g, hoje){   // → { caixa, receber, atraso, nf? } (
 function voDashGestao(g, hoje, e){
   voMostrar('dashSocio'); voDom('dashTitulo').textContent = '🏠 Visão Geral';
   var pl = voPlacarSeguro(), p = pl.p, fin = voCardsFinanceiros(g, hoje), projOk = g.fontes.proj && g.fontes.proj.st === 'ok';
-  var meta = p && p.metaTotC !== null ? voCard('&#127919; Meta do time', p.pctTime === null ? '—' : p.pctTime + '%', voReais(p.vendComMetaC) + ' / ' + voReais(p.metaTotC) + (p.semMeta ? ' &#8226; ' + p.semMeta + ' sem meta (n&#227;o inclu&#237;dos)' : ''), '<div class="progress"><div class="bar" style="width:' + Math.min(100, p.pctTime || 0) + '%;background:' + voBarCor(p.pctTime || 0, 100) + '"></div></div>')
-    : voCard('&#127919; Meta do time', '—', p ? 'N&#227;o configurada' : voMotivoCurto(pl.motivo));
+  var meta = mzCardHtml(hoje);   // 1.5.0.1: Meta da Zip = financeiro_metas × faturamento do Resultado mensal (módulo no fim do bloco Financeiro)
   var vendas = p ? voCard('&#128176; Vendas do m&#234;s', voReais(p.vendidoC), p.nVendas + ' venda(s) fechada(s)') : voCard('&#128176; Vendas do m&#234;s', '—', voMotivoCurto(pl.motivo));
   var proj = projOk ? voCard('&#128293; Projetos ativos', String(g.ativos.length), 'em andamento agora') : voCard('&#128293; Projetos ativos', '—', voMotivoCurto(g.fontes.proj ? g.fontes.proj.st : 'erro'));
   var cards = voDom('dashSocioCards');
@@ -38996,6 +38995,184 @@ renderFinAnual = function(){ return FO_ENTRADAS.finAnual(); };
 FO_ENTRADAS.finMensal = function(){ foCarregarNomes(); rtCarregar(); cxCarregar(false); foCarregarMetasFin(); foRenderMensal(); };
 FO_ENTRADAS.finAnual = function(){ rtCarregar(); cxCarregar(false); foCarregarAnosHist(); foRenderAnual(); };
 FO_REPINTORES.push(foRenderMensal, foRenderAnual);
+// BEGIN 1.5.0.1 META DA ZIP
+// Card "Meta da Zip" da Visão Geral da gestão (Sócio/Admin). Substitui o card anterior, que somava as metas INDIVIDUAIS (placar comercial).
+//  • Meta  = financeiro_metas do mês/ano corrente de São Paulo (a mesma de Financeiro → Resultado mensal → Definir Metas). Ausente ≠ zero ≠ indisponível.
+//  • Realizado = faturamento do Resultado mensal: MESMO cálculo (rtCalcular → foResultadoAno → meses[].fatC), sem filtro por responsável/participante/meta individual.
+//    Competência, recorrência, desconto (valor_vendido já líquido), Perda/Arquivado, contrato-pai e linhas inválidas seguem as regras de foResultadoAno; caixa/recebimentos/vendas do Comercial NÃO entram.
+//  • Estado PRÓPRIO (estadoMetaZip): não depende de visitar o Financeiro e não mexe em estadoRentabilidadeReal/estadoMetasFin (as telas do Financeiro não piscam).
+//    Cada leitura leva { seq, uid, epoch, perfil }; resposta de outra conta/época/perfil/leitura mais nova é descartada. Falha de uma fonte só afeta este card.
+//  • Leitura: ao entrar/Atualizar na Visão Geral (aoEntrarVisaoGeralReal), a cada MZ_INTERVALO_MS com a Visão Geral aberta e visível, ao voltar à aba e quando a meta é gravada (foCarregarMetasFin). Pintar NUNCA lê rede.
+//  • Edição/modal: leitura e repintura NÃO explícitas (timer, volta à aba, 1ª leitura agendada, meta vinda do Financeiro) respeitam ctEditandoMotivo() (a mesma guarda do refresh global): ficam adiadas, o estado final
+//    é guardado e a tela é pintada quando a guarda libera (reavaliação local sem rede a cada MZ_RECHECK_MS, no tick e ao voltar à aba). Limpeza por troca de identidade/permissão/logout NUNCA é adiada.
+var MZ_INTERVALO_MS = 120000, MZ_RECHECK_MS = 3000;
+var estadoMetaZip = { seq: 0, uid: '', epoch: -1, perfil: '', carregando: false, promessa: null, dados: null, timer: null, agendado: false, leituraPend: false, repintarPend: false, recheck: null };
+
+function mzElegivel(){ return crSessao() && crPodeLer() && voModo(voPerfil()) === 'gestao'; }   // só gestão com leitura financeira REAL; Atendimento/Operação/Financeiro nunca carregam este card
+function mzCtxOk(ctx){ var e = estadoMetaZip; return !!ctx && ctx.seq === e.seq && crSessao() && String(currentUser.id) === ctx.uid && crEpoch() === ctx.epoch && crPodeLer() && voPerfil() === ctx.perfil; }
+function mzLimpar(){ var e = estadoMetaZip; e.seq++; e.uid = ''; e.epoch = -1; e.perfil = ''; e.carregando = false; e.promessa = null; e.dados = null; e.leituraPend = false; e.repintarPend = false; if(e.recheck){ clearTimeout(e.recheck); e.recheck = null; } }   // imediata: nunca depende da guarda de edição
+function mzEditando(){ try { return typeof ctEditandoMotivo === 'function' ? ctEditandoMotivo() : ''; } catch(_e){ return 'guarda-indisponivel'; } }   // '' = pode; qualquer dúvida ⇒ adia
+function mzAgendarRecheck(){ var e = estadoMetaZip; if(e.recheck) return; e.recheck = setTimeout(function(){ e.recheck = null; try { mzLiberar(); } catch(_e){} }, MZ_RECHECK_MS); }
+function mzLiberar(){   // aplica o que ficou adiado quando a guarda de edição libera; sem rede para repintar, no máximo UMA leitura (a que foi adiada)
+  var e = estadoMetaZip;
+  if(!e.repintarPend && !e.leituraPend) return;
+  if(!mzElegivel()){ e.repintarPend = false; e.leituraPend = false; return; }
+  if(mzEditando()){ mzAgendarRecheck(); return; }
+  var rep = e.repintarPend, lei = e.leituraPend; e.repintarPend = false; e.leituraPend = false;
+  if(rep) mzRepintar(true);
+  if(lei && mzDashAberta() && document.hidden !== true && !e.carregando) mzCarregar(false);
+}
+function mzGuarda(){   // o que foi lido para outra conta/época/perfil (ou sem permissão) nunca fica
+  var e = estadoMetaZip;
+  if(e.uid === '' && !e.dados && !e.carregando) return;
+  var mesma = crSessao() && String(currentUser.id) === e.uid && crEpoch() === e.epoch && crPodeLer() && voPerfil() === e.perfil && voModo(e.perfil) === 'gestao';
+  if(!mesma) mzLimpar();
+}
+function mzRepintar(imediato){   // imediato = ação explícita do usuário, troca de identidade ou liberação da guarda; senão respeita edição/modal (o estado já foi atualizado)
+  var e = estadoMetaZip;
+  if(!imediato && mzEditando()){ e.repintarPend = true; mzAgendarRecheck(); return; }
+  e.repintarPend = false;
+  try { voRenderDashboard(); } catch(_e){}
+}
+function mzArmar(){ var e = estadoMetaZip; if(!e.timer) e.timer = setInterval(function(){ mzTick(false); }, MZ_INTERVALO_MS); }
+function mzDesarmar(){ var e = estadoMetaZip; if(e.timer){ clearInterval(e.timer); e.timer = null; } }
+function mzDashAberta(){ var sec = document.getElementById('dashboard'); return !!(sec && sec.classList.contains('active')); }
+function mzTick(voltou){
+  var e = estadoMetaZip;
+  if(!mzElegivel()){ mzLimpar(); mzDesarmar(); return; }
+  mzLiberar();   // repintura/leitura adiadas por edição: reavalia a cada tick e ao voltar à aba
+  if(!mzDashAberta() || document.hidden === true || e.carregando) return;
+  if(voltou && e.dados && Date.now() - e.dados.em < MZ_INTERVALO_MS && e.dados.ym === crHojeSP().slice(0, 7)) return;
+  if(mzEditando()){ e.leituraPend = true; mzAgendarRecheck(); return; }
+  mzCarregar(false);
+}
+
+// ---- leitura das duas fontes (cada uma devolve { st, ... } ou null = descartada) ----
+// Mesma validação de foCarregarMetasFin (valor ≥ 0 em centavos, mês 1–12, ano de 4 dígitos); linha inválida ⇒ fonte "invalido" (nunca ignorada em silêncio).
+function mzMetasDeLinhas(linhas){
+  var mapa = {}, inval = 0;
+  linhas.forEach(function(x){ var c = voC(x.valor), a = String(x.ano), mm = String(x.mes).padStart(2, '0'); if(!isFinite(c) || c < 0 || !(x.mes >= 1 && x.mes <= 12) || !/^\d{4}$/.test(a)){ inval++; return; } mapa[a + '-' + mm] = c; });
+  return inval ? null : mapa;
+}
+function mzMetasDeMapa(mapa){ var out = {}; Object.keys(mapa || {}).forEach(function(a){ Object.keys(mapa[a]).forEach(function(mm){ out[a + '-' + mm] = mapa[a][mm].valorC; }); }); return out; }
+function mzLerMetas(ok){
+  var q; try { q = foProvider().metasFin(); } catch(_e){ return Promise.resolve({ st: 'erro' }); }
+  return voLerSimples(ok, q, function(x){ return x.ano + '-' + x.mes; }).then(function(f){
+    if(f === null || !ok()) return null;
+    if(f.st !== 'ok') return { st: f.st };
+    var m = mzMetasDeLinhas(f.linhas); return m ? { st: 'ok', metas: m } : { st: 'invalido' };
+  });
+}
+// Mesmo caminho de rtCarregar (projetos + projetos_financeiro paginados, contagem conferida duas vezes) e mesmo cálculo do Resultado mensal; aqui só a coluna fatC, de todos os anos (sem releitura ao virar mês/ano).
+function mzLerFaturamento(ok){
+  var prov; try { prov = rtProvider(); } catch(_e){ return Promise.resolve({ st: 'erro' }); }
+  var falha = function(r){ return { st: r.status === 'erro' ? crStatusErro(r.erro) : r.status }; };
+  var conta = function(c){ return typeof c === 'object' ? { st: crStatusErro(c.erro) } : { st: c }; };
+  return rtPaginar(function(a, b){ return prov.projetos(a, b); }, 'id', ok).then(function(r1){
+    if(r1.status === 'descartado' || !ok()) return null;
+    if(r1.status !== 'ok') return falha(r1);
+    return rtPaginar(function(a, b){ return prov.financeiro(a, b); }, 'projeto_id', ok).then(function(r2){
+      if(r2.status === 'descartado' || !ok()) return null;
+      if(r2.status !== 'ok') return falha(r2);
+      return rtRecontar(ok, function(){ return prov.contagemProjetos(); }, r1.total).then(function(c1){
+        if(c1 === 'descartado' || !ok()) return null;
+        if(c1 !== 'ok') return conta(c1);
+        return rtRecontar(ok, function(){ return prov.contagemFinanceiro(); }, r2.total).then(function(c2){
+          if(c2 === 'descartado' || !ok()) return null;
+          if(c2 !== 'ok') return conta(c2);
+          try {
+            var calc = rtCalcular(r1.linhas, r2.linhas), fat = {};
+            rtTotais(calc.linhas);   // soma insegura ⇒ limite_valor, como no Resultado mensal
+            foAnosResultado(calc.linhas, []).forEach(function(ano){ foResultadoAno(calc.linhas, [], ano).meses.forEach(function(m, i){ fat[ano + '-' + String(i + 1).padStart(2, '0')] = m.fatC; }); });
+            return { st: 'ok', fat: fat };
+          } catch(_e){ return { st: 'limite_valor' }; }
+        });
+      });
+    });
+  });
+}
+function mzPublicar(ctx, M, F){
+  var e = estadoMetaZip; if(!mzCtxOk(ctx)) return;
+  e.dados = { metaSt: M.st, metas: M.st === 'ok' ? M.metas : {}, fatSt: F.st, fat: F.st === 'ok' ? F.fat : {}, ym: crHojeSP().slice(0, 7), em: Date.now() };   // troca ATÔMICA: nada da leitura anterior sobrevive a uma falha
+  e.carregando = false; e.promessa = null;
+  mzRepintar(ctx.explicito);
+}
+function mzCarregar(forcar, silencioso){   // silencioso = reinício interno (não é ação do usuário): a pintura final respeita a guarda de edição
+  var e = estadoMetaZip;
+  if(!mzElegivel()){ mzLimpar(); mzRepintar(true); return Promise.resolve(); }   // limpeza de segurança: imediata
+  var uid = String(currentUser.id), epoch = crEpoch(), perfil = voPerfil();
+  var mesma = e.uid === uid && e.epoch === epoch && e.perfil === perfil;
+  if(e.carregando && mesma && !forcar) return e.promessa || Promise.resolve();
+  var trocou = !mesma && !!e.dados;
+  if(!mesma) e.dados = null;   // outra conta/época/perfil: nenhum número anterior reaparece
+  var explicito = !!forcar && !silencioso, ctx = { seq: ++e.seq, uid: uid, epoch: epoch, perfil: perfil, explicito: explicito }, ok = function(){ return mzCtxOk(ctx); };
+  e.uid = uid; e.epoch = epoch; e.perfil = perfil; e.carregando = true; e.leituraPend = false;
+  if(!e.dados) mzRepintar(trocou || explicito);   // 1ª leitura: "Lendo…"; recarga da mesma conta mantém o valor até chegar o novo (ou a falha)
+  e.promessa = mzLerMetas(ok).then(function(M){
+    if(M === null || !ok()) return;
+    return mzLerFaturamento(ok).then(function(F){ if(F === null || !ok()) return; mzPublicar(ctx, M, F); });
+  }).then(null, function(){ if(ok()) mzPublicar(ctx, { st: 'erro' }, { st: 'erro' }); }).then(function(){ if(ctx.seq === e.seq){ e.carregando = false; e.promessa = null; } });   // leitura descartada sem leitura mais nova: não fica "em curso" para sempre
+  return e.promessa;
+}
+function mzAtualizar(forcar){
+  if(!mzElegivel()){ mzLimpar(); mzDesarmar(); return Promise.resolve(); }
+  mzArmar();
+  return mzCarregar(forcar);
+}
+// Se a Visão Geral for pintada antes de qualquer leitura (ex.: sessão restaurada), inicia UMA leitura. Depois da 1ª resposta (inclusive falha) nunca repete por pintura.
+function mzAgendarInicio(){
+  var e = estadoMetaZip; if(e.agendado || e.dados || e.carregando || !mzElegivel()) return;
+  e.agendado = true;
+  setTimeout(function(){
+    e.agendado = false; if(e.dados || e.carregando || !mzElegivel()) return;
+    if(mzEditando()){ e.leituraPend = true; mzAgendarRecheck(); return; }   // edição/modal: espera a guarda liberar
+    mzAtualizar(false);
+  }, 0);
+}
+
+// ---- card ----
+function mzCardHtml(hoje){
+  var tit = '&#127919; Meta da Zip', e = estadoMetaZip, d, mes = voMesDe(hoje);
+  mzGuarda(); d = e.dados;
+  if(!d){ mzAgendarInicio(); return voCard(tit, '—', 'Lendo&#8230;'); }
+  if(!mes) return voCard(tit, '—', 'Indispon&#237;vel');
+  var rot = voMesRotulo(mes.ym), tem = function(o){ return Object.prototype.hasOwnProperty.call(o, mes.ym); };
+  var motivo = function(st, nome){ return st === 'sem_permissao' ? 'Sem permiss&#227;o' : (st === 'limite' || st === 'limite_valor') ? 'Volume acima do limite' : nome + ' indispon&#237;vel'; };
+  var fatOk = d.fatSt === 'ok', fatC = fatOk && tem(d.fat) ? d.fat[mes.ym] : null;
+  if(d.metaSt !== 'ok') return voCard(tit, '—', motivo(d.metaSt, 'Meta'));
+  var metaC = tem(d.metas) ? d.metas[mes.ym] : null, fatTxt = fatC !== null ? ' &#8226; faturado ' + voReais(fatC) : '';
+  if(metaC === null) return voCard(tit, '—', 'Meta de ' + voEsc(rot) + ' n&#227;o definida' + fatTxt);
+  if(metaC === 0) return voCard(tit, '—', 'Meta de ' + voEsc(rot) + ' zerada' + fatTxt);
+  if(!fatOk) return voCard(tit, '—', motivo(d.fatSt, 'Faturamento'));
+  if(fatC === null) return voCard(tit, '—', 'Atualizando&#8230;');   // ano ainda não lido (virada de ano): o ciclo seguinte relê
+  var pct = Math.round((fatC / metaC) * 100);   // mesma expressão da coluna "Desempenho" do Resultado mensal; pode passar de 100%
+  return voCard(tit, pct + '%', voReais(fatC) + ' / ' + voReais(metaC), '<div class="progress"><div class="bar" style="width:' + Math.min(100, pct) + '%;background:' + voBarCor(pct, 100) + '"></div></div>');
+}
+
+// ---- ligações com o fluxo existente ----
+var _mzEntrarVg = aoEntrarVisaoGeralReal;
+aoEntrarVisaoGeralReal = function(){ var p = _mzEntrarVg.apply(this, arguments); try { mzAtualizar(true); } catch(_e){} return p; };   // entrar na Visão Geral, "Atualizar" e troca de perfil passam por aqui
+// Meta gravada/relida no Financeiro: o card adota a mesma meta SEM nova leitura; se havia leitura em curso (pode ter lido a meta antiga), reinicia.
+function mzSincronizarMetas(){
+  var m = estadoMetasFin, e = estadoMetaZip;
+  if(m.status !== 'ok' || !crSessao() || m.uid !== String(currentUser.id) || m.epoch !== crEpoch() || !mzElegivel()) return;
+  mzGuarda(); if(e.uid !== String(currentUser.id) || e.epoch !== crEpoch()) return;
+  if(e.carregando){ mzCarregar(true, true); return; }
+  if(!e.dados) return;
+  var novo = mzMetasDeMapa(m.mapa);
+  var ks = Object.keys(novo), igual = e.dados.metaSt === 'ok' && ks.length === Object.keys(e.dados.metas).length && ks.every(function(k){ return Object.prototype.hasOwnProperty.call(e.dados.metas, k) && e.dados.metas[k] === novo[k]; });
+  if(igual) return;
+  e.dados.metas = novo; e.dados.metaSt = 'ok'; mzRepintar();
+}
+var _mzCarregarMetasFin = foCarregarMetasFin;
+foCarregarMetasFin = function(){
+  var p = _mzCarregarMetasFin.apply(this, arguments);
+  try { Promise.resolve(p).then(function(){ try { mzSincronizarMetas(); } catch(_e){} }, function(){}); } catch(_e){}
+  return p;
+};
+FO_LIMPEZAS.push(function(){ mzLimpar(); mzDesarmar(); });   // logout/troca de conta
+if(typeof document !== 'undefined' && document && typeof document.addEventListener === 'function') document.addEventListener('visibilitychange', function(){ try { if(document.hidden !== true) mzTick(true); } catch(_e){} });
+// END 1.5.0.1 META DA ZIP
 FO_LIMPEZAS.push(function(){ var e = estadoMetasFin; e.seq++; e.status = 'idle'; e.mapa = {}; e.uid = ''; foMetasModal.aberto = false; foMetasModal.executando = false; ['finMensalCards', 'finMensalChart', 'finMensalTabela', 'finAnualTabela', 'modalMetasLista'].forEach(function(id){ var el = foDom(id); if(el) el.textContent = ''; }); });
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------

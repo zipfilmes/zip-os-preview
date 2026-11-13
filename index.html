@@ -928,7 +928,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.2 · Cadastro de Clientes</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.3 · Pagamentos da Equipe</div>
 </aside>
 
 <main class="main">
@@ -1491,7 +1491,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px">Data <span style="color:var(--red)">*</span>
     <input id="cxNovoData" type="date" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
    </label>
-   <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px">Valor (R$) <span style="color:var(--red)">*</span>
+   <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px"><span id="cxNovoValorRot">Valor (R$)</span> <span style="color:var(--red)">*</span>
     <input id="cxNovoValor" type="text" inputmode="decimal" oninput="foAvisoConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
    </label>
   </div>
@@ -1504,6 +1504,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
    <label style="font-size:13px;font-weight:700;color:var(--muted)">Pessoa <span style="color:var(--red)">*</span>
     <select id="lancPessoa" onchange="foPessoaMudou('novo')" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box"><option value="">Selecione…</option><option value="__outro">Outro</option></select>
+    <div id="lancPessoaAviso" class="muted" style="display:none;font-size:12px;font-weight:400;margin-top:4px"></div>
    </label>
    <label id="lancPessoaOutroWrap" style="font-size:13px;font-weight:700;color:var(--muted);display:none">Nome da pessoa <span style="color:var(--red)">*</span>
     <input id="lancPessoaOutro" type="text" maxlength="120" placeholder="Nome" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
@@ -1533,8 +1534,8 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Bonificação
      <input id="detBonificacao" type="text" inputmode="decimal" oninput="foSomaConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Encargos / Contador
-     <input id="detEncargosContador" type="text" inputmode="decimal" oninput="foSomaConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Desconto em folha
+     <input id="detDescontoFolha" type="text" inputmode="decimal" oninput="foSomaConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
    </div>
    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)">
@@ -1542,6 +1543,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
      <input id="detHorasExtras" type="text" inputmode="decimal" placeholder="Ex: 4" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
    </div>
+   <div id="lancLiquidoResumo" class="notice blue" style="display:none;margin-top:10px;margin-bottom:0;padding:8px 10px;font-size:13px;font-weight:700"></div>
    <div id="lancConsolidadoAviso" style="display:none;margin-top:10px;padding:8px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e">⚠️ A soma dos detalhes está diferente do valor total do pagamento.</div>
   </div>
  </div>
@@ -1635,7 +1637,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div id="geInfo" class="muted" style="font-size:12px;margin-bottom:10px"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
    <label style="font-size:12px;font-weight:700;color:var(--muted)">Data <input id="geData" type="date" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></label>
-   <label style="font-size:12px;font-weight:700;color:var(--muted)">Valor (R$) <input id="geValor" type="text" inputmode="decimal" oninput="foAvisoConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></label>
+   <label style="font-size:12px;font-weight:700;color:var(--muted)"><span id="geValorRot">Valor (R$)</span> <input id="geValor" type="text" inputmode="decimal" oninput="foAvisoConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></label>
   </div>
   <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin:10px 0">Descrição <input id="geDesc" type="text" maxlength="300" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></label>
   <label id="geCatWrap" style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px">Categoria <select id="geCat" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></select></label>
@@ -1645,6 +1647,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
    <label style="font-size:13px;font-weight:700;color:var(--muted)">Pessoa <span style="color:var(--red)">*</span>
     <select id="gePessoa" onchange="foPessoaMudou('ed')" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box"><option value="">Selecione…</option><option value="__outro">Outro</option></select>
+    <div id="gePessoaAviso" class="muted" style="display:none;font-size:12px;font-weight:400;margin-top:4px"></div>
    </label>
    <label id="gePessoaOutroWrap" style="font-size:13px;font-weight:700;color:var(--muted);display:none">Nome da pessoa <span style="color:var(--red)">*</span>
     <input id="gePessoaOutro" type="text" maxlength="120" placeholder="Nome" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
@@ -1674,7 +1677,10 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Bonificação
      <input id="geDetBonificacao" type="text" inputmode="decimal" oninput="foSomaConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Encargos / Contador
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Desconto em folha
+     <input id="geDetDescontoFolha" type="text" inputmode="decimal" oninput="foSomaConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+    </label>
+    <label id="geEncargosLegadoWrap" style="font-size:12px;font-weight:700;color:var(--muted);display:none">Encargos / Contador (registro anterior)
      <input id="geDetEncargosContador" type="text" inputmode="decimal" oninput="foSomaConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
    </div>
@@ -1683,6 +1689,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
      <input id="geDetHorasExtras" type="text" inputmode="decimal" placeholder="Ex: 4" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
    </div>
+   <div id="geLiquidoResumo" class="notice blue" style="display:none;margin-top:10px;margin-bottom:0;padding:8px 10px;font-size:13px;font-weight:700"></div>
    <div id="geAviso" style="display:none;margin-top:10px;padding:8px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e">⚠️ A soma dos detalhes está diferente do valor total do pagamento.</div>
   </div>
  </div>
@@ -38520,7 +38527,7 @@ cxRender = function(){
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
-  var p = []; if(i.equipe) p.push('Equipe' + (i.pessoa ? ': ' + i.pessoa : '') + (i.consolidado ? ' (Pagamento consolidado)' : '')); if(i.os) p.push('OS ' + i.os); if(i.recId) p.push('🔁 recorrente');
+  var p = []; if(i.equipe) p.push('Equipe' + (i.pessoa ? ': ' + i.pessoa : '') + (i.consolidado ? ' (Pagamento consolidado)' : '')); if(i.os) p.push('OS ' + i.os); var dscC = i.detalhes ? voC(i.detalhes.descontoFolha) : NaN; if(i.equipe && isFinite(dscC) && dscC > 0) p.push('bruto ' + crBRL(i.valorC + dscC) + ' − desconto em folha ' + crBRL(dscC)); if(i.recId) p.push('🔁 recorrente');
   return p.join(' · ') || 'Lançamento';
 }
 function foCaixaMais(){ estadoCaixaReal.mostrar += CX_LINHAS; cxRender(); }
@@ -38532,14 +38539,14 @@ function foEquipeLinhas(itens){   // → [{ pessoa, mes, ano, partes:{cat:centav
   var out = [];
   itens.forEach(function(i){
     if(!i.equipe || i.tipo !== 'saida' || !isFinite(i.valorC)) return;
-    var partes = {}, horas = 0;
+    var partes = {}, horas = 0, desconto = 0;
     if(i.consolidado && !i.detalhes){ partes['Sem detalhamento'] = i.valorC; }
     else if(i.consolidado && i.detalhes){
       var d = i.detalhes, mapa = { 'Salário': d.salario, 'Comissão': d.comissao, 'Hora extra': d.horaExtra, 'Pró-labore': d.proLabore, 'Reembolso': d.reembolso, 'Bonificação': d.bonificacao, 'Encargos/Contador': d.encargosContador };
       var soma = 0; Object.keys(mapa).forEach(function(k){ var c = voC(mapa[k]); if(isFinite(c) && c > 0){ partes[k] = c; soma += c; } }); horas = Number(d.horasExtras) || 0;
-      if(i.valorC > soma) partes['Sem detalhamento'] = i.valorC - soma;
+      var descC = voC(d.descontoFolha); descC = isFinite(descC) && descC > 0 ? descC : 0; desconto = descC; if(i.valorC + descC > soma) partes['Sem detalhamento'] = i.valorC + descC - soma;
     } else { var cat = FO_CAT_EQUIPE.indexOf(i.catEquipe) >= 0 ? i.catEquipe : ''; partes[cat || '(sem categoria)'] = i.valorC; horas = isFinite(i.horas) ? i.horas : 0; }
-    out.push({ pessoa: i.pessoa || '—', mes: i.data.slice(5, 7), ano: i.data.slice(0, 4), partes: partes, horas: horas, totalC: i.valorC });
+    out.push({ pessoa: i.pessoa || '—', mes: i.data.slice(5, 7), ano: i.data.slice(0, 4), partes: partes, horas: horas, desconto: desconto, totalC: i.valorC });
   });
   return out;
 }
@@ -38552,13 +38559,16 @@ function renderResumoEquipe(){
   var pessoas = {}, anos = {}; eq.forEach(function(l){ pessoas[l.pessoa] = true; anos[l.ano] = true; });
   preencher('resumoEqPessoa', Object.keys(pessoas).sort(), 'Todas as pessoas'); preencher('resumoEqAno', Object.keys(anos).sort().reverse(), 'Todos os anos');
   var fP = crValor('resumoEqPessoa'), fM = crValor('resumoEqMes'), fA = crValor('resumoEqAno'), fC = crValor('resumoEqCategoria');
-  var por = {}, tot = { total: 0, horas: 0 }, nova = function(){ var o = { total: 0, horas: 0 }; FO_CAT_EQUIPE.forEach(function(k){ o[k] = 0; }); return o; }; tot = nova();
+  var por = {}, tot = { total: 0, horas: 0 }, nova = function(){ var o = { total: 0, horas: 0, desc: 0, bruto: 0 }; FO_CAT_EQUIPE.forEach(function(k){ o[k] = 0; }); return o; }; tot = nova();
   try {
     eq.forEach(function(l){
       if((fP && l.pessoa !== fP) || (fM && l.mes !== fM) || (fA && l.ano !== fA)) return;
       if(fC && !(l.partes[fC] > 0)) return;
       var d = por[l.pessoa] = por[l.pessoa] || nova();
       Object.keys(l.partes).forEach(function(k){ if(fC && k !== fC) return; if(d[k] != null){ d[k] = foSoma(d[k], l.partes[k]); tot[k] = foSoma(tot[k], l.partes[k]); } d.total = foSoma(d.total, l.partes[k]); tot.total = foSoma(tot.total, l.partes[k]); });
+      var brL = 0; Object.keys(l.partes).forEach(function(k){ if(!fC || k === fC) brL = foSoma(brL, l.partes[k]); });
+      d.bruto = foSoma(d.bruto, brL); tot.bruto = foSoma(tot.bruto, brL);
+      if(!fC && l.desconto > 0){ d.desc = foSoma(d.desc, l.desconto); tot.desc = foSoma(tot.desc, l.desconto); d.total = foSoma(d.total, -l.desconto); tot.total = foSoma(tot.total, -l.desconto); }
       if(!fC || fC === 'Hora extra'){ d.horas += l.horas; tot.horas += l.horas; }
     });
   } catch(_e){ if(cards) cards.textContent = ''; if(tabela) tabela.innerHTML = foMsgLinha('Totais indisponíveis: soma acima do limite seguro.'); return; }
@@ -38570,12 +38580,12 @@ function renderResumoEquipe(){
     : '<div class="muted" style="font-size:13px">Totais indisponíveis: leitura incompleta ou dados incoerentes.</div>';
   var nomes = Object.keys(por).sort();
   if(!nomes.length){ if(tabela) tabela.innerHTML = foMsgLinha('Nenhum lançamento de equipe para os filtros selecionados.'); return; }
-  var linha = function(n, d, b){ var t = b ? function(x){ return '<b>' + x + '</b>'; } : function(x){ return x; }; return '<tr' + (b ? ' style="background:#f8fafc;font-weight:700;height:44px"' : ' style="height:44px"') + '><td' + (b ? '' : ' style="font-weight:700"') + '>' + t(foEsc(n)) + '</td>' + FO_CAT_EQUIPE.slice(0, 3).map(function(k){ return '<td class="money">' + t(cel(d[k])) + '</td>'; }).join('') + '<td style="font-weight:600;color:#d97706">' + t(fmtH(d.horas)) + '</td>' + FO_CAT_EQUIPE.slice(3).map(function(k){ return '<td class="money">' + t(cel(d[k])) + '</td>'; }).join('') + '<td class="money" style="font-weight:800;color:#dc2626">' + t(crBRL(d.total)) + '</td></tr>'; };
-  if(tabela) tabela.innerHTML = '<table class="table" style="width:100%"><tr><th>Pessoa</th><th class="money">Salário</th><th class="money">Comissão</th><th class="money">Hora extra</th><th>Horas</th><th class="money">Pró-labore</th><th class="money">Reembolso</th><th class="money">Bonificação</th><th class="money">Encargos/Contador</th><th class="money">Total</th></tr>'
+  var linha = function(n, d, b){ var t = b ? function(x){ return '<b>' + x + '</b>'; } : function(x){ return x; }; return '<tr' + (b ? ' style="background:#f8fafc;font-weight:700;height:44px"' : ' style="height:44px"') + '><td' + (b ? '' : ' style="font-weight:700"') + '>' + t(foEsc(n)) + '</td>' + FO_CAT_EQUIPE.slice(0, 3).map(function(k){ return '<td class="money">' + t(cel(d[k])) + '</td>'; }).join('') + '<td style="font-weight:600;color:#d97706">' + t(fmtH(d.horas)) + '</td>' + FO_CAT_EQUIPE.slice(3).map(function(k){ return '<td class="money">' + t(cel(d[k])) + '</td>'; }).join('') + '<td class="money">' + t(cel(d.bruto)) + '</td><td class="money">' + t(d.desc > 0 ? '−' + crBRL(d.desc) : '—') + '</td><td class="money" style="font-weight:800;color:#dc2626">' + t(crBRL(d.total)) + '</td></tr>'; };
+  if(tabela) tabela.innerHTML = '<table class="table" style="width:100%"><tr><th>Pessoa</th><th class="money">Salário</th><th class="money">Comissão</th><th class="money">Hora extra</th><th>Horas</th><th class="money">Pró-labore</th><th class="money">Reembolso</th><th class="money">Bonificação</th><th class="money">Encargos/Contador</th><th class="money">Bruto</th><th class="money">Desconto em folha</th><th class="money">Líquido (caixa)</th></tr>'
     + nomes.map(function(n){ return linha(n, por[n], false); }).join('') + linha('Total', tot, true) + '</table>';
 }
 FO_REPINTORES.push(function(){ if(foDom('finCaixa') && estadoFinOriginal.abaAtual === 'finCaixa') cxRender(); });
-FO_ENTRADAS.finCaixa = function(){ foCarregarNomes(); cxCarregar(false); };
+FO_ENTRADAS.finCaixa = function(){ foCarregarNomes(); foCarregarPessoasPag(); cxCarregar(false); };
 FO_LIMPEZAS.push(function(){ foCaixa.novoAberto = false; foCaixa.serieAberto = false; foCaixa.iniciado = false; ['modalNovoLancamento', 'modalSerieLancamento', 'modalEditarLancamento', 'modalExcluirLancamento'].forEach(function(id){ var m = foDom(id); if(m) m.classList.remove('open'); }); });
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39497,8 +39507,8 @@ cxPreencherCategorias = function(selId, tipo, atual){
 // ---- pessoa (equipe real + Outro) ----
 function foPreencherPessoas(k){
   var m = FO_EQ_IDS[k], sel = foDom(m.pessoa); if(!sel) return;
-  var mapa = estadoFinOriginal.nomes.mapa || {}, ids = Object.keys(mapa).sort(function(a, b){ return mapa[a] < mapa[b] ? -1 : mapa[a] > mapa[b] ? 1 : 0; });
-  var ass = ids.map(function(i){ return i + '=' + mapa[i]; }).join('|'); if(sel.getAttribute('data-assinatura') === ass) return;
+  var mapa = foMapaPessoasSeletor(k), ids = Object.keys(mapa).sort(function(a, b){ return mapa[a] < mapa[b] ? -1 : mapa[a] > mapa[b] ? 1 : 0; });
+  var ass = ids.map(function(i){ return i + '=' + mapa[i]; }).join('|'); if(k === 'novo' && sel.getAttribute('data-assinatura') === ass) return;
   var prev = sel.value; sel.textContent = '';
   var add = function(v, t){ var o = crEl('option', '', t); o.value = v; sel.appendChild(o); };
   add('', 'Selecione…'); ids.forEach(function(i){ add(i, mapa[i]); }); add('__outro', 'Outro');
@@ -39511,14 +39521,16 @@ function foSomaDetalhes(k){   // → { c, erro }: soma (centavos) dos campos do 
   return { c: soma, erro: erro };
 }
 function foSomaConsolidado(k){   // como a referência: o total passa a ser a soma dos detalhes
-  var m = FO_EQ_IDS[k], s = foSomaDetalhes(k), v = foDom(m.valor); if(v) v.value = s.c > 0 ? cxValorTexto(s.c) : '';
+  var m = FO_EQ_IDS[k], s = foSomaDetalhes(k), d = foLerDesconto(k), l = foLiquidoCalc(s.c, d.c), v = foDom(m.valor), c = l.ok ? l.liquidoC : 0; if(v) v.value = c > 0 ? cxValorTexto(c) : '';
   foAvisoConsolidado(k);
 }
 function foAvisoConsolidado(k){
   var m = FO_EQ_IDS[k], av = foDom(m.aviso); if(!av) return;
   var eq = k === 'novo' ? foNovoEhEquipe() : !!(edicaoGrupo && edicaoGrupo.item && edicaoGrupo.item.equipe);
-  if(!eq){ av.style.display = 'none'; return; }
-  var s = foSomaDetalhes(k), t = cxParseValor(crValor(m.valor)), total = t.erro ? 0 : t.centavos;
+  if(!eq){ av.style.display = 'none'; foResumoLiquido(k, false); return; }
+  var s = foSomaDetalhes(k), t = cxParseValor(crValor(m.valor)), total = t.erro ? 0 : t.centavos, dsc = foLerDesconto(k), liq = foLiquidoCalc(s.c, dsc.c);
+  if(liq.ok) s = { c: liq.liquidoC, erro: s.erro };
+  foResumoLiquido(k, true);
   av.style.display = (s.c > 0 || total > 0) && s.c !== total ? 'block' : 'none';
 }
 function foNovoCatMudou(){ foNovoBlocoSinc(); foAvisoConsolidado('novo'); }
@@ -39531,12 +39543,22 @@ function foLerEquipe(k){
   var m = FO_EQ_IDS[k], pes = crValor(m.pessoa), pessoaId = null, pessoaNome = '';
   if(!pes) return { erro: 'Selecione a pessoa.' };
   if(pes === '__outro'){ pessoaNome = String(crValor(m.outro)).trim(); if(!pessoaNome) return { erro: 'Informe o nome da pessoa.' }; if(pessoaNome.length > 120 || /[\u0000-\u001f]/.test(pessoaNome)) return { erro: 'Nome da pessoa inválido (até 120 caracteres).' }; }
-  else { pessoaId = pes; pessoaNome = foNome(pes) || (edicaoGrupo && edicaoGrupo.item && String(edicaoGrupo.item.pessoaId) === pes ? edicaoGrupo.item.pessoa : ''); if(!pessoaNome) return { erro: 'Pessoa não encontrada na equipe lida. Atualize e escolha de novo (ou use Outro).' }; }
+  else { pessoaId = pes; pessoaNome = foPessoaRotulo(k, pes); if(!pessoaNome) return { erro: 'Pessoa não encontrada na lista de pessoas. Use Atualizar e escolha de novo (ou use Outro).' }; }
   var os = String(crValor(m.os)).trim();
   if(os && !/^[A-Za-z0-9._-]{1,30}$/.test(os)) return { erro: 'OS vinculada inválida (letras, números, ponto, hífen; até 30 caracteres).' };
   var det = {}, erro = '';
   FO_DET.forEach(function(d){ var v = crValor(foDetId(k, d[0])); if(!String(v).trim()) return; var p = cxParseValor(v); if(p.erro){ erro = erro || 'Detalhamento — ' + d[1] + ': valor inválido.'; return; } if(p.centavos > 0) det[d[0]] = Number(cxFmt2(p.centavos)); });
   if(erro) return { erro: erro };
+  var dsc = foLerDesconto(k); if(dsc.erro) return { erro: dsc.erro };
+  var itE = k === 'ed' && edicaoGrupo ? edicaoGrupo.item : null, brutoC = foSomaDetalhes(k).c;
+  if(dsc.c > 0 || (k === 'novo' && brutoC > 0) || !!(itE && itE.detalhes && itE.detalhes.descontoFolha != null)){   // marca descontoFolha (também 0): líquido = bruto − desconto; o valor do lançamento TEM de ser o líquido (o banco confere de novo). Registro antigo sem a marca segue como era
+    var liq = foLiquidoCalc(brutoC, dsc.c), vt = cxParseValor(crValor(m.valor));
+    if(brutoC <= 0) return { erro: 'Informe ao menos um componente do detalhamento: o valor líquido precisa ser maior que zero.' };
+    if(!liq.ok || liq.liquidoC <= 0) return { erro: 'O desconto em folha deve ser menor que o total bruto (o valor líquido precisa ser maior que zero).' };
+    if(vt.erro || vt.centavos !== liq.liquidoC) return { erro: 'O valor líquido deve ser o total bruto menos o desconto em folha (' + crBRL(liq.liquidoC) + '). Revise os campos do detalhamento.' };
+    if(det.comissao > 0 && Math.round(det.comissao * 100) > liq.liquidoC) return { erro: 'A comissão não pode ser maior que o valor líquido do pagamento.' };
+    det.descontoFolha = Number(cxFmt2(dsc.c));
+  }
   var h = String(crValor(m.horas)).trim();
   if(h){ var t = h.replace(',', '.'); if(!/^\d{1,4}(\.\d{1,2})?$/.test(t)) return { erro: 'Qtd. de horas extras inválida (até 2 casas).' }; if(Number(t) > 0) det.horasExtras = Number(t); }
   if(os && det.comissao > 0) return { erro: 'Comissão de projeto só é paga pelo fluxo "Pagar comissão" do Financeiro do projeto: retire o componente comissão ou a OS vinculada.' };
@@ -39608,7 +39630,7 @@ function foGResultado(env, d){
   return cxIncerto(env, 'Aguardando conferência: resposta inesperada do banco (' + (s || 'sem status') + '). Use “Conferir / repetir” (mesma operação, sem duplicar).');
 }
 function foGLimparForm(){
-  ['cxNovoDesc', 'cxNovoValor', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })).forEach(function(id){ var el = foDom(id); if(el) el.value = ''; });
+  ['cxNovoDesc', 'cxNovoValor', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras', 'detDescontoFolha'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })).forEach(function(id){ var el = foDom(id); if(el) el.value = ''; });
   var r = foDom('lancRecorrente'); if(r) r.checked = false; var p = foDom('lancPessoa'); if(p) p.value = '';
   var o = foDom('lancPessoaOutroWrap'); if(o) o.style.display = 'none';
 }
@@ -39672,6 +39694,7 @@ function foGEditar(id){
     foPessoaMudou('ed'); set('geOs', it.os || '');
     var d = it.detalhes || {};
     FO_DET.forEach(function(x){ var c = voC(d[x[0]]); set(foDetId('ed', x[0]), isFinite(c) && c > 0 ? cxValorTexto(c) : ''); });
+    var dscE = voC(d.descontoFolha); set(foDescId('ed'), isFinite(dscE) && dscE > 0 ? cxValorTexto(dscE) : ''); foEncargosLegadoSinc(it);
     set('geDetHorasExtras', d.horasExtras != null && Number(d.horasExtras) > 0 ? String(d.horasExtras).replace('.', ',') : '');
     foAvisoConsolidado('ed');
   } else {
@@ -39706,7 +39729,125 @@ function foGEditarSalvar(){
   envioCaixaReal = env; cxRender();
   return foGRpc(env, false);
 }
-function foDetNorm(d){ var o = {}; if(d && typeof d === 'object'){ FO_DET.forEach(function(x){ if(d[x[0]] != null && Number(d[x[0]]) > 0) o[x[0]] = Number(d[x[0]]); }); if(d.horasExtras != null && Number(d.horasExtras) > 0) o.horasExtras = Number(d.horasExtras); } return o; }
+function foDetNorm(d){ var o = {}; if(d && typeof d === 'object'){ FO_DET.forEach(function(x){ if(d[x[0]] != null && Number(d[x[0]]) > 0) o[x[0]] = Number(d[x[0]]); }); if(typeof d.descontoFolha === 'number' && isFinite(d.descontoFolha) && d.descontoFolha >= 0) o.descontoFolha = d.descontoFolha; if(d.horasExtras != null && Number(d.horasExtras) > 0) o.horasExtras = Number(d.horasExtras); } return o; }
+
+// <<95:INICIO>>
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+// Pacote 95 (V1.5.0.3): Pagamentos da Equipe
+// • Desconto em folha: valor MANUAL que REDUZ o pagamento consolidado (chave nova detalhes_equipe.descontoFolha, presente também com 0 nos registros novos). O "Encargos / Contador" antigo continua POSITIVO e NÃO é reinterpretado.
+//   Líquido = total bruto (soma dos componentes positivos) − desconto = valor do lançamento = saída do caixa (uma vez). Sem alíquotas, sem despesa/pagamento extra. O BANCO confere de novo (norm + gatilho).
+// • Seletor Pessoa: só participantes reais (conta de teste identificada pelo banco, RPC listar_equipe_pagamento), com o nome completo. Falha FECHADA: sem a lista validada não há nomes curtos nem contas de teste (só a pessoa do registro em edição e "Outro").
+//   O mapa global de nomes (estadoFinOriginal.nomes.mapa) NÃO é filtrado: histórico, placares e relatórios continuam resolvendo qualquer nome.
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+var FO_DESC_SUFIXO = 'DescontoFolha';
+function foDescId(k){ return FO_EQ_IDS[k].pre + FO_DESC_SUFIXO; }
+function foLiquidoCalc(brutoC, descC){   // centavos inteiros → { ok, liquidoC, erro }; desconto maior ou inseguro = falha fechada
+  if(typeof brutoC !== 'number' || typeof descC !== 'number' || !Number.isSafeInteger(brutoC) || !Number.isSafeInteger(descC) || brutoC < 0 || descC < 0) return { ok: false, liquidoC: 0, erro: 'Valores inválidos no pagamento.' };
+  if(descC > brutoC) return { ok: false, liquidoC: 0, erro: 'O desconto em folha não pode ser maior que o total bruto.' };
+  return { ok: true, liquidoC: brutoC - descC, erro: '' };
+}
+function foLerDesconto(k){   // → { c, erro }: campo "Desconto em folha" em centavos; vazio = 0
+  var v = String(crValor(foDescId(k))).trim();
+  if(!v || /^(R\$\s*)?0+([.,]0{1,2})?$/.test(v)) return { c: 0, erro: '' };   // vazio ou zero digitado = sem desconto (cxParseValor recusa zero)
+  var p = cxParseValor(v);
+  if(p.erro) return { c: 0, erro: 'Desconto em folha: valor inválido.' };
+  return { c: p.centavos, erro: '' };
+}
+function foResumoLiquido(k, eq){   // rótulo do Valor + linha "Total bruto − Desconto em folha = Valor líquido (saída do caixa)"; só para equipe
+  var rot = foDom(k === 'novo' ? 'cxNovoValorRot' : 'geValorRot'); if(rot) rot.textContent = eq ? 'Valor líquido (R$)' : 'Valor (R$)';
+  var box = foDom(k === 'novo' ? 'lancLiquidoResumo' : 'geLiquidoResumo'); if(!box) return;
+  if(!eq){ box.style.display = 'none'; box.textContent = ''; return; }
+  var s = foSomaDetalhes(k), d = foLerDesconto(k), l = foLiquidoCalc(s.c, d.c);
+  // registro ANTIGO (sem a marca) cujo valor pago difere da soma dos detalhes e sem desconto digitado: não mostrar bruto − 0 como se fosse o líquido pago, nem inferir desconto pela diferença
+  var itL = k === 'ed' && edicaoGrupo ? edicaoGrupo.item : null;
+  if(itL && !(itL.detalhes && itL.detalhes.descontoFolha != null) && d.c <= 0 && !s.erro && !d.erro && s.c > 0){
+    var vL = cxParseValor(crValor(FO_EQ_IDS.ed.valor));
+    if(vL.erro || vL.centavos !== s.c){
+      if(rot) rot.textContent = 'Valor (R$)';
+      box.style.display = 'block'; box.textContent = 'Registro anterior: valor pago ' + crBRL(itL.valorC) + '. Desconto não discriminado.'; return;
+    }
+  }
+  if(s.c <= 0 && d.c <= 0 && !s.erro && !d.erro){ box.style.display = 'none'; box.textContent = ''; return; }
+  box.style.display = 'block';
+  box.textContent = s.erro || d.erro || (!l.ok ? l.erro : 'Total bruto ' + crBRL(s.c) + ' − Desconto em folha ' + crBRL(d.c) + ' = Valor líquido (saída do caixa) ' + crBRL(l.liquidoC));
+}
+function foEncargosLegadoSinc(it){   // edição: o campo antigo "Encargos / Contador" só aparece se o registro já tinha valor positivo (preservado, nunca tratado como desconto)
+  var w = foDom('geEncargosLegadoWrap'); if(!w) return;
+  var c = it && it.detalhes ? voC(it.detalhes.encargosContador) : NaN;
+  w.style.display = isFinite(c) && c > 0 ? '' : 'none';
+}
+// ---- seletor Pessoa ----
+var foPessoasPag = { status: 'idle', lista: [], ctx: null };   // status: idle | carregando | ok | erro
+function foPessoasPagValidar(data){   // resposta da RPC → lista validada ou null (qualquer linha malformada invalida tudo)
+  if(!Array.isArray(data)) return null;
+  var lista = [], vistos = {};
+  for(var i = 0; i < data.length; i++){
+    var x = data[i], nome = x && typeof x.nome_exibicao === 'string' ? x.nome_exibicao.trim() : '';
+    if(!x || !voIdOk(x.id) || vistos[x.id] || !nome || typeof x.conta_teste !== 'boolean' || (x.nome_curto != null && typeof x.nome_curto !== 'string')) return null;
+    var curto = String(x.nome_curto || '').trim() || nome;   // nome canônico gravado em pessoa_nome (mesmo critério do foNome/foCarregarNomes: nome_curto, senão nome_exibicao); o seletor mostra sempre o completo
+    vistos[x.id] = true; lista.push({ id: x.id, nome: nome, curto: curto, teste: x.conta_teste });
+  }
+  return lista;
+}
+function foPessoasSeletorMontar(lista, base, selecionado){   // → { id: rótulo }. lista null = RPC indisponível: FALHA FECHADA (nenhum nome curto nem conta de teste); selecionado = pessoa já gravada no registro em edição
+  var out = {};
+  if(lista){ lista.forEach(function(x){ if(!x.teste) out[x.id] = x.nome; }); }
+  if(selecionado && selecionado.id && !Object.prototype.hasOwnProperty.call(out, selecionado.id)){
+    var nome = selecionado.nome || '';
+    if(lista) lista.forEach(function(x){ if(x.id === selecionado.id) nome = x.nome; });
+    out[selecionado.id] = (nome || String(selecionado.id)) + ' (registro anterior)';
+  }
+  return out;
+}
+function foPessoasPagCtxOk(){ var c = foPessoasPag.ctx; return !!c && foCtxOk(c); }
+function foPessoasPagPronta(){ return foPessoasPag.status === 'ok' && foPessoasPagCtxOk(); }
+function foPessoaAvisoSinc(k){
+  var el = foDom(k === 'novo' ? 'lancPessoaAviso' : 'gePessoaAviso'); if(!el) return;
+  var pronta = foPessoasPagPronta(), st = foPessoasPag.status;
+  el.style.display = pronta ? 'none' : 'block';
+  el.textContent = pronta ? '' : (st === 'carregando' || st === 'idle' ? 'Carregando a lista de pessoas…' : 'Lista de pessoas indisponível: use Atualizar. Enquanto isso, só “Outro”.');
+}
+function foMapaPessoasSeletor(k){
+  var base = estadoFinOriginal.nomes.mapa || {}, sel = null;
+  if(k === 'ed' && edicaoGrupo && edicaoGrupo.item && edicaoGrupo.item.pessoaId){ var sid = String(edicaoGrupo.item.pessoaId); sel = { id: sid, nome: edicaoGrupo.item.pessoa || base[sid] || '' }; }
+  foPessoaAvisoSinc(k);
+  return foPessoasSeletorMontar(foPessoasPagPronta() ? foPessoasPag.lista : null, base, sel);
+}
+function foPessoaRotulo(k, id){   // texto gravado em pessoa_nome: a mesma pessoa do registro em edição mantém o que já estava gravado; senão, o nome CANÔNICO (curto) da lista validada, como antes (o Resumo agrupa por esse texto); conta de teste nunca
+  var it = k === 'ed' && edicaoGrupo && edicaoGrupo.item ? edicaoGrupo.item : null;
+  if(it && it.pessoaId && String(it.pessoaId) === String(id) && it.pessoa) return it.pessoa;
+  if(!foPessoasPagPronta()) return '';
+  var lista = foPessoasPag.lista;
+  for(var i = 0; i < lista.length; i++){ if(lista[i].id === id && !lista[i].teste) return lista[i].curto; }
+  return '';
+}
+function foCarregarPessoasPag(){
+  if(!foPode()) return Promise.resolve();
+  foGarantirConta();
+  var ctx = foCtxAtual(), p = foPessoasPag;
+  if(p.ctx && (p.ctx.seq !== ctx.seq || p.ctx.uid !== ctx.uid || p.ctx.epoch !== ctx.epoch)){ p = foPessoasPag = { status: 'idle', lista: [], ctx: null }; }
+  if(p.status === 'ok' || p.status === 'carregando') return Promise.resolve();
+  p.status = 'carregando'; p.ctx = ctx;
+  var ok = function(){ return foPessoasPag === p && foCtxOk(ctx); };
+  var q, prov = financeiroOriginalProvider;
+  try { q = prov && prov.pessoasPag ? prov.pessoasPag() : supabaseClient.rpc('listar_equipe_pagamento'); } catch(_e){ q = Promise.reject(_e); }
+  return crComTempo(q).then(function(r){
+    if(!ok()) return;
+    var lista = r && !r.error ? foPessoasPagValidar(r.data) : null;
+    if(!lista){ p.status = 'erro'; p.lista = []; } else { p.status = 'ok'; p.lista = lista; }
+    foRenderTudo(); foPessoasEdicaoRefazer();
+  }, function(){ if(ok()){ p.status = 'erro'; p.lista = []; foRenderTudo(); foPessoasEdicaoRefazer(); } });
+}
+function foPessoasEdicaoRefazer(){ if(edicaoGrupo && edicaoGrupo.item && edicaoGrupo.item.equipe){ try { foPreencherPessoas('ed'); } catch(_e){} } }   // janela de edição já aberta quando a lista chega/falha: refaz as opções (a pessoa escolhida é mantida)
+// nova tentativa só por ação do usuário (abrir o lançamento, editar, Atualizar): nunca em laço de renderização
+var _foCaixaAbrir95 = foCaixaAbrir;
+foCaixaAbrir = function(){ try { foCarregarPessoasPag(); } catch(_e){} return _foCaixaAbrir95.apply(this, arguments); };
+var _foGEditar95 = foGEditar;
+foGEditar = function(){ try { foCarregarPessoasPag(); } catch(_e){} return _foGEditar95.apply(this, arguments); };
+var _foCxCarregar95 = cxCarregar;
+cxCarregar = function(forcar){ if(forcar){ try { foCarregarPessoasPag(); } catch(_e){} } return _foCxCarregar95.apply(this, arguments); };
+FO_LIMPEZAS.push(function(){ foPessoasPag = { status: 'idle', lista: [], ctx: null }; });
+// <<95:FIM>>
 
 // ---- excluir (uma linha ou toda a recorrência) ----
 function foGExcluir(id){
@@ -39753,9 +39894,10 @@ function foGSinc(){
   var msg = foDom('cxMsg'), txt = msg ? msg.textContent : '';
   [['cxMsgGe', !!edicaoGrupo], ['cxMsgRec', !!exclusaoRec]].forEach(function(x){ var el = foDom(x[0]); if(!el) return; el.textContent = ''; if(x[1] && txt){ var n = crEl('div', 'font-size:13px;padding:8px 10px;margin-top:8px', txt); n.className = 'notice'; el.appendChild(n); } });
   foNovoBlocoSinc();
+  try { foResumoLiquido('novo', foNovoEhEquipe()); foResumoLiquido('ed', !!(edicaoGrupo && edicaoGrupo.item && edicaoGrupo.item.equipe)); } catch(_e){}
   var travado = !!env || !foGLeituraOk();
-  cxDesabilitar(['lancPessoa', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras', 'lancRecorrente'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })), travado);
-  cxDesabilitar(['geData', 'geValor', 'geDesc', 'geCat', 'gePessoa', 'gePessoaOutro', 'geOs', 'geDetHorasExtras', 'geSalvarBtn', 'geCancelarBtn'].concat(FO_DET.map(function(d){ return foDetId('ed', d[0]); })), !!env);
+  cxDesabilitar(['lancPessoa', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras', 'detDescontoFolha', 'lancRecorrente'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })), travado);
+  cxDesabilitar(['geData', 'geValor', 'geDesc', 'geCat', 'gePessoa', 'gePessoaOutro', 'geOs', 'geDetHorasExtras', 'geDetDescontoFolha', 'geSalvarBtn', 'geCancelarBtn'].concat(FO_DET.map(function(d){ return foDetId('ed', d[0]); })), !!env);
   if(g){
     cxMostrar('cxConferirBtn', false); cxMostrar('cxReenviarBtn', env.fase === 'incerto'); cxMostrar('cxDescartarBtn', env.fase === 'incerto' || env.fase === 'conflito');
     var br = foDom('cxReenviarBtn'); if(br) br.textContent = '↻ Conferir / repetir (mesma operação, sem duplicar)';

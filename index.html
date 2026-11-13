@@ -1861,6 +1861,9 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </div>
 
 <!-- V8.24.0 Recuperação Admin · Backup e Recuperação (Admin → Configurações). Fragmento único inserido pelo gerador; nada mais do Admin foi alterado. -->
+<div id="bkSessaoAviso" class="hidden" role="alert" style="background:#fef3c7;color:#78350f;border-radius:12px;padding:12px;font-size:13px;margin-bottom:16px">
+ <b>Sessão expirada.</b> Por segurança, nenhuma informação de backup está sendo exibida. Saia do ZIP OS e entre novamente para continuar.
+</div>
 <div class="card hidden" id="backupAdminCard" style="margin-bottom:16px">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
   <div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px">💾</span><h2 style="margin:0">Backup e Recuperação</h2></div>
@@ -48552,7 +48555,9 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
  }
  function badge(texto, cls){ var b = $('bkBadge'); if(b){ b.textContent = texto; b.className = 'badge ' + cls; } }
  // O card só fica visível DEPOIS de /status 200 do servidor no contexto atual (st.aut); qualquer limpeza o oculta de novo.
- function mostrarCard(on){ var cd = $('backupAdminCard'); if(cd){ if(on) cd.classList.remove('hidden'); else cd.classList.add('hidden'); } }
+ // Aviso de sessão expirada (fora do card, sem dados protegidos). Qualquer mostrarCard (true/false: limpeza, 403, saída da tela, /status 200) o remove; só sessaoExpirou() o acende.
+ function avisoSessao(on){ var a = $('bkSessaoAviso'); if(a){ if(on) a.classList.remove('hidden'); else a.classList.add('hidden'); } }
+ function mostrarCard(on){ var cd = $('backupAdminCard'); if(cd){ if(on) cd.classList.remove('hidden'); else cd.classList.add('hidden'); } avisoSessao(false); }
  function pararTimer(){ if(st.timer){ clearInterval(st.timer); st.timer = null; } }
 
  // ---- Posse do acompanhamento/retomada da restauração (st.rest) ----
@@ -48588,7 +48593,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   limparLink();
   st.ops = []; st.idem = {}; st.previaId = null; st.busy = false; st.negado = false; st.aut = false; mostrarCard(false); modoSoProgresso(false); // st.rest NÃO é limpo aqui (ver restDoDono/descartarRest)
   ['bkCodigo'].forEach(function(id){ var e = $(id); if(e) e.value = ''; });
-  var f = $('bkArquivo'); if(f){ try{ f.value = ''; }catch(_e){} f.files = []; }
+  var f = $('bkArquivo'); if(f){ try{ f.value = ''; }catch(_e){} } // value='' limpa a seleção; input.files NÃO aceita atribuição de array (TypeError)
   var p = $('bkPrevia'); if(p) p.innerHTML = '';
   var rc = $('bkRestConf'); if(rc) rc.innerHTML = ''; st.prevInfo = null;
   msg('');
@@ -48611,7 +48616,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   }
   if(mudou) limparTudo();
   var card = $('backupAdminCard');
-  if(card && !ehAdminUI()){ if(!card.classList.contains('hidden')){ limparTudo(); } card.classList.add('hidden'); }
+  if(card && !ehAdminUI()){ if(!card.classList.contains('hidden')){ limparTudo(); } card.classList.add('hidden'); avisoSessao(false); }
   return mudou;
  }
 
@@ -48653,7 +48658,21 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   UPLOAD_SIZE_MISMATCH: 'O tamanho recebido não confere com o do arquivo escolhido.',
   UPLOAD_EXISTS: 'Já existe um envio para esta operação.'
  };
+ // Sessão vencida/inválida: códigos próprios, ou 401/erro de JWT SEM código conhecido de outra natureza (MFA_*, FORBIDDEN… nunca contam como sessão vencida).
+ function ehSessaoExpirada(e){
+  if(!e) return false;
+  if(e.code === 'UNAUTHENTICATED' || e.code === 'SESSION_INVALID') return true;
+  if(e.code && ERROS[e.code]) return false;
+  return e.status === 401 || /\bjwt\b|token is expired|invalid claims/i.test(String(e.message || ''));
+ }
+ // Sem refresh, sem login/MFA automático, sem reenviar nada: limpa tudo (card, histórico, prévia, código, polling) e acende só o aviso genérico, e só para o Admin na identidade vigente.
+ function sessaoExpirou(c){
+  if(!vale(c)) return;
+  limparTudo();
+  avisoSessao(true);
+ }
  function erroTexto(e){
+  if(ehSessaoExpirada(e)) return ERROS.SESSION_INVALID; // nunca expõe token/claims/texto de erro JWT
   if(e && e.code && ERROS[e.code]) return ERROS[e.code];
   return (e && e.message) ? String(e.message) : 'Não foi possível concluir a ação.';
  }
@@ -48664,6 +48683,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   if(!supabaseClient) throw new Error('Sessão indisponível.');
   var r = await supabaseClient.auth.getSession();
   exige(c);
+  if(r && r.error){ var e1 = new Error('Sessão expirada. Entre novamente.'); e1.code = 'UNAUTHENTICATED'; throw e1; } // erro do SDK ao ler a sessão: não segue com sessão duvidosa
   var s = r && r.data && r.data.session;
   if(!s || !s.access_token){ var e = new Error('Sessão expirada. Entre novamente.'); e.code = 'UNAUTHENTICATED'; throw e; }
   if(!s.user || String(s.user.id) !== c.uid){ var e2 = new Error('Contexto mudou.'); e2.code = 'CONTEXT_CHANGED'; throw e2; }
@@ -48681,7 +48701,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   catch(_){ exige(c); var en = new Error('Sem conexão com o serviço de backup.'); en.code = 'NETWORK'; throw en; }
   var j = null; try { j = await res.json(); } catch(_){}
   exige(c); // resposta tardia de outra identidade é descartada
-  if(!res.ok){ var er = new Error((j && j.error && j.error.message) || 'Falha na solicitação.'); er.code = j && j.error && j.error.code; er.status = res.status; throw er; }
+  if(!res.ok){ var er = new Error((j && j.error && j.error.message) || 'Falha na solicitação.'); er.code = j && j.error && j.error.code; er.status = res.status; if(res.status === 401 && ehSessaoExpirada({ code: er.code, status: 401 })){ er.code = 'SESSION_INVALID'; er.message = ERROS.SESSION_INVALID; } throw er; }
   return j;
  }
  // Chave de idempotência: só em memória, reaproveitada enquanto a tentativa anterior terminou por falha de REDE; apagada ao trocar identidade.
@@ -48797,7 +48817,8 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
     limparTudo(); st.negado = true; return;
    }
    // st.aut só vira true com /status 200. Nunca aprovado (401, 5xx, rede…): limpa e oculta. Já aprovado antes: mantém o card e mostra o erro, sem botões novos.
-   if(e.status === 401 || !st.aut){ limparTudo(); return; }
+   if(e.status === 401 || ehSessaoExpirada(e)){ sessaoExpirou(c); return; } // sessão vencida: sem histórico, sem polling, só o aviso genérico
+   if(!st.aut){ limparTudo(); return; }
    badge(e.code === 'CONTROL_NOT_INSTALLED' ? 'Controle não instalado' : 'Indisponível', 'danger');
    msg(erroTexto(e), 'erro');
    pararTimer();
@@ -48815,6 +48836,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
    msg(j.launch === 'uncertain' ? 'Pedido registrado; o início do backup ainda precisa de confirmação. Acompanhe o histórico.' : 'Backup iniciado. Acompanhe o histórico abaixo.', 'ok');
   }catch(e){
    if(e.code === 'CONTEXT_CHANGED') return;
+   if(ehSessaoExpirada(e)){ sessaoExpirou(c); return; }
    if(e.code !== 'NETWORK') limparIdem('backup');
    msg(erroTexto(e), 'erro');
   }finally{ fim(c); if(c.gen === st.gen) carregar(); }
@@ -48834,7 +48856,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
    var ttl = Math.min(Number(j.expiresInSec) > 0 ? Number(j.expiresInSec) : LINK_TTL_MAX, LINK_TTL_MAX);
    mostrarLink(j.url, ttl);
    msg('Arquivo pronto. Clique em "Baixar arquivo agora" em até ' + ttl + ' s. SHA-256 para conferir: ' + String(j.sha256 || ''), 'ok');
-  }catch(e){ if(e.code === 'CONTEXT_CHANGED') return; msg(erroTexto(e), 'erro'); }
+  }catch(e){ if(e.code === 'CONTEXT_CHANGED') return; if(ehSessaoExpirada(e)){ sessaoExpirou(c); return; } msg(erroTexto(e), 'erro'); }
   finally{ fim(c); }
  }
  // O link assinado existe só no DOM, só até o TTL do servidor (máx. 60 s); nunca em storage, atributo de dados ou log.
@@ -48986,6 +49008,7 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
    msg('Conferência iniciada. O resultado aparece abaixo e no histórico.', 'ok');
   }catch(e){
    if(e.code === 'CONTEXT_CHANGED') return;
+   if(ehSessaoExpirada(e)){ sessaoExpirou(c); return; }
    if(e.code !== 'NETWORK') limparIdem('previa');
    msg(erroTexto(e), 'erro');
   }finally{ fim(c); if(c.gen === st.gen) carregar(); }

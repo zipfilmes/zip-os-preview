@@ -928,7 +928,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.1 · Meta da Zip</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.2 · Cadastro de Clientes</div>
 </aside>
 
 <main class="main">
@@ -2473,19 +2473,11 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <label>CEP<input id="newClientCEP" inputmode="numeric" autocomplete="off" placeholder="00000-000" oninput="mascararCepClienteInput(this)"></label>
   <label>E-mail para NF<input id="newClientEmailNF" placeholder="financeiro@cliente.com.br"></label>
   <label>Telefone financeiro<input id="newClientTelFin" placeholder="(35) 99999-0000" oninput="mascararTelefoneClienteInput(this)"></label>
+  <label id="campoRetencaoIssCliente">Contém retenção de ISS<select id="newClientRetencaoISS"><option value="sim">Sim</option><option value="nao" selected>Não</option></select></label>
  </div>
 </div>
 
-<!-- Seção 4: Dados bancários -->
-<div style="background:#f9fafb;border-radius:14px;padding:16px;margin-bottom:16px">
- <div style="font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🏦 Dados bancários</div>
- <div class="formgrid">
-  <label>Banco<input id="newClientBanco" placeholder="Ex: Sicoob"></label>
-  <label>Agência<input id="newClientAgBanco" placeholder="0001"></label>
-  <label>Conta<input id="newClientConta" placeholder="12345-6"></label>
-  <label>PIX<input id="newClientPix" placeholder="CNPJ, e-mail ou telefone"></label>
- </div>
-</div>
+<!-- 1.5.0.2: seção "Dados bancários" removida do cadastro de CLIENTE (colunas e valores do banco preservados; fornecedores intactos) -->
 
 <!-- ================= V8.3.0 CLIENTES PARTE 5.5 ================= -->
 <!-- Superfície A — CADASTRO: contato inicial único. Não existe cliente_id ainda,
@@ -7766,11 +7758,7 @@ function selectClient(name){
    +'<div class="card" style="margin:0"><h3 style="margin-bottom:12px">📍 Endereço</h3>'
     +'<div style="font-size:13px;color:var(--ink);line-height:1.6">'+(c[12]||'—')+'</div>'
    +'</div>'
-   +'<div class="card" style="margin:0"><h3 style="margin-bottom:12px">🏦 Dados bancários</h3>'
-    +'<div style="font-size:13px"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span class="muted">Banco</span><b>'+(c[18]||'—')+'</b></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span class="muted">Agência / Conta</span><b>'+(c[19]||'—')+' / '+(c[20]||'—')+'</b></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:6px 0"><span class="muted">PIX</span><b>'+(c[21]||'—')+'</b></div></div>'
-   +'</div>'
+   // 1.5.0.2: card "Dados bancários" removido do detalhe demonstrativo do cliente
   +'</div>'
 
   +obsCard
@@ -7783,7 +7771,7 @@ function selectClient(name){
 function openNewClient(){
  editingClientIndex=null;
  if(document.getElementById('clientModalTitle')) clientModalTitle.textContent='Novo cliente';
- ['newClientName','newClientCidade','newClientAgencia','newClientCNPJ','newClientRazao','newClientEndereco','newClientEmailNF','newClientTelFin','newClientContato','newClientWhats','newClientEmail','newClientBanco','newClientAgBanco','newClientConta','newClientPix','newClientObs'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=''});
+ ['newClientName','newClientCidade','newClientAgencia','newClientCNPJ','newClientRazao','newClientEndereco','newClientEmailNF','newClientTelFin','newClientContato','newClientWhats','newClientEmail','newClientObs'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=''});
  if(document.getElementById('newClientABC'))newClientABC.value='A';
  if(document.getElementById('newClientPerfil'))newClientPerfil.value='Estratégico';
  openModal('modalCliente');
@@ -7795,7 +7783,7 @@ function editClient(name){
  newClientName.value=c[0]||''; newClientABC.value=c[1]||'A'; newClientPerfil.value=c[2]||'Estratégico'; newClientCidade.value=c[3]||''; newClientAgencia.value=c[4]||'Direto';
  newClientCNPJ.value=c[10]||''; newClientRazao.value=c[11]||''; newClientEndereco.value=c[12]||''; newClientEmailNF.value=c[13]||''; newClientTelFin.value=c[14]||'';
  newClientContato.value=c[15]||''; newClientWhats.value=c[16]||''; newClientEmail.value=c[17]||'';
- newClientBanco.value=c[18]||''; newClientAgBanco.value=c[19]||''; newClientConta.value=c[20]||''; newClientPix.value=c[21]||''; newClientObs.value=c[9]||'';
+ /* 1.5.0.2: sem dados bancários do cliente */ newClientObs.value=c[9]||'';
  openModal('modalCliente');
 }
 function inactivateClient(name){
@@ -8803,11 +8791,8 @@ function addClient(){
   newClientTelFin.value||'-',
   newClientContato.value||'-',
   newClientWhats.value||'-',
-  newClientEmail.value||'-',
-  newClientBanco.value||'-',
-  newClientAgBanco.value||'-',
-  newClientConta.value||'-',
-  newClientPix.value||'-'
+  newClientEmail.value||'-'
+  // 1.5.0.2: sem dados bancários do cliente
  ];
  if(editingClientIndex!==null){const idAntigo=clients[editingClientIndex].clientId;clients[editingClientIndex]=base; if(idAntigo)clients[editingClientIndex].clientId=idAntigo; selectedClientName=base[0];}
  else {garantirClientId(base);clients.unshift(base); selectedClientName=base[0];}
@@ -21679,10 +21664,7 @@ function adaptarClienteSupabaseParaFrontend(row){
     cep: _txtCli(row.cep),
     emailFinanceiro: _txtCli(row.email_financeiro),
     telefone: _txtCli(row.telefone),
-    banco: _txtCli(row.banco),
-    agenciaBancaria: _txtCli(row.agencia_bancaria),
-    conta: _txtCli(row.conta),
-    chavePix: _txtCli(row.chave_pix),
+    contemRetencaoIss: row.contem_retencao_iss === true,   // 1.5.0.2 (só true é Sim); dados bancários não são mais carregados
     ativo: _boolAtivoCli(row.ativo),
     criadoEm: _txtCli(row.criado_em),
     atualizadoEm: _txtCli(row.atualizado_em)
@@ -21710,7 +21692,7 @@ function _brlCli(n){
 function _consultarClientesReais(){
   return supabaseClient
     .from('clientes')
-    .select('id,nome,classe,perfil,cidade,origem,faturamento_total,ticket_medio,em_aberto,ultimo_projeto,observacoes,cnpj,razao_social,endereco,cep,email_financeiro,telefone,banco,agencia_bancaria,conta,chave_pix,ativo,criado_em,atualizado_em')
+    .select('id,nome,classe,perfil,cidade,origem,faturamento_total,ticket_medio,em_aberto,ultimo_projeto,observacoes,cnpj,razao_social,endereco,cep,email_financeiro,telefone,contem_retencao_iss,ativo,criado_em,atualizado_em')
     .order('nome', {ascending:true})
     .order('id', {ascending:true});
 }
@@ -22383,6 +22365,7 @@ function _construirProntuarioClienteReal(cli){
   _zpcLinha(cFis._corpo, 'Razão social', _txtOuTracoCli(cli.razaoSocial));
   _zpcLinha(cFis._corpo, 'E-mail NF', _zpcValorEmail(cli.emailFinanceiro));
   _zpcLinha(cFis._corpo, 'Tel. financeiro', _zpcValorTelefone(cli.telefone));
+  _zpcLinha(cFis._corpo, 'Contém retenção de ISS', cli.contemRetencaoIss === true ? 'Sim' : 'Não');   // 1.5.0.2
   g.appendChild(cFis);
 
   // C3. Endereço
@@ -22395,13 +22378,7 @@ function _construirProntuarioClienteReal(cli){
   _zpcLinha(cEnd._corpo, 'CEP', _soDigitosCli(cli.cep).length === 8 ? _formatarCepCli(cli.cep) : '—');
   g.appendChild(cEnd);
 
-  // C4. Dados bancários
-  var cBan = _zpcCard('🏦', 'Dados bancários');
-  var ag = _txtOuTracoCli(cli.agenciaBancaria), ct = _txtOuTracoCli(cli.conta);
-  _zpcLinha(cBan._corpo, 'Banco', _txtOuTracoCli(cli.banco));
-  _zpcLinha(cBan._corpo, 'Agência / Conta', ag + ' / ' + ct);
-  _zpcLinha(cBan._corpo, 'PIX', _txtOuTracoCli(cli.chavePix));
-  g.appendChild(cBan);
+  // 1.5.0.2: card "Dados bancários" removido do detalhe do CLIENTE (colunas preservadas no banco).
 
   root.appendChild(g);
 
@@ -22594,10 +22571,12 @@ function _definirTextoSituacaoClienteReal(ativo){
 
 // ---- Alternância visual do modal entre demo e real -------------------------
 function _prepararModalClienteModoReal(){
+  var iss = document.getElementById('campoRetencaoIssCliente'); if(iss) iss.style.display = '';   // 1.5.0.2
   var sec = document.getElementById('secaoContatoClienteDemo'); if(sec) sec.style.display = 'none';
   var cmp = document.getElementById('campoAtivoClienteReal');   if(cmp) cmp.style.display = '';
 }
 function _prepararModalClienteModoDemo(){
+  var iss = document.getElementById('campoRetencaoIssCliente'); if(iss) iss.style.display = 'none';   // 1.5.0.2: a demo não tem esse dado
   var sec = document.getElementById('secaoContatoClienteDemo'); if(sec) sec.style.display = '';
   var cmp = document.getElementById('campoAtivoClienteReal');   if(cmp) cmp.style.display = 'none';
   try { _prepararSecoesContatoPorModo(''); } catch(_e){}      // PARTE 5.5: oculta ambas
@@ -22606,10 +22585,11 @@ function _prepararModalClienteModoDemo(){
 // ---- Limpeza do formulário real --------------------------------------------
 function _limparFormClienteReal(){
   ['newClientName','newClientRazao','newClientCNPJ','newClientCidade','newClientEndereco','newClientCEP',
-   'newClientTelFin','newClientEmailNF','newClientAgencia','newClientBanco','newClientAgBanco',
-   'newClientConta','newClientPix','newClientObs'].forEach(function(id){
+   'newClientTelFin','newClientEmailNF','newClientAgencia',
+   'newClientObs'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.value = '';
   });
+  _definirRetencaoIssFormCli(false);                 // 1.5.0.2: cadastro novo/limpo = Não
   var abc = document.getElementById('newClientABC');    if(abc) abc.value = '';
   var pf  = document.getElementById('newClientPerfil'); if(pf)  pf.value  = '';
   _definirTextoSituacaoClienteReal(true);          // cadastro sempre nasce ativo
@@ -22665,11 +22645,8 @@ function abrirEdicaoClienteReal(id){
   set('newClientTelFin',  _formatarTelefoneCli(cli.telefone));  // reaplica máscara
   set('newClientEmailNF',  cli.emailFinanceiro);
   set('newClientAgencia',  cli.origem);
-  set('newClientBanco',    cli.banco);
-  set('newClientAgBanco',  cli.agenciaBancaria);
-  set('newClientConta',    cli.conta);
-  set('newClientPix',      cli.chavePix);
   set('newClientObs',      cli.observacoes);
+  _definirRetencaoIssFormCli(cli.contemRetencaoIss === true);   // 1.5.0.2
   var abc = document.getElementById('newClientABC');
   if(abc) abc.value = _CLASSES_CLI[cli.classe] ? cli.classe : '';
   var pf = document.getElementById('newClientPerfil');
@@ -22707,6 +22684,16 @@ function fecharFormClienteReal(){
 }
 
 // ---- Validação anterior ao envio -------------------------------------------
+// 1.5.0.2: "Contém retenção de ISS" é INFORMATIVO (boolean por cliente: clientes.contem_retencao_iss).
+// Não alimenta orçamento, impostos, ISS ou qualquer cálculo financeiro.
+function _lerRetencaoIssFormCli(){
+  var el = document.getElementById('newClientRetencaoISS');
+  return !!el && el.value === 'sim';
+}
+function _definirRetencaoIssFormCli(v){
+  var el = document.getElementById('newClientRetencaoISS');
+  if(el) el.value = (v === true) ? 'sim' : 'nao';
+}
 function validarFormularioClienteReal(){
   var val = function(id){ var el = document.getElementById(id); return el ? el.value : ''; };
   var erros = [];
@@ -22722,6 +22709,8 @@ function validarFormularioClienteReal(){
   var perfil = String(val('newClientPerfil')||'').trim();
   if(perfil !== '' && !_PERFIS_ENUM_CLI[perfil]) erros.push('Perfil inválido.');
   if(!_emailPlausivelCli(val('newClientEmailNF'))) erros.push('Informe um e-mail financeiro válido, ou deixe o campo em branco.');
+  var iss = val('newClientRetencaoISS');                                   // 1.5.0.2
+  if(iss !== 'sim' && iss !== 'nao') erros.push('Informe se o cliente contém retenção de ISS.');
   return erros;
 }
 
@@ -22746,10 +22735,7 @@ function montarPayloadEdicaoClienteReal(){
     cep:              _cepParaPayloadCli(val('newClientCEP')),
     email_financeiro: textoOuNullCli(val('newClientEmailNF')),
     telefone:         (_soDigitosCli(val('newClientTelFin')) || null),
-    banco:            textoOuNullCli(val('newClientBanco')),
-    agencia_bancaria: textoOuNullCli(val('newClientAgBanco')),
-    conta:            textoOuNullCli(val('newClientConta')),
-    chave_pix:        textoOuNullCli(val('newClientPix'))
+    contem_retencao_iss: _lerRetencaoIssFormCli()   // 1.5.0.2: sem chaves bancárias (UPDATE não toca nelas)
   };
 }
 function montarPayloadCadastroClienteReal(){
@@ -22769,10 +22755,7 @@ function montarPayloadCadastroClienteReal(){
     cep:              _cepParaPayloadCli(val('newClientCEP')),
     email_financeiro: textoOuNullCli(val('newClientEmailNF')),
     telefone:         (_soDigitosCli(val('newClientTelFin')) || null),
-    banco:            textoOuNullCli(val('newClientBanco')),
-    agencia_bancaria: textoOuNullCli(val('newClientAgBanco')),
-    conta:            textoOuNullCli(val('newClientConta')),
-    chave_pix:        textoOuNullCli(val('newClientPix')),
+    contem_retencao_iss: _lerRetencaoIssFormCli(),  // 1.5.0.2: sem chaves bancárias
     ativo:            true
   };
 }

@@ -928,7 +928,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.5.0.3 · Pagamentos da Equipe</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.0.0 · Caixa Centralizado</div>
 </aside>
 
 <main class="main">
@@ -1476,7 +1476,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 
  <div id="modalNovoLancamento" class="modal"><div class="modalbox" style="max-width:480px">
   <h2 style="margin-bottom:8px">💰 Novo lançamento</h2>
-  <p class="muted" style="margin-bottom:16px;font-size:13px">Registre uma entrada ou saída avulsa, não vinculada a nenhuma OS (ex: salário, aluguel, taxa bancária).</p>
+  <p id="cxNovoIntro" class="muted" style="margin-bottom:16px;font-size:13px">Registre uma entrada ou saída avulsa, não vinculada a nenhuma OS (ex: salário, aluguel, taxa bancária).</p>
   <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px">Tipo <span style="color:var(--red)">*</span>
    <div style="display:flex;gap:8px;margin-top:6px">
     <button id="btnTipoEntrada" type="button" onclick="foCaixaTipo('entrada')" class="btn btn2" style="flex:1;font-size:13px;padding:10px">📥 Entrada</button>
@@ -1516,7 +1516,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div id="lancDetalheBloco" style="margin-top:4px;padding-top:10px;border-top:1px dashed #c4b5fd">
    <div style="font-size:12px;font-weight:800;color:#6d28d9;margin-bottom:8px">📋 Detalhamento do pagamento</div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário bruto
      <input id="detSalario" type="text" inputmode="decimal" oninput="foSomaConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Comissão
@@ -1547,7 +1547,46 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <div id="lancConsolidadoAviso" style="display:none;margin-top:10px;padding:8px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e">⚠️ A soma dos detalhes está diferente do valor total do pagamento.</div>
   </div>
  </div>
-  <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;cursor:pointer">
+ <div id="lancFornBloco" style="display:none;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:12px 14px;margin-bottom:12px">
+  <div style="font-size:13px;font-weight:800;color:#6d28d9;margin-bottom:10px">🎬 Dados do fornecedor</div>
+  <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px">Fornecedor <span style="color:var(--red)">*</span>
+   <select id="lancFornSel" onchange="fo96FornMudou()" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box"><option value="">Selecione…</option></select>
+   <div id="lancFornAviso" class="muted" style="display:none;font-size:12px;font-weight:400;margin-top:4px"></div>
+  </label>
+  <label style="font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">OS do projeto <span class="muted" style="font-weight:400">(opcional)</span>
+   <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+    <input id="lancFornOs" type="text" maxlength="30" placeholder="Ex: OS-260143" oninput="fo96OsEditado()" style="flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
+    <button id="lancFornOsBtn" type="button" class="btn btn2" style="font-size:12px;padding:9px 12px;white-space:nowrap" onclick="fo96OsVerificar()">Verificar OS</button>
+   </div>
+  </label>
+  <div id="lancFornOsMsg" class="muted" style="display:none;font-size:12px;margin-bottom:6px"></div>
+  <label id="lancFornLinhaWrap" style="display:none;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px">Linha do projeto <span style="color:var(--red)">*</span>
+   <select id="lancFornLinha" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box"><option value="">(sem linhas)</option></select>
+  </label>
+  <div id="lancFornDetalheBloco" style="margin-top:4px;padding-top:10px;border-top:1px dashed #c4b5fd">
+   <div style="font-size:12px;font-weight:800;color:#6d28d9;margin-bottom:8px">📋 Detalhamento do pagamento</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Valor do serviço
+     <input id="lancFornServico" type="text" inputmode="decimal" oninput="fo96Soma()" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+    </label>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Comissão
+     <input id="lancFornComissao" type="text" inputmode="decimal" oninput="fo96Soma()" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+    </label>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)"><span style="display:block;min-height:2.6em">Reembolso / adicionais</span>
+     <input id="lancFornAdic" type="text" inputmode="decimal" oninput="fo96Soma()" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+    </label>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)"><span style="display:block;min-height:2.6em">Impostos retidos e outros descontos</span>
+     <input id="lancFornDesc" type="text" inputmode="decimal" oninput="fo96Soma()" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+     <span class="muted" style="display:block;font-size:11px;font-weight:400;margin-top:2px">Valores descontados do pagamento ao fornecedor.</span>
+    </label>
+   </div>
+   <label style="display:block;margin-top:8px;font-size:12px;font-weight:700;color:var(--muted)">Observações
+    <input id="lancFornObs" type="text" maxlength="120" placeholder="Opcional" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
+   </label>
+   <div id="lancFornResumo" class="notice blue" style="display:none;margin-top:10px;margin-bottom:0;padding:8px 10px;font-size:13px;font-weight:700"></div>
+  </div>
+ </div>
+  <label id="lancRecorrenteWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;cursor:pointer">
    <input id="lancRecorrente" type="checkbox" style="width:16px;height:16px;cursor:pointer">
    🔁 Repetir todo mês (cria agora 12 lançamentos mensais; nada é gerado depois)
   </label>
@@ -1659,7 +1698,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div id="geDetalheBloco" style="margin-top:4px;padding-top:10px;border-top:1px dashed #c4b5fd">
    <div style="font-size:12px;font-weight:800;color:#6d28d9;margin-bottom:8px">📋 Detalhamento do pagamento</div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário bruto
      <input id="geDetSalario" type="text" inputmode="decimal" oninput="foSomaConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Comissão
@@ -20778,8 +20817,8 @@ var RPC_FIN_CONTEXTO_PRONT_REAL = 'projeto_financeiro_contexto_ler';
 var MSG_FIN23_PRONT_REAL = {
   abrir:'🔎 Localizar ou registrar a saída…',
   titulo:'Localizar ou registrar a saída deste pagamento',
-  comoRegularizar:'Como regularizar: (1) se o pagamento JÁ está no caixa, localize a saída e associe-a a este pagamento; (2) se o pagamento aconteceu mas NÃO está no caixa, registre-o (data efetiva, valor e descrição): a saída é criada uma única vez e associada; (3) se o pagamento nunca foi feito, use “Corrigir esta marcação”.',
-  explica:'Quem escolhe é você: o sistema não escolhe a saída por data, valor ou nome. Registrar cria UMA saída no Caixa (o mesmo caixa de sempre), no projeto e com o fornecedor desta linha, com a data em que o pagamento aconteceu de verdade. Se a resposta se perder ou você clicar duas vezes, nada é criado de novo.',
+  comoRegularizar:'Como regularizar: (1) se o pagamento JÁ está no caixa, localize a saída e associe-a a este pagamento; (2) se o pagamento aconteceu mas NÃO está no caixa, registre-o em Fluxo de caixa → Novo lançamento → Fornecedores e terceiros (informando esta OS): a saída é criada uma única vez e associada; (3) se o pagamento nunca foi feito, use “Corrigir esta marcação”.',
+  explica:'Quem escolhe é você: o sistema não escolhe a saída por data, valor ou nome. A saída que ainda não está no caixa é registrada em Fluxo de caixa → Novo lançamento → Fornecedores e terceiros (uma única saída; repetir ou clicar duas vezes não duplica).',
   lendo:'Lendo as saídas do caixa…',
   erroLer:'Não foi possível ler as saídas do caixa agora. Nada foi alterado.',
   recusa:'O banco não permitiu esta busca para esta linha (projeto sem regra clara, ambíguo ou linha de outro projeto). Nada foi alterado.',
@@ -20797,7 +20836,7 @@ var MSG_FIN23_PRONT_REAL = {
   abertaTitulo:'Operação em aberto: a saída deste pagamento JÁ foi registrada e ainda não foi associada',
   abertaTexto:'{valor} em {data} — {desc} · registrada por {quem} em {quando}. Não será criada outra: associe esta.',
   associarAberta:'Associar a saída já registrada',
-  regTitulo:'O pagamento aconteceu e a saída NÃO está no caixa? Registre-o',
+  regTitulo:'O pagamento aconteceu e a saída NÃO está no caixa? Registre no Fluxo de caixa',
   regBloqueado:'Há uma saída já registrada aguardando associação: associe-a (acima) em vez de registrar outra.',
   regData:'Data efetiva do pagamento (DD/MM/AAAA)', regValor:'Valor pago (R$)', regDesc:'Descrição (3 a 300 caracteres)',
   regModo:'Depois de registrar',
@@ -20924,7 +20963,7 @@ function _p5RegularizarProntReal(cx, l, i, pref, amb){
     }
     // registrar o pagamento que aconteceu e não está no caixa
     bx.appendChild(_elProntReal('div', 'font-weight:600;font-size:12px;margin-top:8px;border-top:1px dashed var(--line);padding-top:6px', M.regTitulo));
-    if(pend) bx.appendChild(_finLinhaProntReal(M.regBloqueado, p + 'reg-bloqueado-' + i, 'font-size:12px;color:#b45309'));
+    if(pend || FO96_CENTRALIZADO) bx.appendChild(pend ? _finLinhaProntReal(M.regBloqueado, p + 'reg-bloqueado-' + i, 'font-size:12px;color:#b45309') : fo96GuiaSaidaProntReal(amb, l, p, i));
     else {
       var g3 = _elProntReal('div'); g3.className = 'formgrid';
       g3.appendChild(amb.campo(M.regData, amb.fld + 'reg_data_' + pref + '_' + i, 'reg_data_' + k, 10));
@@ -20969,7 +21008,7 @@ function p5AssociarProntReal(amb, l, lancId, valor){
   amb.iniciar('forn_comprovar', RPC_FIN_FORN_COMPROVAR_PRONT_REAL, { p_projeto_id:alvo.em.projetoId, p_id:alvo.k, p_vinculo_esperado:String(linha.vinculo_token), p_chave:chave,
     p_lancamento_id:String(lancId), p_valor_esperado:Number(valor) });
 }
-function p5RegistrarProntReal(amb, l){
+function p5RegistrarProntReal(amb, l){ if(FO96_CENTRALIZADO){ amb.msg('aviso', MSG96.prontRegistrar); amb.repintar(); return; }
   var M = MSG_FIN23_PRONT_REAL, f = amb.form, k = String(l.id), alvo = _p5LinhaProntReal(amb, l);
   if(amb.ocupado()) return;
   if(!alvo){ amb.msg('erro', MSG_FIN18_PRONT_REAL.diferentes); amb.repintar(); return; }
@@ -38585,7 +38624,7 @@ function renderResumoEquipe(){
     + nomes.map(function(n){ return linha(n, por[n], false); }).join('') + linha('Total', tot, true) + '</table>';
 }
 FO_REPINTORES.push(function(){ if(foDom('finCaixa') && estadoFinOriginal.abaAtual === 'finCaixa') cxRender(); });
-FO_ENTRADAS.finCaixa = function(){ foCarregarNomes(); foCarregarPessoasPag(); cxCarregar(false); };
+FO_ENTRADAS.finCaixa = function(){ foCarregarNomes(); foCarregarPessoasPag(); fo96CarregarForn(); cxCarregar(false); };
 FO_LIMPEZAS.push(function(){ foCaixa.novoAberto = false; foCaixa.serieAberto = false; foCaixa.iniciado = false; ['modalNovoLancamento', 'modalSerieLancamento', 'modalEditarLancamento', 'modalExcluirLancamento'].forEach(function(id){ var m = foDom(id); if(m) m.classList.remove('open'); }); });
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39848,6 +39887,418 @@ var _foCxCarregar95 = cxCarregar;
 cxCarregar = function(forcar){ if(forcar){ try { foCarregarPessoasPag(); } catch(_e){} } return _foCxCarregar95.apply(this, arguments); };
 FO_LIMPEZAS.push(function(){ foPessoasPag = { status: 'idle', lista: [], ctx: null }; });
 // <<95:FIM>>
+// <<96:INICIO>>
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+// Pacote 96 (V1.6.0.0): Caixa Centralizado
+// • TODA saída nasce no Fluxo de caixa → Novo lançamento. Fornecedores e terceiros: UMA saída líquida (serviço + comissão + adicionais − descontos), com OS opcional.
+//   Gravação por RPC ÚNICA e atômica (financeiro_fornecedor_saida_gravar): chave de operação fixa no retry, IDs gerados no navegador e mantidos, conferência/repetição pelo mesmo caminho auditado
+//   da equipe (g_*): resposta perdida, duplo clique e nova tentativa NUNCA criam segunda saída. Com OS, o banco reutiliza projeto_fornecedor_pagamento_marcar_projeto + projeto_fornecedor_saida_registrar
+//   (mesmas travas, token de vínculo, chaves e histórico do projeto); sem OS, uma saída com fornecedor e sem projeto.
+// • "Registrar a saída" dentro do projeto deixa de criar saída (UI orienta e abre o Novo lançamento); localizar/associar saída já existente, correção e devolução continuam como eram.
+// • Filtro de categoria agrupado (principais / equipe legado / outras). Categorias novas só por SQL (IDs preservados); a tela localiza por nome e tipo, falha fechada se faltarem.
+// • Rótulo "Salário bruto" é só rótulo (ids, chaves e cálculos intactos). Contabilização: ver teste_funcs_96.js (Resultado mensal/anual não mudam; saída com OS não é somada de novo).
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+var FO96_CENTRALIZADO = true;
+var FO96_CAT = { servico: 'Receita de serviços', outras: 'Outras entradas', custoOp: 'Custo de operação ZIP', equipe: 'Equipe — Pagamento consolidado', forn: 'Fornecedores e terceiros', prod: 'Despesas de produção', imp: 'Impostos e taxas', bv: 'BV agência' };
+var FO96_PRINCIPAIS = [FO96_CAT.servico, FO96_CAT.outras, FO96_CAT.custoOp, FO96_CAT.equipe, FO96_CAT.forn, FO96_CAT.prod, FO96_CAT.imp, FO96_CAT.bv];
+var FO96_NOMES_ANTIGOS = ['Receita serviço', 'Custo operacional'];   // antes do SQL 96: continuam no grupo principal, nunca somem do filtro
+var FO96_RPC = { gravar: 'financeiro_fornecedor_saida_gravar', os: 'financeiro_fornecedor_os_resolver', lista: 'listar_fornecedores_pagamento' };
+var FO96_IDS = ['lancFornSel', 'lancFornOs', 'lancFornOsBtn', 'lancFornLinha', 'lancFornServico', 'lancFornComissao', 'lancFornAdic', 'lancFornDesc', 'lancFornObs'];
+var MSG96 = {
+  prontRegistrar: 'A saída agora é registrada em Fluxo de caixa → Novo lançamento → Fornecedores e terceiros. Nada foi criado por aqui.',
+  prontGuia: 'Para registrar a saída que ainda não está no caixa, use Fluxo de caixa → Novo lançamento → Fornecedores e terceiros (informe esta OS e escolha esta linha). Uma única saída é criada; repetir ou clicar duas vezes não duplica. Localizar e associar uma saída que já existe continua aqui.',
+  prontAbrir: 'Abrir Novo lançamento — Fornecedores e terceiros',
+  ausente: 'O Novo lançamento de fornecedor ainda não está instalado no banco (pacote 96). Nada foi alterado, e a tela não usa gravação direta como alternativa.',
+  recorrente: 'Repetir todo mês não se aplica a Fornecedores e terceiros. Desmarque a recorrência.',
+  listaCarregando: 'Carregando a lista de fornecedores…',
+  listaErro: 'Lista de fornecedores indisponível: use Atualizar. Enquanto isso não é possível gravar esta saída.',
+  osAjuda: 'Opcional. Informe a OS e use Verificar OS para escolher a linha do projeto.',
+  descAjuda: 'Valores descontados do pagamento ao fornecedor (impostos retidos e outros descontos). O sistema não calcula alíquotas.',
+  intro: 'Saída de fornecedor ou terceiro. A OS do projeto é opcional: informe-a para ligar a saída à linha do projeto.',
+  prontSemContexto: 'Não foi possível confirmar o projeto e a linha atuais. Atualize a tela e tente de novo. Nada foi criado.'
+};
+
+// ---- categorias ----
+function fo96CatPorNome(nome, tipo){ var r = null; estadoCaixaReal.catalogo.forEach(function(c){ if(c.nome === nome && c.tipo === tipo && c.ativa === true) r = c; }); return r; }
+function fo96CatForn(){ return fo96CatPorNome(FO96_CAT.forn, 'saida'); }
+function fo96NovoEhForn(){ var c = fo96CatForn(), sel = foDom('cxNovoCat'); return !!c && !!sel && String(sel.value) === String(c.id) && crValor('cxNovoTipo') === 'saida'; }
+function fo96GrupoCat(c){   // 'principal' | 'equipe' (itens separados antigos) | 'outra'
+  var n = String(c && c.nome || '');
+  if(FO96_PRINCIPAIS.indexOf(n) >= 0 || FO96_NOMES_ANTIGOS.indexOf(n) >= 0) return 'principal';
+  if(/^Equipe\s*[—-]/.test(n)) return 'equipe';
+  return 'outra';
+}
+// Fornecedores e terceiros só entra no Novo lançamento pelo fluxo próprio (a regra de lançamento avulso continua excluindo "fornecedor")
+var _foCxPreencherCategorias96 = cxPreencherCategorias;
+cxPreencherCategorias = function(selId, tipo, atual){
+  var prev0 = (document.getElementById(selId) || {}).value || '';
+  var n = _foCxPreencherCategorias96.apply(this, arguments);
+  if(selId === 'cxNovoCat' && tipo === 'saida'){
+    var c = fo96CatForn(), sel = document.getElementById(selId), ja = false;
+    if(c && sel){
+      Array.prototype.forEach.call(sel.children, function(o){ if(o.value === String(c.id)) ja = true; });
+      if(!ja){ var o = crEl('option', '', FO96_CAT.forn); o.value = String(c.id); sel.appendChild(o); n++; }
+      if(prev0 === String(c.id)) sel.value = prev0;
+    }
+  }
+  return n;
+};
+// Filtro "Todas as categorias" com grupos visuais (optgroup nativo). Os itens de equipe separados são lançamentos ANTIGOS: filtrar por eles NÃO decompõe o Pagamento consolidado.
+cxOpcoesFiltroCategoria = function(){
+  var sel = document.getElementById('cxCat'); if(!sel) return;
+  var e = estadoCaixaReal, prev = sel.value, vistos = {};
+  sel.textContent = '';
+  var op = function(pai, v, t){ var o = crEl('option', '', t); o.value = v; pai.appendChild(o); };
+  var grupo = function(rotulo){ var g = document.createElement('optgroup'); g.label = rotulo; return g; };
+  op(sel, '', 'Todas as categorias'); op(sel, '__sem', '(sem categoria)');
+  var gp = grupo('Principais'), ge = grupo('Equipe — lançamentos separados'), go = grupo('Outras categorias'), gf = grupo('Em lançamentos, fora do catálogo');
+  var ordem = FO96_PRINCIPAIS.concat(FO96_NOMES_ANTIGOS);
+  var cat = e.catalogo.slice().sort(function(a, b){
+    var ia = ordem.indexOf(String(a.nome)), ib = ordem.indexOf(String(b.nome));
+    if(ia >= 0 || ib >= 0) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    return String(a.nome) < String(b.nome) ? -1 : String(a.nome) > String(b.nome) ? 1 : 0;
+  });
+  cat.forEach(function(c){
+    vistos[String(c.id)] = true;
+    var g = fo96GrupoCat(c), inat = c.ativa === true ? '' : ' (inativa)';
+    if(g === 'principal') op(gp, String(c.id), String(c.nome || cxCategoriaNome(c.id, e.catalogo, true)) + inat);
+    else if(g === 'equipe') op(ge, String(c.id), String(c.nome) + inat);
+    else op(go, String(c.id), cxCategoriaNome(c.id, e.catalogo, true) + inat);
+  });
+  e.itens.forEach(function(i){ if(i.catId && !vistos[String(i.catId)]){ vistos[String(i.catId)] = true; op(gf, String(i.catId), i.catNome); } });
+  [gp, ge, go, gf].forEach(function(g){ if(g.children.length) sel.appendChild(g); });
+  var existe = false; Array.prototype.forEach.call(sel.querySelectorAll('option'), function(o){ if(o.value === prev) existe = true; });
+  sel.value = existe ? prev : '';
+};
+
+// ---- valores do fornecedor (centavos inteiros; vazio ou 0 = 0; negativo, texto e mais de 2 casas = erro) ----
+function fo96ValorOpc(id, rotulo){
+  var v = String(crValor(id)).trim();
+  if(!v || /^(R\$\s*)?0+([.,]0{1,2})?$/.test(v)) return { c: 0, erro: '' };
+  var p = cxParseValor(v);
+  if(p.erro) return { c: 0, erro: rotulo + ': valor inválido (número positivo, até 2 casas).' };
+  return { c: p.centavos, erro: '' };
+}
+function fo96LiquidoCalc(servC, comC, adC, descC){   // → { ok, brutoC, liquidoC, erro }
+  var v = [servC, comC, adC, descC];
+  for(var i = 0; i < v.length; i++){ if(typeof v[i] !== 'number' || !Number.isSafeInteger(v[i]) || v[i] < 0) return { ok: false, brutoC: 0, liquidoC: 0, erro: 'Valores inválidos no pagamento.' }; }
+  var bruto = servC + comC + adC;
+  if(!Number.isSafeInteger(bruto)) return { ok: false, brutoC: 0, liquidoC: 0, erro: 'Valores inválidos no pagamento.' };
+  if(descC > bruto) return { ok: false, brutoC: bruto, liquidoC: 0, erro: 'Os descontos não podem ser maiores que o total do pagamento.' };
+  if(bruto - descC <= 0) return { ok: false, brutoC: bruto, liquidoC: 0, erro: 'O valor líquido precisa ser maior que zero.' };
+  return { ok: true, brutoC: bruto, liquidoC: bruto - descC, erro: '' };
+}
+function fo96LerForn(){   // → { erro } | { servicoC, comissaoC, adicionaisC, descontosC, brutoC, liquidoC, obs }
+  var s = fo96ValorOpc('lancFornServico', 'Valor do serviço'), c = fo96ValorOpc('lancFornComissao', 'Comissão'), a = fo96ValorOpc('lancFornAdic', 'Reembolso/adicionais'), d = fo96ValorOpc('lancFornDesc', 'Impostos retidos e outros descontos');
+  var erro = s.erro || c.erro || a.erro || d.erro; if(erro) return { erro: erro };
+  var l = fo96LiquidoCalc(s.c, c.c, a.c, d.c); if(!l.ok) return { erro: l.erro };
+  var obs = String(crValor('lancFornObs')).replace(/\s+/g, ' ').trim();
+  if(/[\u0000-\u001f]/.test(obs)) return { erro: 'Observações inválidas.' };
+  return { servicoC: s.c, comissaoC: c.c, adicionaisC: a.c, descontosC: d.c, brutoC: l.brutoC, liquidoC: l.liquidoC, obs: obs };
+}
+// Texto gravado na descrição da saída (o detalhamento fica legível no caixa; a coluna não muda). Só os componentes diferentes de zero.
+function fo96Descricao(base, f){
+  var p = [];
+  if(f.servicoC > 0) p.push('serviço ' + crBRL(f.servicoC));
+  if(f.comissaoC > 0) p.push('comissão ' + crBRL(f.comissaoC));
+  if(f.adicionaisC > 0) p.push('adicionais ' + crBRL(f.adicionaisC));
+  if(f.descontosC > 0) p.push('descontos −' + crBRL(f.descontosC));
+  p.push('líquido ' + crBRL(f.liquidoC));
+  return String(base).trim() + ' [' + p.join(' · ') + ']' + (f.obs ? ' — ' + f.obs : '');
+}
+function fo96Soma(){   // o valor do lançamento passa a ser o líquido (somente leitura), como o consolidado da equipe
+  var v = foDom('cxNovoValor'), rot = foDom('cxNovoValorRot'), box = foDom('lancFornResumo');
+  var f = fo96LerForn(), on = fo96NovoEhForn();
+  if(v && on) v.value = f.erro ? '' : cxValorTexto(f.liquidoC);
+  if(rot && on) rot.textContent = 'Valor líquido (R$)';
+  if(!box) return;
+  var vazio = ['lancFornServico', 'lancFornComissao', 'lancFornAdic', 'lancFornDesc'].every(function(id){ return !String(crValor(id)).trim(); });
+  if(!on || vazio){ box.style.display = 'none'; box.textContent = ''; return; }
+  box.style.display = 'block';
+  box.textContent = f.erro ? f.erro : 'Serviço ' + crBRL(f.servicoC) + ' + Comissão ' + crBRL(f.comissaoC) + ' + Adicionais ' + crBRL(f.adicionaisC) + ' − Descontos ' + crBRL(f.descontosC) + ' = Valor líquido (saída do caixa) ' + crBRL(f.liquidoC);
+}
+var _foAvisoConsolidado96 = foAvisoConsolidado;
+foAvisoConsolidado = function(k){ _foAvisoConsolidado96.apply(this, arguments); if(k === 'novo' && fo96NovoEhForn()){ var rot = foDom('cxNovoValorRot'); if(rot) rot.textContent = 'Valor líquido (R$)'; } };
+
+// ---- lista de fornecedores (RPC própria: o Financeiro não depende de ler a tabela diretamente) ----
+var fo96Lista = { status: 'idle', lista: [], ctx: null };   // idle | carregando | ok | erro
+function fo96ListaValidar(data){   // qualquer linha malformada invalida tudo
+  if(!Array.isArray(data)) return null;
+  var out = [], vistos = {};
+  for(var i = 0; i < data.length; i++){
+    var x = data[i], nome = x && typeof x.nome === 'string' ? x.nome.replace(/\s+/g, ' ').trim() : '';
+    if(!x || !voIdOk(x.id) || vistos[x.id] || !nome) return null;
+    vistos[x.id] = true; out.push({ id: x.id, nome: nome });
+  }
+  return out;
+}
+function fo96ListaPronta(){ var p = fo96Lista, c = p.ctx; return p.status === 'ok' && !!c && foCtxOk(c); }
+function fo96CarregarForn(){
+  if(!foPode()) return Promise.resolve();
+  foGarantirConta();
+  var ctx = foCtxAtual(), p = fo96Lista;
+  if(p.ctx && (p.ctx.seq !== ctx.seq || p.ctx.uid !== ctx.uid || p.ctx.epoch !== ctx.epoch)){ p = fo96Lista = { status: 'idle', lista: [], ctx: null }; }
+  if(p.status === 'ok' || p.status === 'carregando') return Promise.resolve();
+  p.status = 'carregando'; p.ctx = ctx;
+  var ok = function(){ return fo96Lista === p && foCtxOk(ctx); };
+  var q; try { q = supabaseClient.rpc(FO96_RPC.lista); } catch(_e){ q = Promise.reject(_e); }
+  return crComTempo(q).then(function(r){
+    if(!ok()) return;
+    var lista = r && !r.error ? fo96ListaValidar(r.data) : null;
+    if(!lista){ p.status = 'erro'; p.lista = []; } else { p.status = 'ok'; p.lista = lista; }
+    foRenderTudo();
+  }, function(){ if(ok()){ p.status = 'erro'; p.lista = []; foRenderTudo(); } });
+}
+function fo96FornSelecionado(){
+  var id = crValor('lancFornSel'), r = null; if(!id || !fo96ListaPronta()) return null;
+  fo96Lista.lista.forEach(function(x){ if(x.id === id) r = x; });
+  return r;
+}
+function fo96PreencherForn(){
+  var sel = foDom('lancFornSel'); if(!sel) return;
+  var lista = fo96ListaPronta() ? fo96Lista.lista : [], ass = lista.map(function(x){ return x.id + '=' + x.nome; }).join('|');
+  var av = foDom('lancFornAviso'), st = fo96Lista.status;
+  if(av){ av.style.display = lista.length || st === 'ok' ? 'none' : 'block'; av.textContent = lista.length || st === 'ok' ? '' : (st === 'carregando' || st === 'idle' ? MSG96.listaCarregando : MSG96.listaErro); }
+  if(sel.getAttribute('data-assinatura') === ass) return;
+  var prev = sel.value; sel.textContent = '';
+  var add = function(v, t){ var o = crEl('option', '', t); o.value = v; sel.appendChild(o); };
+  add('', 'Selecione…'); lista.forEach(function(x){ add(x.id, x.nome); });
+  sel.setAttribute('data-assinatura', ass); sel.value = prev;
+}
+
+// ---- OS opcional: o banco resolve OS → projeto → linhas do ESTE fornecedor; a pessoa escolhe a linha (nada é vinculado por nome, data ou valor) ----
+var fo96Os = { seq: 0, status: 'idle', os: '', fornId: '', dados: null, motivo: '' };   // idle | carregando | ok | recusa | erro
+var fo96Ctx = null;   // contexto vindo do projeto: { projetoId, linhaId, os, fornId } — consumido uma vez ao abrir o formulário
+var fo96Origem = null;   // projeto/linha de onde a pessoa veio: a OS verificada TEM de ser deste projeto; qualquer edição manual da OS/fornecedor a descarta
+function fo96OsDoProjeto(pid){   // OS do projeto a partir das leituras do banco já em tela (nunca de texto digitado); vazio se nenhuma fonte confirmar
+  var out = '';
+  try { var e = estadoSemAtendReal; if(e){
+    if(e.ctx && e.ctx.status === 'ok' && e.ctx.dados && String(e.ctx.dados.projeto_id) === pid && typeof e.ctx.dados.os === 'string') out = e.ctx.dados.os;
+    if(!out && e.lista && Array.isArray(e.lista.itens)) e.lista.itens.forEach(function(p){ if(p && String(p.projeto_id) === pid && typeof p.os === 'string') out = p.os; });
+  } } catch(_e){}
+  try { var f = estadoProntuarioAtendReal && estadoProntuarioAtendReal.fin; if(!out && f){
+    if(f.dados && String(f.dados.projeto_id) === pid && typeof f.dados.os === 'string') out = f.dados.os;
+    if(!out && f.proj && f.proj.lista && Array.isArray(f.proj.lista.itens)) f.proj.lista.itens.forEach(function(p){ if(p && String(p.projeto_id) === pid && typeof p.os === 'string') out = p.os; });
+  } } catch(_e){}
+  return /^[A-Za-z0-9._-]{1,30}$/.test(out) ? out : '';
+}
+function fo96InvalidarProjetos(){   // depois de gravar: o projeto/checklist de fornecedor mostram o novo estado sem F5. Não apaga formulários em edição nem mexe em ação em curso.
+  try { _p5LimparProntReal(); } catch(_e){}
+  try { var e = estadoSemAtendReal; if(e && e.sel && !e.acao && e.chaveCtx === _saChaveCtxProntReal()) _saCarregarCustosProntReal(); } catch(_e){}
+  try { var s = estadoProntuarioAtendReal, fin = s && s.fin; if(fin && fin.aberto && !fin.acao && _ctxProntValido(_ctxProntReal())) _carregarFinProntReal(true); } catch(_e){}
+}
+function fo96OsRecusaTexto(s){
+  var t = { os_inexistente: 'OS não encontrada.', os_ambigua: 'Esta OS aparece em mais de um projeto: o banco não escolhe por você. Nada será gravado com esta OS.', sem_linha: 'Este projeto não tem linha para este fornecedor. Verifique a OS e o fornecedor, ou grave sem OS.',
+    projeto_diferente: 'A OS informada não é a do projeto de onde você veio. Nada será gravado com ela.', fornecedor_inexistente: 'Fornecedor inexistente ou inativo.', projeto_ambiguo: 'O projeto desta OS não pode ser operado por aqui (alvo ambíguo ou não é o alvo do orçamento).', projeto_nao_alvo: 'O projeto desta OS não pode ser operado por aqui (não é o alvo do orçamento).', somente_leitura: 'O projeto desta OS está somente para leitura.' };
+  return t[s] || 'O banco não permitiu usar esta OS (' + String(s || 'sem detalhe') + '). Nada será gravado com ela.';
+}
+function fo96OsValidarDados(d, os, fornId){   // resposta íntegra do resolvedor ou null
+  if(!d || typeof d !== 'object' || Array.isArray(d) || d.status !== 'ok' || !voIdOk(d.projeto_id) || !Array.isArray(d.linhas) || String(d.os) !== os) return null;
+  var linhas = [], vistos = {};
+  for(var i = 0; i < d.linhas.length; i++){
+    var l = d.linhas[i];
+    if(!l || !voIdOk(l.id) || vistos[l.id] || typeof l.vinculo_token !== 'string' || !l.vinculo_token || typeof l.selecionavel !== 'boolean' || (l.fornecedor_id != null && String(l.fornecedor_id) !== String(fornId))) return null;
+    vistos[l.id] = true;
+    linhas.push({ id: l.id, descricao: String(l.descricao == null ? '' : l.descricao), previsto: l.valor_previsto, status_pagamento: String(l.status_pagamento || ''), vinculo_token: l.vinculo_token, comprovacao_estado: String(l.comprovacao_estado || ''), selecionavel: l.selecionavel, motivo: String(l.motivo || '') });
+  }
+  return { projeto_id: d.projeto_id, os: os, titulo: String(d.titulo == null ? '' : d.titulo), linhas: linhas };
+}
+function fo96OsMsg(txt, cor){ var el = foDom('lancFornOsMsg'); if(el){ el.textContent = txt || ''; el.style.color = cor || 'var(--muted)'; el.style.display = txt ? 'block' : 'none'; } }
+function fo96OsPintar(){
+  var sel = foDom('lancFornLinha'), wrap = foDom('lancFornLinhaWrap'); if(!sel) return;
+  var s = fo96Os, ok = s.status === 'ok' && s.dados;
+  if(wrap) wrap.style.display = ok ? 'block' : 'none';
+  var prev = sel.value; sel.textContent = '';
+  var add = function(v, t, dis){ var o = crEl('option', '', t); o.value = v; if(dis) o.disabled = true; sel.appendChild(o); };
+  add('', ok && s.dados.linhas.length ? 'Escolha a linha do projeto…' : '(sem linhas)');
+  if(ok) s.dados.linhas.forEach(function(l){
+    var pre = l.previsto == null || !isFinite(Number(l.previsto)) ? '' : ' · previsto ' + crBRL(Math.round(Number(l.previsto) * 100));
+    var st = l.status_pagamento === 'pago' ? ' · pago' : l.status_pagamento ? ' · ' + l.status_pagamento : '';
+    add(l.id, (l.descricao || 'Linha') + pre + st + (l.selecionavel ? '' : ' — indisponível' + (l.motivo ? ' (' + l.motivo.replace(/_/g, ' ') + ')' : '')), !l.selecionavel);
+  });
+  var sels = ok ? s.dados.linhas.filter(function(l){ return l.selecionavel; }) : [];
+  var existe = false; Array.prototype.forEach.call(sel.children, function(o){ if(prev !== '' && o.value === prev && !o.disabled) existe = true; });   // o item vazio é o marcador "Escolha…": nunca conta como escolha já feita
+  var pref = fo96Origem && fo96Origem.linhaId ? fo96Origem.linhaId : '';   // veio de uma linha do projeto: ela vem escolhida (e visível) se ainda estiver disponível
+  sel.value = existe ? prev : (pref && sels.some(function(l){ return l.id === pref; }) ? pref : (sels.length === 1 ? sels[0].id : ''));   // uma única linha disponível vem escolhida e VISÍVEL; várias exigem escolha explícita
+  if(s.status === 'carregando') fo96OsMsg('Verificando a OS no banco…', 'var(--muted)');
+  else if(s.status === 'ok') fo96OsMsg('OS ' + s.os + (s.dados.titulo ? ' — ' + s.dados.titulo : '') + ': ' + (sels.length ? sels.length + ' linha(s) disponível(is). Confirme a linha escolhida.' : 'nenhuma linha disponível para gravar.'), sels.length ? '#065f46' : '#b45309');
+  else if(s.status === 'recusa') fo96OsMsg(fo96OsRecusaTexto(s.motivo), '#b45309');
+  else if(s.status === 'erro') fo96OsMsg('Não foi possível verificar a OS agora. Nada foi gravado. Tente de novo.', 'var(--red)');
+  else fo96OsMsg('', '');
+}
+function fo96OsEditado(){   // qualquer mudança de OS/fornecedor invalida a verificação anterior (resposta atrasada também é descartada pelo seq)
+  fo96Os.seq++; fo96Os = { seq: fo96Os.seq, status: 'idle', os: '', fornId: '', dados: null, motivo: '' };
+  fo96Origem = null;
+  fo96OsPintar();
+}
+function fo96FornMudou(){ fo96OsEditado(); }
+function fo96OsVerificar(){
+  var os = String(crValor('lancFornOs')).trim(), fid = crValor('lancFornSel');
+  if(!os){ fo96OsEditado(); return Promise.resolve(); }
+  if(!/^[A-Za-z0-9._-]{1,30}$/.test(os)){ fo96OsEditado(); fo96OsMsg('OS inválida (letras, números, ponto, hífen; até 30 caracteres).', 'var(--red)'); return Promise.resolve(); }
+  if(!fid || !fo96FornSelecionado()){ fo96OsEditado(); fo96OsMsg('Escolha o fornecedor antes de verificar a OS.', '#b45309'); return Promise.resolve(); }
+  if(!foPode()) return Promise.resolve();
+  var ctx = foCtxAtual(), seq = fo96Os.seq + 1;
+  fo96Os = { seq: seq, status: 'carregando', os: os, fornId: fid, dados: null, motivo: '' }; fo96OsPintar();
+  var vivo = function(){ return fo96Os.seq === seq && foCtxOk(ctx) && String(crValor('lancFornOs')).trim() === os && crValor('lancFornSel') === fid; };
+  var q; try { q = supabaseClient.rpc(FO96_RPC.os, { p_os: os, p_fornecedor_id: fid }); } catch(_e){ q = Promise.reject(_e); }
+  return crComTempo(q).then(function(r){
+    if(!vivo()) return;
+    var d = r && !r.error ? r.data : null;
+    if(d && typeof d === 'object' && !Array.isArray(d) && typeof d.status === 'string' && d.status !== 'ok'){ fo96Os = { seq: seq, status: 'recusa', os: os, fornId: fid, dados: null, motivo: d.status }; }
+    else if(d && d.status === 'ok' && fo96Origem && fo96Origem.projetoId && String(d.projeto_id) !== String(fo96Origem.projetoId)){ fo96Os = { seq: seq, status: 'recusa', os: os, fornId: fid, dados: null, motivo: 'projeto_diferente' }; }
+    else { var dados = fo96OsValidarDados(d, os, fid); fo96Os = dados ? { seq: seq, status: 'ok', os: os, fornId: fid, dados: dados, motivo: '' } : { seq: seq, status: 'erro', os: os, fornId: fid, dados: null, motivo: '' }; }
+    fo96OsPintar();
+  }, function(){ if(vivo()){ fo96Os = { seq: seq, status: 'erro', os: os, fornId: fid, dados: null, motivo: '' }; fo96OsPintar(); } });
+}
+function fo96OsAlvo(){   // → { erro } | { projeto_id, linha_id, vinculo_token, os }: só vale se a verificação é DESTA OS e DESTE fornecedor e a linha foi escolhida e está disponível
+  var os = String(crValor('lancFornOs')).trim(), fid = crValor('lancFornSel'), s = fo96Os;
+  if(s.status !== 'ok' || !s.dados || s.os !== os || s.fornId !== fid) return { erro: 'Use Verificar OS e escolha a linha do projeto antes de salvar (ou apague a OS para gravar sem projeto).' };
+  var lid = crValor('lancFornLinha'), lin = null;
+  s.dados.linhas.forEach(function(l){ if(l.id === lid) lin = l; });
+  if(!lin) return { erro: 'Escolha a linha do projeto. Nada é vinculado automaticamente.' };
+  if(!lin.selecionavel) return { erro: 'Esta linha do projeto não está disponível para gravar' + (lin.motivo ? ' (' + lin.motivo.replace(/_/g, ' ') + ')' : '') + '.' };
+  return { projeto_id: s.dados.projeto_id, linha_id: lin.id, vinculo_token: lin.vinculo_token, os: os };
+}
+
+// ---- tela: bloco, estado, travas ----
+function fo96FornSinc(){
+  var on = fo96NovoEhForn(), b = foDom('lancFornBloco'); if(b) b.style.display = on ? 'block' : 'none';
+  var v = foDom('cxNovoValor'); if(v) v.readOnly = on;
+  var d = foDom('cxNovoDesc'); if(d){ if(d.getAttribute('data-ph0') == null) d.setAttribute('data-ph0', d.placeholder || ''); d.placeholder = on ? 'Ex: Captação de imagens — 2 diárias' : d.getAttribute('data-ph0'); }
+  var rw = foDom('lancRecorrenteWrap'); if(rw) rw.style.display = on ? 'none' : 'flex';   // "Repetir todo mês" não existe para fornecedor: some neste modo e volta (desmarcado) nas outras categorias
+  if(on){ var rc = foDom('lancRecorrente'); if(rc) rc.checked = false; }
+  var it = foDom('cxNovoIntro'); if(it){ if(it.getAttribute('data-t0') == null) it.setAttribute('data-t0', it.textContent); it.textContent = on ? MSG96.intro : it.getAttribute('data-t0'); }
+  if(on){ fo96PreencherForn(); fo96AplicarCtx(); fo96Soma(); }
+}
+function fo96Travar(){
+  var e = estadoCaixaReal, travado = !!envioCaixaReal || !crSessao() || !crPodeLer() || e.catStatus !== 'ok' || !fo96ListaPronta();
+  cxDesabilitar(FO96_IDS, travado);
+}
+function fo96AplicarCtx(){   // vindo do projeto: preenche fornecedor e OS uma única vez, só quando a lista e a categoria já existem
+  var c = fo96Ctx; if(!c || !foCaixa.novoAberto || !fo96ListaPronta()) return;
+  fo96Ctx = null;
+  var sel = foDom('lancFornSel'), os = foDom('lancFornOs');
+  if(sel && c.fornId && fo96Lista.lista.some(function(x){ return x.id === c.fornId; })) sel.value = c.fornId;
+  if(os && c.os) os.value = c.os;
+  fo96OsEditado();
+  fo96Origem = c.projetoId ? { projetoId: c.projetoId, linhaId: c.linhaId || '' } : null;   // depois do reset acima: a verificação da OS será conferida contra este projeto
+  if(c.os && c.fornId && fo96FornSelecionado()) fo96OsVerificar();
+}
+var _foNovoBlocoSinc96 = foNovoBlocoSinc;
+foNovoBlocoSinc = function(){ _foNovoBlocoSinc96.apply(this, arguments); try { fo96FornSinc(); } catch(_e){} };
+var _cxFormEstado96 = cxFormEstado;
+cxFormEstado = function(){ _cxFormEstado96.apply(this, arguments); try { fo96FornSinc(); fo96Travar(); } catch(_e){} };
+// nova tentativa de ler a lista só por ação da pessoa (abrir o lançamento, Atualizar): nunca em laço de renderização
+var _foCaixaAbrir96 = foCaixaAbrir;
+foCaixaAbrir = function(){ try { fo96CarregarForn(); } catch(_e){} return _foCaixaAbrir96.apply(this, arguments); };
+var _cxCarregar96 = cxCarregar;
+cxCarregar = function(forcar){ if(forcar){ try { fo96CarregarForn(); } catch(_e){} } return _cxCarregar96.apply(this, arguments); };
+var _foCaixaFechar96 = foCaixaFechar;
+foCaixaFechar = function(){ fo96Ctx = null; fo96Origem = null; return _foCaixaFechar96.apply(this, arguments); };   // fechar o lançamento descarta o contexto do projeto
+FO_LIMPEZAS.push(function(){ fo96Lista = { status: 'idle', lista: [], ctx: null }; fo96Os = { seq: fo96Os.seq + 1, status: 'idle', os: '', fornId: '', dados: null, motivo: '' }; fo96Ctx = null; fo96Origem = null; });
+
+// ---- gravar: UMA operação, mesmo caminho conferível das operações de grupo (g_*) ----
+FO_G_RPC.g_forn = FO96_RPC.gravar;
+var _foGArgs96 = foGArgs;
+foGArgs = function(env){ if(env.kind === 'g_forn') return { p_op: env.op, p_linha: env.linha }; return _foGArgs96.apply(this, arguments); };
+var _cxSalvarNovo96 = cxSalvarNovo;
+cxSalvarNovo = function(){
+  if(envioCaixaReal) return Promise.resolve();
+  if(fo96NovoEhForn()) return fo96Novo();
+  return _cxSalvarNovo96.apply(this, arguments);
+};
+function fo96Montar(){   // lê e valida o formulário → { erro } | { linha }
+  var cat = fo96CatForn();
+  var c = cxLerCampos('cxNovo', function(tipo, id){ return tipo === 'saida' && !!cat && String(id) === String(cat.id); });
+  if(c.erro) return c;
+  if(cxChecked('lancRecorrente')) return { erro: MSG96.recorrente };
+  var f = fo96LerForn(); if(f.erro) return f;
+  if(c.centavos !== f.liquidoC) return { erro: 'O valor líquido deve ser serviço + comissão + adicionais − descontos (' + crBRL(f.liquidoC) + '). Revise os campos.' };
+  var forn = fo96FornSelecionado(); if(!forn) return { erro: 'Selecione o fornecedor.' };
+  var osTxt = String(crValor('lancFornOs')).trim(), alvo = null;
+  if(osTxt){
+    alvo = fo96OsAlvo(); if(alvo.erro) return alvo;
+    if(c.data > crHojeSP() || c.data < '2000-01-01') return { erro: 'Com OS, a data é a do pagamento efetivo: não pode ser futura nem anterior a 2000.' };
+  }
+  var desc = fo96Descricao(c.desc, f);
+  if(desc.length > CX_MAX_DESC) return { erro: 'Descrição com o detalhamento passa de ' + CX_MAX_DESC + ' caracteres (' + desc.length + '). Reduza a descrição ou as observações.' };
+  var linha = { id: cxUuid(), data: c.data, categoria_id: cat.id, fornecedor_id: forn.id, os: osTxt || null, projeto_id: alvo ? alvo.projeto_id : null, linha_id: alvo ? alvo.linha_id : null, vinculo_token: alvo ? alvo.vinculo_token : null,
+    descricao: desc, valor: cxFmt2(f.liquidoC), componentes: { servico: cxFmt2(f.servicoC), comissao: cxFmt2(f.comissaoC), adicionais: cxFmt2(f.adicionaisC), descontos: cxFmt2(f.descontosC) } };
+  return { linha: linha };
+}
+function fo96Novo(){
+  if(envioCaixaReal) return Promise.resolve();
+  if(!foGLeituraOk() || !fo96ListaPronta()){ cxMsgForm = fo96ListaPronta() ? cxMsgForm : MSG96.listaErro; cxFormEstado(); return Promise.resolve(); }
+  var m = fo96Montar();
+  if(m.erro){ cxMsgForm = m.erro; cxFormEstado(); return Promise.resolve(); }
+  cxMsgForm = '';
+  var env = cxNovoEnvio('g_forn', { op: cxUuid(), linha: m.linha, linhas: [m.linha], esperadoLinhas: 1, ids: [m.linha.id], msg: 'Gravando a saída do fornecedor (uma única operação)…' });
+  envioCaixaReal = env; cxRender();
+  return foGRpc(env, false);
+}
+function fo96ResultadoTexto(d){
+  var s = String(d.status || '');
+  var t = { fornecedor_inexistente: 'Fornecedor inexistente ou inativo. Nada foi gravado.', os_inexistente: 'OS não encontrada. Nada foi gravado.', os_ambigua: 'Esta OS aparece em mais de um projeto. Nada foi gravado.',
+    linha_invalida: 'A linha escolhida não pertence a este projeto e a este fornecedor. Nada foi gravado.', vinculo_mudou: 'A linha do projeto mudou depois da verificação. Verifique a OS de novo. Nada foi gravado.',
+    ja_comprovado: 'Esse pagamento já está comprovado no caixa por outro registro: nada foi criado (sem duplicar). Confira o projeto.', saida_pendente: 'Já existe uma saída registrada para esta linha aguardando associação: associe-a no projeto. Nada foi criado.',
+    registro_igual: 'Já existe um registro igual para esta linha. Nada foi duplicado.', categoria_invalida: 'A categoria Fornecedores e terceiros não está ativa para saída. Nada foi gravado.',
+    projeto_bloqueado: 'O projeto desta OS não pode ser operado por aqui. Nada foi gravado.', linha_indisponivel: 'A linha escolhida não está disponível para gravar. Nada foi gravado.',
+    conflito: 'CONFLITO: já existe no banco um lançamento com este ID e conteúdo diferente. Nada foi aceito como seu. A lista foi atualizada.' };
+  return t[s] || (s === 'invalido' ? 'O banco recusou os dados: ' + String(d.motivo || 'inválidos') + '. Nada foi gravado.' : '');
+}
+var _foGResultado96 = foGResultado;
+foGResultado = function(env, d){
+  if(env.kind !== 'g_forn') return _foGResultado96.apply(this, arguments);
+  var s = String(d.status || '');
+  if(s === 'aplicado' || s === 'ja_aplicado'){
+    if(d.linhas !== 1) return cxIncerto(env, 'Aguardando conferência: o banco respondeu sucesso sem confirmar exatamente 1 linha (recebido: ' + String(d.linhas) + '). Nada é dado como concluído. Use “Conferir / repetir”.');
+    env.lancId = voIdOk(d.lancamento_id) ? d.lancamento_id : env.linha.id;
+    return fo96Sucesso(env);
+  }
+  var msg = fo96ResultadoTexto(d);
+  if(msg) return foGFim(env, msg, true);
+  return cxIncerto(env, 'Aguardando conferência: resposta inesperada do banco (' + (s || 'sem status') + '). Use “Conferir / repetir” (mesma operação, sem duplicar).');
+};
+var _foGErro96 = foGErro;
+foGErro = function(env, err){ if(env.kind === 'g_forn' && cxRpcErroNaoInstalado(err)) return foGFim(env, MSG96.ausente, false); return _foGErro96.apply(this, arguments); };
+function fo96Sucesso(env){
+  env.fase = 'relendo'; env.msg = 'Gravado. Atualizando a lista…'; cxFormEstado();
+  return cxCarregar(true).then(function(){
+    if(!cxEnvioVivo(env)) return;
+    var e = estadoCaixaReal, leu = e.status === 'ok' || e.status === 'incompleto', it = cxAchar(env.lancId);
+    var msg = !leu || !it ? 'Gravado, mas a releitura ainda não mostra o lançamento. Use Atualizar.' : 'Saída de fornecedor registrada (' + crBRL(it.valorC) + '). Uma única saída no caixa' + (env.linha.os ? ', ligada à linha do projeto ' + env.linha.os + '.' : '.');
+    envioCaixaReal = null; cxLimparPaineis(); foGLimparForm(); cxMsgForm = msg; fo96InvalidarProjetos(); cxRender();
+  });
+}
+var _foGLimparForm96 = foGLimparForm;
+foGLimparForm = function(){
+  _foGLimparForm96.apply(this, arguments);
+  ['lancFornServico', 'lancFornComissao', 'lancFornAdic', 'lancFornDesc', 'lancFornObs', 'lancFornOs'].forEach(function(id){ var el = foDom(id); if(el) el.value = ''; });
+  var s = foDom('lancFornSel'); if(s) s.value = '';
+  fo96OsEditado(); fo96Soma();
+};
+
+// ---- projeto: "Registrar a saída" deixa de criar; orienta e abre o Novo lançamento com o contexto possível ----
+function fo96AbrirDoProjeto(amb, l){
+  // o contexto sai da linha ATUAL em tela (leitura do banco): projeto, linha e fornecedor; a OS só vem de leituras do banco do mesmo projeto. Sem confirmação, nada abre.
+  var alvo = null; try { alvo = _p5LinhaProntReal(amb, l); } catch(_e){}
+  var pid = alvo && alvo.em && alvo.em.projetoId ? String(alvo.em.projetoId) : '';
+  if(!alvo || !pid){ amb.msg('erro', MSG96.prontSemContexto); amb.repintar(); return; }
+  var fid = alvo.linha && typeof alvo.linha.fornecedor_id === 'string' ? alvo.linha.fornecedor_id : '';
+  fo96Ctx = { projetoId: pid, linhaId: String(alvo.k), os: fo96OsDoProjeto(pid), fornId: fid };
+  var b1 = document.querySelector('button[onclick^="show(\'financeiro\'"]'); if(b1) b1.click();
+  var b2 = document.querySelector('#financeiro .tabs button[onclick^="showFin(\'finCaixa\'"]'); if(b2) b2.click();
+  try { foCaixaAbrir('novo'); foCaixaTipo('saida'); var c = fo96CatForn(), sel = foDom('cxNovoCat'); if(c && sel){ cxFormEstado(); sel.value = String(c.id); foNovoCatMudou(); } } catch(_e){}
+}
+function fo96GuiaSaidaProntReal(amb, l, p, i){
+  var box = _elProntReal('div', 'margin-top:4px');
+  box.appendChild(_finLinhaProntReal(MSG96.prontGuia, p + 'reg-guia-' + i, 'font-size:12px;color:#b45309'));
+  var b = _botaoProntReal(MSG96.prontAbrir, p + 'reg-abrir-caixa-' + i, function(){ fo96AbrirDoProjeto(amb, l); }, true, 'margin-top:4px;font-size:12px');
+  b.disabled = amb.ocupado(); box.appendChild(b);
+  return box;
+}
+// <<96:FIM>>
 
 // ---- excluir (uma linha ou toda a recorrência) ----
 function foGExcluir(id){

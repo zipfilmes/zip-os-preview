@@ -920,6 +920,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div id="zosAjustes" role="group" aria-label="Ajustes">
 <div class="zos-aj-tit">Ajustes</div>
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
+<style id="cx97Css">#cxTabela .cx97-lin:hover>td,#cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(23,92,211,.09),rgba(23,92,211,.09))}#cxTabela .cx97-lin:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}html[data-theme="dark"] #cxTabela .cx97-lin:hover>td,html[data-theme="dark"] #cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(143,184,238,.12),rgba(143,184,238,.12))}#cx97Pop{position:fixed;left:0;top:0;z-index:2147483000;display:none;max-width:min(380px,calc(100vw - 16px));min-width:240px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);box-shadow:0 8px 24px rgba(16,24,40,.22);font-size:12px;line-height:1.45;pointer-events:none}#cx97Pop.cx97-vis{display:block}#cx97Pop .t{font-weight:700;font-size:12.5px;margin-bottom:6px;word-break:break-word}#cx97Pop .l{display:flex;gap:10px;justify-content:space-between;padding:1px 0}#cx97Pop .l span:first-child{color:var(--muted);flex:none}#cx97Pop .l span:last-child{text-align:right;word-break:break-word}@media print{#cx97Pop{display:none!important}}</style>
 <style id="zosTemaStatusCss">#zosAjustes .zos-aj-st{margin-top:6px;font-size:11px;color:#98a2b3}#zosAjustes .zos-aj-st:empty{display:none}#zosAjustes .zos-aj-retry{margin-top:4px;border:1px solid #475467;background:transparent;color:#cbd5e1;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}</style>
 <div id="zosTemaStatus" class="zos-aj-st" role="status" aria-live="polite"></div><button type="button" id="zosTemaRetentar" class="zos-aj-retry" style="display:none">Tentar novamente</button>
 </div>
@@ -928,7 +929,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.0.0 · Caixa Centralizado</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.1.0 · Recebimentos Integrados</div>
 </aside>
 
 <main class="main">
@@ -1499,6 +1500,10 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <select id="cxNovoCat" onchange="foNovoCatMudou()" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box"></select>
   </label>
   <div id="cxNovoCatNota" class="muted" style="font-size:12px;margin-bottom:8px"></div>
+  <label id="lancNfWrap" style="display:none;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px">Nota fiscal (opcional)
+   <input id="lancNf" type="text" maxlength="30" autocomplete="off" placeholder="Ex: 1234" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
+   <span class="muted" style="display:block;font-size:11px;font-weight:400;margin-top:2px">Só registra o número da NF neste lançamento; não vincula OS nem cria nota fiscal.</span>
+  </label>
  <div id="lancEquipeBloco" style="display:none;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:12px 14px;margin-bottom:12px">
   <div style="font-size:13px;font-weight:800;color:#6d28d9;margin-bottom:10px">👥 Dados da equipe</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
@@ -16860,6 +16865,7 @@ function classificarRespostaFinProntReal(acao, tipoResp, res, extra){
   // rev23 (P5): o registro repetido (resposta perdida) que NÃO foi associado continua uma operação em aberto: aviso (o painel fica aberto), não "ok"
   if(st === 'repetido' && acao === 'saida_registrar' && d.ligado !== true) return { tipo:'aviso', texto:MSG_FIN23_PRONT_REAL.registradaLivre, reler:true };
   if(st === 'repetido') return { tipo:'ok', texto:M.repetido, reler:true };
+  if(acao === 'rec_estorno'){ var re97 = fo97ClassificarEstorno(st, d); if(re97) return re97; }
   if(acao === 'recebimento'){ var rr = _classificarRecProntReal(st, d); if(rr) return rr; }     // V8.6.0 REC-1
   var r18 = _classificarFin18ProntReal(acao, st, d, extra || {});
   if(r18 !== undefined){
@@ -16980,10 +16986,10 @@ function finPagarFornecedorProntReal(pfId){
 // A tela nunca soma nem decide: mostra o que o banco devolveu. O token de estado lido vai junto; se a parcela mudou (outra aba, outro usuário), o banco devolve
 // 'conflito' e a tela relê, sem sobrescrever. A chave e o conteúdo da ação ficam em fin.acao: "Repetir com a mesma chave" reenvia o MESMO payload, sem chave nova.
 var RPC_REC_LER_PRONT_REAL = 'projeto_recebimentos_ler';
-var RPC_REC_REGISTRAR_PRONT_REAL = 'projeto_recebimento_registrar';
+var RPC_REC_REGISTRAR_PRONT_REAL = 'projeto_recebimento_registrar_nf';
 var MSG_REC_PRONT_REAL = {
   titulo:'Recebimentos do cliente (lidos do banco)',
-  explica:'Cada recebimento é SOMADO ao que já foi recebido na parcela (receber 2.000 e depois 3.000 numa parcela de 5.000 totaliza 5.000). A comissão só é liberada com todas as parcelas recebidas por completo. Não cria parcela nova nem lançamento de caixa.',
+  explica:'Cada recebimento é SOMADO ao que já foi recebido na parcela (receber 2.000 e depois 3.000 numa parcela de 5.000 totaliza 5.000). A comissão só é liberada com todas as parcelas recebidas por completo. Cada recebimento também lança UMA entrada no Fluxo de caixa (Receita de serviços). Não cria parcela nova.',
   carregando:'Lendo os recebimentos no banco…',
   erroLer:'Não foi possível ler os recebimentos agora (se continuar, o módulo REC-1 pode não estar instalado no banco). Nada foi alterado.',
   diferentes:'Os recebimentos vieram de outro projeto que o financeiro mostrado. Nada é oferecido por aqui; releia. Se continuar, avise um Sócio ou Admin.',
@@ -17020,7 +17026,7 @@ function _carregarRecProntReal(ctx, fin, req){
     _renderProntuarioAtendReal('dados');
   });
 }
-function _classificarRecProntReal(st, d){
+function _classificarRecProntReal(st, d){ var r97 = fo97ClassificarRec(st, d); if(r97) return r97;
   var M = MSG_REC_PRONT_REAL;
   if(st === 'aplicado'){
     return { tipo:'ok', reler:true, texto:'Recebimento registrado no banco: ' + _brlProntReal(d.valor) + '. Na parcela: recebido ' + _brlProntReal(d.recebido_depois) + ', saldo ' + _brlProntReal(d.saldo)
@@ -17047,9 +17053,10 @@ function finReceberProntReal(parcelaId){
   if(obs.length > 300) return recusar('A observação aceita até 300 caracteres.');
   var chave = _novoUuidAtendimentoReal();
   if(!chave) return recusar(MSG_FIN_PRONT_REAL.generica);
+  var nfSel = fo97NfEscolha(fin, rec.dados, k); if(nfSel.erro) return recusar(nfSel.erro);
   // chave e conteúdo ficam congelados em fin.acao: se a resposta se perder, "Repetir com a mesma chave" reenvia exatamente isto
   _finIniciarProntReal('recebimento', RPC_REC_REGISTRAR_PRONT_REAL, { p_lead_id:s.leadId, p_chave:chave, p_projeto_id:String(rec.dados.projeto_id), p_parcela_id:k,
-    p_token_esperado:String(p.token), p_valor:v, p_data:dt, p_observacao:obs || null });
+    p_token_esperado:String(p.token), p_valor:v, p_data:dt, p_observacao:obs || null, p_nf_id:nfSel.nfId });
 }
 function _renderFinRecebimentosProntReal(card, d){
   var s = estadoProntuarioAtendReal, fin = s.fin, rec = fin.rec || { status:'idle', dados:null }, M = MSG_REC_PRONT_REAL;
@@ -17087,6 +17094,7 @@ function _renderFinRecebimentosProntReal(card, d){
       inp.addEventListener('change', function(){ fin.form['rec_data_' + k] = inp.value; });
       lab.appendChild(inp); g.appendChild(lab);
       g.appendChild(_finCampoProntReal('Observação (opcional)', 'rec_obs_' + i, 'rec_obs_' + k, 300));
+      fo97NfCampoProntReal(g, x, fin, k, i);
       caixa.appendChild(g);
       var b = _botaoProntReal('💰 Registrar recebimento', 'rec-registrar-' + i, function(){ finReceberProntReal(k); }, false, 'margin-top:6px'); b.disabled = !!fin.acao; caixa.appendChild(b);
     }
@@ -17095,7 +17103,7 @@ function _renderFinRecebimentosProntReal(card, d){
   var ev = Array.isArray(x.eventos) ? x.eventos.filter(_objetoProntReal) : [];
   if(ev.length){
     r.appendChild(_elProntReal('div', 'font-weight:700;margin:8px 0 3px;font-size:13px', 'Recebimentos registrados (mais recentes primeiro)'));
-    ev.slice(0, 10).forEach(function(e, i){
+    ev.slice(0, 10).forEach(function(e, i){ if(fo97EventoProntReal(r, x, fin, e, i)) return;
       r.appendChild(_finLinhaProntReal(_brlProntReal(e.valor) + ' em ' + _dataBRProntReal(e.data_recebimento) + ' (parcela ' + _textoProntReal(e.parcela) + ') — registrado por '
         + (e.registrado_por ? _textoProntReal(e.registrado_por) : '—') + ' em ' + _dataHoraBRProntReal(e.registrado_em), 'rec-evento-' + i, 'font-size:12px;color:var(--muted)'));
     });
@@ -25188,13 +25196,13 @@ function limparPainelFinanceiroRealPorAuth(){
 // Saldo dos lançamentos = entradas − saídas dos lançamentos lidos: é DIFERENÇA, não saldo bancário nem aporte inicial. Saldo anterior/abertura NÃO é calculado.
 // Recebimentos de clientes (REC-1) NÃO criam entradas aqui e NÃO são somados ao caixa. Sem conciliação nem baixa de venda.
 // Sem leitura completa/coerente nenhum total é exibido (nunca zero para simular "indisponível").
-var CX_COLUNAS = 'id,tipo,categoria_id,projeto_id,fornecedor_id,pessoa_id,pessoa_nome,descricao,valor,data,recorrente_id,eh_equipe,categoria_equipe,pagamento_consolidado,horas_extras,detalhes_equipe,criado_por,criado_em,projetos(os),fornecedores(nome)';
+var CX_COLUNAS = 'id,tipo,categoria_id,projeto_id,fornecedor_id,pessoa_id,pessoa_nome,descricao,valor,data,recorrente_id,eh_equipe,categoria_equipe,pagamento_consolidado,horas_extras,detalhes_equipe,criado_por,criado_em,projetos(os),fornecedores(nome),recebimento_evento_id,detalhe_origem';
 var CX_COLUNAS_CONF = 'id,tipo,categoria_id,projeto_id,fornecedor_id,pessoa_id,pessoa_nome,descricao,valor,data,recorrente_id,eh_equipe,categoria_equipe,pagamento_consolidado,horas_extras,detalhes_equipe,criado_por,criado_em';
 var CX_COLUNAS_CAT = 'id,nome,rotulo,tipo,fixa,ativa';
 var CX_LINHAS = 200, CX_MAX_DESC = 300, CX_VALOR_MAX_C = 999999999999;   // numeric(12,2) → até 9.999.999.999,99
 var CX_SERIE_MAX = 12, CX_SERIE_INTERVALOS = [1, 2, 3, 6, 12];
 var CX_NS_SERIE = 'b3f1c2d4-7a65-4e0b-9c1d-5a0e8f2b6c71';   // namespace fixo (UUID v5) dos IDs derivados da série
-var CX_AVISO = 'Dados de caixa são os lançamentos registrados aqui. Recebimentos de clientes não criam entradas automaticamente.';
+var CX_AVISO = 'Dados de caixa são os lançamentos registrados aqui. Recebimentos de clientes registrados em Contas a Receber a partir da versão 1.6.1.0 geram uma entrada automática; os anteriores não foram lançados aqui.';
 var CX_MSG = {
   carregando: 'Lendo os lançamentos de caixa no banco…',
   erro: 'Não foi possível ler os lançamentos de caixa no banco. Nada é exibido no lugar (sem dados de demonstração). Use Atualizar para tentar de novo.',
@@ -25379,7 +25387,7 @@ function cxUuid5(ns, nome){
 // Categorias oferecidas: reais, ativas, do tipo escolhido; as de equipe/comissão/fornecedor não são oferecidas para lançamento avulso.
 function cxCategoriasElegiveis(tipo){
   return estadoCaixaReal.catalogo.filter(function(c){
-    return c.ativa === true && c.tipo === tipo && !/equipe|comiss|fornecedor/.test(crNorm((c.rotulo || '') + ' ' + (c.nome || '')));
+    return c.ativa === true && c.tipo === tipo && c.nome !== 'Estorno de recebimento' && !/equipe|comiss|fornecedor/.test(crNorm((c.rotulo || '') + ' ' + (c.nome || '')));
   });
 }
 // Datas civis da série: i-ésimo = início + i×intervalo meses, dia do início limitado ao último dia do mês (31 → 30/28/29). Sem UTC/fuso.
@@ -25434,7 +25442,7 @@ function aoEntrarCaixaReal(){ return cxCarregar(false); }
 function atualizarCaixaReal(){ return cxCarregar(false); }
 function renderFinCaixa(){ cxRender(); }   // chamadores antigos (categorias demonstrativas) só repintam
 var CX_IDS_TEXTO = ['cxStatus', 'cxFonte', 'cxCardsFiltro', 'cxCardsAcum', 'cxEscopo', 'cxTabela', 'cxMsg', 'cxEdInfo', 'cxDelResumo', 'cxSerPrevia'];
-var CX_IDS_CAMPO = ['cxNovoDesc', 'cxNovoValor', 'cxBusca', 'cxDe', 'cxAte', 'cxEdValor', 'cxEdDesc', 'cxEdData', 'cxSerValor', 'cxSerDesc', 'cxSerData', 'cxSerQtd'];
+var CX_IDS_CAMPO = ['lancNf', 'cxNovoDesc', 'cxNovoValor', 'cxBusca', 'cxDe', 'cxAte', 'cxEdValor', 'cxEdDesc', 'cxEdData', 'cxSerValor', 'cxSerDesc', 'cxSerData', 'cxSerQtd'];
 var CX_IDS_CHECK = ['cxDelConfirma', 'cxSerConfirma', 'cxSerPassado', 'cxSerDup'];
 function limparCaixaRealPorAuth(){
   var e = estadoCaixaReal;
@@ -37967,6 +37975,7 @@ function foRecebimentosHtml(d, l){
       + '<label style="font-size:12px;font-weight:700">Valor recebido agora (R$)<br><input id="finRecValor" type="text" inputmode="decimal" placeholder="0,00" style="width:130px;padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>'
       + '<label style="font-size:12px;font-weight:700">Data<br><input id="finRecData" type="date" max="' + hoje + '" value="' + hoje + '" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>'
       + '<label style="font-size:12px;font-weight:700;flex:1;min-width:140px">Observação (opcional)<br><input id="finRecObs" type="text" maxlength="300" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>'
+      + fo97NfSelectHtml(d.rec)
       + '<button class="btn" data-pa="fin-rec-confirmar" ' + (trava ? 'disabled ' : '') + 'onclick="foRegistrarRecebimento(' + i + ')">💰 Registrar recebimento</button><button class="btn btn2" onclick="foRecebimentoFechar()">Cancelar</button></div>' : '';
     return '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="flex:1;min-width:140px;font-size:13px">Parcela ' + foEsc(x.n) + (x.desc ? ' — ' + foEsc(x.desc) : '')
       + '<span class="muted" style="font-size:11px;display:block">Previsto ' + crBRL(x.prev) + ' • Recebido ' + crBRL(x.rec) + ' • Saldo ' + crBRL(x.saldo) + '</span></span>' + sel
@@ -37975,7 +37984,7 @@ function foRecebimentosHtml(d, l){
       + '</div>' + form + '</div>';
   }).join('');
   var nota = !parcelas ? '<p class="muted" style="font-size:12px;margin-top:8px">' + (d.recSt === 'sem_atendimento' ? 'Projeto sem atendimento vinculado: o registro de recebimento por esta tela exige o atendimento (somente leitura).' : 'Registro de recebimento indisponível agora (somente leitura).') + '</p>' : '';
-  return cab + '<p class="muted" style="font-size:12px;margin-bottom:10px">Defina a data prevista para o cliente pagar cada parcela. Isso alimenta os alertas de cobrança do Dashboard.</p>' + linhas + nota;
+  return cab + '<p class="muted" style="font-size:12px;margin-bottom:10px">Defina a data prevista para o cliente pagar cada parcela. Isso alimenta os alertas de cobrança do Dashboard.</p><p class="muted" style="font-size:12px;margin-bottom:10px">Cada recebimento registrado aqui também lança uma entrada no Fluxo de caixa (Receita de serviços). A NF é opcional.</p>' + linhas + fo97EventosHtml(d, trava, enc) + nota;
 }
 function foNotasHtml(d){
   var p = estadoFinPront, trava = !!p.acao, enc = d.proj.status === 'Encerrado';
@@ -38210,10 +38219,11 @@ function foRegistrarRecebimento(i){
   if(Math.round(v * 100) > Math.round((x.saldo / 100) * 100)) return recusar(M.valorAcima);
   var hoje = foHojeSP(), dt = foValorCampo('finRecData') || hoje, obs = foValorCampo('finRecObs').trim();
   if(!/^\d{4}-\d{2}-\d{2}$/.test(dt) || !rrDataValida(dt) || dt > hoje || dt < '2000-01-01') return recusar(M.dataInvalida);
+  var nf97 = fo97NfEscolhaModerna(rec); if(nf97.erro) return recusar(nf97.erro);
   if(obs.length > 300) return recusar('A observação aceita até 300 caracteres.');
-  var args = { p_lead_id: p.leadId, p_chave: cxUuid(), p_projeto_id: String(rec.projeto_id), p_parcela_id: String(x.id), p_token_esperado: String(x.token), p_valor: v, p_data: dt, p_observacao: obs || null };
+  var args = { p_lead_id: p.leadId, p_chave: cxUuid(), p_projeto_id: String(rec.projeto_id), p_parcela_id: String(x.id), p_token_esperado: String(x.token), p_valor: v, p_data: dt, p_observacao: obs || null, p_nf_id: nf97.nfId };
   delete p.form.rec_aberto;
-  foPAcao({ kind: 'recebimento', reenviar: true, executar: function(){ return supabaseClient.rpc('projeto_recebimento_registrar', args); },
+  foPAcao({ kind: 'recebimento', reenviar: true, executar: function(){ return supabaseClient.rpc('projeto_recebimento_registrar_nf', args); },
     interpretar: function(r){
       if(r.error) return { ok: false, texto: foErroTexto(r.error) };
       var d = r.data, st = _objetoProntReal(d) ? d.status : '';
@@ -38557,7 +38567,7 @@ cxRender = function(){
         + (cxPodeExcluir() && !cxPendente() ? '<button class="btn btn2" type="button" style="font-size:12px" data-pa="caixa-grupo-excluir" onclick="foGExcluir(' + "'" + foEsc(i.id) + "'" + ')">Excluir</button>' : '') || '—';
     }
     var origem = i.avulso ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
-    linhas += '<tr><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
+    linhas += '<tr class="cx97-lin" tabindex="0" data-cx97="' + foEsc(i.id) + '"><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
       + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td><td style="font-size:12px;color:var(--muted)">' + foEsc(i.os || '—') + '</td>'
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
@@ -40299,6 +40309,361 @@ function fo96GuiaSaidaProntReal(amb, l, p, i){
   return box;
 }
 // <<96:FIM>>
+// <<97:INICIO>>
+// Pacote 97 (V1.6.1.0): Recebimentos Integrados. Escrito pelo Claude SEM executar (sem Bash); os testes (Testes/teste_funcs_97.js) extraem ESTE bloco do Tela/index.html gerado.
+// (1) Contas a Receber: NF opcional por recebimento, registro pelo núcleo do banco (projeto_recebimento_registrar_nf: parcela + entrada no caixa na mesma transação) e estorno curto com motivo.
+// (2) Fluxo de caixa: realce discreto da linha e caixinha de informação (mouse, foco, Enter/Espaço/toque; Esc fecha), só com dados estruturados do banco: nada é inferido por regex da descrição.
+// (3) Novo lançamento (entrada): campo NF manual opcional. Tudo o que o banco devolveu entra na tela por textContent (sem innerHTML nas caixinhas e nos campos novos do Contas a Receber).
+var FO97_RPC = { registrar: 'projeto_recebimento_registrar_nf', estornar: 'projeto_recebimento_estornar' };
+var FO97_ORIGENS = ['manual', 'recebimento', 'estorno_recebimento'];
+var FO97_COMP = [['salario', 'Salário bruto'], ['comissao', 'Comissão'], ['horaExtra', 'Hora extra'], ['proLabore', 'Pró-labore'], ['reembolso', 'Reembolso'], ['bonificacao', 'Bonificação'], ['encargosContador', 'Encargos/Contador']];
+var MSG97 = {
+  nfRotulo: 'Nota fiscal (opcional)',
+  nfSem: 'Sem NF (informar depois)',
+  nfEscolha: 'Este projeto tem mais de uma NF: escolha a NF deste recebimento ou "Sem NF". Nada foi gravado.',
+  nfInvalida: 'A NF escolhida não pertence a este projeto ou não tem número. Nada foi gravado; a tela foi relida.',
+  nfNenhuma: 'Nenhuma NF com número neste projeto: o recebimento será registrado como adiantamento (NF pendente). Nenhuma NF é criada por aqui.',
+  nfSemNumero: ' Há NF cadastrada sem número, que não pode ser vinculada.',
+  nfFormato: 'Número da NF inválido: use até 30 caracteres (letras, números, ponto, barra, espaço e hífen).',
+  nfRecorrente: 'A NF manual não vale para lançamento recorrente: apague o número da NF ou desmarque "Repetir todo mês". Nada foi gravado.',
+  catIndisp: 'A categoria necessária (Receita de serviços para o recebimento; Estorno de recebimento para o estorno) não está ativa: nada foi registrado.',
+  repetidoRec: 'Este recebimento já estava registrado (reenvio com a mesma chave): nada foi duplicado.',
+  repetidoEst: 'Este estorno já estava registrado (reenvio com a mesma chave): nada foi duplicado.',
+  estornar: '↩ Estornar',
+  estornoExplica: 'Estorno integral deste recebimento: o valor volta ao saldo da parcela e uma saída compensatória é lançada no Fluxo de caixa (a entrada original não é apagada). Para corrigir um valor, estorne e registre de novo.',
+  estornoRotulo: 'Motivo do estorno (obrigatório)',
+  estornoMotivo: 'Informe o motivo do estorno (de 5 a 300 caracteres).',
+  estornoIndisp: 'Este recebimento não pode ser estornado por aqui (não gerou entrada no caixa ou já foi estornado). Nada foi gravado.',
+  estornoJa: 'Este recebimento já foi estornado. Nada foi gravado; a tela foi relida.',
+  estornoAntigo: 'Recebimento anterior à integração com o caixa: não tem entrada automática e não pode ser estornado por aqui. Nada foi gravado.',
+  estornoInvalido: 'O recebimento não foi encontrado neste projeto. Nada foi gravado; a tela foi relida.',
+  estornoCaixa: 'A entrada de caixa deste recebimento não foi encontrada: o estorno não foi feito. Avise um Sócio ou Admin.',
+  estornoComissao: 'A comissão deste projeto já foi paga: o estorno do recebimento foi recusado. Trate o ajuste pelo fluxo de comissão. Nada foi gravado.',
+  estornoAcima: 'O valor deste recebimento é maior que o recebido na parcela: estorno recusado. Nada foi gravado.'
+};
+function fo97UuidOk(s){ return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
+function fo97NfOk(t){ return typeof t === 'string' && /^[A-Za-z0-9][A-Za-z0-9._\/ -]{0,29}$/.test(t); }
+function fo97Txt(v, max){ if(typeof v !== 'string') return ''; var t = v.replace(/[\u0000-\u001f\u007f]/g, ' ').trim(); return t.length > (max || 200) ? t.slice(0, max || 200) : t; }
+
+// ---------- Contas a Receber: NF opcional ----------
+function fo97NfsLista(dados){   // só NFs íntegras (id UUID + número); qualquer linha malformada é ignorada, nunca vira opção
+  var a = dados && Array.isArray(dados.nfs) ? dados.nfs : [], out = [];
+  a.forEach(function(n){
+    if(!n || typeof n !== 'object' || !fo97UuidOk(n.id)) return;
+    var num = fo97Txt(n.numero, 60); if(!num) return;
+    out.push({ id: n.id, numero: num, valor: n.valor });
+  });
+  return out;
+}
+function fo97EscolherNf(nfs, v){   // regra ÚNICA dos dois caminhos (legado e principal) → { nfId } | { erro }: uma NF vem escolhida; várias exigem escolha; nenhuma = adiantamento (NF pendente)
+  if(!nfs.length) return { nfId: null };
+  if(v === '__sem') return { nfId: null };
+  if(!v) return nfs.length === 1 ? { nfId: nfs[0].id } : { erro: MSG97.nfEscolha };
+  var ok = nfs.filter(function(n){ return n.id === v; })[0];
+  return ok ? { nfId: ok.id } : { erro: MSG97.nfInvalida };
+}
+function fo97NfEscolha(fin, dados, k){ return fo97EscolherNf(fo97NfsLista(dados), _textoProntReal(fin.form['rec_nf_' + k])); }   // caminho LEGADO (prontuário do atendimento)
+function fo97NfEscolhaModerna(rec){ return fo97EscolherNf(fo97NfsLista(rec), foValorCampo('finRecNf')); }   // caminho PRINCIPAL (Financeiro do projeto: foRegistrarRecebimento)
+function fo97NfSelectHtml(rec){   // caminho PRINCIPAL: seletor de NF ao lado de valor/data/observação (HTML montado com foEsc; ids validados como UUID)
+  var nfs = fo97NfsLista(rec), M = MSG97;
+  if(!nfs.length) return '<div data-pa="fin-rec-nf-aviso" class="muted" style="flex-basis:100%;font-size:12px">' + foEsc(M.nfNenhuma + (rec && Number(rec.nfs_sem_numero) > 0 ? M.nfSemNumero : '')) + '</div>';
+  var o = nfs.length > 1 ? '<option value="">Escolha…</option>' : '';
+  nfs.forEach(function(n){ var c = voC(n.valor); o += '<option value="' + foEsc(n.id) + '"' + (nfs.length === 1 ? ' selected' : '') + '>' + foEsc('NF ' + n.numero + (isFinite(c) && c > 0 ? ' · ' + crBRL(c) : '')) + '</option>'; });
+  o += '<option value="__sem">' + foEsc(M.nfSem) + '</option>';
+  return '<label style="font-size:12px;font-weight:700">' + foEsc(M.nfRotulo) + '<br><select id="finRecNf" data-pa="fin-rec-nf" style="max-width:240px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">' + o + '</select></label>';
+}
+function fo97NfCampoProntReal(g, x, fin, k, i){
+  var nfs = fo97NfsLista(x), M = MSG97;
+  if(!nfs.length){
+    g.appendChild(_finLinhaProntReal(M.nfNenhuma + (Number(x.nfs_sem_numero) > 0 ? M.nfSemNumero : ''), 'rec-nf-aviso-' + i, 'font-size:12px;color:var(--muted);grid-column:1/-1'));
+    return;
+  }
+  var lab = _rotuloProntReal(M.nfRotulo), sel = document.createElement('select'), ops = [];
+  if(nfs.length > 1) ops.push(['', 'Escolha…']);
+  nfs.forEach(function(n){ var c = voC(n.valor); ops.push([n.id, 'NF ' + n.numero + (isFinite(c) && c > 0 ? ' · ' + crBRL(c) : '')]); });
+  ops.push(['__sem', M.nfSem]);
+  ops.forEach(function(o){ var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; sel.appendChild(op); });
+  sel.value = _textoProntReal(fin.form['rec_nf_' + k]) || (nfs.length === 1 ? nfs[0].id : '');
+  sel.setAttribute('data-pa', 'campo-rec_nf_' + i); sel.disabled = !!fin.acao;
+  sel.addEventListener('change', function(){ fin.form['rec_nf_' + k] = sel.value; });
+  lab.appendChild(sel); g.appendChild(lab);
+}
+function fo97ClassificarRec(st, d){   // null = segue a classificação da base
+  var M = MSG97;
+  if(st === 'aplicado' && d && typeof d === 'object' && d.caixa === 'gerado'){
+    var nf = typeof d.nf_numero === 'string' && d.nf_numero ? 'NF ' + d.nf_numero : 'sem NF vinculada (NF pendente)';
+    return { tipo: 'ok', reler: true, texto: 'Recebimento registrado no banco: ' + _brlProntReal(d.valor) + '. Na parcela: recebido ' + _brlProntReal(d.recebido_depois) + ', saldo ' + _brlProntReal(d.saldo)
+      + (d.quitado === true ? ' · cliente quitado por completo.' : ' · cliente ainda NÃO quitado por completo.') + ' Entrada lançada no Fluxo de caixa (Receita de serviços) · ' + nf + '.' };
+  }
+  if(st === 'repetido' && d && typeof d === 'object') return { tipo: 'ok', reler: true, texto: M.repetidoRec + (d.caixa === 'gerado' ? ' A entrada do Fluxo de caixa já existe (uma só).' : '') };   // o caminho principal chama esta classificação direto: sem isto a repetição ficaria "incerta" para sempre
+  var mapa = { nf_invalida: M.nfInvalida, categoria_indisponivel: M.catIndisp };
+  return mapa[st] ? { tipo: 'aviso', texto: mapa[st], reler: true } : null;
+}
+
+// ---------- Contas a Receber: lista de recebimentos + estorno ----------
+function fo97EventoTexto(e){   // texto da linha de um recebimento registrado (mesmo nos dois caminhos); só dados do banco
+  var caixa = e.caixa === true, txt = _brlProntReal(e.valor) + ' em ' + _dataBRProntReal(e.data_recebimento) + ' (parcela ' + _textoProntReal(e.parcela) + ') — registrado por ' + (e.registrado_por ? _textoProntReal(e.registrado_por) : '—') + ' em ' + _dataHoraBRProntReal(e.registrado_em);
+  txt += caixa ? ' · ' + (typeof e.nf_numero === 'string' && e.nf_numero ? 'NF ' + e.nf_numero : 'NF pendente') + ' · entrada no Fluxo de caixa' : ' · anterior à integração com o caixa (sem entrada automática)';
+  if(e.estornado === true) txt += ' · ESTORNADO';
+  return txt;
+}
+function fo97EventoProntReal(r, x, fin, e, i){   // true = esta função já pintou a linha do recebimento (caminho LEGADO)
+  var caixa = e.caixa === true, est = e.estornado === true, M = MSG97;
+  var linha = _finLinhaProntReal(fo97EventoTexto(e), 'rec-evento-' + i, 'font-size:12px;color:var(--muted)');
+  r.appendChild(linha);
+  var aberto = _textoProntReal(fin.form.rec_est_abrir) === String(e.id);
+  if(caixa && !est && x.perda !== true && fo97UuidOk(String(e.id))){
+    var b = _botaoProntReal(aberto ? 'Fechar estorno' : M.estornar, 'rec-estornar-' + i, function(){ fo97EstornoAlternar(e.id); }, true, 'margin:2px 0 4px;font-size:12px');
+    b.disabled = !!fin.acao; r.appendChild(b);
+  }
+  if(aberto && caixa && !est){
+    var box = _elProntReal('div', 'margin:2px 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px'); box.setAttribute('data-pa', 'rec-estorno-box-' + i);
+    box.appendChild(_finLinhaProntReal(M.estornoExplica, 'rec-estorno-explica-' + i, 'font-size:12px;color:var(--muted);margin-bottom:6px'));
+    box.appendChild(_finCampoProntReal(M.estornoRotulo, 'rec_est_motivo_' + i, 'rec_est_motivo_' + String(e.id), 300));
+    var ok = _botaoProntReal('Confirmar estorno', 'rec-estorno-confirmar-' + i, function(){ fo97Estornar(e.id); }, false, 'margin-top:6px'); ok.disabled = !!fin.acao; box.appendChild(ok);
+    var cn = _botaoProntReal('Cancelar', 'rec-estorno-cancelar-' + i, function(){ fo97EstornoAlternar(e.id); }, true, 'margin:6px 0 0 6px'); cn.disabled = !!fin.acao; box.appendChild(cn);
+    r.appendChild(box);
+  }
+  return true;
+}
+function fo97EstornoAlternar(id){
+  var s = estadoProntuarioAtendReal, fin = s.fin; if(fin.acao) return;
+  fin.form.rec_est_abrir = _textoProntReal(fin.form.rec_est_abrir) === String(id) ? '' : String(id);
+  _renderProntuarioAtendReal('dados');
+}
+function fo97Estornar(id){
+  var s = estadoProntuarioAtendReal, fin = s.fin, rec = fin.rec, M = MSG97;
+  if(fin.acao || !rec || rec.status !== 'ok' || !rec.dados || fin.status !== 'ok' || !fin.dados) return;
+  function recusar(t){ _finMsgProntReal('erro', t); _renderProntuarioAtendReal('dados'); }
+  var k = String(id), ev = (Array.isArray(rec.dados.eventos) ? rec.dados.eventos : []).filter(function(e){ return _objetoProntReal(e) && String(e.id) === k; })[0];
+  if(!ev || ev.caixa !== true || ev.estornado === true) return recusar(M.estornoIndisp);
+  if(!rec.dados.projeto_id || String(rec.dados.projeto_id) !== String(fin.dados.projeto_id)) return recusar(MSG_REC_PRONT_REAL.semLeitura);
+  if(rec.dados.perda === true) return recusar(MSG_REC_PRONT_REAL.perda);
+  var p = (Array.isArray(rec.dados.parcelas) ? rec.dados.parcelas : []).filter(function(y){ return _objetoProntReal(y) && String(y.id) === String(ev.parcela_id); })[0];
+  if(!p || !p.token) return recusar(MSG_REC_PRONT_REAL.semLeitura);
+  var mot = _textoProntReal(fin.form['rec_est_motivo_' + k]).trim();
+  if(mot.length < 5 || mot.length > 300) return recusar(M.estornoMotivo);
+  var chave = _novoUuidAtendimentoReal();
+  if(!chave) return recusar(MSG_FIN_PRONT_REAL.generica);
+  // chave e conteúdo ficam congelados em fin.acao: se a resposta se perder, "Repetir com a mesma chave" reenvia exatamente isto (o banco responde "repetido" sem estornar duas vezes)
+  _finIniciarProntReal('rec_estorno', FO97_RPC.estornar, { p_lead_id: s.leadId, p_chave: chave, p_projeto_id: String(rec.dados.projeto_id), p_evento_id: k, p_token_esperado: String(p.token), p_motivo: mot });
+}
+// ---------- Contas a Receber PRINCIPAL (Financeiro do projeto: foRecebimentosHtml / foRegistrarRecebimento / foPAcao): lista de recebimentos + estorno ----------
+function fo97EventosHtml(d, trava, enc){
+  var p = estadoFinPront, rec = d && d.rec;
+  if(!rec || !Array.isArray(rec.eventos)) return '';
+  var ev = rec.eventos.filter(function(e){ return !!e && typeof e === 'object' && !Array.isArray(e); }).slice(0, 10);
+  if(!ev.length) return '';
+  var h = '<div style="margin:10px 0 4px;font-size:13px;font-weight:700">Recebimentos registrados (mais recentes primeiro)</div>';
+  ev.forEach(function(e, i){
+    var id = String(e.id || ''), ok = fo97UuidOk(id), pode = ok && e.caixa === true && e.estornado !== true && rec.perda !== true && !enc;
+    h += '<div data-pa="fin-rec-evento-' + i + '" style="font-size:12px;color:var(--muted);padding:3px 0">' + foEsc(fo97EventoTexto(e))
+      + (pode ? ' <button data-pa="fin-rec-estornar-' + i + '" ' + (trava ? 'disabled ' : '') + 'onclick="fo97ModEstornoAbrir(\'' + id + '\')" style="font-size:11px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer;color:var(--ink)">' + foEsc(MSG97.estornar) + '</button>' : '') + '</div>';
+    if(pode && String(p.form.rec_est_aberto || '') === id){
+      h += '<div data-pa="fin-rec-estorno-box-' + i + '" style="margin:2px 0 8px;padding:10px;border:1px solid var(--line);border-radius:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end"><div class="muted" style="font-size:12px;flex-basis:100%">' + foEsc(MSG97.estornoExplica) + '</div>'
+        + '<label style="font-size:12px;font-weight:700;flex:1;min-width:200px">' + foEsc(MSG97.estornoRotulo) + '<br><input id="finRecEstMotivo" type="text" maxlength="300" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>'
+        + '<button class="btn" data-pa="fin-rec-estorno-confirmar" ' + (trava ? 'disabled ' : '') + 'onclick="fo97ModEstornar(\'' + id + '\')">Confirmar estorno</button><button class="btn btn2" data-pa="fin-rec-estorno-cancelar" onclick="fo97ModEstornoFechar()">Cancelar</button></div>';
+    }
+  });
+  return h;
+}
+function fo97ModEstornoAbrir(id){ var p = estadoFinPront; if(p.acao || p.status !== 'ok' || !fo97UuidOk(String(id))) return; p.form.rec_est_aberto = String(id); p.msg = null; foRenderProntuario(); }
+function fo97ModEstornoFechar(){ var p = estadoFinPront; if(p.acao) return; delete p.form.rec_est_aberto; foRenderProntuario(); }
+function fo97ModEstornar(id){
+  var p = estadoFinPront; if(p.acao || p.status !== 'ok' || !p.d || !p.d.rec) return;
+  var rec = p.d.rec, M = MSG97;
+  function recusar(t){ foPMsg('erro', t); foRenderProntuario(); }
+  var k = String(id), ev = (Array.isArray(rec.eventos) ? rec.eventos : []).filter(function(e){ return !!e && String(e.id) === k; })[0];
+  if(!ev || ev.caixa !== true || ev.estornado === true) return recusar(M.estornoIndisp);
+  if(rec.perda === true) return recusar(MSG_REC_PRONT_REAL.perda);
+  var par = (Array.isArray(rec.parcelas) ? rec.parcelas : []).filter(function(y){ return _objetoProntReal(y) && String(y.id) === String(ev.parcela_id); })[0];
+  if(!par || !par.token || !rec.projeto_id) return recusar(MSG_REC_PRONT_REAL.semLeitura);
+  var mot = foValorCampo('finRecEstMotivo').trim();
+  if(mot.length < 5 || mot.length > 300) return recusar(M.estornoMotivo);
+  var args = { p_lead_id: p.leadId, p_chave: cxUuid(), p_projeto_id: String(rec.projeto_id), p_evento_id: k, p_token_esperado: String(par.token), p_motivo: mot };
+  delete p.form.rec_est_aberto;
+  // mesmo desenho do registro: a chave fica nos args (fixos); "Repetir com a mesma chave" reenvia exatamente isto e o banco responde "repetido" sem estornar duas vezes
+  foPAcao({ kind: 'rec_estorno', reenviar: true, executar: function(){ return supabaseClient.rpc(FO97_RPC.estornar, args); },
+    interpretar: function(r){
+      if(r.error) return { ok: false, texto: foErroTexto(r.error) };
+      var d = r.data, st = _objetoProntReal(d) ? d.status : '';
+      var c = fo97ClassificarEstorno(st, d || {});
+      if(!c) return { incerto: true };
+      return c.tipo === 'ok' ? { ok: true, texto: c.texto } : { ok: false, tipo: 'aviso', texto: c.texto };
+    } });
+}
+function fo97ClassificarEstorno(st, d){   // null = segue a classificação da base
+  var M = MSG97;
+  if(st === 'repetido' && d && typeof d === 'object') return { tipo: 'ok', reler: true, texto: M.repetidoEst };
+  if(st === 'aplicado') return { tipo: 'ok', reler: true, texto: 'Recebimento estornado: ' + _brlProntReal(d && d.valor) + ' voltou ao saldo da parcela (recebido ' + _brlProntReal(d && d.recebido_depois) + ', saldo ' + _brlProntReal(d && d.saldo) + '). Saída compensatória lançada no Fluxo de caixa.' };
+  var mapa = { ja_estornado: M.estornoJa, evento_invalido: M.estornoInvalido, evento_sem_caixa: M.estornoAntigo, conflito: MSG_REC_PRONT_REAL.conflito, comissao_ja_paga: M.estornoComissao, acima_do_recebido: M.estornoAcima,
+    projeto_perda: MSG_REC_PRONT_REAL.perdaBanco, parcela_nao_aplicavel: MSG_REC_PRONT_REAL.naoAplicavelBanco, parcela_invalida: MSG_REC_PRONT_REAL.parcelaInvalida, projeto_diferente: MSG_REC_PRONT_REAL.projetoDiferente,
+    caixa_ausente: M.estornoCaixa, categoria_indisponivel: M.catIndisp };
+  return mapa[st] ? { tipo: 'aviso', texto: mapa[st], reler: true } : null;
+}
+
+// ---------- Fluxo de caixa: dados das linhas ----------
+function fo97Detalhe(d){   // detalhe_origem do banco → objeto saneado | null (formato desconhecido nunca vira informação)
+  if(!d || typeof d !== 'object' || Array.isArray(d) || Number(d.v) !== 1 || FO97_ORIGENS.indexOf(d.origem) < 0) return null;
+  var p = Number(d.parcela);
+  return { origem: d.origem, os: fo97Txt(d.os, 40), titulo: fo97Txt(d.titulo), cliente: fo97Txt(d.cliente), nfNumero: fo97Txt(d.nf_numero, 60), motivo: fo97Txt(d.motivo, 300), parcela: Number.isInteger(p) && p > 0 ? p : 0, nfPendente: d.nf_pendente === true };
+}
+var _cxCalcular97 = cxCalcular;
+cxCalcular = function(rows, catalogo, catOk){
+  var r = _cxCalcular97.apply(this, arguments);
+  r.itens.forEach(function(it, i){
+    var raw = (rows || [])[i] || {}, forn = cxRelacao(raw.fornecedores);
+    it.fornecedor = forn && forn.nome ? fo97Txt(String(forn.nome), 120) : ''; it.fornId = raw.fornecedor_id || '';
+    it.i97 = fo97Detalhe(raw.detalhe_origem); it.recEvId = raw.recebimento_evento_id || '';
+    if(it.i97 && it.i97.origem !== 'manual'){   // entrada de recebimento / estorno: somente leitura (mesmo que o projeto tenha sido removido depois); NF manual continua avulsa e editável
+      var os = it.os || it.i97.os;
+      it.avulso = false;
+      it.origem = 'Vinculado (somente leitura): ' + (it.i97.origem === 'recebimento' ? 'Recebimento de cliente' : 'Estorno de recebimento') + (os ? ' · OS ' + os : '')
+        + (it.i97.nfNumero ? ' · NF ' + it.i97.nfNumero : (it.i97.origem === 'recebimento' ? ' · NF pendente' : ''));
+    }
+  });
+  return r;
+};
+// o estorno compensa a ENTRADA de caixa; não é custo de projeto: fica fora do Resultado mensal/anual (que usa o valor vendido), sem marcar o mês com "saída vinculada"
+var _foResultadoAno97 = foResultadoAno;
+foResultadoAno = function(linhas, itensCx, ano){
+  return _foResultadoAno97.call(this, linhas, (itensCx || []).filter(function(i){ return !(i && i.i97 && i.i97.origem === 'estorno_recebimento'); }), ano);
+};
+
+// ---------- Fluxo de caixa: caixinha de informação ----------
+function fo97Linhas(it){   // → [[rótulo, valor]]; faltante = "—"; somente campos estruturados
+  var L = [], d = it.i97, ent = it.tipo === 'entrada';
+  function add(r, v){ L.push([r, (v === undefined || v === null || v === '') ? '—' : String(v)]); }
+  add('Data', it.data ? (crDataBR(it.data) || it.data) : '');
+  add('Valor', isFinite(it.valorC) ? crBRL(it.valorC) : '');
+  add('Categoria', it.catNome);
+  if(d && d.origem === 'recebimento'){
+    add('Origem', 'Recebimento de cliente (Contas a Receber)'); add('OS', d.os || it.os); add('Projeto', d.titulo); add('Cliente', d.cliente); add('Parcela', d.parcela || ''); add('NF', d.nfNumero || 'NF pendente (adiantamento)');
+  } else if(d && d.origem === 'estorno_recebimento'){
+    add('Origem', 'Estorno de recebimento (saída compensatória)'); add('OS', d.os || it.os); add('Parcela', d.parcela || ''); add('NF do recebimento', d.nfNumero); add('Motivo', d.motivo);
+  } else if(ent){
+    add('OS', it.os); add('NF', d && d.origem === 'manual' ? d.nfNumero : ''); add('Cliente', '');
+  } else {
+    add('Fornecedor', it.fornecedor); add('OS', it.os);
+    if(it.fornId) add('Detalhamento', it.descricao);   // o pacote 96 grava o detalhamento legível na descrição; é mostrada como está, sem decompor
+    if(it.equipe){
+      add('Pessoa', it.pessoa); add('Categoria da equipe', it.catEquipe);
+      if(it.consolidado && it.detalhes){
+        var bruto = 0;
+        FO97_COMP.forEach(function(c){ var v = voC(it.detalhes[c[0]]); if(isFinite(v) && v > 0){ add(c[1], crBRL(v)); bruto += v; } });
+        var h = Number(it.detalhes.horasExtras); if(isFinite(h) && h > 0) add('Horas extras', String(h) + 'h');
+        var dc = voC(it.detalhes.descontoFolha);
+        if(isFinite(dc) && dc > 0){ add('Total bruto', crBRL(bruto)); add('Desconto em folha', '− ' + crBRL(dc)); add('Líquido pago', isFinite(it.valorC) ? crBRL(it.valorC) : ''); }   // registro antigo (sem a marca) não é reinterpretado
+      }
+    }
+  }
+  return L;
+}
+var fo97Pop = { el: null, tr: null, fixo: false };
+function fo97PopEl(){
+  if(fo97Pop.el && fo97Pop.el.parentNode) return fo97Pop.el;
+  var e = document.createElement('div'); e.id = 'cx97Pop'; e.setAttribute('role', 'tooltip'); document.body.appendChild(e); fo97Pop.el = e; return e;
+}
+function fo97PopPintar(el, it){
+  el.textContent = '';
+  var t = document.createElement('div'); t.className = 't'; t.textContent = (it.descricao || '—').slice(0, 140); el.appendChild(t);
+  fo97Linhas(it).forEach(function(l){
+    var r = document.createElement('div'), a = document.createElement('span'), b = document.createElement('span');
+    r.className = 'l'; a.textContent = l[0]; b.textContent = l[1]; r.appendChild(a); r.appendChild(b); el.appendChild(r);
+  });
+}
+function fo97PopPos(tr, el){   // position:fixed: nunca desloca a grade; abaixo da linha, ou acima se não couber; sem sair da janela
+  var r = tr.getBoundingClientRect(), w = el.offsetWidth || 320, h = el.offsetHeight || 120, vw = window.innerWidth || 1024, vh = window.innerHeight || 768;
+  var left = Math.max(8, Math.min(r.left + 16, vw - w - 8)), top = r.bottom + 4;
+  if(top + h > vh - 8) top = Math.max(8, r.top - h - 4);
+  el.style.left = left + 'px'; el.style.top = top + 'px';
+}
+function fo97PopFechar(){
+  var p = fo97Pop;
+  if(p.el) p.el.classList.remove('cx97-vis');
+  if(p.tr){ p.tr.classList.remove('cx97-on'); p.tr.removeAttribute('aria-describedby'); }
+  p.tr = null; p.fixo = false;
+}
+function fo97PopMostrar(tr, fixar){
+  var id = tr.getAttribute('data-cx97'), it = id ? cxAchar(id) : null;
+  if(!it){ fo97PopFechar(); return; }
+  if(fo97Pop.tr && fo97Pop.tr !== tr){ fo97Pop.tr.classList.remove('cx97-on'); fo97Pop.tr.removeAttribute('aria-describedby'); }
+  var el = fo97PopEl(); fo97PopPintar(el, it);
+  el.classList.add('cx97-vis'); tr.classList.add('cx97-on'); tr.setAttribute('aria-describedby', 'cx97Pop');
+  fo97Pop.tr = tr; fo97Pop.fixo = !!fixar; fo97PopPos(tr, el);
+}
+function fo97LinhaDe(n){ while(n && n.nodeType === 1){ if(n.classList && n.classList.contains('cx97-lin')) return n; n = n.parentNode; } return null; }
+function fo97Ligar(tab){
+  if(tab.getAttribute('data-cx97-ligado') === '1') return;
+  tab.setAttribute('data-cx97-ligado', '1');
+  var mostrar = function(ev){ var tr = fo97LinhaDe(ev.target); if(tr && !fo97Pop.fixo) fo97PopMostrar(tr, false); };
+  var fechar = function(ev){ var tr = fo97LinhaDe(ev.target); if(tr && tr !== fo97LinhaDe(ev.relatedTarget) && !fo97Pop.fixo) fo97PopFechar(); };
+  tab.addEventListener('mouseover', mostrar); tab.addEventListener('focusin', mostrar);
+  tab.addEventListener('mouseout', fechar); tab.addEventListener('focusout', fechar);
+  tab.addEventListener('click', function(ev){   // toque/clique: fixa ou solta; cliques nos botões da linha (Editar/Excluir) seguem seu caminho
+    var tr = fo97LinhaDe(ev.target); if(!tr) return;
+    var n = ev.target; while(n && n !== tr){ var tg = n.tagName; if(tg === 'BUTTON' || tg === 'A' || tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA') return; n = n.parentNode; }
+    if(fo97Pop.fixo && fo97Pop.tr === tr) fo97PopFechar(); else fo97PopMostrar(tr, true);
+  });
+  tab.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape'){ fo97PopFechar(); return; }
+    var tr = ev.target && ev.target.classList && ev.target.classList.contains('cx97-lin') ? ev.target : null;   // só com a PRÓPRIA linha em foco (botões internos mantêm Enter/Espaço)
+    if(tr && (ev.key === 'Enter' || ev.key === ' ')){ ev.preventDefault(); if(fo97Pop.fixo && fo97Pop.tr === tr) fo97PopFechar(); else fo97PopMostrar(tr, true); }
+  });
+}
+var fo97GlobalLigado = false;
+function fo97LigarGlobal(){
+  if(fo97GlobalLigado) return; fo97GlobalLigado = true;
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && fo97Pop.tr) fo97PopFechar(); });
+  document.addEventListener('click', function(ev){ if(fo97Pop.fixo && !fo97LinhaDe(ev.target)) fo97PopFechar(); });
+  var reposicionar = function(){ if(!fo97Pop.tr) return; if(fo97Pop.fixo && fo97Pop.el) fo97PopPos(fo97Pop.tr, fo97Pop.el); else fo97PopFechar(); };
+  window.addEventListener('resize', reposicionar); window.addEventListener('scroll', reposicionar, true);
+}
+function fo97Pintar(){
+  var tab = foDom('cxTabela'); if(!tab) return;
+  fo97PopFechar();   // a lista foi repintada: as linhas anteriores não existem mais
+  fo97Ligar(tab); fo97LigarGlobal();
+}
+var _cxRender97 = cxRender;
+cxRender = function(){ var r = _cxRender97.apply(this, arguments); try { fo97Pintar(); } catch(_e){} return r; };
+FO_LIMPEZAS.push(function(){ try { fo97PopFechar(); } catch(_e){} });
+
+// ---------- Novo lançamento (entrada): NF manual opcional ----------
+function fo97NfManualTexto(){ return crValor('cxNovoTipo') === 'entrada' ? String(crValor('lancNf')).trim() : ''; }
+function fo97NfSinc(){
+  var w = foDom('lancNfWrap'); if(!w) return;
+  var on = crValor('cxNovoTipo') === 'entrada';
+  w.style.display = on ? 'block' : 'none';
+  var inp = foDom('lancNf'); if(!inp) return;
+  inp.disabled = !!envioCaixaReal || !crSessao() || !crPodeLer() || estadoCaixaReal.catStatus !== 'ok';
+  if(!on) inp.value = '';
+}
+var _cxFormEstado97 = cxFormEstado;
+cxFormEstado = function(){ _cxFormEstado97.apply(this, arguments); try { fo97NfSinc(); } catch(_e){} };
+var _cxValidarForm97 = cxValidarForm;
+cxValidarForm = function(){
+  var v = _cxValidarForm97.apply(this, arguments);
+  if(v.erro || !v.payload || v.payload.tipo !== 'entrada') return v;
+  var nf = fo97NfManualTexto();
+  if(!nf) return v;
+  if(!fo97NfOk(nf)) return { erro: MSG97.nfFormato };
+  v.payload.detalhe_origem = { v: 1, origem: 'manual', nf_numero: nf };
+  return v;
+};
+var _cxSalvarNovo97 = cxSalvarNovo;
+cxSalvarNovo = function(){
+  if(envioCaixaReal) return Promise.resolve();
+  if(fo97NfManualTexto() && cxChecked('lancRecorrente')){ cxMsgForm = MSG97.nfRecorrente; cxFormEstado(); return Promise.resolve(); }
+  return _cxSalvarNovo97.apply(this, arguments);
+};
+var _cxSucesso97 = cxSucesso;
+cxSucesso = function(env){
+  return Promise.resolve(_cxSucesso97.apply(this, arguments)).then(function(r){
+    if(env && env.kind === 'novo' && !envioCaixaReal){ var el = foDom('lancNf'); if(el) el.value = ''; }
+    return r;
+  });
+};
+// <<97:FIM>>
 
 // ---- excluir (uma linha ou toda a recorrência) ----
 function foGExcluir(id){

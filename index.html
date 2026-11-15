@@ -40858,10 +40858,15 @@ function fo98Sinc(){
     if(cE){ fo98Rotulos('E', cE); fo98Fornecedores('E'); }
     fo98Mostrar('cxEd98Aviso', !!ed.ref0 && !cE);
     fo98Estados('E', travado);
+    var ei = foDom('cxEdInfo');   // texto curto (o antigo "só avulso sem referências é editável" ficou ambíguo); ID, data e autor continuam informados
+    if(ei) ei.textContent = 'Editando lançamento ' + String(ed.id).slice(0, 8) + ' · criado em ' + ((typeof cxDataHora === 'function' && cxDataHora(ed.snap.criado_em)) || '?') + ' · autor e ID não mudam. Edite os dados deste lançamento. Alterações simultâneas serão conferidas ao salvar.';
   }
 }
 var _cxFormEstado98 = cxFormEstado;
 cxFormEstado = function(){ _cxFormEstado98.apply(this, arguments); try { fo98Sinc(); } catch(_e){} };
+// trocar tipo/categoria no Novo lançamento passa por foNovoCatMudou → foNovoBlocoSinc (não por cxFormEstado): sincroniza também por esse caminho real; fo98Sinc não chama foNovoBlocoSinc (sem recursão)
+var _foNovoBlocoSinc98 = foNovoBlocoSinc;
+foNovoBlocoSinc = function(){ var r = _foNovoBlocoSinc98.apply(this, arguments); try { fo98Sinc(); } catch(_e){} return r; };
 
 // ---------- OS: lista REAL e autorizada do banco, paginada (nada de limite silencioso) ----------
 function fo98OsMsg(k, txt, cor){ var el = foDom(FO98_PRE[k] + 'OsMsg'); if(el){ el.textContent = txt || ''; el.style.color = cor || 'var(--muted)'; el.style.display = txt ? 'block' : 'none'; } }

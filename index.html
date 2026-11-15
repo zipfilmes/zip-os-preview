@@ -921,6 +921,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div class="zos-aj-tit">Ajustes</div>
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
 <style id="cx97Css">#cxTabela .cx97-lin:hover>td,#cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(23,92,211,.09),rgba(23,92,211,.09))}#cxTabela .cx97-lin:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}html[data-theme="dark"] #cxTabela .cx97-lin:hover>td,html[data-theme="dark"] #cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(143,184,238,.12),rgba(143,184,238,.12))}#cx97Pop{position:fixed;left:0;top:0;z-index:2147483000;display:none;max-width:min(380px,calc(100vw - 16px));min-width:240px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);box-shadow:0 8px 24px rgba(16,24,40,.22);font-size:12px;line-height:1.45;pointer-events:none}#cx97Pop.cx97-vis{display:block}#cx97Pop .t{font-weight:700;font-size:12.5px;margin-bottom:6px;word-break:break-word}#cx97Pop .l{display:flex;gap:10px;justify-content:space-between;padding:1px 0}#cx97Pop .l span:first-child{color:var(--muted);flex:none}#cx97Pop .l span:last-child{text-align:right;word-break:break-word}@media print{#cx97Pop{display:none!important}}</style>
+<style id="cx98Css">#cx97Pop{pointer-events:auto;user-select:text;-webkit-user-select:text;cursor:auto;overflow-y:auto;overscroll-behavior:contain;min-width:0;max-width:calc(100vw - 16px);box-sizing:border-box}#cx97Pop .l span:last-child{user-select:text;-webkit-user-select:text}#cx97Pop .cx98-x{display:none;position:absolute;top:3px;right:5px;border:0;background:none;color:var(--muted);font-size:14px;line-height:1;cursor:pointer;padding:2px 5px}#cx97Pop.cx98-fixo{padding-right:26px;box-shadow:0 8px 24px rgba(16,24,40,.30),0 0 0 2px var(--accent)}#cx97Pop.cx98-fixo .cx98-x{display:block}</style>
 <style id="zosTemaStatusCss">#zosAjustes .zos-aj-st{margin-top:6px;font-size:11px;color:#98a2b3}#zosAjustes .zos-aj-st:empty{display:none}#zosAjustes .zos-aj-retry{margin-top:4px;border:1px solid #475467;background:transparent;color:#cbd5e1;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}</style>
 <div id="zosTemaStatus" class="zos-aj-st" role="status" aria-live="polite"></div><button type="button" id="zosTemaRetentar" class="zos-aj-retry" style="display:none">Tentar novamente</button>
 </div>
@@ -929,7 +930,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.1.0 · Recebimentos Integrados</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.2.0 · Detalhes do Caixa</div>
 </aside>
 
 <main class="main">
@@ -1504,6 +1505,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <input id="lancNf" type="text" maxlength="30" autocomplete="off" placeholder="Ex: 1234" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
    <span class="muted" style="display:block;font-size:11px;font-weight:400;margin-top:2px">Só registra o número da NF neste lançamento; não vincula OS nem cria nota fiscal.</span>
   </label>
+ <div id="lanc98Bloco" style="display:none"></div>
  <div id="lancEquipeBloco" style="display:none;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:12px 14px;margin-bottom:12px">
   <div style="font-size:13px;font-weight:800;color:#6d28d9;margin-bottom:10px">👥 Dados da equipe</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
@@ -1655,6 +1657,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
     <label style="font-size:12px;font-weight:700">Categoria<br><select id="cxEdCat" style="min-width:160px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"></select></label>
     <label style="font-size:12px;font-weight:700;flex:1;min-width:200px">Descrição<br><input id="cxEdDesc" type="text" maxlength="300" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:10px"></label>
    </div>
+   <div id="cxEd98Bloco" style="display:none"></div>
    <div id="cxMsgEd"></div>
    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
     <button id="cxEdSalvarBtn" class="btn" type="button" data-pa="caixa-editar-salvar" onclick="cxEditarSalvar()">💾 Salvar edição</button>
@@ -25442,7 +25445,7 @@ function aoEntrarCaixaReal(){ return cxCarregar(false); }
 function atualizarCaixaReal(){ return cxCarregar(false); }
 function renderFinCaixa(){ cxRender(); }   // chamadores antigos (categorias demonstrativas) só repintam
 var CX_IDS_TEXTO = ['cxStatus', 'cxFonte', 'cxCardsFiltro', 'cxCardsAcum', 'cxEscopo', 'cxTabela', 'cxMsg', 'cxEdInfo', 'cxDelResumo', 'cxSerPrevia'];
-var CX_IDS_CAMPO = ['lancNf', 'cxNovoDesc', 'cxNovoValor', 'cxBusca', 'cxDe', 'cxAte', 'cxEdValor', 'cxEdDesc', 'cxEdData', 'cxSerValor', 'cxSerDesc', 'cxSerData', 'cxSerQtd'];
+var CX_IDS_CAMPO = ['lancNf', 'lanc98Dest', 'lanc98Os', 'lanc98Cliente', 'cxEd98Nf', 'cxEd98Dest', 'cxEd98Os', 'cxEd98Cliente', 'cxNovoDesc', 'cxNovoValor', 'cxBusca', 'cxDe', 'cxAte', 'cxEdValor', 'cxEdDesc', 'cxEdData', 'cxSerValor', 'cxSerDesc', 'cxSerData', 'cxSerQtd'];
 var CX_IDS_CHECK = ['cxDelConfirma', 'cxSerConfirma', 'cxSerPassado', 'cxSerDup'];
 function limparCaixaRealPorAuth(){
   var e = estadoCaixaReal;
@@ -38568,11 +38571,11 @@ cxRender = function(){
     }
     var origem = i.avulso ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
     linhas += '<tr class="cx97-lin" tabindex="0" data-cx97="' + foEsc(i.id) + '"><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
-      + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td><td style="font-size:12px;color:var(--muted)">' + foEsc(i.os || '—') + '</td>'
+      + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td>' + fo98CelulaOs(i)
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
-  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + '</table>'
+  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + '</table>'
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
@@ -40664,6 +40667,531 @@ cxSucesso = function(env){
   });
 };
 // <<97:FIM>>
+// <<98:INICIO>>
+// Pacote 98 (V1.6.2.0): Detalhes do Caixa. Escrito pelo Claude SEM executar (sem Bash); os testes (Testes/teste_funcs_98.js) extraem ESTE bloco do Tela/index.html gerado.
+// (1) Editar entrada manual: NF opcional (acrescentar/corrigir/remover), também em registros antigos sem NF. (2) Novo/Editar saída das categorias Impostos e taxas, Custo de operação ZIP, Despesas de produção e BV agência:
+//     referências INFORMATIVAS (fornecedor cadastrado OU destinatário/agência, OS escolhida no banco, cliente). As referências ficam em detalhe_origem (v2) validadas pelo servidor; NUNCA em projeto_id/fornecedor_id
+//     (esses ativam custos, comprovação e travas). Gravação só por RPC própria (criar/editar) com chave de operação, instantâneo completo (inclui detalhe_origem) e retry idempotente.
+// (3) Caixinha de informação fixável, selecionável e copiável. (4) Caixinha à ESQUERDA da tabela (sobre o menu) quando há espaço; senão acoplada embaixo da janela. (5) Coluna "OS / NF-e": OS em cima, NF embaixo, mesma célula.
+// Tudo o que vem do banco entra na tela por textContent/foEsc. Nada é inferido da descrição. Nenhuma leitura/escrita nova de tabelas: só as duas RPCs de gravação e a busca de OS.
+var FO98_RPC = { criar: 'financeiro_lancamento_criar_ref', editar: 'financeiro_lancamento_editar_ref', osListar: 'financeiro_caixa_os_listar' };
+var FO98_PAG = 30;
+var FO98_CATS = {};   // categoria → nome do campo de texto livre (a mesma lista vale no servidor)
+FO98_CATS[FO96_CAT.imp] = 'destinatario'; FO98_CATS[FO96_CAT.custoOp] = 'destinatario'; FO98_CATS[FO96_CAT.prod] = 'destinatario'; FO98_CATS[FO96_CAT.bv] = 'agencia';
+var FO98_PRE = { N: 'lanc98', E: 'cxEd98' };
+var MSG98 = {
+  refTitulo: '🔗 Referências (opcionais)',
+  refNota: 'Informações para identificar esta despesa.',
+  fornRot: 'Fornecedor cadastrado', fornNenhum: '(não é fornecedor cadastrado)',
+  fornCarregando: 'Carregando a lista de fornecedores…', fornErro: 'Lista de fornecedores indisponível agora: use Atualizar ou informe o nome abaixo.',
+  fornInvalido: 'Fornecedor não encontrado na lista atual. Atualize e escolha de novo. Nada foi gravado.',
+  fornOuDest: 'Informe o fornecedor cadastrado OU o nome do destinatário/agência, não os dois. Nada foi gravado.',
+  destInvalido: 'Destinatário/agência inválido: de 1 a 120 caracteres, sem caracteres de controle. Nada foi gravado.',
+  cliInvalido: 'Cliente inválido: de 1 a 120 caracteres, sem caracteres de controle. Nada foi gravado.',
+  osRot: 'OS do projeto', osBuscar: 'Buscar OS', osMais: 'Mostrar mais', osPlaceholder: 'Parte da OS, do projeto ou do cliente',
+  osEscolher: 'Escolha a OS na lista (Buscar OS) ou apague o campo OS. Nada foi gravado.',
+  osCarregando: 'Buscando OS no banco…', osVazio: 'Nenhuma OS encontrada para esta busca.', osEscolha: 'Escolha a OS na lista.',
+  osErro: 'Não foi possível buscar as OS agora. Nada foi gravado. Tente de novo.',
+  osAusente: 'A busca de OS ainda não está instalada no banco (pacote 98). Nada foi alterado.',
+  osLonga: 'Busca inválida: de 1 a 60 caracteres.',
+  cliRot: 'Cliente', cliNota: 'Com OS escolhida o cliente vem do projeto. Sem OS (serviço antigo ou externo) pode ser digitado.',
+  nfRot: 'Nota fiscal (opcional)', nfNota: 'Só registra o número da NF neste lançamento; apague para remover. Não vincula OS nem cria nota fiscal.',
+  nfSoEntrada: 'NF só vale para entrada: apague o número da NF ou volte o tipo para Entrada. Nada foi gravado.',
+  refRemovida: 'Esta categoria/tipo não aceita referências: as referências atuais deste lançamento serão removidas ao salvar.',
+  recorrente: 'Referências não valem para lançamento recorrente: apague as referências ou desmarque "Repetir todo mês". Nada foi gravado.',
+  ausente: 'O lançamento com referências ainda não está instalado no banco (pacote 98). Nada foi alterado, e a tela não usa gravação direta como alternativa.',
+  releituraDetalhe: 'Edição confirmada pelo banco, mas a releitura ainda não mostra a NF/as referências. Use Atualizar.',
+  recusa: 'O banco recusou os dados: '
+};
+var fo98St = { N: null, E: null };
+function fo98Novo0(){ return { os: { seq: 0, status: 'idle', busca: '', itens: [], total: 0, temMais: false, apos: null, sel: null }, fornAtual: null, clienteAuto: false }; }
+fo98St.N = fo98Novo0(); fo98St.E = fo98Novo0();
+function fo98Limpa(v){ return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function fo98TxtOk(t){ return typeof t === 'string' && t.length >= 1 && t.length <= 120 && !/[\u0000-\u001f\u007f]/.test(t); }
+function fo98CatRef(catId){   // categoria de SAÍDA que aceita referências → { nome, campo } | null
+  if(!catId) return null;
+  var r = null;
+  (estadoCaixaReal.catalogo || []).forEach(function(c){ if(String(c.id) === String(catId) && c.tipo === 'saida' && Object.prototype.hasOwnProperty.call(FO98_CATS, c.nome)) r = { nome: c.nome, campo: FO98_CATS[c.nome] }; });
+  return r;
+}
+function fo98CanonRef(r){ if(!r || typeof r !== 'object') return ''; var o = {}; Object.keys(r).sort().forEach(function(k){ o[k] = r[k]; }); return JSON.stringify(o); }
+function fo98Detalhe(d){   // detalhe_origem do banco (manual v1 = NF; v2 = referências) → saneado | null; formato desconhecido nunca vira informação
+  if(!d || typeof d !== 'object' || Array.isArray(d) || d.origem !== 'manual') return null;
+  var v = Number(d.v); if(v !== 1 && v !== 2) return null;
+  var nf = typeof d.nf_numero === 'string' && fo97NfOk(d.nf_numero) ? d.nf_numero : '', ref = null;
+  if(v === 2 && d.ref && typeof d.ref === 'object' && !Array.isArray(d.ref)){
+    var r = d.ref, o = {};
+    if(fo97UuidOk(r.fornecedor_id)){ o.fornecedor_id = r.fornecedor_id; o.fornecedor_nome = fo97Txt(r.fornecedor_nome, 120); }
+    ['destinatario', 'agencia', 'cliente'].forEach(function(k){ var t = fo97Txt(r[k], 120); if(t) o[k] = t; });
+    if(fo97UuidOk(r.projeto_id)){ o.projeto_id = r.projeto_id; o.os = fo97Txt(r.os, 40); o.titulo = fo97Txt(r.titulo, 200); }
+    ref = Object.keys(o).length ? o : null;
+  }
+  return { v: v, nf: nf, ref: ref };
+}
+function fo98RefEntrada(ref){   // referência do banco → forma de ENTRADA do formulário (para comparar "nada mudou")
+  if(!ref) return null;
+  var o = {};
+  if(ref.fornecedor_id) o.fornecedor_id = ref.fornecedor_id;
+  if(ref.destinatario) o.destinatario = ref.destinatario;
+  if(ref.agencia) o.agencia = ref.agencia;
+  if(ref.projeto_id) o.projeto_id = ref.projeto_id; else if(ref.cliente) o.cliente = ref.cliente;
+  return Object.keys(o).length ? o : null;
+}
+function fo98Snap(it){ var s = Object.assign({}, it.snap || {}); s.detalhe_origem = it.detRaw || null; return s; }   // instantâneo COMPLETO: os 8 campos antigos + detalhe_origem como o banco devolveu
+
+// ---------- dados das linhas: coluna "OS / NF-e" e caixinha ----------
+var _cxCalcular98 = cxCalcular;
+cxCalcular = function(rows, catalogo, catOk){
+  var r = _cxCalcular98.apply(this, arguments);
+  r.itens.forEach(function(it, i){
+    var raw = (rows || [])[i] || {};
+    it.detRaw = raw.detalhe_origem && typeof raw.detalhe_origem === 'object' ? raw.detalhe_origem : null;
+    it.i98 = fo98Detalhe(raw.detalhe_origem);
+    it.colOs = it.os || (it.i97 && it.i97.os) || (it.i98 && it.i98.ref && it.i98.ref.os) || '';
+    it.colNf = (it.i97 && it.i97.nfNumero) || (it.i98 && it.i98.nf) || '';
+  });
+  return r;
+};
+function fo98CelulaOs(i){   // duas linhas compactas na MESMA célula (a altura da linha da tabela é a dos botões/descrição): OS em cima, NF-e embaixo; ausente = —
+  var os = String(i.colOs || ''), nf = String(i.colNf || ''), base = 'max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+  return '<td style="font-size:12px;color:var(--muted)"><div title="' + foEsc(os) + '" style="line-height:13px;' + base + '">' + foEsc(os || '—') + '</div><div title="' + foEsc(nf) + '" style="line-height:12px;font-size:11px;' + base + '">' + foEsc(nf || '—') + '</div></td>';
+}
+var _fo97Linhas98 = fo97Linhas;
+fo97Linhas = function(it){
+  var d = it.i98;
+  if(!d) return _fo97Linhas98.apply(this, arguments);
+  var L = [];
+  function add(r, v){ L.push([r, (v === undefined || v === null || v === '') ? '—' : String(v)]); }
+  add('Data', it.data ? (crDataBR(it.data) || it.data) : ''); add('Valor', isFinite(it.valorC) ? crBRL(it.valorC) : ''); add('Categoria', it.catNome);
+  if(it.tipo === 'entrada'){ add('OS', it.colOs); add('NF', d.nf); add('Cliente', d.ref && d.ref.cliente); return L; }
+  var ref = d.ref || {};
+  if(ref.fornecedor_id) add('Fornecedor', ref.fornecedor_nome || 'cadastrado');
+  else if(ref.agencia) add('Agência', ref.agencia); else add('Destinatário', ref.destinatario);
+  add('OS', it.colOs); if(ref.titulo) add('Projeto', ref.titulo); add('Cliente', ref.cliente);
+  return L;
+};
+
+// ---------- campos novos (montados por JS: textContent, sem HTML do banco) ----------
+function fo98El(tag, id, st, txt){ var e = document.createElement(tag); if(id) e.id = id; if(st) e.setAttribute('style', st); if(txt !== undefined && txt !== null) e.textContent = txt; return e; }
+function fo98Montar(k){
+  var p = FO98_PRE[k], host = foDom(k === 'N' ? 'lanc98Bloco' : 'cxEd98Bloco');
+  if(!host || host.getAttribute('data-montado') === '1') return;
+  host.setAttribute('data-montado', '1');
+  var N = k === 'N';
+  var lab = N ? 'font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px' : 'font-size:12px;font-weight:700;display:block;margin-top:8px';
+  var inp = N ? 'display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box' : 'display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;box-sizing:border-box';
+  var mut = 'display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px';
+  var campo = function(rotuloId, rotulo, controle, nota){ var l = fo98El('label', null, lab); l.appendChild(fo98El('span', rotuloId, null, rotulo)); l.appendChild(controle); if(nota) l.appendChild(fo98El('span', null, mut, nota)); return l; };
+  if(!N){   // edição: NF da entrada
+    var w = fo98El('label', 'cxEd98NfWrap', lab + ';display:none'); w.appendChild(fo98El('span', null, null, MSG98.nfRot));
+    var nf = fo98El('input', 'cxEd98Nf', inp); nf.type = 'text'; nf.maxLength = 30; nf.setAttribute('autocomplete', 'off'); nf.placeholder = 'Ex: 1234'; w.appendChild(nf); w.appendChild(fo98El('span', null, mut, MSG98.nfNota));
+    host.appendChild(w);
+  }
+  var box = fo98El('div', p + 'Campos', (N ? 'border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px' : 'border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:10px') + ';display:none');
+  box.appendChild(fo98El('div', null, 'font-size:' + (N ? 13 : 12) + 'px;font-weight:800;margin-bottom:4px', MSG98.refTitulo));
+  box.appendChild(fo98El('div', null, 'font-size:11px;color:var(--muted);margin-bottom:4px', MSG98.refNota));
+  var sf = fo98El('select', p + 'Forn', inp); sf.addEventListener('change', function(){ fo98FornMudou(k); });
+  box.appendChild(campo(null, MSG98.fornRot, sf)); box.appendChild(fo98El('div', p + 'FornAviso', 'display:none;font-size:11px;color:var(--muted);margin-top:2px'));
+  var dest = fo98El('input', p + 'Dest', inp); dest.type = 'text'; dest.maxLength = 120; dest.setAttribute('autocomplete', 'off');
+  box.appendChild(campo(p + 'DestRot', 'Destinatário', dest, 'Quando não for fornecedor cadastrado (órgão, banco, agência...).'));
+  var linha = fo98El('div', null, 'display:flex;gap:8px;align-items:center;margin-top:' + (N ? 6 : 4) + 'px');
+  var os = fo98El('input', p + 'Os', inp.replace('display:block;width:100%;margin-top:6px;', 'flex:1;min-width:0;').replace('display:block;width:100%;margin-top:4px;', 'flex:1;min-width:0;')); os.type = 'text'; os.maxLength = 60; os.placeholder = MSG98.osPlaceholder; os.setAttribute('autocomplete', 'off');
+  os.addEventListener('input', function(){ fo98OsEditado(k); });
+  os.addEventListener('keydown', function(ev){ if(ev.key === 'Enter'){ ev.preventDefault(); fo98OsBuscar(k, false); } });
+  var bb = fo98El('button', p + 'OsBuscar', 'font-size:12px;padding:9px 12px;white-space:nowrap', MSG98.osBuscar); bb.type = 'button'; bb.className = 'btn btn2'; bb.addEventListener('click', function(){ fo98OsBuscar(k, false); });
+  linha.appendChild(os); linha.appendChild(bb);
+  var lo = fo98El('label', null, lab); lo.appendChild(fo98El('span', null, null, MSG98.osRot)); lo.appendChild(linha); box.appendChild(lo);
+  var ls = fo98El('select', p + 'OsLista', inp + ';display:none'); ls.addEventListener('change', function(){ fo98OsEscolher(k); }); box.appendChild(ls);
+  var bm = fo98El('button', p + 'OsMais', 'font-size:12px;margin-top:6px;display:none', MSG98.osMais); bm.type = 'button'; bm.className = 'btn btn2'; bm.addEventListener('click', function(){ fo98OsBuscar(k, true); }); box.appendChild(bm);
+  box.appendChild(fo98El('div', p + 'OsMsg', 'display:none;font-size:12px;margin-top:4px;color:var(--muted)'));
+  var cli = fo98El('input', p + 'Cliente', inp); cli.type = 'text'; cli.maxLength = 120; cli.setAttribute('autocomplete', 'off');
+  box.appendChild(campo(null, MSG98.cliRot, cli, MSG98.cliNota));
+  host.appendChild(box);
+  if(!N){
+    host.appendChild(fo98El('div', 'cxEd98Aviso', 'display:none;font-size:12px;margin-top:8px;color:#b45309', MSG98.refRemovida));
+    var ec = foDom('cxEdCat'); if(ec) ec.addEventListener('change', function(){ cxFormEstado(); });
+  }
+}
+function fo98Rotulos(k, c){
+  var p = FO98_PRE[k], r = foDom(p + 'DestRot'), d = foDom(p + 'Dest');
+  var rot = c.campo === 'agencia' ? 'Agência' : 'Destinatário';
+  if(r) r.textContent = rot; if(d) d.placeholder = c.campo === 'agencia' ? 'Ex: nome da agência' : 'Ex: órgão, banco, outro destinatário';
+}
+function fo98Fornecedores(k){
+  var p = FO98_PRE[k], sel = foDom(p + 'Forn'); if(!sel) return;
+  var st = fo98St[k], pronta = fo96ListaPronta(), lista = pronta ? fo96Lista.lista : [];
+  var extra = st.fornAtual && st.fornAtual.id && !lista.some(function(x){ return x.id === st.fornAtual.id; }) ? st.fornAtual : null;
+  var av = foDom(p + 'FornAviso'), msg = pronta ? '' : (fo96Lista.status === 'erro' ? MSG98.fornErro : MSG98.fornCarregando);
+  if(av){ av.textContent = msg; av.style.display = msg ? 'block' : 'none'; }
+  var ass = lista.map(function(x){ return x.id + '=' + x.nome; }).join('|') + '#' + (extra ? extra.id : '');
+  if(sel.getAttribute('data-assinatura') === ass) return;
+  var prev = sel.value; sel.textContent = '';
+  var add = function(v, t){ var o = document.createElement('option'); o.value = v; o.textContent = t; sel.appendChild(o); };
+  add('', MSG98.fornNenhum); lista.forEach(function(x){ add(x.id, x.nome); }); if(extra) add(extra.id, '(atual) ' + (extra.nome || 'fornecedor'));
+  sel.setAttribute('data-assinatura', ass); sel.value = prev;
+}
+function fo98FornMudou(k){
+  var p = FO98_PRE[k];
+  if(crValor(p + 'Forn')){ var d = foDom(p + 'Dest'); if(d) d.value = ''; }
+  fo98Estados(k, !!envioCaixaReal);
+}
+function fo98Estados(k, travado){
+  var p = FO98_PRE[k], st = fo98St[k], forn = crValor(p + 'Forn'), os = st.os, busy = os.status === 'carregando';
+  var set = function(id, d){ var e = foDom(id); if(e) e.disabled = !!d; };
+  set(p + 'Forn', travado); set(p + 'Dest', travado || !!forn); set(p + 'Os', travado); set(p + 'OsBuscar', travado || busy); set(p + 'OsLista', travado); set(p + 'OsMais', travado || busy); set(p + 'Cliente', travado || !!os.sel);
+  if(k === 'E') set('cxEd98Nf', travado);
+}
+function fo98NovoCat(){ return crValor('cxNovoTipo') === 'saida' ? fo98CatRef(crValor('cxNovoCat')) : null; }
+function fo98Mostrar(id, on){ var e = foDom(id); if(e) e.style.display = on ? 'block' : 'none'; }
+function fo98Sinc(){
+  fo98Montar('N'); fo98Montar('E');
+  var e = estadoCaixaReal, travado = !!envioCaixaReal || !crSessao() || !crPodeLer() || e.catStatus !== 'ok';
+  var cN = fo98NovoCat();
+  fo98Mostrar('lanc98Bloco', !!cN); fo98Mostrar('lanc98Campos', !!cN);
+  if(cN){ fo98Rotulos('N', cN); fo98Fornecedores('N'); }
+  fo98Estados('N', travado);
+  var ed = edicaoCaixa;
+  fo98Mostrar('cxEd98Bloco', !!ed);
+  if(ed){
+    var tipo = crValor('cxEdTipo') || ed.snap.tipo, cE = tipo === 'saida' ? fo98CatRef(crValor('cxEdCat')) : null;
+    fo98Mostrar('cxEd98NfWrap', tipo === 'entrada'); fo98Mostrar('cxEd98Campos', !!cE);
+    if(cE){ fo98Rotulos('E', cE); fo98Fornecedores('E'); }
+    fo98Mostrar('cxEd98Aviso', !!ed.ref0 && !cE);
+    fo98Estados('E', travado);
+  }
+}
+var _cxFormEstado98 = cxFormEstado;
+cxFormEstado = function(){ _cxFormEstado98.apply(this, arguments); try { fo98Sinc(); } catch(_e){} };
+
+// ---------- OS: lista REAL e autorizada do banco, paginada (nada de limite silencioso) ----------
+function fo98OsMsg(k, txt, cor){ var el = foDom(FO98_PRE[k] + 'OsMsg'); if(el){ el.textContent = txt || ''; el.style.color = cor || 'var(--muted)'; el.style.display = txt ? 'block' : 'none'; } }
+function fo98OsPintar(k){
+  var p = FO98_PRE[k], s = fo98St[k].os, ls = foDom(p + 'OsLista'), mais = foDom(p + 'OsMais'), cli = foDom(p + 'Cliente');
+  if(ls){
+    ls.textContent = '';
+    var add = function(v, t){ var o = document.createElement('option'); o.value = v; o.textContent = t; ls.appendChild(o); };
+    add('', s.itens.length ? MSG98.osEscolha : '—');
+    s.itens.forEach(function(x){ add(x.projeto_id, x.os + (x.titulo ? ' — ' + x.titulo : '') + (x.cliente ? ' — ' + x.cliente : '')); });
+    ls.value = s.sel ? s.sel.projeto_id : '';
+    ls.style.display = s.itens.length ? 'block' : 'none';
+  }
+  if(mais) mais.style.display = s.temMais ? 'inline-block' : 'none';
+  if(s.status === 'carregando') fo98OsMsg(k, MSG98.osCarregando);
+  else if(s.status === 'erro') fo98OsMsg(k, MSG98.osErro, 'var(--red)');
+  else if(s.status === 'ausente') fo98OsMsg(k, MSG98.osAusente, '#b45309');
+  else if(s.sel) fo98OsMsg(k, 'OS ' + s.sel.os + (s.sel.titulo ? ' — ' + s.sel.titulo : '') + ' escolhida' + (s.sel.cliente ? ' · cliente: ' + s.sel.cliente : '') + '.', '#065f46');
+  else if(s.status === 'ok') fo98OsMsg(k, s.itens.length ? 'Mostrando ' + s.itens.length + ' de ' + s.total + ' resultado(s).' + (s.temMais ? ' Use Mostrar mais.' : '') : MSG98.osVazio, s.itens.length ? 'var(--muted)' : '#b45309');
+  else fo98OsMsg(k, '');
+  if(cli) cli.disabled = !!envioCaixaReal || !!s.sel;
+  fo98Estados(k, !!envioCaixaReal);
+}
+function fo98OsEditado(k){   // qualquer digitação invalida a escolha anterior (resposta atrasada também é descartada pelo seq)
+  var st = fo98St[k], s = st.os;
+  fo98St[k].os = { seq: s.seq + 1, status: 'idle', busca: '', itens: [], total: 0, temMais: false, apos: null, sel: null };
+  if(st.clienteAuto){ var c = foDom(FO98_PRE[k] + 'Cliente'); if(c) c.value = ''; st.clienteAuto = false; }
+  fo98OsPintar(k);
+}
+function fo98OsValidar(d){   // resposta íntegra da busca ou null (qualquer linha malformada invalida tudo)
+  if(!d || typeof d !== 'object' || Array.isArray(d) || d.status !== 'ok' || !Array.isArray(d.itens) || typeof d.tem_mais !== 'boolean') return null;
+  var out = [], vistos = {};
+  for(var i = 0; i < d.itens.length; i++){
+    var x = d.itens[i];
+    if(!x || typeof x !== 'object' || !fo97UuidOk(x.projeto_id) || vistos[x.projeto_id] || typeof x.os !== 'string' || !/^[A-Za-z0-9._-]{1,30}$/.test(x.os)) return null;
+    vistos[x.projeto_id] = true;
+    out.push({ projeto_id: x.projeto_id, os: x.os, titulo: fo97Txt(x.titulo, 200), cliente: typeof x.cliente === 'string' ? fo97Txt(x.cliente, 120) : '' });
+  }
+  if(d.tem_mais && !out.length) return null;
+  var tot = Number(d.total);
+  return { itens: out, temMais: d.tem_mais, total: isFinite(tot) && tot >= out.length ? tot : out.length, apos: out.length ? { os: out[out.length - 1].os, id: out[out.length - 1].projeto_id } : null };
+}
+function fo98OsEscolherItem(k, it){
+  var p = FO98_PRE[k], st = fo98St[k];
+  st.os.sel = it;
+  var o = foDom(p + 'Os'); if(o) o.value = it.os;
+  var c = foDom(p + 'Cliente'); if(c) c.value = it.cliente || '';
+  st.clienteAuto = true;
+  fo98OsPintar(k);
+}
+function fo98OsEscolher(k){
+  var s = fo98St[k].os, v = crValor(FO98_PRE[k] + 'OsLista'), it = null;
+  s.itens.forEach(function(x){ if(x.projeto_id === v) it = x; });
+  if(it) fo98OsEscolherItem(k, it); else { s.sel = null; fo98OsPintar(k); }
+}
+function fo98OsBuscar(k, mais){
+  var p = FO98_PRE[k], st = fo98St[k], s = st.os, txt = fo98Limpa(crValor(p + 'Os'));
+  if(!foPode() || s.status === 'carregando') return Promise.resolve();
+  if(txt.length < 1 || txt.length > 60){ fo98OsMsg(k, MSG98.osLonga, '#b45309'); return Promise.resolve(); }
+  if(mais && (!s.temMais || !s.apos || s.busca !== txt)) mais = false;
+  if(!mais){ st.os = s = { seq: s.seq + 1, status: 'idle', busca: txt, itens: [], total: 0, temMais: false, apos: null, sel: null }; if(st.clienteAuto){ var c0 = foDom(p + 'Cliente'); if(c0) c0.value = ''; st.clienteAuto = false; } }
+  var seq = s.seq, apos = mais ? s.apos : null, ctx = foCtxAtual();
+  s.status = 'carregando'; fo98OsPintar(k);
+  var vivo = function(){ return fo98St[k].os === s && s.seq === seq && foCtxOk(ctx); };
+  var q; try { q = supabaseClient.rpc(FO98_RPC.osListar, { p_busca: txt, p_limite: FO98_PAG, p_apos_os: apos ? apos.os : null, p_apos_id: apos ? apos.id : null }); } catch(_e){ q = Promise.reject(_e); }
+  return crComTempo(q).then(function(r){
+    if(!vivo()) return;
+    if(r && r.error && cxRpcErroNaoInstalado(r.error)){ s.status = 'ausente'; fo98OsPintar(k); return; }
+    var v = r && !r.error ? fo98OsValidar(r.data) : null;
+    if(!v){ s.status = 'erro'; fo98OsPintar(k); return; }
+    var ja = {}; s.itens.forEach(function(x){ ja[x.projeto_id] = true; });
+    v.itens.forEach(function(x){ if(!ja[x.projeto_id]){ ja[x.projeto_id] = true; s.itens.push(x); } });
+    s.temMais = v.temMais; s.apos = v.apos || s.apos; s.total = v.total; s.status = 'ok';
+    var ex = s.itens.filter(function(x){ return x.os.toLowerCase() === txt.toLowerCase(); });
+    if(!mais && ex.length === 1) return fo98OsEscolherItem(k, ex[0]);   // OS digitada inteira e única: já vem escolhida
+    fo98OsPintar(k);
+  }, function(){ if(vivo()){ s.status = 'erro'; fo98OsPintar(k); } });
+}
+
+// ---------- leitura/validação das referências (a regra é repetida e decidida pelo servidor) ----------
+function fo98LerRef(k, c){   // c = { nome, campo } → { erro } | { ref: objeto de ENTRADA | null }
+  var p = FO98_PRE[k], st = fo98St[k], ref = {};
+  var forn = crValor(p + 'Forn'), dest = fo98Limpa(crValor(p + 'Dest')), cli = fo98Limpa(crValor(p + 'Cliente')), osTxt = fo98Limpa(crValor(p + 'Os'));
+  if(forn){
+    var okF = fo97UuidOk(forn) && ((fo96ListaPronta() && fo96Lista.lista.some(function(x){ return x.id === forn; })) || (!!st.fornAtual && st.fornAtual.id === forn));
+    if(!okF) return { erro: MSG98.fornInvalido };
+    if(dest) return { erro: MSG98.fornOuDest };
+    ref.fornecedor_id = forn;
+  } else if(dest){
+    if(!fo98TxtOk(dest)) return { erro: MSG98.destInvalido };
+    ref[c.campo] = dest;
+  }
+  if(osTxt){
+    var sel = st.os.sel;
+    if(!sel || sel.os !== osTxt) return { erro: MSG98.osEscolher };
+    ref.projeto_id = sel.projeto_id;   // OS/projeto/cliente vêm do BANCO a partir deste id; texto digitado nunca é enviado
+  } else if(cli){
+    if(!fo98TxtOk(cli)) return { erro: MSG98.cliInvalido };
+    ref.cliente = cli;
+  }
+  return { ref: Object.keys(ref).length ? ref : null };
+}
+
+// ---------- Novo lançamento com referências (RPC própria; caminho antigo permanece para os demais casos) ----------
+FO_G_RPC.g_ref = FO98_RPC.criar;
+var _foGArgs98 = foGArgs;
+foGArgs = function(env){ if(env.kind === 'g_ref') return { p_op: env.op, p_linha: env.linha }; return _foGArgs98.apply(this, arguments); };
+var _cxSalvarNovo98 = cxSalvarNovo;
+cxSalvarNovo = function(){
+  if(envioCaixaReal) return Promise.resolve();
+  var c = fo98NovoCat();
+  if(!c || foNovoEhEquipe() || fo96NovoEhForn()) return _cxSalvarNovo98.apply(this, arguments);   // sem categoria de referências: o caminho antigo (96/97) decide
+  var r = fo98LerRef('N', c);
+  if(r.erro){ cxMsgForm = r.erro; cxFormEstado(); return Promise.resolve(); }
+  if(!r.ref) return _cxSalvarNovo98.apply(this, arguments);   // nenhum campo novo preenchido: lançamento avulso comum
+  return fo98Novo(r.ref);
+};
+function fo98Novo(ref){
+  if(envioCaixaReal) return Promise.resolve();
+  if(!foGLeituraOk()){ cxFormEstado(); return Promise.resolve(); }
+  var c = cxLerCampos('cxNovo', cxCatElegivel);
+  if(c.erro){ cxMsgForm = c.erro; cxFormEstado(); return Promise.resolve(); }
+  if(cxChecked('lancRecorrente')){ cxMsgForm = MSG98.recorrente; cxFormEstado(); return Promise.resolve(); }
+  var linha = { id: cxUuid(), tipo: c.tipo, data: c.data, descricao: c.desc, valor: cxFmt2(c.centavos), categoria_id: c.cat, ref: ref };
+  cxMsgForm = '';
+  var env = cxNovoEnvio('g_ref', { op: cxUuid(), linha: linha, linhas: [linha], esperadoLinhas: 1, ids: [linha.id], msg: 'Gravando o lançamento com referências (uma única operação)…' });
+  envioCaixaReal = env; cxRender();
+  return foGRpc(env, false);
+}
+function fo98ResultadoTexto(d){
+  var s = String(d.status || '');
+  if(s === 'conflito') return 'CONFLITO: o lançamento mudou desde que você o abriu, ou já existe um registro com este ID e conteúdo diferente. Nada foi aceito como seu. A lista foi atualizada.';
+  if(s === 'protegido') return 'Recusado: este lançamento está protegido (' + String(d.motivo || 'vínculo ou evidência financeira') + '). Nada foi gravado.';
+  if(s === 'invalido') return MSG98.recusa + String(d.motivo || 'inválidos') + '. Nada foi gravado.';
+  return '';
+}
+var _foGResultado98 = foGResultado;
+foGResultado = function(env, d){
+  if(env.kind !== 'g_ref') return _foGResultado98.apply(this, arguments);
+  var s = String(d.status || '');
+  if(s === 'aplicado' || s === 'ja_aplicado'){
+    if(d.linhas !== 1) return cxIncerto(env, 'Aguardando conferência: o banco respondeu sucesso sem confirmar exatamente 1 linha (recebido: ' + String(d.linhas) + '). Nada é dado como concluído. Use “Conferir / repetir”.');
+    return fo98Sucesso(env);
+  }
+  var msg = fo98ResultadoTexto(d);
+  if(msg) return foGFim(env, msg, s === 'conflito' || s === 'protegido');
+  return cxIncerto(env, 'Aguardando conferência: resposta inesperada do banco (' + (s || 'sem status') + '). Use “Conferir / repetir” (mesma operação, sem duplicar).');
+};
+var _foGErro98 = foGErro;
+foGErro = function(env, err){ if(env.kind === 'g_ref' && cxRpcErroNaoInstalado(err)) return foGFim(env, MSG98.ausente, false); return _foGErro98.apply(this, arguments); };
+function fo98Sucesso(env){
+  env.fase = 'relendo'; env.msg = 'Gravado. Atualizando a lista…'; cxFormEstado();
+  return cxCarregar(true).then(function(){
+    if(!cxEnvioVivo(env)) return;
+    var e = estadoCaixaReal, leu = e.status === 'ok' || e.status === 'incompleto', it = cxAchar(env.linha.id);
+    var msg = !leu || !it ? 'Gravado, mas a releitura ainda não mostra o lançamento. Use Atualizar.' : 'Lançamento registrado com as referências.';
+    envioCaixaReal = null; cxLimparPaineis(); foGLimparForm(); cxMsgForm = msg; cxRender();
+  });
+}
+function fo98Zerar(k){
+  fo98St[k] = fo98Novo0();
+  var p = FO98_PRE[k];
+  [p + 'Dest', p + 'Os', p + 'Cliente'].concat(k === 'E' ? ['cxEd98Nf'] : []).forEach(function(id){ var el = foDom(id); if(el) el.value = ''; });
+  var f = foDom(p + 'Forn'); if(f) f.value = '';
+  fo98OsPintar(k);
+}
+var _foGLimparForm98 = foGLimparForm;
+foGLimparForm = function(){ _foGLimparForm98.apply(this, arguments); fo98Zerar('N'); };
+FO_LIMPEZAS.push(function(){ try { fo98Zerar('N'); fo98Zerar('E'); } catch(_e){} });
+
+// ---------- Editar: NF (entrada) e referências (saída) pela RPC própria ----------
+var _cxProvider98 = cxProvider;
+cxProvider = function(){
+  var p = _cxProvider98.apply(this, arguments);
+  if(caixaRealProvider) return p;   // teste local injeta o próprio provedor
+  return Object.assign({}, p, { editar: function(a){ return supabaseClient.rpc(FO98_RPC.editar, a); } });   // excluir/ler/inserir continuam os de antes
+};
+var _cxAbrirEdicao98 = cxAbrirEdicao;
+cxAbrirEdicao = function(id){
+  var antes = edicaoCaixa;
+  var r = _cxAbrirEdicao98.apply(this, arguments);
+  if(edicaoCaixa && edicaoCaixa !== antes && edicaoCaixa.id === String(id)){ try { fo98EdPreencher(cxAchar(id)); } catch(_e){} }
+  return r;
+};
+function fo98EdPreencher(it){
+  var ed = edicaoCaixa; if(!ed || !it) return;
+  fo98Montar('E');
+  var st = fo98St.E = fo98Novo0(), d = it.i98, ref = d && d.ref ? d.ref : null;
+  ed.snap98 = fo98Snap(it); ed.ref0 = fo98RefEntrada(ref); ed.nf0 = d && d.nf ? d.nf : '';
+  var set = function(id, v){ var e = foDom(id); if(e) e.value = v; };
+  set('cxEd98Nf', ed.nf0); set('cxEd98Dest', ref ? (ref.destinatario || ref.agencia || '') : ''); set('cxEd98Os', ref && ref.os ? ref.os : ''); set('cxEd98Cliente', ref && ref.cliente ? ref.cliente : '');
+  if(ref && ref.projeto_id){ st.os.sel = { projeto_id: ref.projeto_id, os: ref.os || '', titulo: ref.titulo || '', cliente: ref.cliente || '' }; st.clienteAuto = true; }
+  st.fornAtual = ref && ref.fornecedor_id ? { id: ref.fornecedor_id, nome: ref.fornecedor_nome || '' } : null;
+  try { fo96CarregarForn(); } catch(_e){}
+  fo98Fornecedores('E'); set('cxEd98Forn', st.fornAtual ? st.fornAtual.id : '');
+  fo98OsPintar('E');
+  cxFormEstado();
+}
+function fo98LerEdicao(c, ed){   // → { erro } | { nf, ref }: o formulário descreve o detalhe COMPLETO desejado (vazio = remover)
+  var nf = fo98Limpa(crValor('cxEd98Nf'));
+  if(c.tipo === 'entrada'){
+    if(nf && !fo97NfOk(nf)) return { erro: MSG97.nfFormato };
+    return { nf: nf, ref: null };
+  }
+  if(nf) return { erro: MSG98.nfSoEntrada };
+  var cat = fo98CatRef(c.cat);
+  if(!cat) return { nf: '', ref: null };
+  var r = fo98LerRef('E', cat); if(r.erro) return r;
+  return { nf: '', ref: r.ref };
+}
+cxEditarSalvar = function(){
+  if(envioCaixaReal) return Promise.resolve();   // duplo clique/reentrância
+  var ed = edicaoCaixa;
+  if(!ed || !crSessao() || !cxPodeEditar() || String(currentUser.id) !== ed.uid || crEpoch() !== ed.epoch){ edicaoCaixa = null; cxMsgForm = 'O painel de edição perdeu a validade (conta, perfil ou sessão mudou). Reabra pela lista.'; cxFormEstado(); return Promise.resolve(); }
+  if(estadoCaixaReal.catStatus !== 'ok'){ cxFormEstado(); return Promise.resolve(); }
+  var c = cxLerCampos('cxEd', function(tipo, cat){
+    if(cxCatElegivel(tipo, cat)) return true;
+    if(cat !== ed.snap.categoria_id) return false;   // categoria que a linha já tem: mantida, desde que seja do tipo escolhido
+    var k = null; estadoCaixaReal.catalogo.forEach(function(x){ if(String(x.id) === cat) k = x; });
+    return !k ? tipo === ed.snap.tipo : k.tipo === tipo;
+  });
+  if(c.erro){ cxMsgForm = c.erro; cxFormEstado(); return Promise.resolve(); }
+  var det = fo98LerEdicao(c, ed);
+  if(det.erro){ cxMsgForm = det.erro; cxFormEstado(); return Promise.resolve(); }
+  var s = ed.snap, novo = { tipo: c.tipo, data: c.data, descricao: c.desc, valor: cxFmt2(c.centavos), categoria_id: c.cat, nf_numero: det.nf || null, ref: det.ref };
+  var igual = novo.tipo === s.tipo && novo.data === s.data && novo.descricao === s.descricao && novo.valor === s.valor && (novo.categoria_id || null) === (s.categoria_id || null);
+  if(igual && (det.nf || '') === (ed.nf0 || '') && fo98CanonRef(det.ref) === fo98CanonRef(ed.ref0)){ cxMsgForm = 'Nada foi alterado.'; cxFormEstado(); return Promise.resolve(); }
+  cxMsgForm = '';
+  var env = cxNovoEnvio('editar', { op: cxUuid(), id: ed.id, esperado: ed.snap98 || s, novo: novo, msg: 'Salvando a edição…' });
+  envioCaixaReal = env; cxRender();
+  return cxRpc(env, false);
+};
+var _cxSucesso98 = cxSucesso;
+cxSucesso = function(env){
+  return Promise.resolve(_cxSucesso98.apply(this, arguments)).then(function(r){
+    if(env && (env.kind === 'novo' || env.kind === 'serie') && !envioCaixaReal){ try { fo98Zerar('N'); } catch(_e){} }   // lançamento comum gravado: campos novos escondidos não ficam com rascunho antigo
+    if(env && env.kind === 'editar' && env.novo && !envioCaixaReal && cxMsgForm === 'Lançamento editado.'){   // a releitura também tem de mostrar a NF/as referências gravadas
+      var it = cxAchar(env.id), d = it && it.i98;
+      var bate = !!it && ((d && d.nf) || '') === (env.novo.nf_numero || '') && fo98CanonRef(fo98RefEntrada(d && d.ref)) === fo98CanonRef(env.novo.ref);
+      if(!bate){ cxMsgForm = MSG98.releituraDetalhe; cxFormEstado(); }
+    }
+    return r;
+  });
+};
+
+// ---------- Caixinha: fixável, selecionável, à esquerda da tabela (sobre o menu) ----------
+var FO98_POP = { grace: null, downDentro: false };
+function fo98PopDentro(n){ return !!(fo97Pop.el && n && n.nodeType && fo97Pop.el.contains(n)); }
+function fo98PopCancelaGrace(){ if(FO98_POP.grace){ clearTimeout(FO98_POP.grace); FO98_POP.grace = null; } }
+function fo98PopAgendaFechar(){ fo98PopCancelaGrace(); FO98_POP.grace = setTimeout(function(){ FO98_POP.grace = null; if(!fo97Pop.fixo) fo97PopFechar(); }, 280); }   // tempo para o mouse atravessar o vão até a caixinha
+fo97PopEl = function(){
+  if(fo97Pop.el && fo97Pop.el.parentNode) return fo97Pop.el;
+  var e = document.createElement('div'); e.id = 'cx97Pop'; e.setAttribute('role', 'group'); e.setAttribute('aria-label', 'Detalhes do lançamento'); document.body.appendChild(e); fo97Pop.el = e;
+  e.addEventListener('mouseenter', fo98PopCancelaGrace);
+  e.addEventListener('mouseleave', function(){ if(!fo97Pop.fixo) fo98PopAgendaFechar(); });
+  e.addEventListener('mousedown', function(){ FO98_POP.downDentro = true; if(fo97Pop.tr && !fo97Pop.fixo){ fo97Pop.fixo = true; e.classList.add('cx98-fixo'); } });   // começar a selecionar/copiar já fixa a caixinha
+  e.addEventListener('keydown', function(ev){ if(ev.key === 'Escape') fo97PopFechar(); });
+  return e;
+};
+fo97PopPintar = function(el, it){   // igual ao da 97, mas o título mostra a descrição inteira (até 300, o limite do banco) para poder copiá-la
+  el.textContent = '';
+  var t = document.createElement('div'); t.className = 't'; t.textContent = (it.descricao || '—').slice(0, 300); el.appendChild(t);
+  fo97Linhas(it).forEach(function(l){
+    var r = document.createElement('div'), a = document.createElement('span'), b = document.createElement('span');
+    r.className = 'l'; a.textContent = l[0]; b.textContent = l[1]; r.appendChild(a); r.appendChild(b); el.appendChild(r);
+  });
+};
+var _fo97PopFechar98 = fo97PopFechar;
+fo97PopFechar = function(){ fo98PopCancelaGrace(); if(fo97Pop.el) fo97Pop.el.classList.remove('cx98-fixo'); return _fo97PopFechar98.apply(this, arguments); };
+function fo98PopPos(tr, el){   // position:fixed: nunca desloca a grade nem o menu. À esquerda da tabela se couber; senão acoplada embaixo da janela (tela pequena). Nunca fora da janela.
+  var vw = window.innerWidth || 1024, vh = window.innerHeight || 768, M = 8, W = 240;
+  var tab = foDom('cxTabela'), rt = (tab || tr).getBoundingClientRect(), rr = tr.getBoundingClientRect();
+  var esq = vw >= 760 && rt.left >= W + 2 * M;
+  var maxH = Math.max(120, Math.floor(esq ? vh - 2 * M : vh * 0.45)), w = esq ? W : Math.min(vw - 2 * M, 520);
+  el.style.maxHeight = maxH + 'px'; el.style.width = w + 'px';
+  var h = Math.min(el.offsetHeight || 140, maxH), left, top;
+  if(esq){ left = rt.left - W - M; top = Math.max(M, Math.min(rr.top, vh - h - M)); }
+  else { left = Math.max(M, Math.round((vw - w) / 2)); top = Math.max(M, vh - h - M); }
+  el.style.left = Math.round(left) + 'px'; el.style.top = Math.round(top) + 'px';
+}
+fo97PopPos = fo98PopPos;
+fo97PopMostrar = function(tr, fixar){
+  var id = tr.getAttribute('data-cx97'), it = id ? cxAchar(id) : null;
+  if(!it){ fo97PopFechar(); return; }
+  fo98PopCancelaGrace();
+  if(fo97Pop.tr && fo97Pop.tr !== tr){ fo97Pop.tr.classList.remove('cx97-on'); fo97Pop.tr.removeAttribute('aria-describedby'); }
+  var el = fo97PopEl(); fo97PopPintar(el, it);
+  var x = document.createElement('button'); x.type = 'button'; x.className = 'cx98-x'; x.setAttribute('aria-label', 'Fechar'); x.textContent = '✕'; x.addEventListener('click', function(){ fo97PopFechar(); }); el.appendChild(x);
+  el.classList.add('cx97-vis'); tr.classList.add('cx97-on'); tr.setAttribute('aria-describedby', 'cx97Pop');
+  fo97Pop.tr = tr; fo97Pop.fixo = !!fixar;
+  if(fixar) el.classList.add('cx98-fixo'); else el.classList.remove('cx98-fixo');
+  fo97PopPos(tr, el);
+};
+fo97Ligar = function(tab){
+  if(tab.getAttribute('data-cx97-ligado') === '1') return;
+  tab.setAttribute('data-cx97-ligado', '1');
+  var mostrar = function(ev){ var tr = fo97LinhaDe(ev.target); if(!tr) return; fo98PopCancelaGrace(); if(!fo97Pop.fixo && fo97Pop.tr !== tr) fo97PopMostrar(tr, false); };
+  var sair = function(ev){
+    var tr = fo97LinhaDe(ev.target); if(!tr || fo97Pop.fixo) return;
+    var para = ev.relatedTarget;
+    if(para && (fo97LinhaDe(para) === tr || fo98PopDentro(para))) return;   // continua na linha, ou foi para a caixinha
+    fo98PopAgendaFechar();
+  };
+  tab.addEventListener('mouseover', mostrar); tab.addEventListener('focusin', mostrar);
+  tab.addEventListener('mouseout', sair); tab.addEventListener('focusout', sair);
+  tab.addEventListener('click', function(ev){   // clique/toque na linha fixa ou solta; Editar/Excluir e demais controles seguem seu caminho
+    var tr = fo97LinhaDe(ev.target); if(!tr) return;
+    var n = ev.target; while(n && n !== tr){ var tg = n.tagName; if(tg === 'BUTTON' || tg === 'A' || tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA') return; n = n.parentNode; }
+    if(fo97Pop.fixo && fo97Pop.tr === tr) fo97PopFechar(); else fo97PopMostrar(tr, true);
+  });
+  tab.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape'){ fo97PopFechar(); return; }
+    var tr = ev.target && ev.target.classList && ev.target.classList.contains('cx97-lin') ? ev.target : null;
+    if(tr && (ev.key === 'Enter' || ev.key === ' ')){ ev.preventDefault(); if(fo97Pop.fixo && fo97Pop.tr === tr) fo97PopFechar(); else fo97PopMostrar(tr, true); }
+  });
+};
+fo97LigarGlobal = function(){
+  if(fo97GlobalLigado) return; fo97GlobalLigado = true;
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && fo97Pop.tr) fo97PopFechar(); });
+  document.addEventListener('mousedown', function(ev){ FO98_POP.downDentro = fo98PopDentro(ev.target); }, true);
+  document.addEventListener('click', function(ev){
+    if(!fo97Pop.fixo) return;
+    if(FO98_POP.downDentro || fo98PopDentro(ev.target)){ FO98_POP.downDentro = false; return; }   // arrastar para selecionar texto e soltar fora NÃO fecha
+    if(fo97LinhaDe(ev.target)) return;   // o clique na linha decide (fixa outra / solta a mesma)
+    fo97PopFechar();
+  });
+  var reposicionar = function(ev){ if(!fo97Pop.tr) return; if(ev && ev.target && fo98PopDentro(ev.target)) return; if(fo97Pop.fixo && fo97Pop.el) fo97PopPos(fo97Pop.tr, fo97Pop.el); else fo97PopFechar(); };
+  window.addEventListener('resize', reposicionar); window.addEventListener('scroll', reposicionar, true);
+};
+// <<98:FIM>>
 
 // ---- excluir (uma linha ou toda a recorrência) ----
 function foGExcluir(id){

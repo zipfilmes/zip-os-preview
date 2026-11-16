@@ -922,6 +922,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
 <style id="cx97Css">#cxTabela .cx97-lin:hover>td,#cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(23,92,211,.09),rgba(23,92,211,.09))}#cxTabela .cx97-lin:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}html[data-theme="dark"] #cxTabela .cx97-lin:hover>td,html[data-theme="dark"] #cxTabela .cx97-lin.cx97-on>td{background-image:linear-gradient(rgba(143,184,238,.12),rgba(143,184,238,.12))}#cx97Pop{position:fixed;left:0;top:0;z-index:2147483000;display:none;max-width:min(380px,calc(100vw - 16px));min-width:240px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);box-shadow:0 8px 24px rgba(16,24,40,.22);font-size:12px;line-height:1.45;pointer-events:none}#cx97Pop.cx97-vis{display:block}#cx97Pop .t{font-weight:700;font-size:12.5px;margin-bottom:6px;word-break:break-word}#cx97Pop .l{display:flex;gap:10px;justify-content:space-between;padding:1px 0}#cx97Pop .l span:first-child{color:var(--muted);flex:none}#cx97Pop .l span:last-child{text-align:right;word-break:break-word}@media print{#cx97Pop{display:none!important}}</style>
 <style id="cx98Css">#cx97Pop{pointer-events:auto;user-select:text;-webkit-user-select:text;cursor:auto;overflow-y:auto;overscroll-behavior:contain;min-width:0;max-width:calc(100vw - 16px);box-sizing:border-box}#cx97Pop .l span:last-child{user-select:text;-webkit-user-select:text}#cx97Pop .cx98-x{display:none;position:absolute;top:3px;right:5px;border:0;background:none;color:var(--muted);font-size:14px;line-height:1;cursor:pointer;padding:2px 5px}#cx97Pop.cx98-fixo{padding-right:26px;box-shadow:0 8px 24px rgba(16,24,40,.30),0 0 0 2px var(--accent)}#cx97Pop.cx98-fixo .cx98-x{display:block}</style>
+<style id="cx99Css">.fo99-obs{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help;border-radius:4px}.fo99-obs:focus-visible{outline:2px solid var(--accent);outline-offset:1px}@media(max-width:760px){.fo99-obs{max-width:130px}}#fo99ObsPop{position:fixed;left:0;top:0;z-index:2147483000;display:none;box-sizing:border-box;max-width:min(420px,calc(100vw - 16px));max-height:min(50vh,320px);overflow:auto;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);box-shadow:0 8px 24px rgba(16,24,40,.22);font-size:12px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}.fo99-spin{display:inline-block;width:11px;height:11px;margin-right:6px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-1px;animation:fo99g .8s linear infinite}@keyframes fo99g{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.fo99-spin{animation-duration:2.4s}}.fo99-st.at{color:#92400e}.fo99-st.ok{color:#166534}.fo99-st.er{color:#b91c1c}html[data-theme="dark"] .fo99-st.at{color:#fbbf24}html[data-theme="dark"] .fo99-st.ok{color:#4ade80}html[data-theme="dark"] .fo99-st.er{color:#f87171}</style>
 <style id="zosTemaStatusCss">#zosAjustes .zos-aj-st{margin-top:6px;font-size:11px;color:#98a2b3}#zosAjustes .zos-aj-st:empty{display:none}#zosAjustes .zos-aj-retry{margin-top:4px;border:1px solid #475467;background:transparent;color:#cbd5e1;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif}</style>
 <div id="zosTemaStatus" class="zos-aj-st" role="status" aria-live="polite"></div><button type="button" id="zosTemaRetentar" class="zos-aj-retry" style="display:none">Tentar novamente</button>
 </div>
@@ -930,7 +931,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.2.0 · Detalhes do Caixa</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.3.0 · Caixa e Fornecedores</div>
 </aside>
 
 <main class="main">
@@ -1417,6 +1418,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button id="cxAberturaBtn" type="button" data-pa="caixa-abertura-abrir" onclick="cxAberturaAbrir()" style="display:none;padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">💰 Definir saldo inicial</button>
     <button id="cxSerieAbrirBtn" type="button" data-pa="caixa-serie-abrir" onclick="foCaixaAbrir('serie')" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">🔁 Lançamento recorrente</button>
+    <button id="cx99PdfBtn" type="button" data-pa="caixa-relatorio-pdf" onclick="fo99RelatorioAbrir()" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">📄 Gerar relatório PDF</button>
     <button id="cxNovoAbrirBtn" type="button" data-pa="caixa-novo-abrir" onclick="foCaixaAbrir('novo')" style="padding:9px 14px;border:none;border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:var(--green);color:white;cursor:pointer;white-space:nowrap">+ Novo lançamento</button>
    </div>
   </div>
@@ -1594,9 +1596,10 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   </div>
  </div>
   <label id="lancRecorrenteWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;cursor:pointer">
-   <input id="lancRecorrente" type="checkbox" style="width:16px;height:16px;cursor:pointer">
-   🔁 Repetir todo mês (cria agora 12 lançamentos mensais; nada é gerado depois)
+   <input id="lancRecorrente" type="checkbox" onchange="fo99RecSinc()" style="width:16px;height:16px;cursor:pointer">
+   🔁 Repetir todo mês (nada é gerado depois)
   </label>
+  <div id="lanc99Rec" style="display:none;margin:0 0 8px 24px"><label style="font-size:12px;font-weight:700;color:var(--muted)">Quantidade de meses <input id="lanc99Qtd" type="number" min="1" max="12" step="1" value="12" inputmode="numeric" oninput="fo99RecSinc()" onchange="fo99RecSinc()" style="width:70px;margin-left:6px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box"></label><div id="lanc99Nota" class="muted" style="font-size:11px;margin-top:3px"></div></div>
   <div id="cxMsgNovo"></div>
   <div style="display:flex;gap:8px;margin-top:12px">
    <button id="cxNovoBtn" class="btn" type="button" style="flex:2" data-pa="caixa-salvar" onclick="cxSalvarNovo()">💾 Salvar lançamento</button>
@@ -30547,7 +30550,7 @@ function _urlAssinadaSeguraForn(valor){
 }
 var GALERIA_BUCKET_FORN = 'fornecedores-galeria';
 var GALERIA_MAX_FORN = 10;
-var GALERIA_MAX_BYTES_FORN = 512000;                    // 500 KB (500*1024): teto do arquivo ENVIADO (saída da compressão); NÃO limita o tamanho de entrada
+var GALERIA_MAX_BYTES_FORN = 102400; // V1.6.3.0: 100 KB (100*1024) EXATOS (era 500 KB; o texto histórico abaixo ficou como estava):                    // 500 KB (500*1024): teto do arquivo ENVIADO (saída da compressão); NÃO limita o tamanho de entrada
 var GALERIA_MIMES_FORN = ['image/jpeg','image/png'];
 // ---------------------------------------------------------------------------
 // C21 (secao 5): COMPACTACAO LOCAL, no proprio navegador. Nenhum servico
@@ -30568,8 +30571,8 @@ var GALERIA_MIMES_FORN = ['image/jpeg','image/png'];
 //    presumido a partir da qualidade escolhida.
 // ---------------------------------------------------------------------------
 var GALERIA_PNG_MARGEM_FORN = 0.9;   // PNG (sem perdas, so dimensao): 1a tentativa em escala 1; as seguintes = escala anterior x raiz(500 KB / tamanho REAL do blob) x margem, sempre decrescente
-var GALERIA_PLANO_JPEG_FORN = [[1, 0.82], [1, 0.7], [0.85, 0.7], [0.7, 0.65], [0.6, 0.6], [0.5, 0.6], [0.4, 0.55], [0.32, 0.5], [0.25, 0.45], [0.2, 0.45]];   // JPEG: [escala, qualidade]; cada passo reduz dimensao e/ou qualidade
-var GALERIA_MAX_TENTATIVAS_FORN = 10;                         // teto duro de tentativas (cobre as duas escadas inteiras)
+var GALERIA_PLANO_JPEG_FORN = [[1, 0.82], [1, 0.7], [0.85, 0.7], [0.7, 0.65], [0.6, 0.6], [0.5, 0.6], [0.4, 0.55], [0.32, 0.5], [0.25, 0.45], [0.2, 0.45], [0.16, 0.45], [0.13, 0.4], [0.1, 0.4], [0.08, 0.35]];   // JPEG: [escala, qualidade]; cada passo reduz dimensao e/ou qualidade
+var GALERIA_MAX_TENTATIVAS_FORN = 14;                         // teto duro de tentativas (cobre as duas escadas inteiras)
 // C28 (EXT16): capacidade de DECODIFICAR — o minimo para ABRIR e CONFIRMAR
 // que um arquivo e uma imagem valida. Usada tanto para imagens pequenas
 // (que nunca precisam de canvas, so de confirmacao) quanto como pre-requisito
@@ -30670,7 +30673,7 @@ function prepararImagemGaleriaForn(arquivo, aoFim){
     return;
   }
   if(!_galeriaSuportaCompactacaoForn()){
-    aoFim('Esta imagem passa de 500 KB e o navegador não permitiu comprimi-la aqui. Envie uma versão menor.', null); return;
+    aoFim('Esta imagem passa de 100 KB e o navegador não permitiu comprimi-la aqui. Envie uma versão menor.', null); return;
   }
   _galeriaDecodificarImagemForn(arquivo, function(img, w0, h0, liberar){
     var ehPng = (mime === 'image/png');
@@ -30683,7 +30686,7 @@ function prepararImagemGaleriaForn(arquivo, aoFim){
     function tentar(){
       if(n >= planos.length){
         liberar();
-        aoFim('Não foi possível reduzir esta imagem para até 500 KB. Envie uma versão menor.', null);
+        aoFim('Não foi possível reduzir esta imagem para até 100 KB. Envie uma versão menor.', null);
         return;
       }
       var p = planos[n]; n += 1;
@@ -30770,7 +30773,7 @@ function _ctxGaleriaValido(ctx){
 function _validarArquivoGaleriaForn(arq, totalAtual){
   if(!arq) return 'Arquivo inválido.';
   if(GALERIA_MIMES_FORN.indexOf(String(arq.type)) < 0) return 'Formato não permitido. Use JPEG ou PNG.';
-  if(Number(arq.size) > GALERIA_MAX_BYTES_FORN) return 'Imagem acima de 500 KB.';
+  if(Number(arq.size) > GALERIA_MAX_BYTES_FORN) return 'Imagem acima de 100 KB.';
   if(totalAtual >= GALERIA_MAX_FORN) return 'Limite de ' + GALERIA_MAX_FORN + ' imagens atingido.';
   return '';
 }
@@ -31134,6 +31137,7 @@ function _processarFilaGaleriaForn(){
   }
   var uploadConfirmado = false, registroConfirmado = false;
   try {
+    if(!(Number(arquivo.size) > 0) || Number(arquivo.size) > GALERIA_MAX_BYTES_FORN){ fim('Imagem acima de 100 KB.'); return; }   // V1.6.3.0: tamanho REAL conferido imediatamente antes do Storage
     var up = supabaseClient.storage.from(GALERIA_BUCKET_FORN).upload(caminho, arquivo, { contentType: arquivo.type });
     if(!up || typeof up.then !== 'function') throw new Error('Resposta assíncrona inválida');
     up.then(function(resUp){
@@ -32637,7 +32641,7 @@ function _renderGaleriaFormForn(){
     });
     box.appendChild(inp);
     var dicaGal = document.createElement('div'); dicaGal.className = 'muted'; dicaGal.style.fontSize = '11px'; dicaGal.style.marginTop = '4px';
-    dicaGal.textContent = 'JPEG/PNG • compressão automática até 500KB';
+    dicaGal.textContent = 'JPEG/PNG • compressão automática até 100 KB';
     box.appendChild(dicaGal);
     if(travadoPorSalvar){
       var avSalvando = document.createElement('div');
@@ -39632,13 +39636,13 @@ function foGNovo(){
   if(c.erro){ cxMsgForm = c.erro; cxFormEstado(); return Promise.resolve(); }
   var rec = cxChecked('lancRecorrente'), eq = null;
   if(ehEq){ eq = foLerEquipe('novo'); if(eq.erro){ cxMsgForm = eq.erro; cxFormEstado(); return Promise.resolve(); } }
-  var datas = rec ? cxSerieDatas(c.data, 12, 1) : [c.data];
+  var qtdR = rec ? fo99LerQtd() : { n: 1 }; if(qtdR.erro){ cxMsgForm = qtdR.erro; cxFormEstado(); return Promise.resolve(); } var datas = rec ? cxSerieDatas(c.data, qtdR.n, 1) : [c.data];
   if(datas.some(function(d){ return !d || !cxDataValida(d); })){ cxMsgForm = 'A recorrência passaria do ano 9999: use uma data anterior.'; cxFormEstado(); return Promise.resolve(); }
-  var base = { tipo: c.tipo, descricao: c.desc, valor: cxFmt2(c.centavos), categoria_id: c.cat, recorrente_id: rec ? 'REC-' + cxUuid() : null, equipe: ehEq };
+  var base = { tipo: c.tipo, descricao: c.desc, valor: cxFmt2(c.centavos), categoria_id: c.cat, recorrente_id: rec && qtdR.n > 1 ? 'REC-' + cxUuid() : null, equipe: ehEq };
   if(eq){ base.pessoa_id = eq.pessoaId; base.pessoa_nome = eq.pessoaNome; base.os = eq.os || null; base.detalhes = eq.detalhes; }
   var linhas = datas.map(function(d){ var o = { id: cxUuid(), data: d }; Object.keys(base).forEach(function(k){ o[k] = base[k]; }); return o; });
   cxMsgForm = '';
-  var env = cxNovoEnvio('g_novo', { op: cxUuid(), linhas: linhas, esperadoLinhas: linhas.length, ids: linhas.map(function(l){ return l.id; }), msg: rec ? 'Gravando a recorrência (12 lançamentos num único comando)…' : 'Gravando o lançamento de equipe…' });
+  var env = cxNovoEnvio('g_novo', { op: cxUuid(), linhas: linhas, esperadoLinhas: linhas.length, ids: linhas.map(function(l){ return l.id; }), msg: rec ? (qtdR.n > 1 ? 'Gravando a recorrência (' + qtdR.n + ' lançamentos num único comando)' : 'Gravando o lançamento')+'…' : 'Gravando o lançamento de equipe…' });
   envioCaixaReal = env; cxRender();
   return foGRpc(env, false);
 }
@@ -41197,6 +41201,353 @@ fo97LigarGlobal = function(){
   window.addEventListener('resize', reposicionar); window.addEventListener('scroll', reposicionar, true);
 };
 // <<98:FIM>>
+// <<99:INICIO>>
+// Pacote 99 (V1.6.3.0): Caixa e Fornecedores. Escrito pelo Claude SEM executar (sem Bash); os testes (Testes/teste_funcs_99.js) extraem ESTE bloco do Tela/index.html gerado.
+// (1) Rótulo "Salários e pró-labore" no lugar de "Equipe — Pagamento consolidado" SÓ NA TELA (nome persistido, ids, cálculos e SQL intactos).
+// (2) Repetir todo mês com quantidade 1–12 (inclui o lançamento inicial). 1 = lançamento avulso sem recorrente_id (regra do banco); 2–12 = mesma gravação atômica de antes.
+// (3) Relatório de Fluxo de Caixa em PDF (A4, timbrado do contrato via coDocContratoCabs, paginação própria do coDocJanelaHtml). Só leitura do que a tela já carregou.
+// (4) Fornecedores: coluna Observação compacta (reticências) com popover do texto INTEGRAL (mouse, teclado e toque).
+// (5) Galeria: o teto do arquivo ENVIADO passou de 500 KB para 100 KB (constantes e textos editados na base; o motor de compressão é o mesmo).
+// (6) Fornecedor em edição: botão "Enviar fotos" que reaproveita persistirGaleriaFormForn (mesma fila, mesmos guardas); não grava a ficha.
+// Tudo o que vem do banco/usuário entra na tela por textContent ou coEsc. Nenhuma leitura/escrita nova de banco.
+var FO99_ROTULO_EQUIPE = 'Salários e pró-labore';
+var FO99_REC_MAX = 12;   // limite do backend financeiro_lancamento_grupo_gravar (1 a 12 linhas)
+var FO99_MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+var MSG99 = {
+  qtd: 'Informe a quantidade de meses: um número inteiro de 1 a 12.',
+  relSemAcesso: 'Entre com uma conta que possa ver o Fluxo de Caixa para gerar o relatório.',
+  relPeriodo: 'Escolha um mês e um ano específicos para gerar o relatório.',
+  relCarregando: 'Os lançamentos ainda estão carregando. Aguarde terminar e gere o relatório de novo.',
+  relIncompleto: 'Não é possível gerar o relatório: a leitura do caixa está incompleta, falhou ou tem dados incoerentes. Use Atualizar e tente de novo. Nada foi impresso.',
+  relCategorias: 'Não é possível gerar o relatório: as categorias não foram lidas (os nomes ficariam incorretos). Use Atualizar e tente de novo. Nada foi impresso.',
+  relSaldo: 'Não é possível gerar o relatório: o saldo inicial ainda não foi lido ou não pôde ser lido. Use Atualizar e tente de novo. Nada foi impresso.',
+  relSessao: 'Os dados na tela são de outra sessão. Use Atualizar e tente de novo.',
+  relJanela: 'O navegador bloqueou a janela do relatório. Permita janelas pop-up para este site e tente de novo.',
+  fotosSalvarPrimeiro: 'Salve o cadastro primeiro: depois de salvar, as fotos da fila são enviadas e o botão Enviar fotos aparece na edição do fornecedor.',
+  fotosSalvando: 'A ficha está sendo salva. Aguarde terminar para enviar as fotos.',
+  fotosPreparando: 'Há fotos sendo preparadas. Aguarde terminar para enviar.',
+  fotosAndamento: 'Já há um envio de fotos em andamento. Aguarde terminar.',
+  fotosNenhuma: 'Nenhuma foto pronta para enviar.',
+  fotosSemUuid: 'Salve o cadastro primeiro: as fotos só podem ser enviadas para um fornecedor já cadastrado.',
+  fotosSalvar: 'As fotos estão sendo enviadas. Aguarde terminar para salvar as alterações.',
+  fotosAbortado: 'O envio foi interrompido porque a sessão ou a ficha mudou. As fotos que não foram enviadas continuam na fila.'
+};
+
+// ---------- (1) rótulo da categoria de equipe: só apresentação ----------
+function fo99RotuloCat(t){ return String(t) === FO_CAT_CONSOLIDADO ? FO99_ROTULO_EQUIPE : t; }
+var _cxCategoriaNome99 = cxCategoriaNome;
+cxCategoriaNome = function(){ return fo99RotuloCat(_cxCategoriaNome99.apply(this, arguments)); };   // tabela (catNome), detalhe, busca, "fora do catálogo", "(atual)" na edição
+function fo99ReRotular(no){   // opções do select (inclusive dentro de optgroup): troca só o TEXTO; o value (id) nunca muda
+  var ch = no && no.children ? no.children : [], i, o, t;
+  for(i = 0; i < ch.length; i++){
+    o = ch[i];
+    if(String(o.tagName || '').toUpperCase() === 'OPTION'){
+      t = String(o.textContent);
+      if(t === FO_CAT_CONSOLIDADO) o.textContent = FO99_ROTULO_EQUIPE;
+      else if(t === FO_CAT_CONSOLIDADO + ' (inativa)') o.textContent = FO99_ROTULO_EQUIPE + ' (inativa)';
+      else if(t === '(atual) ' + FO_CAT_CONSOLIDADO) o.textContent = '(atual) ' + FO99_ROTULO_EQUIPE;
+    } else fo99ReRotular(o);
+  }
+}
+var _cxPreencherCategorias99 = cxPreencherCategorias;
+cxPreencherCategorias = function(selId){
+  var n = _cxPreencherCategorias99.apply(this, arguments);
+  try { fo99ReRotular(document.getElementById(selId)); } catch(_e){}
+  return n;
+};
+var _cxOpcoesFiltroCategoria99 = cxOpcoesFiltroCategoria;
+cxOpcoesFiltroCategoria = function(){
+  var r = _cxOpcoesFiltroCategoria99.apply(this, arguments);
+  try { fo99ReRotular(document.getElementById('cxCat')); } catch(_e){}
+  return r;
+};
+
+// ---------- (2) Repetir todo mês: quantidade de 1 a 12 ----------
+function fo99QtdDe(txt){   // texto → { n } | { erro }; só inteiro de 1 a 12
+  var s = String(txt === null || txt === undefined ? '' : txt).trim();
+  if(!/^\d{1,2}$/.test(s)) return { erro: MSG99.qtd };
+  var n = Number(s);
+  if(n < 1 || n > FO99_REC_MAX) return { erro: MSG99.qtd };
+  return { n: n };
+}
+function fo99LerQtd(){ return fo99QtdDe(crValor('lanc99Qtd')); }
+function fo99NotaRec(n){
+  if(n === 1) return '1 mês = só o lançamento inicial (sem repetição).';
+  return n + ' meses = lançamento inicial + ' + (n - 1) + (n - 1 === 1 ? ' mês seguinte.' : ' meses seguintes.');
+}
+function fo99RecSinc(){
+  var box = foDom('lanc99Rec'), wrap = foDom('lancRecorrenteWrap');
+  var vis = cxChecked('lancRecorrente') && !(wrap && wrap.style.display === 'none');
+  if(box) box.style.display = vis ? 'block' : 'none';
+  var nota = foDom('lanc99Nota'); if(!nota) return;
+  var q = fo99LerQtd();
+  nota.textContent = q.erro ? q.erro : fo99NotaRec(q.n);
+}
+var _cxFormEstado99 = cxFormEstado;
+cxFormEstado = function(){ var r = _cxFormEstado99.apply(this, arguments); try { fo99RecSinc(); } catch(_e){} return r; };
+var _foNovoBlocoSinc99 = foNovoBlocoSinc;   // trocar a categoria → foNovoCatMudou → foNovoBlocoSinc (96/98) → aqui: o campo some junto com "Repetir todo mês" no modo Fornecedores
+foNovoBlocoSinc = function(){ var r = _foNovoBlocoSinc99.apply(this, arguments); try { fo99RecSinc(); } catch(_e){} return r; };
+var _foGLimparForm99 = foGLimparForm;
+foGLimparForm = function(){
+  var r = _foGLimparForm99.apply(this, arguments);
+  var q = foDom('lanc99Qtd'); if(q) q.value = String(FO99_REC_MAX);
+  try { fo99RecSinc(); } catch(_e){}
+  return r;
+};
+
+// ---------- (3) Relatório de Fluxo de Caixa (PDF) ----------
+function fo99Pad2(n){ return ('0' + n).slice(-2); }
+function fo99RelDados(){   // lê o filtro de mês/ano e o estado já carregado; devolve { erro } ou os dados do relatório (nada é gravado)
+  var e = estadoCaixaReal;
+  if(!crSessao() || !crPodeLer()) return { erro: MSG99.relSemAcesso };
+  var mes = String(crValor('finCaixaMes')), ano = String(crValor('finCaixaAno'));
+  if(!/^(0[1-9]|1[0-2])$/.test(mes) || !/^\d{4}$/.test(ano)) return { erro: MSG99.relPeriodo };   // "Todos os meses/anos" não gera relatório
+  if(e.status === 'carregando' || e.status === 'idle') return { erro: MSG99.relCarregando };
+  if(String(currentUser.id) !== e.uid || crEpoch() !== e.epoch) return { erro: MSG99.relSessao };
+  if(!(e.status === 'ok' && e.completo && e.anomalias === 0)) return { erro: MSG99.relIncompleto };   // parcial, incompleto ou incoerente nunca é impresso
+  if(e.catStatus !== 'ok') return { erro: MSG99.relCategorias };
+  var cfg = cxAberturaCfg(true);
+  if(!cfg.saldoOk) return { erro: MSG99.relSaldo };
+  var de = ano + '-' + mes + '-01', ate = ano + '-' + mes + '-' + fo99Pad2(foUltimoDia(ano, mes));
+  var f = { de: de, ate: ate };   // o filtro de categoria e a busca da tela são IGNORADOS de propósito: relatório contábil integral
+  var ord = cxFiltrar(e.itens, f).sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : a.criadoMs !== b.criadoMs ? a.criadoMs - b.criadoMs : a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
+  var plano = cxAbPlano(ord, e.itens, cfg, f, true), t = cxTotais(ord), antes = 0;
+  plano.forEach(function(p){ if(p.tipo === 'mov' && p.antes) antes++; });
+  return { periodo: FO99_MESES[Number(mes) - 1] + ' de ' + ano, de: de, ate: ate, plano: plano, n: ord.length, totais: t,
+    anteriorC: cxAbSaldoAntes(e.itens, cfg.abertura, de), finalC: cxAbSaldoAte(e.itens, cfg.abertura, ate), antesAbertura: antes, emitido: crHojeSP() };
+}
+function fo99RelCss(){
+  var A = CO_DOC_AZUL;
+  return [
+    '.rel{font-size:10px;line-height:1.35;color:#1a1a2e}',
+    '.blk{display:flow-root}',
+    '.b-sum{padding-bottom:4mm}',
+    '.rinfo{font-size:9px;color:#4b5563;margin-bottom:3mm}',
+    '.rs{display:flex;gap:3mm}',
+    '.rs>div{flex:1 1 0;min-width:0;border:1px solid #d5dde8;border-radius:2mm;padding:2mm 3mm}',
+    '.rs span{display:block;font-size:7.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b7280}',
+    '.rs b{display:block;font-size:12px;white-space:nowrap}',
+    '.rg{display:flex;align-items:flex-start;gap:1.5mm;padding:1.6mm 2mm;border-bottom:1px solid #e9eef4;font-size:9px}',
+    '.tarja.rg{background:' + A + ';color:#fff;font-size:7.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;align-items:center;border-bottom:0}',
+    '.c1{flex:0 0 16mm;white-space:nowrap}',
+    '.c2{flex:1 1 0;min-width:0;overflow-wrap:anywhere}',
+    '.c3{flex:0 0 28mm;overflow-wrap:anywhere}',
+    '.c4{flex:0 0 20mm;overflow-wrap:anywhere;font-size:8px;color:#4b5563}',
+    '.tarja.rg .c4{color:inherit}',   // a tarja azul: o cinza do corpo (#4b5563) ficava ilegível sobre #1e3a5f
+    '.c5,.c6,.c7{flex:0 0 20mm;text-align:right;white-space:nowrap}',
+    '.rg.ab{background:#eff6ff;font-weight:700}',
+    '.rg.tot{background:#f0f4f8;font-weight:800;border-top:1.5px solid ' + A + ';border-bottom:0}',
+    '.b-vazio{padding:8mm 0;text-align:center;color:#6b7280;font-size:11px}',
+    '.pos{color:#065f46}.neg{color:#b91c1c}'
+  ].join('');
+}
+function fo99RelHtml(r){
+  var E = coEsc, M = crBRL;
+  var cabs = coDocContratoCabs(r.periodo, null);   // timbrado ATUAL do contrato (logo, telefone/site, faixa, continuação); só o título muda
+  var TIT = 'Contrato de prestação de serviços';
+  var cab1 = cabs.cab1.split(TIT).join('Relatório de Fluxo de Caixa'), cabN = cabs.cabN.split(TIT).join('Relatório de Fluxo de Caixa');
+  var col = function(c, t){ return '<div class="' + c + '">' + t + '</div>'; };
+  var tarja = '<div class="tarja rg">' + col('c1', 'Data') + col('c2', 'Descrição') + col('c3', 'Categoria') + col('c4', 'OS / NF-e') + col('c5', 'Entrada') + col('c6', 'Saída') + col('c7', 'Saldo') + '</div>';
+  var card = function(rot, val, cls){ return '<div><span>' + E(rot) + '</span><b class="' + cls + '">' + E(val) + '</b></div>'; };
+  var blocos = [];
+  blocos.push('<div class="blk b-sum"><div class="rinfo">Período: ' + E(crDataBR(r.de)) + ' a ' + E(crDataBR(r.ate)) + ' &nbsp;•&nbsp; Categorias: Todas as categorias &nbsp;•&nbsp; Emitido em ' + E(crDataBR(r.emitido))
+    + '<br>Soma dos lançamentos registrados no ZIP OS; não é saldo bancário.</div><div class="rs">'
+    + card('Saldo anterior', r.anteriorC === null ? '—' : M(r.anteriorC), '') + card('Entradas', M(r.totais.entradaC), 'pos') + card('Saídas', M(r.totais.saidaC), 'neg')
+    + card('Saldo final', r.finalC === null ? '—' : M(r.finalC), r.finalC !== null && r.finalC < 0 ? 'neg' : '') + '</div>'
+    + (r.anteriorC === null ? '<div class="rinfo" style="margin-top:2mm">O período começa antes do saldo inicial da empresa: o saldo anterior não é definido.</div>' : '')
+    + (r.antesAbertura ? '<div class="rinfo" style="margin-top:2mm">' + E(r.antesAbertura + (r.antesAbertura === 1 ? ' lançamento é anterior' : ' lançamentos são anteriores') + ' ao saldo inicial: aparece(m) na lista, mas não entra(m) no saldo.') + '</div>' : '') + '</div>');
+  if(r.plano.length){
+    blocos.push('<div class="blk b-tarja" data-keep="1">' + tarja + '</div>');
+    r.plano.forEach(function(p){
+      if(p.tipo === 'abertura'){
+        blocos.push('<div class="blk b-row"><div class="rg ab">' + col('c1', E(crDataBR(p.data))) + col('c2', 'Saldo inicial da empresa') + col('c3', '') + col('c4', '') + col('c5', '') + col('c6', '') + col('c7', E(M(p.saldoC))) + '</div></div>');
+        return;
+      }
+      var i = p.item, ent = i.tipo === 'entrada' ? i.valorC : 0, sai = i.tipo === 'saida' ? i.valorC : 0;
+      blocos.push('<div class="blk b-row"><div class="rg">' + col('c1', E(i.data ? crDataBR(i.data) || i.data : 'sem data')) + col('c2', E(i.descricao || '—')) + col('c3', E(i.catNome || '—'))
+        + col('c4', E(i.colOs || '—') + '<br>' + E(i.colNf || '—')) + col('c5', ent ? '<span class="pos">' + E(M(ent)) + '</span>' : '—') + col('c6', sai ? '<span class="neg">' + E(M(sai)) + '</span>' : '—')
+        + col('c7', p.saldoC === null ? '—' : E(M(p.saldoC))) + '</div></div>');
+    });
+    blocos.push('<div class="blk b-tot"><div class="rg tot">' + col('c1', '') + col('c2', 'Totais do período · saldo final') + col('c3', '') + col('c4', '') + col('c5', E(M(r.totais.entradaC))) + col('c6', E(M(r.totais.saidaC))) + col('c7', r.finalC === null ? '—' : E(M(r.finalC))) + '</div></div>');
+  } else blocos.push('<div class="blk b-vazio">Nenhum lançamento neste período.</div>');
+  return coDocJanelaHtml({ titulo: 'Relatório de Fluxo de Caixa ' + E(r.periodo), css: coDocCssBase() + fo99RelCss(), cab1: cab1, cabN: cabN, fim: '', tarja: tarja, blocos: blocos,
+    tipo: 'fcx', lado: 14, topo: 8, base: 16, pgn: true, wm: false, nFinal: r.plano.length ? 2 : 0, cls: 'rel' });
+}
+function fo99RelatorioAbrir(){
+  var r = fo99RelDados();
+  if(r.erro){ cxMsgForm = r.erro; cxFormEstado(); return false; }
+  var ok = coDocAbrirJanela(fo99RelHtml(r));   // chamado dentro do clique: o navegador permite a janela
+  cxMsgForm = ok ? '' : MSG99.relJanela; cxFormEstado();
+  return ok;
+}
+
+// ---------- (4) Fornecedores: Observação compacta + popover com o texto integral ----------
+var fo99Obs = { el: null, ancora: null, fixo: false, ligado: false };
+function fo99ObsEl(){
+  if(fo99Obs.el && fo99Obs.el.parentNode) return fo99Obs.el;
+  var p = document.createElement('div'); p.id = 'fo99ObsPop'; p.setAttribute('role', 'tooltip');
+  document.body.appendChild(p); fo99Obs.el = p; return p;
+}
+function fo99ObsPosicionar(){   // position:fixed: não empurra nem reflui nada na tabela
+  var p = fo99Obs.el, a = fo99Obs.ancora; if(!p || !a) return;
+  var r = a.getBoundingClientRect(), vw = window.innerWidth || 1024, vh = window.innerHeight || 768;
+  p.style.display = 'block';
+  var w = p.offsetWidth || 300, h = p.offsetHeight || 80, left = Math.max(8, Math.min(r.left, vw - w - 8)), top = r.bottom + 6;
+  if(top + h > vh - 8 && r.top - h - 6 >= 8) top = r.top - h - 6;
+  p.style.left = Math.round(left) + 'px'; p.style.top = Math.round(Math.max(8, top)) + 'px';
+}
+function fo99ObsMostrar(a, texto, fixo){
+  var p = fo99ObsEl(); p.textContent = texto;
+  fo99Obs.ancora = a; fo99Obs.fixo = !!fixo;
+  a.setAttribute('aria-expanded', 'true'); a.setAttribute('aria-describedby', 'fo99ObsPop');
+  fo99ObsPosicionar();
+}
+function fo99ObsFechar(){
+  var a = fo99Obs.ancora;
+  if(a){ a.setAttribute('aria-expanded', 'false'); a.removeAttribute('aria-describedby'); }
+  fo99Obs.ancora = null; fo99Obs.fixo = false;
+  if(fo99Obs.el) fo99Obs.el.style.display = 'none';
+}
+function fo99ObsLigar(){
+  if(fo99Obs.ligado) return; fo99Obs.ligado = true;
+  document.addEventListener('click', function(ev){ if(fo99Obs.ancora && ev.target !== fo99Obs.ancora && !(fo99Obs.el && fo99Obs.el.contains(ev.target))) fo99ObsFechar(); });
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && fo99Obs.ancora){ var a = fo99Obs.ancora; fo99ObsFechar(); try { a.focus(); } catch(_e){} } });
+  window.addEventListener('scroll', function(){ if(fo99Obs.ancora) fo99ObsFechar(); }, true);
+  window.addEventListener('resize', function(){ if(fo99Obs.ancora) fo99ObsFechar(); });
+}
+function fo99CelulaObs(valor){
+  var td = document.createElement('td'), s = valor === null || valor === undefined ? '' : String(valor).trim();
+  if(!s){ td.textContent = '—'; return td; }   // sem observação: nada a abrir (e o clique segue para a linha)
+  var a = document.createElement('span');
+  a.className = 'fo99-obs'; a.setAttribute('tabindex', '0'); a.setAttribute('role', 'button'); a.setAttribute('aria-haspopup', 'true'); a.setAttribute('aria-expanded', 'false');
+  a.textContent = s;   // textContent: o texto nunca vira HTML
+  var alternar = function(){ if(fo99Obs.ancora === a && fo99Obs.fixo) fo99ObsFechar(); else fo99ObsMostrar(a, s, true); };
+  a.addEventListener('mouseenter', function(){ if(!fo99Obs.fixo) fo99ObsMostrar(a, s, false); });
+  a.addEventListener('mouseleave', function(){ if(fo99Obs.ancora === a && !fo99Obs.fixo) fo99ObsFechar(); });
+  a.addEventListener('focus', function(){ if(!fo99Obs.fixo) fo99ObsMostrar(a, s, false); });
+  a.addEventListener('blur', function(){ if(fo99Obs.ancora === a && !fo99Obs.fixo) fo99ObsFechar(); });
+  a.addEventListener('click', function(ev){ ev.stopPropagation(); alternar(); });   // não abre o prontuário da linha
+  a.addEventListener('keydown', function(ev){
+    if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); ev.stopPropagation(); alternar(); }
+    else if(ev.key === 'Escape'){ fo99ObsFechar(); }
+  });
+  td.appendChild(a); fo99ObsLigar();
+  return td;
+}
+var _renderTabelaFornecedoresReal99 = _renderTabelaFornecedoresReal;
+_renderTabelaFornecedoresReal = function(){
+  fo99ObsFechar();
+  var r = _renderTabelaFornecedoresReal99.apply(this, arguments);
+  var tb = document.getElementById('tabelaFornecedoresReal'); if(!tb) return r;
+  var mapa = {}; (estadoFornecedoresReais.filtrados || []).forEach(function(f){ mapa[f.id] = f; });
+  Array.prototype.slice.call(tb.children).forEach(function(tr){   // a 6ª célula (Observação) da tabela REAL é trocada pela compacta; as demais ficam como estavam
+    var f = mapa[tr.dataset ? tr.dataset.fornecedorId : ''];
+    if(!f || !tr.children || tr.children.length < 6) return;
+    tr.replaceChild(fo99CelulaObs(f.observacoes), tr.children[5]);
+  });
+  return r;
+};
+
+// ---------- (6) "Enviar fotos" na edição do fornecedor (mesmo motor da fila; não grava a ficha) ----------
+var fo99Foto = { fase: 'idle', ger: 0, msg: '' };   // fase: idle | enviando | concluido | erro; ger invalida respostas de uma ficha/sessão que já mudou
+function fo99FotoItens(){ return estadoGaleriaFormForn.itens || []; }
+function fo99FotoProntas(){ return fo99FotoItens().filter(function(i){ return (i.situacao === 'pendente' || i.situacao === 'erro') && !i.emExecucao && !!i.arquivo && i.falhaDePreparacao !== true; }); }
+function fo99FotoPreparando(){ return fo99FotoItens().filter(function(i){ return i.situacao === 'preparando'; }).length; }
+function fo99FotoNaFila(){ return fo99FotoItens().filter(function(i){ return i.situacao !== 'enviado'; }).length; }
+function fo99FotoEmEdicao(){ var est = estadoCadastroFornecedor; return est.modo === 'edicao' && _uuidValidoForn(est.editandoUuid); }
+function fo99SalvarTrava(){ var b = _botaoSalvarCadastroReal(); if(b) b.disabled = fo99Foto.fase === 'enviando' || !!estadoCadastroFornecedor.salvando; }
+function fo99FotoAviso(fase, msg){ fo99Foto.fase = fase; fo99Foto.msg = msg; _renderGaleriaFormForn(); }
+function fo99EnviarFotos(){
+  var f = fo99Foto, est = estadoCadastroFornecedor, e = estadoGaleriaFormForn;
+  if(f.fase === 'enviando') return;   // duplo clique: um único envio
+  if(!fo99FotoEmEdicao()) return fo99FotoAviso('erro', MSG99.fotosSemUuid);
+  if(!perfilAtualPodeGerenciarGaleriaForn()) return;
+  if(!_contextoEdicaoAindaValido(est)) return fo99FotoAviso('erro', MSG99.fotosAbortado);   // o registro real da edição guarda conta/época/perfil/ficha da ABERTURA (aberturaOwnerUserId/Epoch/Perfil/Uuid): conta ou perfil mudou desde que abriu → recusa
+  if(est.salvando) return fo99FotoAviso('erro', MSG99.fotosSalvando);
+  if(e.execucaoAtiva === true) return fo99FotoAviso('erro', MSG99.fotosAndamento);
+  if(fo99FotoPreparando() > 0) return fo99FotoAviso('erro', MSG99.fotosPreparando);
+  var ids = fo99FotoProntas().map(function(i){ return i.idLocal; });
+  if(!ids.length) return fo99FotoAviso('erro', MSG99.fotosNenhuma);
+  var uuid = est.editandoUuid, ger = ++f.ger;
+  f.fase = 'enviando'; f.msg = ''; f.uid = String(est.aberturaOwnerUserId); f.epoch = est.aberturaEpoch; f.uuid = uuid;   // identidade + época + ficha da ORIGEM (a abertura da edição), não a leitura do instante do clique
+  fo99SalvarTrava(); _renderGaleriaFormForn();
+  persistirGaleriaFormForn(uuid, function(r){ fo99FotoFim(ger, uuid, r); }, ids);   // motor existente: fila serial, UUID real, orfãos, conferência incerta, guarda de contexto
+}
+function fo99Epoca(){ return typeof _authContextEpoch !== 'undefined' ? _authContextEpoch : 0; }
+function fo99FotoFim(ger, uuid, r){
+  var f = fo99Foto; r = r || {};
+  if(ger !== f.ger) return;   // ficha fechada/trocada/conta trocada: resposta tardia não mexe na tela atual
+  if(String(currentUser ? currentUser.id : '') !== f.uid || fo99Epoca() !== f.epoch || !fo99FotoEmEdicao() || estadoCadastroFornecedor.editandoUuid !== uuid || f.uuid !== uuid){
+    f.fase = 'idle'; f.msg = ''; fo99SalvarTrava(); _renderGaleriaFormForn(); return;   // conta/época/ficha diferentes da origem: não pinta resultado (o motor já recusou gravar sem contexto válido)
+  }
+  var itens = fo99FotoItens(), falhas = itens.filter(function(i){ return i.situacao === 'erro'; }).length, incertas = itens.filter(function(i){ return i.situacao === 'confirmacao_pendente'; }).length, n = r.enviadas || 0;
+  if(r.ocupado){ f.fase = 'erro'; f.msg = MSG99.fotosAndamento; }
+  else if(r.abortado){ f.fase = 'erro'; f.msg = MSG99.fotosAbortado; }
+  else {
+    var partes = [];
+    if(n > 0) partes.push('Enviado: ' + n + (n === 1 ? ' foto.' : ' fotos.'));
+    if(falhas > 0) partes.push(falhas + (falhas === 1 ? ' foto falhou' : ' fotos falharam') + ' e continua(m) na fila: clique em Enviar fotos para tentar de novo.');
+    if(incertas > 0) partes.push(incertas + (incertas === 1 ? ' foto ficou' : ' fotos ficaram') + ' com confirmação pendente: reabra o cadastro para conferir antes de reenviar.');
+    if(!partes.length) partes.push(MSG99.fotosAbortado);   // o motor devolveu sem trabalhar (contexto inválido já na partida): nada foi enviado e a fila segue intacta
+    f.fase = falhas > 0 || incertas > 0 || n === 0 ? 'erro' : 'concluido'; f.msg = partes.join(' ');
+    if(n > 0){   // sucesso real: tira da fila o que já foi enviado (não é reenviado nem duplicado na tela) e relê a galeria sem F5
+      estadoGaleriaFormForn.itens = itens.filter(function(i){
+        if(i.situacao !== 'enviado') return true;
+        if(i.objectUrl && typeof URL !== 'undefined' && URL.revokeObjectURL){ try { URL.revokeObjectURL(i.objectUrl); } catch(_e){} }
+        return false;
+      });
+      try { carregarExistentesFormForn(uuid); } catch(_e){}   // a galeria do prontuário já é relida pelo próprio motor a cada imagem registrada (carregarGaleriaFornecedorReal)
+    }
+  }
+  fo99SalvarTrava(); _renderGaleriaFormForn();
+}
+function fo99FotosPintar(){
+  var box = document.getElementById('listaGaleriaFormForn'); if(!box || !perfilAtualPodeGerenciarGaleriaForn()) return;
+  var est = estadoCadastroFornecedor, f = fo99Foto, prep = fo99FotoPreparando(), prontas = fo99FotoProntas().length, ativo = f.fase === 'enviando';
+  var host = document.createElement('div'); host.id = 'fo99Fotos'; host.style.marginTop = '8px';
+  if(!fo99FotoEmEdicao()){
+    if(fo99FotoNaFila() > 0){ var nota = document.createElement('div'); nota.className = 'muted'; nota.style.fontSize = '11px'; nota.textContent = MSG99.fotosSalvarPrimeiro; host.appendChild(nota); }
+  } else if(prontas > 0 || prep > 0 || ativo || f.msg){
+    var b = document.createElement('button'); b.setAttribute('type', 'button'); b.id = 'fo99BtnEnviarFotos';
+    b.textContent = 'Enviar fotos' + (prontas > 0 ? ' (' + prontas + ')' : '');
+    b.style.border = 'none'; b.style.borderRadius = '8px'; b.style.padding = '8px 14px'; b.style.fontSize = '13px'; b.style.fontWeight = '700'; b.style.cursor = 'pointer'; b.style.background = 'var(--green)'; b.style.color = 'white';
+    b.disabled = ativo || prep > 0 || prontas === 0 || !!est.salvando;
+    if(b.disabled){ b.setAttribute('disabled', 'disabled'); b.style.opacity = '.55'; b.style.cursor = 'default'; }
+    b.addEventListener('click', fo99EnviarFotos);
+    host.appendChild(b);
+    var st = document.createElement('div'); st.id = 'fo99FotosStatus'; st.className = 'fo99-st'; st.setAttribute('role', 'status'); st.setAttribute('aria-live', 'polite'); st.style.fontSize = '12px'; st.style.fontWeight = '700'; st.style.marginTop = '6px';
+    var txt = '';   // a cor vem de classes (.at/.ok/.er) com variante escura no CSS: contraste nos dois temas
+    if(ativo || prep > 0){   // atividade REAL (sem porcentagem inventada)
+      var sp = document.createElement('span'); sp.className = 'fo99-spin'; sp.setAttribute('aria-hidden', 'true'); st.appendChild(sp);
+      txt = ativo ? 'Enviando fotos…' : 'Preparando ' + prep + (prep === 1 ? ' foto…' : ' fotos…') + ' Aguarde para enviar.';
+      st.className = 'fo99-st at';
+    } else if(f.msg){ txt = f.msg; st.className = f.fase === 'concluido' ? 'fo99-st ok' : 'fo99-st er'; }
+    st.appendChild(document.createTextNode(txt));
+    host.appendChild(st);
+  }
+  if(host.children.length) box.appendChild(host);
+  var av = document.getElementById('avisoSalvarGaleriaFormForn');   // texto antigo "só ao Salvar alterações": em EDIÇÃO passa a citar o botão; no cadastro novo (sem UUID) fica o texto original
+  if(av && fo99FotoEmEdicao()) av.textContent = 'Em edição, as imagens novas são enviadas por “Enviar fotos” ou ao clicar em “Salvar alterações”. Ainda cabem ' + _capacidadeGaleriaFormForn().restante + ' de ' + GALERIA_MAX_FORN + '.';
+}
+var _renderGaleriaFormForn99 = _renderGaleriaFormForn;
+_renderGaleriaFormForn = function(){
+  var r = _renderGaleriaFormForn99.apply(this, arguments);
+  try { fo99FotosPintar(); } catch(_e){}
+  return r;
+};
+var _limparGaleriaFormForn99 = limparGaleriaFormForn;
+limparGaleriaFormForn = function(){
+  fo99Foto.ger++; fo99Foto.fase = 'idle'; fo99Foto.msg = '';
+  var r = _limparGaleriaFormForn99.apply(this, arguments);
+  try { fo99SalvarTrava(); } catch(_e){}
+  return r;
+};
+var _salvarEdicaoFornecedorReal99 = _salvarEdicaoFornecedorReal;
+_salvarEdicaoFornecedorReal = function(){   // Salvar alterações não concorre com o envio direto de fotos
+  if(fo99Foto.fase === 'enviando' || estadoGaleriaFormForn.execucaoAtiva === true){ _msgCadastroFornecedor(MSG99.fotosSalvar, 'erro'); return; }
+  return _salvarEdicaoFornecedorReal99.apply(this, arguments);
+};
+// <<99:FIM>>
 
 // ---- excluir (uma linha ou toda a recorrência) ----
 function foGExcluir(id){
@@ -41245,7 +41596,7 @@ function foGSinc(){
   foNovoBlocoSinc();
   try { foResumoLiquido('novo', foNovoEhEquipe()); foResumoLiquido('ed', !!(edicaoGrupo && edicaoGrupo.item && edicaoGrupo.item.equipe)); } catch(_e){}
   var travado = !!env || !foGLeituraOk();
-  cxDesabilitar(['lancPessoa', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras', 'detDescontoFolha', 'lancRecorrente'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })), travado);
+  cxDesabilitar(['lancPessoa', 'lancPessoaOutro', 'lancOsVinculada', 'detHorasExtras', 'detDescontoFolha', 'lancRecorrente', 'lanc99Qtd'].concat(FO_DET.map(function(d){ return foDetId('novo', d[0]); })), travado);
   cxDesabilitar(['geData', 'geValor', 'geDesc', 'geCat', 'gePessoa', 'gePessoaOutro', 'geOs', 'geDetHorasExtras', 'geDetDescontoFolha', 'geSalvarBtn', 'geCancelarBtn'].concat(FO_DET.map(function(d){ return foDetId('ed', d[0]); })), !!env);
   if(g){
     cxMostrar('cxConferirBtn', false); cxMostrar('cxReenviarBtn', env.fase === 'incerto'); cxMostrar('cxDescartarBtn', env.fase === 'incerto' || env.fase === 'conflito');

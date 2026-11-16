@@ -931,7 +931,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.4.0 · Rótulos do Caixa</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.5.0 · Categorias e Detalhes</div>
 </aside>
 
 <main class="main">
@@ -25571,7 +25571,8 @@ function cxPreencherCategorias(selId, tipo, atual){   // atual = categoria que a
   var sel = document.getElementById(selId); if(!sel) return 0;
   var e = estadoCaixaReal, prev = sel.value, el = cxCategoriasElegiveis(tipo), achouAtual = false;
   sel.textContent = '';
-  var o0 = crEl('option', '', '(sem categoria)'); o0.value = ''; sel.appendChild(o0);
+  var criacao = selId === 'cxNovoCat' || selId === 'cxSerCat';   // pacote 101: na criação o vazio é só um marcador (não escolhível); na edição de registro antigo continua "(sem categoria)"
+  var o0 = crEl('option', '', criacao ? 'Selecione uma categoria' : '(sem categoria)'); o0.value = ''; if(criacao) o0.disabled = true; sel.appendChild(o0);
   el.forEach(function(c){ var o = crEl('option', '', String(c.rotulo || c.nome || c.id)); o.value = String(c.id); sel.appendChild(o); if(atual && String(c.id) === String(atual)) achouAtual = true; });
   if(atual && !achouAtual){
     var cat = null; e.catalogo.forEach(function(c){ if(String(c.id) === String(atual)) cat = c; });
@@ -25614,7 +25615,7 @@ function cxFormEstado(){
   var sel = document.getElementById('cxNovoCat'), nota = document.getElementById('cxNovoCatNota');
   if(sel && !env){
     var tipo = crValor('cxNovoTipo') || 'entrada', n = cxPreencherCategorias('cxNovoCat', tipo);
-    if(nota) nota.textContent = e.catStatus !== 'ok' ? '' : n ? '' : 'Nenhuma categoria de ' + (tipo === 'saida' ? 'saída' : 'entrada') + ' cadastrada para lançamento avulso: o lançamento será salvo sem categoria. Esta tela não cria nem altera categorias.';
+    if(nota) nota.textContent = e.catStatus !== 'ok' ? '' : n ? '' : 'Nenhuma categoria de ' + (tipo === 'saida' ? 'saída' : 'entrada') + ' cadastrada para lançamento avulso: não é possível registrar um novo lançamento deste tipo. Esta tela não cria nem altera categorias.';
   }
   var d = document.getElementById('cxNovoData'); if(d && !d.value) d.value = crHojeSP();
   // série
@@ -25657,6 +25658,7 @@ function cxLerCampos(p, catOk){
   if(!desc) return { erro: 'Informe a descrição.' };
   if(desc.length > CX_MAX_DESC) return { erro: 'Descrição muito longa (máximo ' + CX_MAX_DESC + ' caracteres).' };
   var v = cxParseValor(crValor(p + 'Valor')); if(v.erro) return { erro: v.erro };
+  if(!cat && p !== 'cxEd') return { erro: 'Selecione uma categoria.' };   // pacote 101: lançamento NOVO (cxNovo/cxSer) exige categoria, antes de qualquer envio; edição (cxEd) de registro antigo sem categoria continua permitida
   if(cat && !catOk(tipo, cat)) return { erro: 'Categoria não disponível para este tipo. Atualize e escolha novamente.' };
   return { tipo: tipo, data: data, desc: desc, centavos: v.centavos, cat: cat || null };
 }
@@ -38573,7 +38575,7 @@ cxRender = function(){
       acoes = (cxPodeEditar() && !cxPendente() ? '<button class="btn btn2" type="button" style="font-size:12px;margin-right:4px" data-pa="caixa-grupo-editar" onclick="foGEditar(' + "'" + foEsc(i.id) + "'" + ')">Editar</button>' : '')
         + (cxPodeExcluir() && !cxPendente() ? '<button class="btn btn2" type="button" style="font-size:12px" data-pa="caixa-grupo-excluir" onclick="foGExcluir(' + "'" + foEsc(i.id) + "'" + ')">Excluir</button>' : '') || '—';
     }
-    var origem = i.avulso ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
+    var origem = (i.avulso || (i.equipe && i.consolidado)) ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
     linhas += '<tr class="cx97-lin" tabindex="0" data-cx97="' + foEsc(i.id) + '"><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
       + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td>' + fo98CelulaOs(i)
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
@@ -40554,7 +40556,7 @@ function fo97Linhas(it){   // → [[rótulo, valor]]; faltante = "—"; somente 
     add('Fornecedor', it.fornecedor); add('OS', it.os);
     if(it.fornId) add('Detalhamento', it.descricao);   // o pacote 96 grava o detalhamento legível na descrição; é mostrada como está, sem decompor
     if(it.equipe){
-      add('Pessoa', it.pessoa); add('Categoria da equipe', it.catEquipe);
+      add('Pessoa', it.pessoa); add('Categoria da equipe', (it.consolidado || it.catEquipe === 'Pagamento consolidado') ? FO99_ROTULO_EQUIPE : it.catEquipe);   // pacote 101: só apresentação; it.catEquipe (canônico curto) não muda
       if(it.consolidado && it.detalhes){
         var bruto = 0;
         FO97_COMP.forEach(function(c){ var v = voC(it.detalhes[c[0]]); if(isFinite(v) && v > 0){ add(c[1], crBRL(v)); bruto += v; } });
@@ -41210,7 +41212,7 @@ fo97LigarGlobal = function(){
 // (5) Galeria: o teto do arquivo ENVIADO passou de 500 KB para 100 KB (constantes e textos editados na base; o motor de compressão é o mesmo).
 // (6) Fornecedor em edição: botão "Enviar fotos" que reaproveita persistirGaleriaFormForn (mesma fila, mesmos guardas); não grava a ficha.
 // Tudo o que vem do banco/usuário entra na tela por textContent ou coEsc. Nenhuma leitura/escrita nova de banco.
-var FO99_ROTULO_EQUIPE = 'Salários e pró-labore';
+var FO99_ROTULO_EQUIPE = 'Salários e Pró-Labore';
 var FO99_REC_MAX = 12;   // limite do backend financeiro_lancamento_grupo_gravar (1 a 12 linhas)
 var FO99_MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 var MSG99 = {
@@ -41234,16 +41236,23 @@ var MSG99 = {
 };
 
 // ---------- (1) rótulo da categoria de equipe: só apresentação ----------
-function fo99RotuloCat(t){ return String(t) === FO_CAT_CONSOLIDADO ? FO99_ROTULO_EQUIPE : t; }
+// Pacote 101: o catálogo real traz nome = FO_CAT_CONSOLIDADO e rotulo curto 'Pagamento consolidado'; cxCategoriaNome devolve o rotulo, então o texto sozinho não basta: confere também a categoria do catálogo pelo id.
+function fo101CatConsolidada(id, catalogo){
+  if(!id || !Array.isArray(catalogo)) return false;
+  for(var k = 0; k < catalogo.length; k++){ if(catalogo[k] && String(catalogo[k].id) === String(id)) return String(catalogo[k].nome) === FO_CAT_CONSOLIDADO; }
+  return false;
+}
+function fo99RotuloCat(t, id, catalogo){ return (String(t) === FO_CAT_CONSOLIDADO || fo101CatConsolidada(id, catalogo)) ? FO99_ROTULO_EQUIPE : t; }
 var _cxCategoriaNome99 = cxCategoriaNome;
-cxCategoriaNome = function(){ return fo99RotuloCat(_cxCategoriaNome99.apply(this, arguments)); };   // tabela (catNome), detalhe, busca, "fora do catálogo", "(atual)" na edição
+cxCategoriaNome = function(id, catalogo){ return fo99RotuloCat(_cxCategoriaNome99.apply(this, arguments), id, catalogo); };   // tabela (catNome), detalhe, busca, "fora do catálogo", "(atual)" na edição
 function fo99ReRotular(no){   // opções do select (inclusive dentro de optgroup): troca só o TEXTO; o value (id) nunca muda
   var ch = no && no.children ? no.children : [], i, o, t;
   for(i = 0; i < ch.length; i++){
     o = ch[i];
     if(String(o.tagName || '').toUpperCase() === 'OPTION'){
       t = String(o.textContent);
-      if(t === FO_CAT_CONSOLIDADO) o.textContent = FO99_ROTULO_EQUIPE;
+      if(o.value && fo101CatConsolidada(o.value, estadoCaixaReal.catalogo)) o.textContent = (t.indexOf('(atual) ') === 0 ? '(atual) ' : '') + FO99_ROTULO_EQUIPE + (/ \(inativa\)$/.test(t) ? ' (inativa)' : '');   // pacote 101: opção com rotulo curto, identificada pelo id (value)
+      else if(t === FO_CAT_CONSOLIDADO) o.textContent = FO99_ROTULO_EQUIPE;
       else if(t === FO_CAT_CONSOLIDADO + ' (inativa)') o.textContent = FO99_ROTULO_EQUIPE + ' (inativa)';
       else if(t === '(atual) ' + FO_CAT_CONSOLIDADO) o.textContent = '(atual) ' + FO99_ROTULO_EQUIPE;
     } else fo99ReRotular(o);

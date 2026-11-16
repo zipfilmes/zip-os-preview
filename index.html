@@ -931,7 +931,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.3.0 · Caixa e Fornecedores</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.4.0 · Rótulos do Caixa</div>
 </aside>
 
 <main class="main">
@@ -1525,7 +1525,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div id="lancDetalheBloco" style="margin-top:4px;padding-top:10px;border-top:1px dashed #c4b5fd">
    <div style="font-size:12px;font-weight:800;color:#6d28d9;margin-bottom:8px">📋 Detalhamento do pagamento</div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário bruto
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário dias normais
      <input id="detSalario" type="text" inputmode="decimal" oninput="foSomaConsolidado('novo')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Comissão
@@ -1709,7 +1709,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <div id="geDetalheBloco" style="margin-top:4px;padding-top:10px;border-top:1px dashed #c4b5fd">
    <div style="font-size:12px;font-weight:800;color:#6d28d9;margin-bottom:8px">📋 Detalhamento do pagamento</div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário bruto
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Salário dias normais
      <input id="geDetSalario" type="text" inputmode="decimal" oninput="foSomaConsolidado('ed')" placeholder="0,00" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;box-sizing:border-box">
     </label>
     <label style="font-size:12px;font-weight:700;color:var(--muted)">Comissão
@@ -39810,7 +39810,7 @@ function foLerDesconto(k){   // → { c, erro }: campo "Desconto em folha" em ce
   return { c: p.centavos, erro: '' };
 }
 function foResumoLiquido(k, eq){   // rótulo do Valor + linha "Total bruto − Desconto em folha = Valor líquido (saída do caixa)"; só para equipe
-  var rot = foDom(k === 'novo' ? 'cxNovoValorRot' : 'geValorRot'); if(rot) rot.textContent = eq ? 'Valor líquido (R$)' : 'Valor (R$)';
+  var rot = foDom(k === 'novo' ? 'cxNovoValorRot' : 'geValorRot'); if(rot) rot.textContent = eq ? 'Valor Pago (R$)' : 'Valor (R$)';
   var box = foDom(k === 'novo' ? 'lancLiquidoResumo' : 'geLiquidoResumo'); if(!box) return;
   if(!eq){ box.style.display = 'none'; box.textContent = ''; return; }
   var s = foSomaDetalhes(k), d = foLerDesconto(k), l = foLiquidoCalc(s.c, d.c);
@@ -40027,7 +40027,7 @@ function fo96Soma(){   // o valor do lançamento passa a ser o líquido (somente
   var v = foDom('cxNovoValor'), rot = foDom('cxNovoValorRot'), box = foDom('lancFornResumo');
   var f = fo96LerForn(), on = fo96NovoEhForn();
   if(v && on) v.value = f.erro ? '' : cxValorTexto(f.liquidoC);
-  if(rot && on) rot.textContent = 'Valor líquido (R$)';
+  if(rot && on) rot.textContent = 'Valor Pago (R$)';
   if(!box) return;
   var vazio = ['lancFornServico', 'lancFornComissao', 'lancFornAdic', 'lancFornDesc'].every(function(id){ return !String(crValor(id)).trim(); });
   if(!on || vazio){ box.style.display = 'none'; box.textContent = ''; return; }
@@ -40035,7 +40035,7 @@ function fo96Soma(){   // o valor do lançamento passa a ser o líquido (somente
   box.textContent = f.erro ? f.erro : 'Serviço ' + crBRL(f.servicoC) + ' + Comissão ' + crBRL(f.comissaoC) + ' + Adicionais ' + crBRL(f.adicionaisC) + ' − Descontos ' + crBRL(f.descontosC) + ' = Valor líquido (saída do caixa) ' + crBRL(f.liquidoC);
 }
 var _foAvisoConsolidado96 = foAvisoConsolidado;
-foAvisoConsolidado = function(k){ _foAvisoConsolidado96.apply(this, arguments); if(k === 'novo' && fo96NovoEhForn()){ var rot = foDom('cxNovoValorRot'); if(rot) rot.textContent = 'Valor líquido (R$)'; } };
+foAvisoConsolidado = function(k){ _foAvisoConsolidado96.apply(this, arguments); if(k === 'novo' && fo96NovoEhForn()){ var rot = foDom('cxNovoValorRot'); if(rot) rot.textContent = 'Valor Pago (R$)'; } };
 
 // ---- lista de fornecedores (RPC própria: o Financeiro não depende de ler a tabela diretamente) ----
 var fo96Lista = { status: 'idle', lista: [], ctx: null };   // idle | carregando | ok | erro
@@ -40323,7 +40323,7 @@ function fo96GuiaSaidaProntReal(amb, l, p, i){
 // (3) Novo lançamento (entrada): campo NF manual opcional. Tudo o que o banco devolveu entra na tela por textContent (sem innerHTML nas caixinhas e nos campos novos do Contas a Receber).
 var FO97_RPC = { registrar: 'projeto_recebimento_registrar_nf', estornar: 'projeto_recebimento_estornar' };
 var FO97_ORIGENS = ['manual', 'recebimento', 'estorno_recebimento'];
-var FO97_COMP = [['salario', 'Salário bruto'], ['comissao', 'Comissão'], ['horaExtra', 'Hora extra'], ['proLabore', 'Pró-labore'], ['reembolso', 'Reembolso'], ['bonificacao', 'Bonificação'], ['encargosContador', 'Encargos/Contador']];
+var FO97_COMP = [['salario', 'Salário dias normais'], ['comissao', 'Comissão'], ['horaExtra', 'Hora extra'], ['proLabore', 'Pró-labore'], ['reembolso', 'Reembolso'], ['bonificacao', 'Bonificação'], ['encargosContador', 'Encargos/Contador']];
 var MSG97 = {
   nfRotulo: 'Nota fiscal (opcional)',
   nfSem: 'Sem NF (informar depois)',

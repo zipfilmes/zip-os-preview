@@ -343,6 +343,27 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 .hvDemNota{font-size:12px;margin:0 0 8px}
 @media(max-width:700px){.hvDemTd{min-width:130px}.hvDemBtn{min-height:40px}}
 </style>
+<style id="cx103Css">
+/* Pacote 103 (V1.6.7.0): coluna "Conf." (checkbox manual), descrição em uma linha com reticências e 🔁 fora da área cortada. Escopado ao Fluxo (#cxTabela); Claro e Escuro; não toca outras tabelas nem o PDF. */
+/* Estratégia: layout automático da tabela PRESERVADO (as demais colunas continuam do tamanho do conteúdo, como antes). Só a célula da descrição tem teto de largura proporcional à janela
+   (max-width num bloco interno: a contribuição intrínseca de um bloco com max-width é limitada por ele, então 10 mil caracteres sem espaço não esticam a coluna nem a tabela). O texto
+   sobra por overflow:hidden + reticências numa única linha (altura da linha = a de antes); o 🔁 e os textos de origem (que quebram normalmente) ficam dentro do mesmo teto. */
+#cxTabela .cx103-dw{max-width:clamp(180px,30vw,460px);min-width:0;overflow-wrap:anywhere}
+#cxTabela .cx103-dl{display:flex;align-items:center;gap:5px;white-space:nowrap;min-width:0}
+#cxTabela .cx103-ic{flex:none}
+#cxTabela .cx103-dt{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#cxTabela th.cx103-th,#cxTabela td.cx103-cf{width:44px;text-align:center;padding-left:6px;padding-right:6px;white-space:nowrap}
+#cxTabela .cx103-chk{-webkit-appearance:none;appearance:none;box-sizing:border-box;display:inline-block;position:relative;width:16px;height:16px;padding:0;margin:0;border:1.5px solid #98a2b3;border-radius:4px;background:#fff;cursor:pointer;vertical-align:middle}
+#cxTabela .cx103-chk:checked{background:#16a34a;border-color:#16a34a}
+#cxTabela .cx103-chk:checked::after{content:"✓";position:absolute;left:0;right:0;top:0;line-height:13px;text-align:center;color:#fff;font-size:12px;font-weight:700}
+#cxTabela .cx103-chk:focus-visible{outline:2px solid #1e3a5f;outline-offset:2px}
+#cxTabela .cx103-chk:disabled{opacity:.55;cursor:default}
+#cxTabela .cx103-av{color:#b45309;font-weight:700;margin-left:2px}
+html[data-theme="dark"] #cxTabela .cx103-chk{background:#1d2027;border-color:#6b7686}
+html[data-theme="dark"] #cxTabela .cx103-chk:checked{background:#16a34a;border-color:#16a34a}
+html[data-theme="dark"] #cxTabela .cx103-chk:focus-visible{outline-color:#8fb8ee}
+html[data-theme="dark"] #cxTabela .cx103-av{color:#f4d58b}
+</style>
 <style id="zosTemaCss">
 /* ===== V1.1.0.0 TEMA ESCURO — bloco ADICIONAL e escopado (html[data-theme="dark"]). O Tema Claro (padrão) não recebe nenhuma regra daqui,
    exceto a caixa "Ajustes" do menu lateral. Marcador D = html[data-theme="dark"]. ===== */
@@ -931,7 +952,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.6.0 · Totais e Categorias</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.7.0 · Marcações e Recorrência</div>
 </aside>
 
 <main class="main">
@@ -1417,7 +1438,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
    <h2 style="margin:0;font-size:20px;font-weight:800">💸 Fluxo de Caixa</h2>
    <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button id="cxAberturaBtn" type="button" data-pa="caixa-abertura-abrir" onclick="cxAberturaAbrir()" style="display:none;padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">💰 Definir saldo inicial</button>
-    <button id="cxSerieAbrirBtn" type="button" data-pa="caixa-serie-abrir" onclick="foCaixaAbrir('serie')" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">🔁 Lançamento recorrente</button>
+    <!-- 103: botão "Lançamento recorrente" removido do topo; função e janela internas preservadas (Novo lançamento → Repetir todo mês) -->
     <button id="cx99PdfBtn" type="button" data-pa="caixa-relatorio-pdf" onclick="fo99RelatorioAbrir()" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">📄 Gerar relatório PDF</button>
     <button id="cxNovoAbrirBtn" type="button" data-pa="caixa-novo-abrir" onclick="foCaixaAbrir('novo')" style="padding:9px 14px;border:none;border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:var(--green);color:white;cursor:pointer;white-space:nowrap">+ Novo lançamento</button>
    </div>
@@ -1755,7 +1776,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
   <p class="muted" style="margin-bottom:18px;font-size:13px" id="modalExcluirRecorrenteDesc">Este lançamento se repete todo mês. O que você deseja excluir?</p>
   <div style="display:flex;flex-direction:column;gap:10px">
    <button class="btn" type="button" style="background:var(--red);font-size:14px;padding:12px" data-pa="caixa-recorrente-toda" onclick="confirmarExclusaoRecorrente('toda')">🔁 Excluir toda a recorrência</button>
-   <button class="btn btn2" type="button" style="font-size:14px;padding:12px;border:1px solid var(--line)" data-pa="caixa-recorrente-mes" onclick="confirmarExclusaoRecorrente('mes')">📅 Excluir só este mês</button>
+   <button id="cx103ApartirBtn" class="btn btn2" type="button" style="font-size:14px;padding:12px;border:1px solid var(--line)" data-pa="caixa-recorrente-apartir" onclick="confirmarExclusaoRecorrente('apartir')">📆 Excluir este mês e os seguintes</button><button class="btn btn2" type="button" style="font-size:14px;padding:12px;border:1px solid var(--line)" data-pa="caixa-recorrente-mes" onclick="confirmarExclusaoRecorrente('mes')">📅 Excluir só este mês</button>
    <button class="btn btn2" type="button" onclick="confirmarExclusaoRecorrente('cancelar')" style="padding:10px;font-size:13px;color:var(--muted)">Cancelar</button>
   </div>
   <div id="cxMsgRec"></div>
@@ -38562,7 +38583,7 @@ cxRender = function(){
   if(!filtrados.length && !(f.de && totalOk) && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado) + fo102TabelaVazia(tt); return; }
   var ord = filtrados.slice().sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : a.criadoMs !== b.criadoMs ? a.criadoMs - b.criadoMs : a.id < b.id ? -1 : 1; });
   var vis = ord.slice(0, e.mostrar), hoje = crHojeSP(), saldo = anteriorC, linhas = '';
-  if(f.de && cfgAb.saldoOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="6">' + cxAbRotuloAnterior() + '</td>' + foCelula(catFiltro || anteriorC === null ? '—' : crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
+  if(f.de && cfgAb.saldoOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="7">' + cxAbRotuloAnterior() + '</td>' + foCelula(catFiltro || anteriorC === null ? '—' : crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
   cxAbPlano(vis, e.itens, cfgAb, f, vis.length === ord.length).forEach(function(pl){
     if(pl.tipo === 'abertura'){ linhas += cxAbLinhaHtml(catFiltro ? { tipo: pl.tipo, data: pl.data, saldoC: null } : pl); return; }
     var i = pl.item; saldo = catFiltro ? null : pl.saldoC;
@@ -38577,12 +38598,12 @@ cxRender = function(){
         + (cxPodeExcluir() && !cxPendente() ? '<button class="btn btn2" type="button" style="font-size:12px" data-pa="caixa-grupo-excluir" onclick="foGExcluir(' + "'" + foEsc(i.id) + "'" + ')">Excluir</button>' : '') || '—';
     }
     var origem = (i.avulso || (i.equipe && i.consolidado)) ? '' : '<div class="muted" style="font-size:11px">' + foEsc(i.grupo ? foGOrigem(i) : i.origem) + '</div>';
-    linhas += '<tr class="cx97-lin" tabindex="0" data-cx97="' + foEsc(i.id) + '"><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>'
-      + '<td>' + foEsc(i.descricao || '—') + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</td><td style="font-size:12px">' + foEsc(i.catNome) + '</td>' + fo98CelulaOs(i)
+    linhas += '<tr class="cx97-lin" tabindex="0" data-cx97="' + foEsc(i.id) + '"><td style="font-size:12px;white-space:nowrap">' + (i.data ? crDataBR(i.data) || foEsc(i.data) : 'sem data') + (i.data > hoje ? ' · futura' : '') + '</td>' + fo103Celula(i)
+      + '<td><div class="cx103-dw">' + fo103Desc(i) + origem + (pl.antes ? '<div class="muted" style="font-size:11px">anterior ao saldo inicial · não entra no saldo</div>' : '') + '</div></td><td style="font-size:12px">' + foEsc(i.catNome) + '</td>' + fo98CelulaOs(i)
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
-  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
+  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Conf.</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. Total de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
@@ -38606,7 +38627,7 @@ function fo102Totais(f, itens, filtrados, cfg, anteriorC){
 }
 function fo102CelSaldo(c){ return foCelula(c === null ? '—' : crBRL(c), 'font-weight:700;color:' + (c === null ? 'var(--muted)' : c >= 0 ? '#1e3a5f' : '#dc2626'), 'money'); }
 function fo102RodapeHtml(tt){
-  return '<tr class="cx102-total" style="background:#f8fafc;font-weight:700"><td colspan="4">Total do período</td>'
+  return '<tr class="cx102-total" style="background:#f8fafc;font-weight:700"><td colspan="5">Total do período</td>'
     + foCelula(crBRL(tt.entradaC), 'color:#065f46;font-weight:700', 'money') + foCelula(crBRL(tt.saidaC), 'color:#dc2626;font-weight:700', 'money')
     + fo102CelSaldo(tt.saldoFinalC) + '<td></td></tr>';
 }
@@ -38619,10 +38640,119 @@ function fo102NotaHtml(tt){
 }
 function fo102TabelaVazia(tt){   // sem linhas a mostrar, mas leitura completa: o rodapé continua honesto (zeros e saldo aplicável)
   if(!tt) return '';
-  return '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
+  return '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Conf.</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
     + fo102RodapeHtml(tt) + '</table>' + fo102NotaHtml(tt);
 }
 // <<102:FIM>>
+// <<103:INICIO>>
+// Pacote 103 (V1.6.7.0 · Marcações e Recorrência). Escrito pelo Claude SEM executar (sem Bash); os testes (Testes/teste_103.js) extraem ESTE bloco do Tela/index.html gerado.
+// (1) "Conf.": checkbox MANUAL e informativo no Fluxo (o Financeiro se lembra do que já marcou; a conferência com o banco é feita fora do sistema). Salva só marcado/desmarcado por lançamento, compartilhado entre os usuários
+//     do Financeiro, em public.financeiro_caixa_marcacoes_103 (via 2 RPCs). NÃO lê nem valida valor/data/tipo, NÃO se invalida por edição, NÃO muda totais/saldos/contas a receber.
+//     Leitura em LOTE dos lançamentos visíveis (uma chamada por até 200), cache por leitura/conta/época; o checkbox só muda depois que o servidor responde (nada de estado otimista).
+// (2) "Excluir este mês e os seguintes" (escopo 'apartir' da RPC existente financeiro_lancamento_grupo_excluir): corte = 1º dia do mês do lançamento escolhido; alvo = mesmo recorrente_id com data >= corte.
+//     O servidor refaz a conta sob lock; a tela só monta o instantâneo de cada alvo (como no "toda").
+// (3) Descrição em UMA linha com reticências (texto integral no banco, na busca, no popup, na edição e no PDF) e 🔁 fora da área cortada para qualquer lançamento com recorrente_id.
+var FO103_RPC = { ler: 'financeiro_caixa_marcacoes_ler_103', definir: 'financeiro_caixa_marcacao_definir_103' };
+var FO103_LOTE = 200;
+var FO103_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+var fo103Marc = { seq: -1, uid: '', epoch: -1, mapa: {}, fila: [] };   // mapa[id] = { st: 'lendo'|'ok'|'env'|'erro', marcado, versao, aviso? }
+function fo103Pode(){ return foPode(); }   // perfis REAIS da conta (financeiro/sócio/admin)
+function fo103Ctx(){ return { seq: estadoCaixaReal.seq, uid: crSessao() ? String(currentUser.id) : '', epoch: crEpoch() }; }
+function fo103Vivo(c){ return !!c && c.seq === estadoCaixaReal.seq && cxCtxValido(c); }
+function fo103Estado(){   // o cache vale para UMA leitura do caixa (seq) de UMA conta/época; qualquer mudança descarta tudo
+  var c = fo103Ctx();
+  if(fo103Marc.seq !== c.seq || fo103Marc.uid !== c.uid || fo103Marc.epoch !== c.epoch) fo103Marc = { seq: c.seq, uid: c.uid, epoch: c.epoch, mapa: {}, fila: [] };
+  return fo103Marc;
+}
+function fo103Celula(i){
+  var m = fo103Estado(), pode = fo103Pode(), x = m.mapa[i.id];
+  if(!x && pode){ x = m.mapa[i.id] = { st: 'lendo', marcado: false, versao: 0 }; m.fila.push(i.id); }   // pedido é enviado depois da pintura (fo103Despachar)
+  var trava = !pode || !x || x.st !== 'ok';
+  var aviso = x && x.aviso ? '<span class="cx103-av" role="img" aria-label="' + foEsc(x.aviso) + '" title="' + foEsc(x.aviso) + '">⚠</span>' : '';
+  return '<td class="cx103-cf"><input type="checkbox" class="cx103-chk" aria-label="Marcação manual" title="Marcação manual"' + (x && x.marcado ? ' checked' : '') + (trava ? ' disabled' : '')
+    + ' onclick="fo103Clique(event,\'' + foEsc(i.id) + '\')">' + aviso + '</td>';
+}
+function fo103Despachar(){   // depois de cada pintura: uma leitura em lote dos ids ainda desconhecidos (sem N+1; sem laço: o que falha fica 'erro' até a próxima leitura do caixa)
+  var m = fo103Marc; if(!m || !m.fila || !m.fila.length) return;
+  var ctx = { seq: m.seq, uid: m.uid, epoch: m.epoch }, ids = m.fila.splice(0, m.fila.length);
+  if(!fo103Vivo(ctx) || !fo103Pode()) return;
+  for(var k = 0; k < ids.length; k += FO103_LOTE) fo103LerLote(ctx, m, ids.slice(k, k + FO103_LOTE));
+}
+function fo103LerLote(ctx, m, ids){
+  var q; try { q = supabaseClient.rpc(FO103_RPC.ler, { p_ids: ids }); } catch(_e){ q = Promise.reject(_e); }
+  var aplicar = function(lista){
+    if(!fo103Vivo(ctx) || fo103Marc !== m) return;   // outra conta/época/leitura: resposta descartada sem tocar na tela
+    var achados = {};
+    if(lista){
+      for(var a = 0; a < lista.length; a++){
+        var x = lista[a];
+        if(!x || typeof x.id !== 'string' || ids.indexOf(x.id) < 0 || achados[x.id] || typeof x.marcado !== 'boolean' || !Number.isInteger(Number(x.versao)) || Number(x.versao) < 1){ lista = null; break; }
+        achados[x.id] = x;
+      }
+    }
+    ids.forEach(function(id){
+      var at = m.mapa[id]; if(!at || at.st !== 'lendo') return;
+      if(!lista) m.mapa[id] = { st: 'erro', marcado: false, versao: 0, aviso: 'Não foi possível ler a marcação agora. Atualize a página.' };
+      else m.mapa[id] = achados[id] ? { st: 'ok', marcado: achados[id].marcado, versao: Number(achados[id].versao), aviso: at.aviso || '' } : { st: 'ok', marcado: false, versao: 0, aviso: at.aviso || '' };   // ausente = desmarcado
+    });
+    cxRender();
+  };
+  return crComTempo(q).then(function(r){ aplicar(r && !r.error && Array.isArray(r.data) ? r.data : null); }, function(){ aplicar(null); });
+}
+function fo103Restaurar(ctx, m, id, ant, aviso, reler){
+  if(!fo103Vivo(ctx) || fo103Marc !== m) return;
+  m.mapa[id] = { st: reler ? 'lendo' : 'ok', marcado: ant.marcado, versao: ant.versao, aviso: aviso };
+  if(reler) fo103LerLote(ctx, m, [id]); else cxRender();   // incerto: relê o estado REAL (a leitura repinta); definitivo: volta ao que estava
+  if(reler) cxRender();
+}
+function fo103Resposta(ctx, m, id, novo, ant, r){
+  if(!fo103Vivo(ctx) || fo103Marc !== m) return;
+  var err = r && r.error ? r.error : null;
+  if(err){
+    if(crStatusErro(err) === 'sessao') return fo103Restaurar(ctx, m, id, ant, 'Sessão expirada. Entre novamente.', false);
+    if(cxRpcErroNaoInstalado(err)) return fo103Restaurar(ctx, m, id, ant, 'A marcação ainda não está disponível no banco.', false);
+    if(cxRpcDefinitivo(err)) return fo103Restaurar(ctx, m, id, ant, 'Não foi possível salvar a marcação.', false);
+    return fo103Restaurar(ctx, m, id, ant, 'Não foi possível confirmar a marcação. Mostrando o estado atual.', true);
+  }
+  var d = r && r.data && typeof r.data === 'object' && !Array.isArray(r.data) ? r.data : null, s = d ? String(d.status || '') : '';
+  var valido = !!d && typeof d.marcado === 'boolean' && Number.isInteger(Number(d.versao)) && Number(d.versao) >= 0;
+  if(valido && (s === 'aplicado' || s === 'ja_aplicado') && d.marcado === novo){ m.mapa[id] = { st: 'ok', marcado: d.marcado, versao: Number(d.versao), aviso: '' }; return cxRender(); }
+  if(valido && s === 'conflito'){ m.mapa[id] = { st: 'ok', marcado: d.marcado, versao: Number(d.versao), aviso: 'Outra pessoa mudou esta marcação. Mostrando o estado atual.' }; return cxRender(); }
+  if(s === 'inexistente') return fo103Restaurar(ctx, m, id, ant, 'Este lançamento não existe mais. Atualize a página.', false);
+  return fo103Restaurar(ctx, m, id, ant, 'Não foi possível confirmar a marcação. Mostrando o estado atual.', true);
+}
+function fo103Clique(ev, id){   // não propaga ao popup/linha; o checkbox só muda quando o servidor confirma (preventDefault + repintura)
+  if(ev){ try { ev.stopPropagation(); ev.preventDefault(); } catch(_e){} }
+  var m = fo103Estado(), x = m.mapa[id];
+  if(!x || x.st !== 'ok' || !fo103Pode()) return Promise.resolve();
+  var ctx = fo103Ctx(), novo = !x.marcado, ant = { marcado: x.marcado, versao: x.versao };
+  x.st = 'env'; x.aviso = '';
+  cxRender();
+  var q; try { q = supabaseClient.rpc(FO103_RPC.definir, { p_id: id, p_marcado: novo, p_versao: ant.versao }); } catch(_e){ q = Promise.reject(_e); }
+  return crComTempo(q).then(function(r){ fo103Resposta(ctx, m, id, novo, ant, r); }, function(){ fo103Resposta(ctx, m, id, novo, ant, { error: { code: 'timeout', message: 'sem resposta' } }); });
+}
+// ---- descrição: uma linha com reticências; 🔁 fora da área cortada (só visual: nada é gravado na descrição) ----
+function fo103Desc(i){
+  var t = String(i.descricao || '—');
+  return '<div class="cx103-dl">' + (i.recId ? '<span class="cx103-ic" role="img" aria-label="Recorrente">🔁</span>' : '') + '<span class="cx103-dt" title="' + foEsc(t) + '">' + foEsc(t) + '</span></div>';
+}
+// ---- "Excluir este mês e os seguintes" ----
+function fo103MesRotulo(iso){ var m = /^(\d{4})-(\d{2})-\d{2}$/.exec(String(iso || '')); return m && +m[2] >= 1 && +m[2] <= 12 ? FO103_MESES[+m[2] - 1] + ' de ' + m[1] : ''; }
+function fo103Apartir(it, grupo){   // → { ok, ids, membros, n, rotulo, motivo }
+  var rot = fo103MesRotulo(it.data), corte = String(it.data || '').slice(0, 7) + '-01';
+  if(!rot) return { ok: false, ids: [], membros: [], n: 0, rotulo: '', motivo: 'A data deste lançamento é inválida.' };
+  var sub = grupo.filter(function(x){ return String(x.data) >= corte; }).sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : a.id < b.id ? -1 : 1; });
+  var base = { ids: sub.map(function(x){ return x.id; }), membros: sub.map(function(x){ return x.snapG; }), n: sub.length, rotulo: rot };
+  if(sub.length < 1 || sub.length > 12) return Object.assign(base, { ok: false, motivo: 'Este mês e os seguintes somam ' + sub.length + ' lançamentos (o limite é 12).' });
+  if(base.membros.some(function(m){ return !m; })) return Object.assign(base, { ok: false, motivo: 'Algum lançamento deste mês em diante não pode ser excluído por aqui (protegido ou com dados incoerentes). Exclua só este mês ou corrija antes.' });
+  return Object.assign(base, { ok: true, motivo: '' });
+}
+function fo103ApartirPintar(x){
+  var d = foDom('modalExcluirRecorrenteDesc'), b = foDom('cx103ApartirBtn'), ap = x && x.ap;
+  if(d && ap && ap.ok) d.textContent += ' “Este mês e os seguintes” apaga ' + ap.n + (ap.n === 1 ? ' lançamento' : ' lançamentos') + ', de ' + ap.rotulo + ' em diante, e preserva os meses anteriores.';
+  if(b){ b.textContent = '📆 Excluir este mês e os seguintes' + (ap && ap.ok ? ' (' + ap.rotulo + ' em diante · ' + ap.n + ')' : ''); b.disabled = !(ap && ap.ok); }
+}
+// <<103:FIM>>
 function foCaixaMais(){ estadoCaixaReal.mostrar += CX_LINHAS; cxRender(); }
 function foCaixaEditar(id){ cxAbrirEdicao(id); }
 function foCaixaExcluir(id){ cxAbrirExclusao(id); }
@@ -39741,7 +39871,7 @@ function foGSucesso(env){
       msg = !leu ? 'Edição confirmada pelo banco, mas a releitura falhou. Use Atualizar.' : bate ? 'Lançamento editado.' : 'Edição confirmada pelo banco, mas a releitura ainda não a mostra. Use Atualizar.';
     } else {
       var resto = env.ids.filter(function(id){ return !!cxAchar(id); });
-      msg = !leu ? 'Exclusão confirmada pelo banco, mas a releitura falhou. Use Atualizar.' : resto.length ? 'Exclusão confirmada pelo banco, mas a releitura ainda mostra ' + resto.length + ' linha(s). Use Atualizar.' : env.ids.length > 1 ? 'Recorrência excluída: ' + env.ids.length + ' lançamentos.' : 'Lançamento excluído.';
+      msg = !leu ? 'Exclusão confirmada pelo banco, mas a releitura falhou. Use Atualizar.' : resto.length ? 'Exclusão confirmada pelo banco, mas a releitura ainda mostra ' + resto.length + ' linha(s). Use Atualizar.' : env.escopo === 'apartir' ? 'Este mês e os seguintes foram excluídos: ' + env.ids.length + (env.ids.length > 1 ? ' lançamentos.' : ' lançamento.') : env.ids.length > 1 ? 'Recorrência excluída: ' + env.ids.length + ' lançamentos.' : 'Lançamento excluído.';
     }
     envioCaixaReal = null; cxLimparPaineis(); foGLimparForm(); cxMsgForm = msg; cxRender();
   });
@@ -41602,17 +41732,17 @@ function foGExcluir(id){
   if(!it || !it.grupo || it.anom.length || !it.snapG){ cxMsgForm = 'Só lançamento de equipe consolidada ou recorrente íntegro pode ser excluído aqui.'; cxFormEstado(); return; }
   var grupo = it.recId ? estadoCaixaReal.itens.filter(function(x){ return x.recId === it.recId; }) : [];
   if(grupo.length > 1){
-    exclusaoRec = { id: it.id, snapG: it.snapG, ids: grupo.map(function(x){ return x.id; }), membros: grupo.map(function(x){ return x.snapG; }), n: grupo.length, uid: String(currentUser.id), epoch: crEpoch(), desc: it.descricao, valor: it.valorC };
-    cxMsgForm = ''; var d = foDom('modalExcluirRecorrenteDesc'); if(d) d.textContent = '“' + it.descricao + '” (' + crBRL(it.valorC) + ') se repete todo mês (' + grupo.length + ' lançamentos). O que você deseja excluir?';
+    exclusaoRec = { id: it.id, snapG: it.snapG, ids: grupo.map(function(x){ return x.id; }), membros: grupo.map(function(x){ return x.snapG; }), n: grupo.length, uid: String(currentUser.id), epoch: crEpoch(), desc: it.descricao, valor: it.valorC, ap: fo103Apartir(it, grupo) };
+    cxMsgForm = ''; var d = foDom('modalExcluirRecorrenteDesc'); if(d) d.textContent = '“' + it.descricao + '” (' + crBRL(it.valorC) + ') se repete todo mês (' + grupo.length + ' lançamentos). O que você deseja excluir?'; fo103ApartirPintar(exclusaoRec);
     cxFormEstado(); return;
   }
   if(!confirm('Excluir o lançamento "' + it.descricao + '" (' + crBRL(it.valorC) + ')? Esta ação não pode ser desfeita.')) return;
   foGExcluirEnviar(it.id, it.snapG, 'um', [it.id]);
 }
 function foGExcluirEnviar(id, snapG, escopo, ids, membros){
-  var esperado = {}; Object.keys(snapG).forEach(function(k){ esperado[k] = snapG[k]; }); if(escopo === 'toda'){ esperado.grupo_n = ids.length; esperado.membros = membros; }
+  var esperado = {}; Object.keys(snapG).forEach(function(k){ esperado[k] = snapG[k]; }); if(escopo === 'toda' || escopo === 'apartir'){ esperado.grupo_n = ids.length; esperado.membros = membros; }
   cxMsgForm = '';
-  var env = cxNovoEnvio('g_excluir', { op: cxUuid(), id: id, esperado: esperado, escopo: escopo, esperadoLinhas: ids.length, ids: ids, msg: escopo === 'toda' ? 'Excluindo toda a recorrência…' : 'Excluindo o lançamento…' });
+  var env = cxNovoEnvio('g_excluir', { op: cxUuid(), id: id, esperado: esperado, escopo: escopo, esperadoLinhas: ids.length, ids: ids, msg: escopo === 'toda' ? 'Excluindo toda a recorrência…' : escopo === 'apartir' ? 'Excluindo este mês e os seguintes…' : 'Excluindo o lançamento…' });
   envioCaixaReal = env; cxRender();
   return foGRpc(env, false);
 }
@@ -41626,6 +41756,7 @@ function confirmarExclusaoRecorrente(opcao){
     if(x.membros.some(function(m){ return !m; })){ cxMsgForm = 'Esta recorrência tem lançamentos que não podem ser excluídos por aqui (protegidos ou com dados incoerentes). Exclua só este mês ou corrija antes.'; return cxFormEstado(); }
     return foGExcluirEnviar(x.id, x.snapG, 'toda', x.ids, x.membros);
   }
+  if(opcao === 'apartir'){ var ap = x.ap; if(!ap || !ap.ok){ cxMsgForm = ap && ap.motivo ? ap.motivo : 'Esta opção não está disponível para esta recorrência.'; return cxFormEstado(); } return foGExcluirEnviar(x.id, x.snapG, 'apartir', ap.ids, ap.membros); }
   if(opcao === 'mes') return foGExcluirEnviar(x.id, x.snapG, 'um', [x.id]);
   cxFormEstado();
 }
@@ -45611,7 +45742,7 @@ function cxAbRotuloAnterior(){
   return ab ? 'Saldo anterior (saldo inicial de ' + crDataBR(ab.data) + ' + lançamentos desde então, até o dia anterior ao período)' : 'Saldo anterior (lançamentos até o dia anterior ao período)';
 }
 function cxAbLinhaHtml(pl){
-  return '<tr style="background:#eff6ff;font-weight:700"><td style="font-size:12px;white-space:nowrap">' + (crDataBR(pl.data) || foEsc(pl.data)) + '</td><td colspan="5">Saldo inicial da empresa <span class="muted" style="font-weight:400;font-size:11px">(abertura no começo do dia; não é entrada nem receita)</span></td>'
+  return '<tr style="background:#eff6ff;font-weight:700"><td style="font-size:12px;white-space:nowrap">' + (crDataBR(pl.data) || foEsc(pl.data)) + '</td><td colspan="6">Saldo inicial da empresa <span class="muted" style="font-weight:400;font-size:11px">(abertura no começo do dia; não é entrada nem receita)</span></td>'
     + (pl.saldoC === null ? foCelula('—', 'font-weight:700;color:var(--muted)', 'money') : foCelula(crBRL(pl.saldoC), 'font-weight:700;color:' + (pl.saldoC >= 0 ? '#1e3a5f' : '#dc2626'), 'money')) + '<td></td></tr>';
 }
 function cxAberturaCarregar(){
@@ -45642,6 +45773,8 @@ var _cxCarregarAb = cxCarregar;
 cxCarregar = function(){ var p = _cxCarregarAb.apply(this, arguments); try { cxAberturaCarregar(); } catch(_e){} return p; };
 var _cxRenderAb = cxRender;
 cxRender = function(){ var r = _cxRenderAb.apply(this, arguments); try { cxAberturaPintar(); } catch(_e){} return r; };
+var _cxRender103 = cxRender;
+cxRender = function(){ var r = _cxRender103.apply(this, arguments); try { fo103Despachar(); } catch(_e){} return r; };
 function cxAberturaPintar(){
   var box = foDom('cxAbertura'), btn = foDom('cxAberturaBtn'); if(!box) return;
   var a = aberturaCaixa, vivo = foPode(), t = '', cor = 'var(--muted)';

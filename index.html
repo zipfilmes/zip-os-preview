@@ -344,7 +344,7 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 @media(max-width:700px){.hvDemTd{min-width:130px}.hvDemBtn{min-height:40px}}
 </style>
 <style id="cx103Css">
-/* Pacote 103 (V1.6.7.0): coluna "Conf." (checkbox manual), descrição em uma linha com reticências e 🔁 fora da área cortada. Escopado ao Fluxo (#cxTabela); Claro e Escuro; não toca outras tabelas nem o PDF. */
+/* Pacote 103 (V1.6.7.0): coluna "Ok" (checkbox manual), descrição em uma linha com reticências e 🔁 fora da área cortada. Escopado ao Fluxo (#cxTabela); Claro e Escuro; não toca outras tabelas nem o PDF. */
 /* Estratégia: layout automático da tabela PRESERVADO (as demais colunas continuam do tamanho do conteúdo, como antes). Só a célula da descrição tem teto de largura (max-width num bloco interno:
    a contribuição intrínseca de um bloco com max-width é limitada por ele, então 10 mil caracteres sem espaço não esticam a coluna nem a tabela). O texto sobra por overflow:hidden + reticências
    numa única linha (altura da linha = a de antes); o 🔁 e os textos de origem (que quebram normalmente) ficam dentro do mesmo teto.
@@ -38609,7 +38609,7 @@ cxRender = function(){
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
-  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Conf.</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
+  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Ok</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. Total de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
@@ -38646,13 +38646,13 @@ function fo102NotaHtml(tt){
 }
 function fo102TabelaVazia(tt){   // sem linhas a mostrar, mas leitura completa: o rodapé continua honesto (zeros e saldo aplicável)
   if(!tt) return '';
-  return '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Conf.</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
+  return '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Ok</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
     + fo102RodapeHtml(tt) + '</table>' + fo102NotaHtml(tt);
 }
 // <<102:FIM>>
 // <<103:INICIO>>
 // Pacote 103 (V1.6.7.0 · Marcações e Recorrência). Escrito pelo Claude SEM executar (sem Bash); os testes (Testes/teste_103.js) extraem ESTE bloco do Tela/index.html gerado.
-// (1) "Conf.": checkbox MANUAL e informativo no Fluxo (o Financeiro se lembra do que já marcou; a conferência com o banco é feita fora do sistema). Salva só marcado/desmarcado por lançamento, compartilhado entre os usuários
+// (1) "Ok": checkbox MANUAL e informativo no Fluxo (o Financeiro se lembra do que já marcou; a conferência com o banco é feita fora do sistema). Salva só marcado/desmarcado por lançamento, compartilhado entre os usuários
 //     do Financeiro, em public.financeiro_caixa_marcacoes_103 (via 2 RPCs). NÃO lê nem valida valor/data/tipo, NÃO se invalida por edição, NÃO muda totais/saldos/contas a receber.
 //     Leitura em LOTE dos lançamentos visíveis (uma chamada por até 200), cache por leitura/conta/época; o checkbox só muda depois que o servidor responde (nada de estado otimista).
 // (2) "Excluir este mês e os seguintes" (escopo 'apartir' da RPC existente financeiro_lancamento_grupo_excluir): corte = 1º dia do mês do lançamento escolhido; alvo = mesmo recorrente_id com data >= corte.

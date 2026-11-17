@@ -931,7 +931,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.5.0 · Categorias e Detalhes</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.6.0 · Totais e Categorias</div>
 </aside>
 
 <main class="main">
@@ -38554,17 +38554,18 @@ cxRender = function(){
   var filtrados = periodoOk ? cxFiltrar(e.itens, f) : [];
   var cfgAb = cxAberturaCfg(totalOk);
   var anteriorC = f.de && cfgAb.saldoOk ? cxAbSaldoAntes(e.itens, cfgAb.abertura, f.de) : 0;
-  if(tot && totalOk && periodoOk) tot.innerHTML = foCaixaTotaisTexto(f, e.itens, filtrados, anteriorC, cfgAb.saldoOk);
+  var catFiltro = !!f.cat, tt = totalOk && periodoOk ? fo102Totais(f, e.itens, filtrados, cfgAb, anteriorC) : null;   // pacote 102: resumo vai para o rodapé da tabela
+  if(tot && totalOk && periodoOk) tot.textContent = '';   // pacote 102: o resumo Entradas/Saídas/Resultado/Saldo anterior não se repete no topo
   else if(tot) tot.textContent = totalOk ? '' : 'Totais indisponíveis: leitura incompleta ou dados incoerentes.';
   try { renderResumoEquipe(); } catch(_e){}
-  if(!e.itens.length && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(e.status === 'ok' ? CX_MSG.vazio : 'Nenhum lançamento lido.'); return; }
-  if(!filtrados.length && !(f.de && totalOk) && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado); return; }
+  if(!e.itens.length && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(e.status === 'ok' ? CX_MSG.vazio : 'Nenhum lançamento lido.') + fo102TabelaVazia(tt); return; }
+  if(!filtrados.length && !(f.de && totalOk) && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado) + fo102TabelaVazia(tt); return; }
   var ord = filtrados.slice().sort(function(a, b){ return a.data < b.data ? -1 : a.data > b.data ? 1 : a.criadoMs !== b.criadoMs ? a.criadoMs - b.criadoMs : a.id < b.id ? -1 : 1; });
   var vis = ord.slice(0, e.mostrar), hoje = crHojeSP(), saldo = anteriorC, linhas = '';
-  if(f.de && cfgAb.saldoOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="6">' + cxAbRotuloAnterior() + '</td>' + foCelula(crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
+  if(f.de && cfgAb.saldoOk) linhas += '<tr style="background:#f8fafc;font-weight:700"><td colspan="6">' + cxAbRotuloAnterior() + '</td>' + foCelula(catFiltro || anteriorC === null ? '—' : crBRL(anteriorC), 'font-weight:700', 'money') + '<td></td></tr>';
   cxAbPlano(vis, e.itens, cfgAb, f, vis.length === ord.length).forEach(function(pl){
-    if(pl.tipo === 'abertura'){ linhas += cxAbLinhaHtml(pl); return; }
-    var i = pl.item; saldo = pl.saldoC;
+    if(pl.tipo === 'abertura'){ linhas += cxAbLinhaHtml(catFiltro ? { tipo: pl.tipo, data: pl.data, saldoC: null } : pl); return; }
+    var i = pl.item; saldo = catFiltro ? null : pl.saldoC;
     var ent = i.tipo === 'entrada' ? i.valorC : 0, sai = i.tipo === 'saida' ? i.valorC : 0;
     var acoes = '—';
     if(i.avulso && !i.anom.length && i.snap){
@@ -38581,13 +38582,47 @@ cxRender = function(){
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
-  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + '</table>'
-    + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
+  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
+    + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. Total de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
   var p = []; if(i.equipe) p.push('Equipe' + (i.pessoa ? ': ' + i.pessoa : '') + (i.consolidado ? ' (Pagamento consolidado)' : '')); if(i.os) p.push('OS ' + i.os); var dscC = i.detalhes ? voC(i.detalhes.descontoFolha) : NaN; if(i.equipe && isFinite(dscC) && dscC > 0) p.push('bruto ' + crBRL(i.valorC + dscC) + ' − desconto em folha ' + crBRL(dscC)); if(i.recId) p.push('🔁 recorrente');
   return p.join(' · ') || 'Lançamento';
 }
+// <<102:INICIO>>
+// Pacote 102 (V1.6.6.0): resumo Entradas/Saídas no RODAPÉ da tabela do Fluxo ("Total do período") e saldo acumulado só quando representa o caixa.
+// • Com QUALQUER categoria no filtro (inclui "(sem categoria)", legada, inativa ou fora do catálogo) a coluna Saldo acum. mostra "—" (linhas, saldo anterior/inicial e total final):
+//   uma categoria isolada não é o caixa. O saldo REAL (cxAbSaldoPorId/cxAbPlano) não muda; só a apresentação omite.
+// • Filtro de tipo ou busca (sem categoria): linhas mantêm o saldo real do caixa; o saldo FINAL do rodapé fica "—" porque Entrada/Saída são de um subconjunto.
+// • Saldo final = saldo REAL ao fim do período (abertura + todas as movimentações até o último dia, cxAbSaldoAte); nunca soma de saldos de linhas.
+// • Entradas/Saídas somam TODOS os lançamentos do filtro (não só os visíveis na página). Abertura não é entrada.
+function fo102Totais(f, itens, filtrados, cfg, anteriorC){
+  var t = cxTotais(filtrados), catFiltro = !!f.cat, subconjunto = !catFiltro && !!(f.tipo || (f.busca && String(f.busca).trim()));
+  var fin = null;
+  if(cfg.saldoOk && !catFiltro && !subconjunto) fin = cxAbSaldoAte(itens, cfg.abertura, f.ate || '9999-12-31');
+  return { entradaC: t.entradaC, saidaC: t.saidaC, resultadoC: t.saldoC, n: t.n, temAnterior: !!f.de,
+    anteriorC: (f.de && cfg.saldoOk && !catFiltro && typeof anteriorC === 'number') ? anteriorC : null,
+    saldoFinalC: typeof fin === 'number' ? fin : null, catFiltro: catFiltro, subconjunto: subconjunto };
+}
+function fo102CelSaldo(c){ return foCelula(c === null ? '—' : crBRL(c), 'font-weight:700;color:' + (c === null ? 'var(--muted)' : c >= 0 ? '#1e3a5f' : '#dc2626'), 'money'); }
+function fo102RodapeHtml(tt){
+  return '<tr class="cx102-total" style="background:#f8fafc;font-weight:700"><td colspan="4">Total do período</td>'
+    + foCelula(crBRL(tt.entradaC), 'color:#065f46;font-weight:700', 'money') + foCelula(crBRL(tt.saidaC), 'color:#dc2626;font-weight:700', 'money')
+    + fo102CelSaldo(tt.saldoFinalC) + '<td></td></tr>';
+}
+function fo102NotaHtml(tt){
+  var p = ['Resultado do período: <b>' + crBRL(tt.resultadoC) + '</b>'];
+  if(tt.temAnterior) p.push('Saldo anterior: <b>' + (tt.anteriorC === null ? '—' : crBRL(tt.anteriorC)) + '</b>');
+  var msg = tt.catFiltro ? ' Saldo oculto com filtro de categoria: uma categoria isolada não representa o saldo do caixa.'
+    : tt.subconjunto ? ' Saldo final oculto: o filtro de tipo ou busca mostra só parte dos lançamentos.' : '';
+  return '<p class="muted" style="padding:8px 16px;font-size:12px">' + p.join(' &nbsp;•&nbsp; ') + ' (soma dos lançamentos; não é saldo bancário).' + msg + '</p>';
+}
+function fo102TabelaVazia(tt){   // sem linhas a mostrar, mas leitura completa: o rodapé continua honesto (zeros e saldo aplicável)
+  if(!tt) return '';
+  return '<table class="table" style="width:100%"><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
+    + fo102RodapeHtml(tt) + '</table>' + fo102NotaHtml(tt);
+}
+// <<102:FIM>>
 function foCaixaMais(){ estadoCaixaReal.mostrar += CX_LINHAS; cxRender(); }
 function foCaixaEditar(id){ cxAbrirEdicao(id); }
 function foCaixaExcluir(id){ cxAbrirExclusao(id); }
@@ -39918,8 +39953,8 @@ FO_LIMPEZAS.push(function(){ foPessoasPag = { status: 'idle', lista: [], ctx: nu
 // • Rótulo "Salário bruto" é só rótulo (ids, chaves e cálculos intactos). Contabilização: ver teste_funcs_96.js (Resultado mensal/anual não mudam; saída com OS não é somada de novo).
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 var FO96_CENTRALIZADO = true;
-var FO96_CAT = { servico: 'Receita de serviços', outras: 'Outras entradas', custoOp: 'Custo de operação ZIP', equipe: 'Equipe — Pagamento consolidado', forn: 'Fornecedores e terceiros', prod: 'Despesas de produção', imp: 'Impostos e taxas', bv: 'BV agência' };
-var FO96_PRINCIPAIS = [FO96_CAT.servico, FO96_CAT.outras, FO96_CAT.custoOp, FO96_CAT.equipe, FO96_CAT.forn, FO96_CAT.prod, FO96_CAT.imp, FO96_CAT.bv];
+var FO96_CAT = { servico: 'Receita de serviços', outras: 'Outras entradas', custoOp: 'Custo de operação ZIP', equipe: 'Equipe — Pagamento consolidado', forn: 'Fornecedores e terceiros', prod: 'Despesas de produção', imp: 'Impostos e taxas', bv: 'BV agência', invest: 'Investimentos', manut: 'Manutenção', benef: 'Benefícios', assin: 'Assinaturas', despFin: 'Despesas financeiras' };
+var FO96_PRINCIPAIS = [FO96_CAT.servico, FO96_CAT.outras, FO96_CAT.custoOp, FO96_CAT.equipe, FO96_CAT.forn, FO96_CAT.prod, FO96_CAT.imp, FO96_CAT.bv, FO96_CAT.invest, FO96_CAT.manut, FO96_CAT.benef, FO96_CAT.assin, FO96_CAT.despFin];
 var FO96_NOMES_ANTIGOS = ['Receita serviço', 'Custo operacional'];   // antes do SQL 96: continuam no grupo principal, nunca somem do filtro
 var FO96_RPC = { gravar: 'financeiro_fornecedor_saida_gravar', os: 'financeiro_fornecedor_os_resolver', lista: 'listar_fornecedores_pagamento' };
 var FO96_IDS = ['lancFornSel', 'lancFornOs', 'lancFornOsBtn', 'lancFornLinha', 'lancFornServico', 'lancFornComissao', 'lancFornAdic', 'lancFornDesc', 'lancFornObs'];
@@ -40684,6 +40719,7 @@ var FO98_RPC = { criar: 'financeiro_lancamento_criar_ref', editar: 'financeiro_l
 var FO98_PAG = 30;
 var FO98_CATS = {};   // categoria → nome do campo de texto livre (a mesma lista vale no servidor)
 FO98_CATS[FO96_CAT.imp] = 'destinatario'; FO98_CATS[FO96_CAT.custoOp] = 'destinatario'; FO98_CATS[FO96_CAT.prod] = 'destinatario'; FO98_CATS[FO96_CAT.bv] = 'agencia';
+FO98_CATS[FO96_CAT.invest] = 'destinatario'; FO98_CATS[FO96_CAT.manut] = 'destinatario'; FO98_CATS[FO96_CAT.benef] = 'destinatario'; FO98_CATS[FO96_CAT.assin] = 'destinatario'; FO98_CATS[FO96_CAT.despFin] = 'destinatario';   // pacote 102: espelha a lista do validador no servidor
 var FO98_PRE = { N: 'lanc98', E: 'cxEd98' };
 var MSG98 = {
   refTitulo: '🔗 Referências (opcionais)',
@@ -45576,7 +45612,7 @@ function cxAbRotuloAnterior(){
 }
 function cxAbLinhaHtml(pl){
   return '<tr style="background:#eff6ff;font-weight:700"><td style="font-size:12px;white-space:nowrap">' + (crDataBR(pl.data) || foEsc(pl.data)) + '</td><td colspan="5">Saldo inicial da empresa <span class="muted" style="font-weight:400;font-size:11px">(abertura no começo do dia; não é entrada nem receita)</span></td>'
-    + foCelula(crBRL(pl.saldoC), 'font-weight:700;color:' + (pl.saldoC >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td></td></tr>';
+    + (pl.saldoC === null ? foCelula('—', 'font-weight:700;color:var(--muted)', 'money') : foCelula(crBRL(pl.saldoC), 'font-weight:700;color:' + (pl.saldoC >= 0 ? '#1e3a5f' : '#dc2626'), 'money')) + '<td></td></tr>';
 }
 function cxAberturaCarregar(){
   var e = estadoCaixaReal;

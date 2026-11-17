@@ -958,7 +958,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.7.0 · Marcações e Recorrência</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.8.0 · Produção e Fornecedores</div>
 </aside>
 
 <main class="main">
@@ -5949,12 +5949,87 @@ function renderGameHeader(projs,nome,tipo){
 }
 
 
+// V1.6.8.0 (104) — PRÓXIMA GRAVAÇÃO no card de Produção. Só leitura/apresentação: usa os dias já cadastrados
+// (p[17][0].gravacoes + horarios/horarioDia1 via horariosDeGravacao) e o checklist "Dia N de gravação" (p[20]).
+// Nenhuma data é alterada; o prazo de entrega nunca é usado como gravação.
+function gravacaoDataISOOper(v){   // 'dd/mm/aaaa' ou 'aaaa-mm-dd[...]' → 'aaaa-mm-dd' com calendário válido; senão ''
+ const s=String(v==null?'':v).trim();
+ let a,m,d;
+ let r=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+ if(r){d=Number(r[1]);m=Number(r[2]);a=Number(r[3]);}
+ else{
+  r=/^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/.exec(s);
+  if(!r)return '';
+  a=Number(r[1]);m=Number(r[2]);d=Number(r[3]);
+ }
+ const t=new Date(Date.UTC(a,m-1,d));
+ if(t.getUTCFullYear()!==a||t.getUTCMonth()!==m-1||t.getUTCDate()!==d)return '';
+ return String(a).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+function gravacaoHoraOper(v){   // 'HH:MM[:SS]' válido → 'HH:MM'; senão ''
+ const r=/^(\d{2}):(\d{2})(?::\d{2})?$/.exec(String(v==null?'':v).trim());
+ if(!r||Number(r[1])>23||Number(r[2])>59)return '';
+ return r[1]+':'+r[2];
+}
+function gravacaoHojeOper(){   // data civil de hoje em São Paulo (helper existente), nunca o fuso do computador
+ let h='';
+ try{if(typeof _dataCivilSaoPauloISO==='function')h=_dataCivilSaoPauloISO(new Date());}catch(_e){h='';}
+ return gravacaoDataISOOper(h);
+}
+function gravacaoDiasEntreOper(isoA,isoB){   // isoB - isoA em dias corridos (datas civis)
+ const pa=isoA.split('-'),pb=isoB.split('-');
+ return Math.round((Date.UTC(Number(pb[0]),Number(pb[1])-1,Number(pb[2]))-Date.UTC(Number(pa[0]),Number(pa[1])-1,Number(pa[2])))/86400000);
+}
+// → {estado:'proxima',dia,total,data,hora,diff} | {estado:'concluidas'} | {estado:'adefinir'}
+function proximaGravacaoOper(p,hojeISO){
+ const info=p&&p[17]&&p[17][0]&&p[17][0].gravacoes!==undefined?p[17][0]:null;
+ const grav=info&&Array.isArray(info.gravacoes)?info.gravacoes:[];
+ if(!grav.length)return{estado:'adefinir'};
+ const hs=horariosDeGravacao(info,grav.length);
+ const feitos={};   // "Dia N de gravação" do checklist de Produção; ausente = não concluído
+ (Array.isArray(p[20])?p[20]:[]).forEach(function(x){
+  const m=x&&typeof x[0]==='string'?/^\s*Dia\s*(\d+)\b/i.exec(x[0]):null;
+  if(m){const n=Number(m[1]);feitos[n]=(feitos[n]===undefined?true:feitos[n])&&x[1]===true;}
+ });
+ const dias=grav.map(function(d,i){return{i:i,n:i+1,iso:gravacaoDataISOOper(d),hora:gravacaoHoraOper(hs[i]),feito:feitos[i+1]===true};});
+ const pend=dias.filter(function(x){return !x.feito&&x.iso;}).sort(function(a,b){return a.iso<b.iso?-1:a.iso>b.iso?1:a.i-b.i;});
+ if(pend.length){
+  const x=pend[0],hj=gravacaoDataISOOper(hojeISO);
+  return{estado:'proxima',dia:x.n,total:grav.length,data:x.iso.slice(8)+'/'+x.iso.slice(5,7)+'/'+x.iso.slice(0,4),hora:x.hora,diff:hj?gravacaoDiasEntreOper(hj,x.iso):null};
+ }
+ if(dias.some(function(x){return !x.feito;}))return{estado:'adefinir'};
+ return dias.some(function(x){return x.feito;})?{estado:'concluidas'}:{estado:'adefinir'};
+}
+function gravacaoBlocoOper(g){   // bloco direito do cabeçalho do card de Produção (mesmo desenho do bloco "Prazo")
+ const lab='<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px">';
+ if(g.estado==='concluidas')return lab+'Gravação</div><div style="font-size:13px;font-weight:700;color:#16a34a;margin-bottom:3px">Gravações concluídas</div><div style="font-size:11px;font-weight:700">✅</div>';
+ if(g.estado!=='proxima')return lab+'Gravação</div><div style="font-size:13px;font-weight:700;color:#9ca3af;margin-bottom:3px">A definir</div>';
+ let cor='#1d4ed8',txt='🎬 em '+g.diff+'d';
+ if(g.diff===null){txt='';}
+ else if(g.diff<0){cor='#dc2626';txt='🔴 Pendente — atrasada '+Math.abs(g.diff)+'d';}
+ else if(g.diff===0){cor='#f59e0b';txt='🟠 Hoje';}
+ else if(g.diff===1){cor='#f59e0b';txt='🟠 Amanhã';}
+ return lab+'Próxima gravação'+(g.total>1?' · Dia '+g.dia:'')+'</div>'
+  +'<div style="font-size:13px;font-weight:700;color:'+cor+';margin-bottom:3px">'+pjEsc(g.data+(g.hora?' às '+g.hora:''))+'</div>'
+  +(txt?'<div style="font-size:11px;font-weight:700">'+txt+'</div>':'')
+  +(g.hora?'':'<div style="font-size:11px;color:var(--muted)">⏰ horário a definir</div>');
+}
+
 function criarCardOper(p,tipo){
  const arr=tipo==='prod'?(p[20]||[]):(p[21]||[]);
  const done=arr.filter(function(x){return x[1];}).length;
  const pct=arr.length>0?Math.round((done/arr.length)*100):0;
  const urg=urgenciaPrazo(p[6]);
  const resp=tipo==='prod'?p[8]:p[9];
+ // V1.6.8.0: só o card de Produção destaca a próxima gravação; o de Edição mantém exatamente o bloco "Prazo" e a linha de baixo de antes
+ const blocoDir=tipo==='prod'
+  ?gravacaoBlocoOper(proximaGravacaoOper(p,gravacaoHojeOper()))
+  :'<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px">Prazo</div>'
+  +'<div style="font-size:13px;font-weight:700;color:'+urg.cor+';margin-bottom:3px">'+pjEsc(p[6])+'</div>'
+  +'<div style="font-size:11px;font-weight:700">'+urg.icon+' '+urg.label+'</div>';
+ const linhaPrazo=tipo==='prod'
+  ?'📅 Entrega '+pjEsc(p[6])+(urg.label?' &nbsp;•&nbsp; '+urg.icon+' '+urg.label:'')
+  :'📅 '+pjEsc(p[6]);
 
  const card=document.createElement('div');
  card.className='item';
@@ -5970,9 +6045,7 @@ function criarCardOper(p,tipo){
   +'<div style="font-size:12px;color:var(--muted)">'+pjEsc(p[4])+'</div>'
   +'</div>'
   +'<div style="text-align:right;flex-shrink:0">'
-  +'<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px">Prazo</div>'
-  +'<div style="font-size:13px;font-weight:700;color:'+urg.cor+';margin-bottom:3px">'+pjEsc(p[6])+'</div>'
-  +'<div style="font-size:11px;font-weight:700">'+urg.icon+' '+urg.label+'</div>'
+  +blocoDir
   +'</div>'
   +'</div>'
   +'<div style="margin-bottom:6px">'
@@ -5982,8 +6055,8 @@ function criarCardOper(p,tipo){
   +'<div style="background:'+(pct===100?'var(--green)':pct>50?'#3b82f6':'#f59e0b')+';height:5px;border-radius:999px;width:'+pct+'%"></div>'
   +'</div>'
   +'</div>'
-  +'<div style="font-size:12px;color:var(--muted)">📅 '+pjEsc(p[6])+(resp&&resp!=='A definir'?' &nbsp;•&nbsp; 👤 '+pjEsc(resp):'')+'</div>'
-  +(resumoFornecedoresOper(p)?'<div style="margin-top:6px">'+resumoFornecedoresOper(p)+'</div>':'');
+  +'<div style="font-size:12px;color:var(--muted)">'+linhaPrazo+(resp&&resp!=='A definir'?' &nbsp;•&nbsp; 👤 '+pjEsc(resp):'')+'</div>'
+  +(tipo!=='prod'&&resumoFornecedoresOper(p)?'<div style="margin-top:6px">'+resumoFornecedoresOper(p)+'</div>':'');
 
  return card;
 }
@@ -18678,7 +18751,9 @@ function _carregarEquipeProjetoProntReal(ctx){
   function normalizar(nome, id){ return String(nome || '').trim() || String(id).slice(0, 8); }
   _consultaSimplesProntReal(function(){ return supabaseClient.rpc(RPC_EQUIPE_LER_PRONT_REAL); }, function(ok, data){
     if(!_ctxProntValido(ctx) || s.formDados !== dados) return;
-    var lista = (ok && _objetoProntReal(data) && data.status === 'ok' && Array.isArray(data.equipe)) ? data.equipe : null;
+    // 104: a RPC equipe_elegivel_ler (já filtrada no banco: sem contas _teste nem username vazio) é a fonte ÚNICA. FALHA FECHADA:
+    // sem o marcador sem_testes === true (função antiga ainda instalada) a lista NÃO é usada — só "Não há"/"Atribuir depois".
+    var lista = (ok && _objetoProntReal(data) && data.status === 'ok' && data.sem_testes === true && Array.isArray(data.equipe)) ? data.equipe : null;
     if(!lista){ dados.equipe.status = 'erro'; if(s.painel === 'projeto') _renderProntuarioAtendReal('painel'); return; }
     var membros = lista.filter(function(u){ return _objetoProntReal(u) && u.id; }).map(function(u){
       return { id:String(u.id), nome:normalizar(u.nome, u.id), producao:u.producao === true, edicao:u.edicao === true };
@@ -19867,9 +19942,9 @@ function _renderPainelContratoProntReal(card, f, x, fechamento, h){
 function _renderPainelProjetoProntReal(card, f, x, h){
   var s = estadoProntuarioAtendReal, versao = _versaoContratadaProntReal(x);
   card.appendChild(_elProntReal('h3', 'margin:0 0 6px', '🚀 Iniciar projeto'));
-  card.appendChild(_elProntReal('p', 'font-size:12px;color:var(--muted);margin:0 0 8px',
-    'O projeto nasce com a versão v' + (versao ? versao.versao : '?') + ' do orçamento. Se o orçamento mudar antes de confirmar, o banco recusa e pede para reconferir.'));
+  var temSeletorContrato = false;   // 104: quando o seletor de contrato aparece, o formulário abaixo ganha o mesmo respiro (12px) dos outros campos
   if(x.v6e === 'ok' && (x.sitContrato === 'gerado' || x.sitContrato === 'autorizado_sem_assinatura')){
+    temSeletorContrato = true;
     var ops = [['', '— responda —'], ['assinado', '✅ Sim, o contrato foi assinado']];
     if(x.sitContrato === 'gerado') ops.push(['autorizado_sem_assinatura', '⚠️ Não, mas o início está autorizado sem assinatura']);
     ops.push(['manter', x.sitContrato === 'gerado' ? 'Ainda não — seguir sem mudar a situação (fica “gerado”)' : 'Ainda não — manter “autorizado sem assinatura”']);
@@ -19884,6 +19959,7 @@ function _renderPainelProjetoProntReal(card, f, x, h){
     return o;
   }
   var g = _elProntReal('div'); g.className = 'formgrid';
+  if(temSeletorContrato) g.style.marginTop = '12px';
   g.appendChild(h.texto('Título do projeto *', 'prj_titulo', f, 'titulo', LIMITES_PROJ_PRONT_REAL.titulo));
   g.appendChild(h.escolha('🎬 Produção *', 'prj_producao', f, 'producao', equipe(eq.producao, 'Não há (sem produção)'), _repintarPainelRev3ProntReal));
   g.appendChild(h.escolha('✂️ Edição *', 'prj_edicao', f, 'edicao', equipe(eq.edicao, 'Não há (sem edição)')));
@@ -37779,6 +37855,53 @@ function foConsulta(ok, q){
     return { st: 'ok', data: r.data };
   }, function(){ return ok() ? { st: 'erro' } : null; });
 }
+// 104 — PIX/banco do CADASTRO do fornecedor como fallback de leitura no prontuário financeiro (Sócio/Financeiro/Admin).
+// Regras: dados específicos do projeto/snapshot (pagamento do projeto, snapshot legado) têm prioridade e NUNCA se misturam por campo com o cadastro;
+// só linhas 'cadastrado' sem nenhum dado específico consultam o cadastro (RPC existente obter_financeiro_fornecedor, uma vez por fornecedor, sem cache entre projetos);
+// o resultado vive só em p.d.cad (descartado ao fechar/trocar de OS, conta ou época) — nunca vai para snapshot, estado comum, Produção/Edição ou gravação.
+function foTemDadosPagEspecificos(f, pg){
+  var s = _objetoProntReal(f && f.snapshot) ? f.snapshot : {}; pg = pg || {};
+  return !!(pg.chave_pix || s.pix || pg.banco || s.banco || pg.agencia || s.agencia || pg.conta || s.conta);
+}
+function foCadastroNormalizar(r, fid){   // resposta da RPC → { st:'ok', banco, agencia, conta, pix } | { st:'sem_permissao'|'erro' }
+  if(!r || r.st !== 'ok') return { st: r && r.st === 'sem_permissao' ? 'sem_permissao' : 'erro' };
+  var row = Array.isArray(r.data) && r.data.length === 1 ? r.data[0] : null;
+  if(!_objetoProntReal(row)) return { st: 'erro' };
+  if(typeof row.fornecedor_id !== 'string' || row.fornecedor_id.toLowerCase() !== fid) return { st: 'erro' };   // origem comprovada: id ausente/nulo/divergente = recusado (a RPC real sempre devolve o id)
+  var t = function(v){ return v == null ? '' : String(v).trim(); };
+  return { st: 'ok', banco: t(row.banco), agencia: t(row.agencia_bancaria), conta: t(row.conta), pix: t(row.chave_pix) };
+}
+function foCadastroPagamentoLer(ok, R){
+  var cad = { st: 'nada', porLinha: {}, mapa: {} };
+  R.cad = cad;
+  var forn = R.forn && R.forn.st === 'ok' && Array.isArray(R.forn.data) ? R.forn.data : [];
+  if(!forn.length || forn.length > FO_LIMITE_LISTA) return;
+  if(R.pag && R.pag.st !== 'ok'){ cad.st = 'indisponivel'; return; }   // sem saber se há dado específico, não se usa o cadastro
+  var pm = {}; if(R.pag && Array.isArray(R.pag.data)) R.pag.data.forEach(function(x){ if(x) pm[x.projeto_fornecedor_id] = x; });
+  var cand = forn.filter(function(f){ return f.tipo_vinculo === 'cadastrado' && !foTemDadosPagEspecificos(f, pm[f.id]); }).map(function(f){ return f.id; });
+  if(!cand.length) return;
+  return foConsulta(ok, supabaseClient.from('projeto_fornecedores').select('id,fornecedor_id').in('id', cand)).then(function(r){
+    if(r === null) return;
+    if(r.st !== 'ok' || !Array.isArray(r.data)){ cad.st = 'erro'; return; }
+    var vistos = {}, fids = [];
+    r.data.forEach(function(x){
+      if(!x || cand.indexOf(x.id) < 0 || !_uuidValidoForn(x.fornecedor_id)) return;
+      var fid = String(x.fornecedor_id).toLowerCase();
+      cad.porLinha[x.id] = fid;
+      if(!vistos[fid]){ vistos[fid] = true; fids.push(fid); }
+    });
+    cad.st = 'ok';
+    return fids.slice(0, FO_LIMITE_LISTA).reduce(function(prom, fid){
+      return prom.then(function(){
+        if(!ok()) return;
+        return foConsulta(ok, supabaseClient.rpc('obter_financeiro_fornecedor', { p_fornecedor_id: fid })).then(function(r2){
+          if(r2 === null) return;
+          cad.mapa[fid] = foCadastroNormalizar(r2, fid);
+        });
+      });
+    }, Promise.resolve());
+  });
+}
 function foAbrirProntuario(os, opts){
   opts = opts || {};
   var l = foLinhaCr(os), p = estadoFinPront;
@@ -37811,6 +37934,9 @@ function foAbrirProntuario(os, opts){
     return foConsulta(ok, supabaseClient.from('projeto_fornecedores_pagamento').select('projeto_fornecedor_id,banco,agencia,conta,chave_pix').in('projeto_fornecedor_id', f)).then(function(r){ if(r !== null) R.pag = r; });
   }).then(function(){
     if(!ok()) return;
+    return foCadastroPagamentoLer(ok, R);   // 104: fallback SOMENTE LEITURA do cadastro financeiro (fica só em p.d.cad, nunca em snapshot/estado comum)
+  }).then(function(){
+    if(!ok()) return;
     var pj = R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 1 ? R.proj.data[0] : null;
     if(!pj || !pj.orcamento_versao_id) return;
     return foConsulta(ok, supabaseClient.from('orcamento_versoes').select('id,orcamento_id,versao,snapshot').eq('id', pj.orcamento_versao_id)).then(function(r){ if(r !== null) R.ver = r; });
@@ -37824,7 +37950,7 @@ function foAbrirProntuario(os, opts){
     var rec = R.rec && R.rec.st === 'ok' && _objetoProntReal(R.rec.data) && R.rec.data.status === 'ok' && R.rec.data.modulo === 'REC-1' && Array.isArray(R.rec.data.parcelas) && String(R.rec.data.projeto_id) === String(pid) ? R.rec.data : null;
     var orc = R.orc && R.orc.st === 'ok' && _objetoProntReal(R.orc.data) && R.orc.data.status === 'ok' && _objetoProntReal(R.orc.data.orcamento) && Array.isArray(R.orc.data.itens) ? R.orc.data : null;
     var pagMap = {}; if(R.pag && R.pag.st === 'ok' && Array.isArray(R.pag.data)) R.pag.data.forEach(function(x){ pagMap[x.projeto_fornecedor_id] = x; });
-    p.d = { proj: proj, chk: lista('chk'), notas: lista('notas'), hist: lista('hist'), forn: lista('forn'), fin: um('fin'), finSt: R.fin ? R.fin.st : 'indisponivel', cli: um('cli'), rec: rec, recSt: l.leadId ? (rec ? 'ok' : 'indisponivel') : 'sem_atendimento', orc: orc, ver: foVerContratada(proj, um('ver')), verSt: !proj.orcamento_versao_id ? 'nao_registrada' : (R.ver ? R.ver.st : 'indisponivel'), pagMap: pagMap, lido: new Date().toISOString() };
+    p.d = { proj: proj, chk: lista('chk'), notas: lista('notas'), hist: lista('hist'), forn: lista('forn'), fin: um('fin'), finSt: R.fin ? R.fin.st : 'indisponivel', cli: um('cli'), rec: rec, recSt: l.leadId ? (rec ? 'ok' : 'indisponivel') : 'sem_atendimento', orc: orc, ver: foVerContratada(proj, um('ver')), verSt: !proj.orcamento_versao_id ? 'nao_registrada' : (R.ver ? R.ver.st : 'indisponivel'), pagMap: pagMap, cad: R.cad || { st: 'nada', porLinha: {}, mapa: {} }, lido: new Date().toISOString() };
     p.status = 'ok'; foRenderProntuario();
   }, function(){ if(ok()){ p.status = 'erro'; p.d = null; foRenderProntuario(); } });
 }
@@ -37985,8 +38111,17 @@ function foFornecedoresHtml(d){
       + '<div style="text-align:right;white-space:nowrap"><div style="font-size:14px;font-weight:800">' + (isFinite(v) ? crBRL(v) : '—') + '</div></div></div></div>';
     var s = _objetoProntReal(f.snapshot) ? f.snapshot : {}, nome = s.nome || f.nome_manual || '(sem nome)', pg = d.pagMap[f.id] || {}, pix = pg.chave_pix || s.pix, banco = pg.banco || s.banco, ag = pg.agencia || s.agencia, conta = pg.conta || s.conta;
     var selo = f.tipo_vinculo === 'cadastrado' ? '<span style="font-size:10px;background:#dcfce7;color:#065f46;border-radius:5px;padding:1px 6px">cadastrado</span>' : '<span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:5px;padding:1px 6px">manual</span>';
+    // 104: sem nenhum dado específico (projeto/snapshot), linha 'cadastrado' usa o cadastro financeiro inteiro (nunca campo a campo); leitura que falhou ≠ cadastro sem PIX
+    var doCadastro = false, avisoCad = '';
+    if(f.tipo_vinculo === 'cadastrado' && !foTemDadosPagEspecificos(f, d.pagMap[f.id])){
+      var cd = d.cad || { st: 'nada', porLinha: {}, mapa: {} }, fidC = cd.porLinha[f.id], rc = fidC ? cd.mapa[fidC] : null;
+      if(cd.st === 'indisponivel') avisoCad = 'Dados de pagamento do projeto indisponíveis agora. Reabra o prontuário.';
+      else if(cd.st === 'erro' || (cd.st === 'ok' && (!fidC || !rc || rc.st === 'erro'))) avisoCad = 'Não foi possível ler os dados de pagamento do cadastro agora. Reabra o prontuário.';
+      else if(cd.st === 'ok' && rc && rc.st === 'sem_permissao') avisoCad = 'Seu perfil não permite ler os dados de pagamento do cadastro.';
+      else if(cd.st === 'ok' && rc && rc.st === 'ok'){ doCadastro = true; pix = rc.pix; banco = rc.banco; ag = rc.agencia; conta = rc.conta; }
+    }
     var partes = []; if(pix) partes.push('PIX: ' + foEsc(pix)); if(banco) partes.push('Banco: ' + foEsc(banco) + (ag ? ' Ag ' + foEsc(ag) : '') + (conta ? ' C/C ' + foEsc(conta) : ''));
-    var pagHtml = partes.length ? '<div style="font-size:11px;color:var(--muted);margin-top:3px">💳 ' + partes.join(' &nbsp;•&nbsp; ') + '</div>' : '<div style="font-size:11px;color:#b45309;background:#fef3c7;border-radius:6px;padding:3px 8px;margin-top:4px;display:inline-block">⚠️ Dados de pagamento a confirmar</div>';
+    var pagHtml = partes.length ? '<div style="font-size:11px;color:var(--muted);margin-top:3px">💳 ' + partes.join(' &nbsp;•&nbsp; ') + (doCadastro ? ' &nbsp;•&nbsp; <i>do cadastro do fornecedor</i>' : '') + '</div>' : avisoCad ? '<div style="font-size:11px;color:#b45309;background:#fef3c7;border-radius:6px;padding:3px 8px;margin-top:4px;display:inline-block" data-pa="fin-forn-cad-aviso">⚠️ ' + foEsc(avisoCad) + '</div>' : '<div style="font-size:11px;color:#b45309;background:#fef3c7;border-radius:6px;padding:3px 8px;margin-top:4px;display:inline-block">⚠️ Dados de pagamento a confirmar</div>';
     var st = f.status_pagamento || 'pendente', cor = st === 'pago' ? ['#dcfce7', '#065f46'] : st === 'nao_aplicavel' ? ['#f1f5f9', '#475467'] : ['#fef3c7', '#92400e'];
     return '<div style="padding:10px;background:#fafafa;border:1px solid var(--line);border-radius:8px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><span style="font-weight:700;font-size:13px">' + foEsc(nome) + '</span> ' + selo
       + '<div style="font-size:11px;color:var(--muted);margin-top:2px">📦 ' + foEsc(f.item_descricao || 'item') + '</div>' + pagHtml + '</div><div style="text-align:right;white-space:nowrap"><div style="font-size:14px;font-weight:800">' + (isFinite(v) ? crBRL(v) : '—') + '</div></div></div>'

@@ -345,10 +345,16 @@ html[data-theme="dark"] #recuperacaoSenhaScreen .zl-btn-sec:hover:not(:disabled)
 </style>
 <style id="cx103Css">
 /* Pacote 103 (V1.6.7.0): coluna "Conf." (checkbox manual), descrição em uma linha com reticências e 🔁 fora da área cortada. Escopado ao Fluxo (#cxTabela); Claro e Escuro; não toca outras tabelas nem o PDF. */
-/* Estratégia: layout automático da tabela PRESERVADO (as demais colunas continuam do tamanho do conteúdo, como antes). Só a célula da descrição tem teto de largura proporcional à janela
-   (max-width num bloco interno: a contribuição intrínseca de um bloco com max-width é limitada por ele, então 10 mil caracteres sem espaço não esticam a coluna nem a tabela). O texto
-   sobra por overflow:hidden + reticências numa única linha (altura da linha = a de antes); o 🔁 e os textos de origem (que quebram normalmente) ficam dentro do mesmo teto. */
-#cxTabela .cx103-dw{max-width:clamp(180px,30vw,460px);min-width:0;overflow-wrap:anywhere}
+/* Estratégia: layout automático da tabela PRESERVADO (as demais colunas continuam do tamanho do conteúdo, como antes). Só a célula da descrição tem teto de largura (max-width num bloco interno:
+   a contribuição intrínseca de um bloco com max-width é limitada por ele, então 10 mil caracteres sem espaço não esticam a coluna nem a tabela). O texto sobra por overflow:hidden + reticências
+   numa única linha (altura da linha = a de antes); o 🔁 e os textos de origem (que quebram normalmente) ficam dentro do mesmo teto.
+   O teto acompanha o ESPAÇO REAL: com o menu lateral fixo, a área do Fluxo mede (100vw − ~343px) e as outras 8 colunas somam ~740px + ~20px de respiro da célula (medido: Data 79, Conf 45, Categoria 80,
+   OS 70, Entrada 98, Saída 98, Saldo 105, Ações 165). Sobra, portanto, 100vw − ~1103px para a descrição; subtraímos 1150px (≈47px de folga para a barra de rolagem e números maiores) e limitamos
+   entre 60px (janelas estreitas: reticências antes de empurrar os botões; rolagem horizontal normal só se nem assim couber) e 460px (telas largas aproveitam o espaço).
+   Medido com dados extremos (57 linhas, valores de R$ 100 mil+, saldos de milhões, categorias grandes) a folga de 47px não bastava e, com 97px, ainda sobrava ~9px de respiro horizontal:
+   subtraímos 1220px (≈ 117px de folga) e o teto vale
+   1280px → 60px (todas as 9 colunas e as ações cabem em 937px; a descrição trunca com reticências e o texto inteiro fica no hover) · 1400px → 180px · 1440px → 220px · 1960px ou mais → 460px. */
+#cxTabela .cx103-dw{max-width:clamp(60px,calc(100vw - 1220px),460px);min-width:0;overflow-wrap:anywhere}
 #cxTabela .cx103-dl{display:flex;align-items:center;gap:5px;white-space:nowrap;min-width:0}
 #cxTabela .cx103-ic{flex:none}
 #cxTabela .cx103-dt{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}

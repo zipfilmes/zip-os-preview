@@ -958,7 +958,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.8.0 · Produção e Fornecedores</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.9.0 · Status Financeiro</div>
 </aside>
 
 <main class="main">
@@ -37937,6 +37937,9 @@ function foAbrirProntuario(os, opts){
     return foCadastroPagamentoLer(ok, R);   // 104: fallback SOMENTE LEITURA do cadastro financeiro (fica só em p.d.cad, nunca em snapshot/estado comum)
   }).then(function(){
     if(!ok()) return;
+    return foFornTokensLer(ok, pid, R);   // 105: vinculo_token guardado (só leitura) para marcar fornecedor como Pago pela RPC existente
+  }).then(function(){
+    if(!ok()) return;
     var pj = R.proj && R.proj.st === 'ok' && Array.isArray(R.proj.data) && R.proj.data.length === 1 ? R.proj.data[0] : null;
     if(!pj || !pj.orcamento_versao_id) return;
     return foConsulta(ok, supabaseClient.from('orcamento_versoes').select('id,orcamento_id,versao,snapshot').eq('id', pj.orcamento_versao_id)).then(function(r){ if(r !== null) R.ver = r; });
@@ -37950,36 +37953,58 @@ function foAbrirProntuario(os, opts){
     var rec = R.rec && R.rec.st === 'ok' && _objetoProntReal(R.rec.data) && R.rec.data.status === 'ok' && R.rec.data.modulo === 'REC-1' && Array.isArray(R.rec.data.parcelas) && String(R.rec.data.projeto_id) === String(pid) ? R.rec.data : null;
     var orc = R.orc && R.orc.st === 'ok' && _objetoProntReal(R.orc.data) && R.orc.data.status === 'ok' && _objetoProntReal(R.orc.data.orcamento) && Array.isArray(R.orc.data.itens) ? R.orc.data : null;
     var pagMap = {}; if(R.pag && R.pag.st === 'ok' && Array.isArray(R.pag.data)) R.pag.data.forEach(function(x){ pagMap[x.projeto_fornecedor_id] = x; });
-    p.d = { proj: proj, chk: lista('chk'), notas: lista('notas'), hist: lista('hist'), forn: lista('forn'), fin: um('fin'), finSt: R.fin ? R.fin.st : 'indisponivel', cli: um('cli'), rec: rec, recSt: l.leadId ? (rec ? 'ok' : 'indisponivel') : 'sem_atendimento', orc: orc, ver: foVerContratada(proj, um('ver')), verSt: !proj.orcamento_versao_id ? 'nao_registrada' : (R.ver ? R.ver.st : 'indisponivel'), pagMap: pagMap, cad: R.cad || { st: 'nada', porLinha: {}, mapa: {} }, lido: new Date().toISOString() };
+    p.d = { proj: proj, chk: lista('chk'), notas: lista('notas'), hist: lista('hist'), forn: lista('forn'), fin: um('fin'), finSt: R.fin ? R.fin.st : 'indisponivel', cli: um('cli'), rec: rec, recSt: l.leadId ? (rec ? 'ok' : 'indisponivel') : 'sem_atendimento', orc: orc, ver: foVerContratada(proj, um('ver')), verSt: !proj.orcamento_versao_id ? 'nao_registrada' : (R.ver ? R.ver.st : 'indisponivel'), pagMap: pagMap, cad: R.cad || { st: 'nada', porLinha: {}, mapa: {} }, tok: R.tok || { st: 'nada', porLinha: {} }, lido: new Date().toISOString() };
     p.status = 'ok'; foRenderProntuario();
   }, function(){ if(ok()){ p.status = 'erro'; p.d = null; foRenderProntuario(); } });
 }
 abrirProntuarioFin = function(os){ if(!foPode()) return; var el = foDom('finProntuario'); if(el) el.style.display = 'block'; foAbrirProntuario(String(os || '')); try { if(el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'start' }); } catch(_e){} };
 function foFecharProntuario(){ var p = estadoFinPront; p.seq++; p.os = ''; p.status = 'idle'; p.d = null; p.acao = null; p.form = {}; p.msg = null; var el = foDom('finProntuario'); if(el){ el.textContent = ''; el.style.display = 'none'; } }
 // ---------------- derivados ----------------
-function foEstadoParcelas(d){   // → { conhecido, completo }: todas as parcelas aplicáveis quitadas (valor recebido = previsto)
-  var l = foLinhaCr(estadoFinPront.os), ps = d.rec ? d.rec.parcelas.filter(_objetoProntReal).map(function(x){ return { st: x.status, saldo: foNum(x.saldo) }; }) : (l ? l.parcelas.map(function(x){ return { st: x.status, saldo: x.prevC - x.recC }; }) : []);
+function foEstadoParcelas(d){   // → { conhecido, completo, naoAplicavel? }: 105 — derivado SÓ das parcelas reais (status E saldo coerentes); leitura parcial/ausente = desconhecido (fail-closed)
+  var l = foLinhaCr(estadoFinPront.os), ps;
+  if(d.rec){
+    var bruto = d.rec.parcelas; ps = bruto.filter(_objetoProntReal).map(function(x){ return { st: x.status, saldo: foNum(x.saldo) }; });
+    if(ps.length !== bruto.length) return { conhecido: false, completo: false };
+  } else ps = l ? l.parcelas.map(function(x){ return { st: x.status, saldo: x.prevC - x.recC }; }) : [];
   if(!ps.length) return { conhecido: false, completo: false };
-  return { conhecido: true, completo: ps.every(function(x){ return x.st === 'nao_aplicavel' || (x.st === 'recebido' && x.saldo <= 0); }) && ps.some(function(x){ return x.st === 'recebido'; }) };
+  var aplic = ps.filter(function(x){ return x.st !== 'nao_aplicavel'; });
+  if(!aplic.length) return { conhecido: true, completo: true, naoAplicavel: true };
+  return { conhecido: true, completo: aplic.every(function(x){ return x.st === 'recebido' && isFinite(x.saldo) && x.saldo <= 0; }) };
+}
+// 105: vinculo_token do fornecedor SOMENTE pela RPC de leitura guardada já existente (nunca montado a partir do id). Só o token é guardado: os dados bancários da resposta são descartados aqui.
+function foFornTokensNormalizar(r, pid){
+  if(!r || r.st !== 'ok') return { st: r && r.st === 'sem_permissao' ? 'sem_permissao' : 'erro', porLinha: {} };
+  var x = r.data, t = { st: 'erro', porLinha: {} };
+  if(!_objetoProntReal(x) || x.status !== 'ok' || String(x.projeto_id) !== String(pid) || !Array.isArray(x.linhas)) return t;
+  x.linhas.forEach(function(l){ if(_objetoProntReal(l) && typeof l.id === 'string' && typeof l.vinculo_token === 'string' && l.vinculo_token && String(l.projeto_id) === String(pid)) t.porLinha[l.id] = l.vinculo_token; });
+  t.st = 'ok'; return t;
+}
+function foFornTokensLer(ok, pid, R){
+  R.tok = { st: 'nada', porLinha: {} };
+  var f = R.forn && R.forn.st === 'ok' && Array.isArray(R.forn.data) ? R.forn.data : [];
+  if(!f.length || f.length > FO_LIMITE_LISTA) return;
+  return foConsulta(ok, supabaseClient.rpc('projeto_fornecedores_pagamento_ler_projeto', { p_projeto_id: pid })).then(function(r){ if(r !== null) R.tok = foFornTokensNormalizar(r, pid); });
 }
 function foChecklistItens(d){   // [{ rotulo, situacao, id|null, auto, ordem }] na ordem do banco + itens derivados da referência
   var linhas = d.chk.st === 'ok' ? d.chk.linhas.slice().sort(function(a, b){ return (a.ordem - b.ordem) || (a.titulo < b.titulo ? -1 : 1); }) : [];
   var itens = linhas.map(function(r){ return { id: r.id, titulo: r.titulo, situacao: r.situacao, auto: false, data: r.data_evento }; });
-  // "Recebimento confirmado" NÃO é uma caixa que se marca: a situação efetiva vem das parcelas reais (REC-1/recebimentos_cliente). O flag do checklist só é sincronizado (ação explícita) quando as parcelas já provam.
+  // "Recebimento confirmado" NÃO é caixa que se marca nem precisa de segunda confirmação (105): a situação vem SEMPRE das parcelas reais (REC-1/recebimentos_cliente), também para linha antiga do checklist; sem escrita ao desenhar. Sem parcelas lidas = Pendente.
   itens.forEach(function(it){
     if(it.titulo !== 'Recebimento confirmado') return;
-    var est = foEstadoParcelas(d), db = foConcluido(it.situacao);
+    var est = foEstadoParcelas(d);
     it.recebimento = true; it.auto = true; it.dbSituacao = it.situacao; it.parcelasOk = est.completo; it.parcelasConhecidas = est.conhecido;
-    it.situacao = est.conhecido && est.completo && db ? 'Recebido' : 'Pendente';
-    it.sync = !est.conhecido ? '' : est.completo && !db ? 'confirmar' : !est.completo && db ? 'corrigir' : !est.completo ? 'registrar' : '';
+    it.situacao = est.conhecido && est.completo ? (est.naoAplicavel ? 'Não aplicável' : 'Recebido') : 'Pendente';
+    it.sync = est.conhecido && !est.completo ? 'registrar' : '';
   });
-  // "Pagamento dos fornecedores": automático (nunca marcado à mão), como na referência
-  var fs = d.forn.st === 'ok' ? d.forn.linhas : null;
+  // "Pagamento dos fornecedores": automático (nunca marcado à mão), como na referência. 105: vem SEMPRE das linhas reais, inclusive quando já existe linha gravada no checklist (ela só serve de âncora); leitura com erro/limite nunca conclui.
+  var fs = d.forn.st === 'ok' ? d.forn.linhas : null, stF = 'Pendente';
   if(fs){
     var pagaveis = fs.filter(function(f){ return f.tipo_vinculo === 'cadastrado' || f.tipo_vinculo === 'manual'; }), adef = fs.some(function(f){ return f.tipo_vinculo === 'a_definir'; });
-    var st = adef ? 'Pendente' : !pagaveis.length ? 'Não aplicável' : pagaveis.every(function(f){ return f.status_pagamento === 'pago' || f.status_pagamento === 'nao_aplicavel'; }) ? 'Pago' : 'Pendente';
-    if(!itens.some(function(i){ return i.titulo === FO_ITEM_FORN; })) itens.push({ id: null, titulo: FO_ITEM_FORN, situacao: st, auto: true });
+    stF = adef ? 'Pendente' : !pagaveis.length ? 'Não aplicável' : pagaveis.every(function(f){ return f.status_pagamento === 'pago' || f.status_pagamento === 'nao_aplicavel'; }) ? 'Pago' : 'Pendente';
   }
+  var itF = itens.filter(function(i){ return i.titulo === FO_ITEM_FORN; })[0];
+  if(itF){ itF.dbSituacao = itF.situacao; itF.situacao = stF; itF.auto = true; }
+  else if(d.chk.st === 'ok') itens.push({ id: null, titulo: FO_ITEM_FORN, situacao: stF, auto: true });
   if(d.chk.st === 'ok' && !itens.some(function(i){ return i.titulo === FO_ITEM_CUSTOS; })) itens.push({ id: null, titulo: FO_ITEM_CUSTOS, situacao: 'Pendente', auto: false, novo: true });
   return itens;
 }
@@ -38084,7 +38109,7 @@ function foStatusFinHtml(d, l){
     var ok = foConcluido(it.situacao), clicavel = !it.auto && !enc && !trava, extra = it.recebimento ? foRecebimentoLinha(it, d, enc, trava) : '';
     return '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
       + '<div ' + (clicavel ? 'onclick="foToggleChecklist(' + i + ')" ' : '') + 'data-pa="fin-chk-' + i + '" style="width:22px;height:22px;border-radius:6px;border:2px solid ' + (ok ? 'var(--green)' : 'var(--line)') + ';background:' + (ok ? 'var(--green)' : 'white') + ';cursor:' + (clicavel ? 'pointer' : 'default') + ';display:flex;align-items:center;justify-content:center;color:white;font-size:13px;flex-shrink:0">' + (ok ? '✓' : '') + '</div>'
-      + '<span style="font-size:13px;' + (ok ? 'text-decoration:line-through;color:var(--muted)' : '') + '">' + foEsc(it.titulo === 'Recebimento confirmado' ? 'Recebimento do cliente' : it.titulo) + '</span><span class="muted" style="font-size:12px;margin-left:auto">' + foEsc(it.situacao) + (it.auto ? ' (automático)' : '') + '</span></div>' + extra + '</div>';
+      + '<span style="font-size:13px;' + (ok ? 'text-decoration:line-through;color:var(--muted)' : '') + '">' + foEsc(it.titulo === 'Recebimento confirmado' ? 'Recebimento do cliente' : it.titulo) + '</span><span class="muted" style="font-size:12px;margin-left:auto">' + foEsc(it.situacao) + '</span></div>' + extra + '</div>';
   }).join('') || '<p class="muted" style="font-size:13px">Checklist financeiro ' + (d.chk.st === 'ok' ? 'inexistente para este projeto.' : 'indisponível.') + '</p>';
   var forn = foFornecedoresHtml(d);
   var acoes = '<button class="btn" data-pa="fin-encerrar" style="width:100%;margin-top:12px;padding:10px;font-size:14px;' + (podeEncerrar && !trava ? 'background:var(--green);color:white" onclick="foEncerrar()"' : 'background:#9ca3af;color:white;cursor:not-allowed" disabled') + '>🏁 Encerrar projeto</button>'
@@ -38095,8 +38120,7 @@ function foStatusFinHtml(d, l){
 function foRecebimentoLinha(it, d, enc, trava){   // ação real ao lado do item derivado
   var b = function(txt, on, pa){ return '<button class="btn btn2" data-pa="' + pa + '" ' + (enc || trava ? 'disabled ' : '') + 'style="font-size:12px;margin:6px 0 0 32px" onclick="' + on + '">' + txt + '</button>'; };
   if(it.sync === 'registrar'){ var i0 = foParcelasAtuais().findIndex(function(x){ return x.st !== 'recebido' && x.st !== 'nao_aplicavel' && x.token; }); return i0 >= 0 ? b('💰 Registrar pagamento', 'foRecebimentoAbrir(' + i0 + ')', 'fin-rec-registrar-item') : '<div class="muted" style="font-size:11px;margin:4px 0 0 32px">Registro de recebimento indisponível agora.</div>'; }
-  if(it.sync === 'confirmar') return '<div class="muted" style="font-size:11px;margin:4px 0 0 32px">Todas as parcelas estão quitadas, mas o checklist ainda não reflete.</div>' + b('✔ Confirmar recebimento completo no checklist', "foSincronizarRecebimento('Recebido')", 'fin-rec-sync-confirmar');
-  if(it.sync === 'corrigir') return '<div style="font-size:11px;color:#b45309;margin:4px 0 0 32px">⚠ O checklist diz Recebido, mas há parcela em aberto.</div>' + b('↩ Corrigir checklist para Pendente', "foSincronizarRecebimento('Pendente')", 'fin-rec-sync-corrigir');
+  // 105: sem "Confirmar/Corrigir checklist": o item é derivado das parcelas (nada a sincronizar).
   return it.parcelasConhecidas ? '' : '<div class="muted" style="font-size:11px;margin:4px 0 0 32px">Sem parcelas lidas para este projeto.</div>';
 }
 function foFornecedoresHtml(d){
@@ -38125,8 +38149,7 @@ function foFornecedoresHtml(d){
     var st = f.status_pagamento || 'pendente', cor = st === 'pago' ? ['#dcfce7', '#065f46'] : st === 'nao_aplicavel' ? ['#f1f5f9', '#475467'] : ['#fef3c7', '#92400e'];
     return '<div style="padding:10px;background:#fafafa;border:1px solid var(--line);border-radius:8px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><span style="font-weight:700;font-size:13px">' + foEsc(nome) + '</span> ' + selo
       + '<div style="font-size:11px;color:var(--muted);margin-top:2px">📦 ' + foEsc(f.item_descricao || 'item') + '</div>' + pagHtml + '</div><div style="text-align:right;white-space:nowrap"><div style="font-size:14px;font-weight:800">' + (isFinite(v) ? crBRL(v) : '—') + '</div></div></div>'
-      + '<div style="margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--muted)">Pagamento:</span><select data-pa="fin-forn-' + idx + '" ' + (trava || enc ? 'disabled ' : '') + 'onchange="foAlterarPagFornecedor(' + idx + ',this.value)" style="padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-size:11px;background:' + cor[0] + ';color:' + cor[1] + ';font-weight:700">'
-      + ['pendente', 'pago', 'nao_aplicavel'].map(function(o){ return '<option value="' + o + '"' + (st === o ? ' selected' : '') + '>' + ({ pendente: 'Pendente', pago: 'Pago', nao_aplicavel: 'Não aplicável' })[o] + '</option>'; }).join('') + '</select></div></div>';
+      + foFornPagControle(f, idx, st, cor, d.tok, trava || enc) + '</div>';
   }).join('');
   return '<div style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💸 Fornecedores a pagar</div>' + linhas
     + '<div style="font-size:12px;color:var(--muted);text-align:right;margin-top:4px">Total previsto: <b>' + crBRL(total) + '</b> <span style="opacity:.7">(informativo — já incluso no custo)</span></div></div>';
@@ -38340,23 +38363,53 @@ function foToggleChecklist(i){
     conferir: function(){ return lerLinha(it.id).then(function(r){ if(!r || r.st !== 'ok' || !Array.isArray(r.data) || r.data.length !== 1) return 'indefinido'; var s = r.data[0].situacao; return s === novo ? 'aplicado' : s === it.situacao ? 'nao_aplicado' : 'indefinido'; }); } });
 }
 // ---- "Recebimento confirmado": só reflete no checklist o que as parcelas já provam ----
-function foSincronizarRecebimento(novo){
+function foSincronizarRecebimento(novo){   // 105: o recebimento do cliente é DERIVADO das parcelas — não há mais escrita no checklist. Mantida só porque a camada Projetos a embrulha por nome; apenas relê (aba antiga).
   var p = estadoFinPront; if(p.acao || p.status !== 'ok') return;
-  var it = foChecklistItens(p.d).filter(function(i){ return i.recebimento; })[0]; if(!it || !it.id || p.d.proj.status === 'Encerrado') return;
-  if((novo === 'Recebido' && it.sync !== 'confirmar') || (novo === 'Pendente' && it.sync !== 'corrigir') || (novo !== 'Recebido' && novo !== 'Pendente')){ foPMsg('aviso', 'O estado das parcelas mudou: a tela foi relida.'); foAbrirProntuario(p.os, { manter: true }); return; }
-  if(!confirm((novo === 'Recebido' ? 'Confirmar no checklist que o recebimento está completo' : 'Corrigir o checklist para Pendente') + '?')) return;
-  var hoje = foHojeSP();
-  foPAcao({ kind: 'checklist',
-    executar: function(){ return supabaseClient.from('financeiro_checklist').update({ situacao: novo, data_evento: novo === 'Recebido' ? hoje : null }).eq('id', it.id).eq('situacao', it.dbSituacao).select('id'); },
-    interpretar: function(r){ if(r.error) return { ok: false, texto: foErroTexto(r.error) }; if(Array.isArray(r.data) && r.data.length === 1) return { ok: true, texto: 'Checklist: Recebimento ' + (novo === 'Recebido' ? 'confirmado' : 'corrigido para Pendente') + '.', historico: '💳 Recebimento confirmado (checklist): ' + novo }; return { ok: false, tipo: 'aviso', texto: FO_MSG.conflito }; },
-    conferir: function(){ return foConsulta(function(){ return true; }, supabaseClient.from('financeiro_checklist').select('id,situacao').eq('id', it.id)).then(function(r){ if(!r || r.st !== 'ok' || !Array.isArray(r.data) || r.data.length !== 1) return 'indefinido'; var s = r.data[0].situacao; return s === novo ? 'aplicado' : s === it.dbSituacao ? 'nao_aplicado' : 'indefinido'; }); } });
+  foPMsg('aviso', 'O recebimento do cliente agora é calculado pelas parcelas; a tela foi relida.'); foAbrirProntuario(p.os, { manter: true });
 }
 // ---- pagamento de fornecedor ----
+// 105: controle do pagamento do fornecedor sem opção que falha em silêncio. Pago só pela RPC guardada (precisa do token lido); linha já Pago = selo fixo (correção segue o fluxo já auditado do prontuário do projeto, com motivo).
+function foFornPagControle(f, idx, st, cor, tok, travado){
+  var rot = { pendente: 'Pendente', pago: 'Pago', nao_aplicavel: 'Não aplicável' }, cab = '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:11px;color:var(--muted)">Pagamento:</span>';
+  var estilo = 'background:' + cor[0] + ';color:' + cor[1] + ';font-weight:700';
+  if(st === 'pago') return cab + '<span data-pa="fin-forn-' + idx + '" style="padding:4px 8px;border-radius:6px;font-size:11px;' + estilo + '">Pago</span><span class="muted" style="font-size:11px">Correção de pagamento já feito: pelo prontuário do projeto.</span></div>';
+  var tokOk = !!(tok && tok.st === 'ok' && tok.porLinha && tok.porLinha[f.id]);
+  var ops = st === 'nao_aplicavel' ? ['pendente', 'nao_aplicavel'] : st === 'pendente' ? (tokOk ? ['pendente', 'pago', 'nao_aplicavel'] : ['pendente', 'nao_aplicavel']) : [st];
+  var aviso = st === 'pendente' && !tokOk ? '<span class="muted" style="font-size:11px" data-pa="fin-forn-pago-indisponivel">Marcar como pago indisponível agora; reabra o prontuário.</span>' : '';
+  return cab + '<select data-pa="fin-forn-' + idx + '" ' + (travado || !rot[st] ? 'disabled ' : '') + 'onchange="foAlterarPagFornecedor(' + idx + ',this.value)" style="padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-size:11px;' + estilo + '">'
+    + ops.map(function(o){ return '<option value="' + foEsc(o) + '"' + (st === o ? ' selected' : '') + '>' + foEsc(rot[o] || o) + '</option>'; }).join('') + '</select>' + aviso + '</div>';
+}
+// → resultado do foPAcao para a resposta da RPC projeto_fornecedor_pagamento_marcar_projeto. Resposta que não prova nada (payload estranho, projeto diferente, status desconhecido) = incerto, nunca falso sucesso. A RPC já grava o histórico e NÃO gera caixa.
+function foFornecedorPagoResultado(r, nome, pid){
+  if(r.error) return { ok: false, texto: foErroTexto(r.error) };
+  var x = r.data; if(!_objetoProntReal(x) || typeof x.status !== 'string') return { incerto: true };
+  if(x.status === 'aplicado' || x.status === 'repetido' || x.status === 'nada'){
+    if(String(x.projeto_id) !== String(pid)) return { incerto: true };
+    return x.status === 'nada' ? { ok: true, tipo: 'aviso', texto: 'Pagamento de ' + nome + ' já estava marcado como Pago.' } : { ok: true, texto: 'Pagamento de ' + nome + ': Pago.' };
+  }
+  if(x.status === 'vinculo_mudou') return { ok: false, tipo: 'aviso', texto: 'O vínculo deste fornecedor mudou depois que você abriu a tela. Nada foi gravado; a tela foi relida — confira e tente de novo.' };
+  if(x.status === 'inexistente' || x.status === 'linha_de_outro_projeto' || x.status === 'ausente') return { ok: false, texto: 'Este fornecedor não pertence mais a este projeto. Nada foi gravado.' };
+  if(x.status === 'nao_pagavel') return { ok: false, tipo: 'aviso', texto: 'Fornecedor marcado como "Não aplicável" não é pago por aqui. Nada foi gravado.' };
+  if(x.status === 'projeto_ambiguo' || x.status === 'projeto_nao_alvo') return { ok: false, tipo: 'aviso', texto: 'O banco não aceitou o pagamento por este projeto (mais de um projeto no mesmo orçamento). Nada foi gravado.' };
+  return { incerto: true };
+}
+function foFornecedorMarcarPago(f, nome){
+  var p = estadoFinPront, tok = p.d && p.d.tok && p.d.tok.st === 'ok' && p.d.tok.porLinha ? p.d.tok.porLinha[f.id] : null;
+  if(!tok){ foPMsg('erro', 'Não foi possível conferir o vínculo deste fornecedor agora. Reabra o prontuário.'); foRenderProntuario(); return; }
+  if(!confirm('Marcar o pagamento de ' + nome + ' como Pago? Esta tela não desfaz o pagamento nem lança saída no caixa (use Novo lançamento).')){ foRenderProntuario(); return; }
+  var chave = cxUuid(), pid = p.projId, fid = f.id;   // chave gerada UMA vez: repetir após resposta perdida reutiliza a mesma
+  foPAcao({ kind: 'fornecedor', reenviar: true, sucesso: 'Pagamento do fornecedor confirmado no banco.',
+    executar: function(){ return supabaseClient.rpc('projeto_fornecedor_pagamento_marcar_projeto', { p_projeto_id: pid, p_id: fid, p_vinculo_esperado: tok, p_chave: chave }); },
+    interpretar: function(r){ return foFornecedorPagoResultado(r, nome, pid); },
+    conferir: function(){ return foConsulta(function(){ return true; }, supabaseClient.from('projeto_fornecedores').select('id,status_pagamento').eq('id', fid)).then(function(r){ if(!r || r.st !== 'ok' || !Array.isArray(r.data) || r.data.length !== 1) return 'indefinido'; var s2 = r.data[0].status_pagamento; return s2 === 'pago' ? 'aplicado' : s2 === 'pendente' ? 'nao_aplicado' : 'indefinido'; }); } });
+}
 function foAlterarPagFornecedor(idx, valor){
   var p = estadoFinPront; if(p.acao || p.status !== 'ok') { foRenderProntuario(); return; }
   var lista = p.d.forn.linhas.filter(function(f){ return f.tipo_vinculo !== 'nao_se_aplica'; }), f = lista[idx];
   if(!f || f.tipo_vinculo === 'a_definir' || ['pendente', 'pago', 'nao_aplicavel'].indexOf(valor) < 0 || valor === f.status_pagamento){ foRenderProntuario(); return; }
   var s = _objetoProntReal(f.snapshot) ? f.snapshot : {}, nome = s.nome || f.nome_manual || 'fornecedor', rot = { pendente: 'Pendente', pago: 'Pago', nao_aplicavel: 'Não aplicável' }[valor];
+  if(f.status_pagamento === 'pago' || (valor === 'pago' && f.status_pagamento !== 'pendente')){ foPMsg('aviso', 'Este pagamento não muda por aqui. A tela foi relida.'); foAbrirProntuario(p.os, { manter: true }); return; }
+  if(valor === 'pago'){ foFornecedorMarcarPago(f, nome); return; }
   foPAcao({ kind: 'fornecedor',
     executar: function(){ return supabaseClient.from('projeto_fornecedores').update({ status_pagamento: valor }).eq('id', f.id).eq('status_pagamento', f.status_pagamento).select('id'); },
     interpretar: function(r){ if(r.error) return { ok: false, texto: foErroTexto(r.error) }; if(Array.isArray(r.data) && r.data.length === 1) return { ok: true, texto: 'Pagamento de ' + nome + ': ' + rot + '.', historico: '💸 Pagamento de ' + nome + ': ' + rot }; return { ok: false, tipo: 'aviso', texto: FO_MSG.conflito }; },

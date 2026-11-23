@@ -933,6 +933,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div id="navMenuWrap" style="flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;min-height:auto">
 <div class="nav" style="margin:0">
 <button data-role="socio financeiro atendimento producao edicao admin" class="active" onclick="show('dashboard',this)">🏠 Visão Geral</button>
+<button data-role="socio financeiro atendimento admin" onclick="show('agenda107',this)">📅 Agenda <span class="ag-bdg" data-ag-bdg hidden></span></button>
 <button data-role="socio financeiro atendimento admin" onclick="show('comercial',this)">💼 Comercial</button>
 <button data-role="socio financeiro atendimento admin" onclick="show('clientes',this)">🤝 Clientes</button>
 <button data-role="socio financeiro atendimento admin" onclick="show('fornecedores',this)">👥 Fornecedores</button>
@@ -944,6 +945,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </div>
 </div>
 
+<div id="ag107NavOper" class="nav" style="display:none;margin:0 0 8px"><button type="button" onclick="show('operacao',this)">🎬 Operação</button><button type="button" onclick="show('agenda107',this)">📅 Agenda <span class="ag-bdg" data-ag-bdg hidden></span></button></div>
 <div id="zosAjustes" role="group" aria-label="Ajustes">
 <div class="zos-aj-tit">Ajustes</div>
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
@@ -958,7 +960,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.6.9.0 · Status Financeiro</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.0.0 · Agenda</div>
 </aside>
 
 <main class="main">
@@ -984,6 +986,97 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div id="dashFinanceiro" class="hidden"></div>
 </section>
 
+<style id="ag107Css">#agenda107{--ag-azul:#175cd3;--ag-lar:#c2410c;--ag-ver:#15803d;--ag-rox:#7c3aed;--ag-cin:#667085}
+#agenda107 .ag-acoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#agenda107 .ag-bdg{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:#b42318;color:#fff;font-size:11px;font-weight:800;line-height:16px;text-align:center;margin-left:6px;vertical-align:1px}
+#agenda107 .ag-bdg[hidden],.ag-bdg[hidden]{display:none}
+.nav .ag-bdg{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:#b42318;color:#fff;font-size:11px;font-weight:800;line-height:16px;text-align:center;margin-left:6px}
+.nav .ag-bdg[hidden]{display:none}
+#agenda107 .ag-filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+#agenda107 .ag-filtros label{flex:1 1 140px;min-width:120px;display:block}
+#agenda107 .ag-filtros input,#agenda107 .ag-filtros select{margin-top:4px;padding:9px}
+#agenda107 .ag-bloco{margin-bottom:14px}
+#agenda107 .ag-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#agenda107 .ag-cab h2{margin:0}
+#agenda107 .ag-nav{display:flex;gap:6px;align-items:center}
+#agenda107 .ag-nav .btn{padding:8px 12px}
+#agenda107 .ag-semana{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+#agenda107 .ag-dia{border:1px solid var(--line);border-radius:14px;padding:10px;min-height:120px;min-width:0;overflow:hidden;background:var(--panel)}
+#agenda107 .ag-dia.hoje{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+#agenda107 .ag-dia h4{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+#agenda107 .ag-dia h4 b{color:var(--ink);font-size:14px}
+#agenda107 .ag-vazio{font-size:12px;color:var(--muted)}
+#agenda107 .ag-ev{display:block;width:100%;min-width:0;text-align:left;border:1px solid var(--line);border-left:4px solid var(--ag-cor,var(--ag-cin));background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 8px;margin-top:6px;cursor:pointer;font:inherit;font-size:12px;line-height:1.35;overflow:hidden}
+#agenda107 .ag-ev:hover,#agenda107 .ag-ev:focus-visible{border-color:var(--accent);outline:none}
+#agenda107 .ag-ev .h{display:block;color:var(--muted);font-weight:700}
+#agenda107 .ag-ev .t{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#agenda107 .ag-ev .s,#agenda107 .ag-ev .b{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#agenda107 .ag-cancel .t{text-decoration:line-through;opacity:.7}
+#agenda107 .ag-conc{opacity:.75}
+#agenda107 .ag-n-reuniao{--ag-cor:var(--ag-azul)}
+#agenda107 .ag-n-gravacao{--ag-cor:var(--ag-lar)}
+#agenda107 .ag-n-edicao{--ag-cor:var(--ag-ver)}
+#agenda107 .ag-n-revisao{--ag-cor:var(--ag-rox)}
+#agenda107 .ag-n-outros{--ag-cor:var(--ag-cin)}
+#agenda107 .ag-mes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+#agenda107 .ag-dow{font-size:11px;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase}
+#agenda107 .ag-cel{border:1px solid var(--line);border-radius:10px;min-height:62px;padding:5px;background:var(--panel);color:var(--ink);cursor:pointer;text-align:left;font:inherit;font-size:12px;min-width:0;overflow:hidden}
+#agenda107 .ag-cel.fora{opacity:.5}
+#agenda107 .ag-cel.hoje{border-color:var(--accent)}
+#agenda107 .ag-cel.sel{box-shadow:0 0 0 2px var(--accent) inset}
+#agenda107 .ag-cel b{font-size:13px}
+#agenda107 .ag-pts{display:flex;gap:3px;flex-wrap:wrap;align-items:center;margin-top:4px}
+#agenda107 .ag-pt{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ag-cor,var(--ag-cin))}
+#agenda107 .ag-q{font-size:11px;color:var(--muted);font-weight:700}
+#agenda107 .ag-msg{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px;color:var(--muted);background:var(--panel)}
+#agenda107 .ag-msg.erro{border-color:#fecaca;color:var(--red)}
+#agenda107 .ag-ov{position:fixed;inset:0;background:rgba(16,24,40,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+#agenda107 .ag-box{background:var(--panel);color:var(--ink);border-radius:18px;max-width:880px;width:100%;max-height:92vh;overflow:auto;padding:20px;user-select:text;-webkit-user-select:text;box-shadow:0 18px 48px rgba(16,24,40,.35)}
+#agenda107 .ag-box.peq{max-width:560px}
+#agenda107 .ag-box h2{margin:0 0 4px;overflow-wrap:anywhere}
+#agenda107 .ag-sec{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+#agenda107 .ag-sec h3{margin:0 0 8px}
+#agenda107 .ag-kv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 12px;font-size:13px}
+#agenda107 .ag-kv dt{color:var(--muted);font-weight:700}
+#agenda107 .ag-kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+#agenda107 .ag-os{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;background:rgba(23,92,211,.05)}
+#agenda107 .ag-os .rot{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+#agenda107 .ag-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#agenda107 .ag-form .full{grid-column:1/-1}
+#agenda107 .ag-form label{display:block}
+#agenda107 .ag-lista{max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:6px 10px;margin-top:5px}
+#agenda107 .ag-lista label{display:flex;gap:8px;align-items:center;padding:3px 0;font-weight:400;color:var(--ink);font-size:13px}
+#agenda107 .ag-lista input[type=checkbox],#agenda107 .ag-form input[type=checkbox]{width:auto;margin:0}
+#agenda107 .ag-chk{display:flex;gap:8px;align-items:center;font-weight:400;color:var(--ink)}
+#agenda107 .ag-res{border:1px solid var(--line);border-radius:12px;margin-top:6px;overflow:hidden}
+#agenda107 .ag-res button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 10px;cursor:pointer;font:inherit;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#agenda107 .ag-res button:last-child{border-bottom:0}
+#agenda107 .ag-res button:hover{background:rgba(23,92,211,.08)}
+#agenda107 .ag-tag{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;margin:3px 6px 3px 0;max-width:100%}
+#agenda107 .ag-tag button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:0}
+#agenda107 .ag-aviso{border-left:5px solid #f59e0b;background:rgba(245,158,11,.12);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px}
+#agenda107 .ag-aviso.erro{border-left-color:#ef4444;background:rgba(239,68,68,.10)}
+#agenda107 .ag-aviso.ok{border-left-color:#22a05a;background:rgba(34,160,90,.10)}
+#agenda107 .ag-botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
+#agenda107 .ag-av{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:10px 12px;margin-top:8px;cursor:pointer;font:inherit;font-size:13px;overflow-wrap:anywhere}
+#agenda107 .ag-av.nl{border-left:5px solid var(--accent);font-weight:700}
+#agenda107 .ag-av small{display:block;color:var(--muted);font-weight:400}
+#agenda107 .ag-sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#agenda107 .ag-err{color:var(--red);font-size:12px;margin-top:3px}
+html[data-theme="dark"] #agenda107{--ag-azul:#8fb8ee;--ag-lar:#fdba8c;--ag-ver:#a6e3be;--ag-rox:#c4b5fd;--ag-cin:#98a2b3}
+html[data-theme="dark"] #agenda107 .ag-os{background:rgba(143,184,238,.08)}
+html[data-theme="dark"] #agenda107 .ag-res button:hover{background:rgba(143,184,238,.12)}
+html[data-theme="dark"] #agenda107 .ag-msg.erro{border-color:#7a3a42}
+html[data-theme="dark"] #agenda107 .ag-ov{background:rgba(0,0,0,.6)}
+@media(max-width:1100px){#agenda107 .ag-semana{grid-template-columns:1fr}#agenda107 .ag-dia{min-height:0}}
+@media(max-width:700px){#agenda107 .ag-form{grid-template-columns:1fr}#agenda107 .ag-kv{grid-template-columns:1fr}#agenda107 .ag-cel{min-height:48px;padding:3px}#agenda107 .ag-box{padding:14px}}</style>
+<section id="agenda107" class="section">
+<div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn btn2" data-ag="atualizar">Atualizar</button><button type="button" class="btn btn2" data-ag="avisos">🔔 Avisos <span class="ag-bdg" id="ag107BdgTopo" data-ag-bdg hidden></span></button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
+<div id="ag107Filtros" class="ag-filtros"></div>
+<div id="ag107Corpo"></div>
+<div id="ag107Modal"></div>
+<div id="ag107Live" class="ag-sr" role="status" aria-live="polite"></div>
+</section>
 <section id="comercial" class="section">
 <div class="top"><h1>💼 Comercial</h1><div style="display:flex;gap:8px"><button class="btn" id="btnNovoAtendimentoComercial" onclick="abrirNovoAtendimento()">+ Novo atendimento</button><button class="btn" id="btnNovoAtendimentoReal" style="display:none" onclick="abrirCriacaoAtendimentoReal()">+ Novo atendimento</button></div></div>
 <!-- V8.3.0: avisos e estado do modo REAL (somente leitura). Controlados por JS; ocultos no modo demo. -->
@@ -51604,6 +51697,782 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
   };
  }
 })();
+</script>
+<script id="ag107Js">
+/* ZIP OS V1.7.0.0 · Agenda — front. Fonte única: o construtor injeta este arquivo como <script id="ag107Js"> no fim do HTML da 105.
+   Regras: nenhum callback de Auth (identidade vigiada por timer), respostas tardias/de outra identidade descartadas, todo texto dinâmico escapado,
+   links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto. */
+var AG107 = (function(){
+'use strict';
+var G = (typeof window !== 'undefined') ? window : this;
+var RPC_TIMEOUT = 20000, POLL_MS = 60000, VIGIA_MS = 1500;
+var NAT = { reuniao: 'Reunião / call', gravacao: 'Gravação', edicao: 'Edição', revisao: 'Revisão / apresentação', outros: 'Outros' };
+var NAT_ORD = ['reuniao', 'gravacao', 'edicao', 'revisao', 'outros'];
+var STATUS = { previsto: 'Previsto', confirmado: 'Confirmado', concluido: 'Concluído', cancelado: 'Cancelado' };
+var LEMB = [['ambos', '1 dia e 1 hora antes'], ['1d', '1 dia antes'], ['1h', '1 hora antes'], ['nenhum', 'Sem lembrete']];
+var PRES = { pendente: 'Aguardando resposta', confirmado: 'Confirmou', recusado: 'Recusou' };
+var DOW = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+var MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+var AVISO = { convite: 'Você foi incluído em', alteracao: 'Compromisso alterado:', cancelamento: 'Compromisso cancelado:', remocao: 'Você foi removido de um compromisso', lembrete_1d: 'Lembrete — amanhã:', lembrete_1h: 'Lembrete — em 1 hora:' };
+var CHAVES_PAYLOAD = ['natureza', 'titulo', 'data', 'hora_inicio', 'hora_fim', 'status', 'responsavel_id', 'participantes', 'externos', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'projeto_id', 'gravacao_id', 'permitir_duplicado', 'atualizar_referencia', 'cliente'];
+var RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/* ------------------------------------------------------------------ utilitários puros */
+function esc(v){ return String(v == null ? '' : v).replace(/[&<>"'`]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]; }); }
+function safeUrl(u){ u = String(u == null ? '' : u).trim(); return (u.length <= 500 && /^https?:\/\/[^\s<>"]+$/i.test(u)) ? u : ''; }
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function norm(s){ s = String(s == null ? '' : s).toLowerCase(); try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch(e){} return s.trim(); }
+function parseYmd(s){
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s == null ? '' : s)); if(!m) return null;
+  var y = +m[1], mo = +m[2], d = +m[3], t = Date.UTC(y, mo - 1, d), dt = new Date(t);
+  if(dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+  return { y: y, m: mo, d: d, t: t };
+}
+function ymd(t){ var d = new Date(t); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
+function addDias(s, n){ var p = parseYmd(s); return p ? ymd(p.t + n * 86400000) : ''; }
+function dowSeg(s){ var p = parseYmd(s); return p ? (new Date(p.t).getUTCDay() + 6) % 7 : 0; }
+function inicioSemana(s){ return addDias(s, -dowSeg(s)); }
+function inicioGradeMes(a, m){ return inicioSemana(a + '-' + pad2(m) + '-01'); }
+function hojeBR(){
+  try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }
+  catch(e){ return ymd(Date.now() - 3 * 3600000); }
+}
+function fmtData(s){ var p = parseYmd(s); return p ? pad2(p.d) + '/' + pad2(p.m) + '/' + p.y : String(s || ''); }
+function fmtDataCurta(s){ var p = parseYmd(s); return p ? pad2(p.d) + '/' + pad2(p.m) : ''; }
+function fmtDiaSemana(s){ return DOW[dowSeg(s)] || ''; }
+function quando(it){ return it.hora_inicio ? it.hora_inicio + (it.hora_fim ? '–' + it.hora_fim : '') : 'A definir'; }
+function trunc(s, n){ s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function novaChave(){
+  try { if(G.crypto && typeof G.crypto.randomUUID === 'function') return G.crypto.randomUUID(); } catch(e){}
+  var h = '0123456789abcdef', r = '';
+  for(var i = 0; i < 36; i++){ if(i === 8 || i === 13 || i === 18 || i === 23) r += '-'; else if(i === 14) r += '4'; else if(i === 19) r += h[8 + Math.floor(Math.random() * 4)]; else r += h[Math.floor(Math.random() * 16)]; }
+  return r;
+}
+function hashTexto(s){ var h = 5381; s = String(s); for(var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return String(h >>> 0); }
+function interno(p){ return p && p.tipo === 'interno'; }
+function porNome(a, b){ return String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'); }
+
+/* ------------------------------------------------------------------ validação do formulário e payload (espelham o servidor; o servidor é a autoridade) */
+var CTRL1 = /[\u0000-\u001F\u007F]/, CTRL_ML = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
+function validarForm(f){
+  var e = {}, t = String(f.titulo == null ? '' : f.titulo).trim();
+  if(!NAT[f.natureza]) e.natureza = 'Escolha a natureza.';
+  if(!t || t.length > 160 || CTRL1.test(t)) e.titulo = 'Informe um título de até 160 caracteres.';
+  if(!parseYmd(f.data)) e.data = 'Informe uma data válida.';
+  var hi = f.aDefinir ? '' : String(f.hi || ''), hf = f.aDefinir ? '' : String(f.hf || '');
+  var reH = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
+  if(!f.aDefinir && !hi) e.hi = 'Informe o início ou marque "Horário a definir".';
+  else if(hi && !reH.test(hi)) e.hi = 'Horário inicial inválido.';
+  if(hf){ if(!reH.test(hf)) e.hf = 'Horário final inválido.'; else if(!hi) e.hf = 'Informe o início antes do fim.'; else if(hf <= hi) e.hf = 'O fim deve ser depois do início.'; }
+  var loc = String(f.local || '').trim(), pla = String(f.plataforma || '').trim(), lnk = String(f.link || '').trim(), pau = String(f.pauta || '').trim();
+  if(loc.length > 200 || CTRL1.test(loc)) e.local = 'Local: até 200 caracteres.';
+  if(pla.length > 60 || CTRL1.test(pla)) e.plataforma = 'Plataforma: até 60 caracteres.';
+  if(lnk && !safeUrl(lnk)) e.link = 'O link precisa começar com http:// ou https://.';
+  if(pau.length > 4000 || CTRL_ML.test(pau)) e.pauta = 'Pauta: até 4000 caracteres.';
+  var cli = f.projeto_id ? '' : String(f.cliente || '').trim();   // com OS vale o cliente da OS (consulta); o texto próprio só existe sem OS
+  if(cli.length > 120 || CTRL1.test(cli)) e.cliente = 'Cliente: até 120 caracteres.';
+  if(f.status !== 'previsto' && f.status !== 'confirmado' && !(f.modo === 'editar' && f.status === 'concluido')) e.status = 'Situação inválida.';
+  var lm = false; LEMB.forEach(function(x){ if(x[0] === f.lembrete) lm = true; }); if(!lm) e.lembrete = 'Lembrete inválido.';
+  var parts = (f.parts || []).filter(function(x){ return RE_UUID.test(String(x)); });
+  if(parts.length > 30) e.parts = 'No máximo 30 participantes internos.';
+  var ext = [];
+  (f.externos || []).forEach(function(x){
+    if(x.pfId){ ext.push({ projeto_fornecedor_id: x.pfId }); return; }
+    var nm = String(x.nome || '').trim(), fn = String(x.funcao || '').trim();
+    if(!nm || nm.length > 120 || CTRL1.test(nm)){ e.externos = 'Nome do convidado: 1 a 120 caracteres.'; return; }
+    if(fn.length > 120 || CTRL1.test(fn)){ e.externos = 'Função: até 120 caracteres.'; return; }
+    var o = { tipo: x.tipo === 'fornecedor' ? 'fornecedor' : 'convidado', nome: nm }; if(fn) o.funcao = fn; ext.push(o);
+  });
+  if(ext.length > 30) e.externos = 'No máximo 30 convidados/fornecedores.';
+  if(f.gravacao_id && !f.projeto_id) e.projeto_id = 'Escolha a OS da gravação.';
+  var p = {
+    natureza: f.natureza, titulo: t, data: f.data, hora_inicio: hi || null, hora_fim: hf || null, status: f.status || 'previsto',
+    responsavel_id: RE_UUID.test(String(f.resp || '')) ? f.resp : null, participantes: parts, externos: ext,
+    local: loc || null, plataforma: pla || null, link: lnk || null, pauta: pau || null, cliente: cli || null, lembrete: f.lembrete || 'ambos',
+    projeto_id: f.projeto_id || null, gravacao_id: f.gravacao_id || null
+  };
+  if(f.modo === 'novo' && f.permitirDup) p.permitir_duplicado = true;
+  if(f.modo === 'editar' && f.atualizarRef) p.atualizar_referencia = true;
+  return { erros: e, payload: p };
+}
+function hashPayload(p, modo, id, ver){ return hashTexto(modo + '|' + (id || '') + '|' + (ver == null ? '' : ver) + '|' + JSON.stringify(p)); }
+function divergencias(snap, atual){
+  var out = []; if(!snap || !atual) return out;
+  function c(rot, a, b){ a = a == null ? '' : String(a); b = b == null ? '' : String(b); if(a !== b) out.push({ campo: rot, antes: a, depois: b }); }
+  c('Título da OS', snap.titulo, atual.titulo); c('Cliente', snap.cliente_nome, atual.cliente_nome); c('Local da OS', snap.local, atual.local);
+  if(snap.gravacao || atual.gravacao){ var ga = snap.gravacao || {}, gb = atual.gravacao || {}; c('Data da gravação', ga.data, gb.data); c('Horário da gravação', ga.horario, gb.horario); }
+  return out;
+}
+function passa(it, fl){
+  if(fl.natureza && it.natureza !== fl.natureza) return false;
+  if(fl.status && it.status !== fl.status) return false;
+  if(fl.pessoa){ var ok = it.responsavel_id === fl.pessoa || (it.participantes || []).some(function(p){ return p.usuario_id === fl.pessoa; }); if(!ok) return false; }
+  var q = norm(fl.texto); if(q && norm([it.os, it.cliente, it.titulo].join(' ')).indexOf(q) < 0) return false;
+  return true;
+}
+function ordenar(a, b){
+  if(a.data !== b.data) return a.data < b.data ? -1 : 1;
+  var x = a.hora_inicio || '99:99', y = b.hora_inicio || '99:99'; if(x !== y) return x < y ? -1 : 1;
+  return String(a.titulo).localeCompare(String(b.titulo), 'pt-BR');
+}
+function porDia(itens, fl){ var m = {}; (itens || []).forEach(function(it){ if(!passa(it, fl)) return; (m[it.data] = m[it.data] || []).push(it); }); Object.keys(m).forEach(function(k){ m[k].sort(ordenar); }); return m; }
+function fmtDiv(v){ return v ? (parseYmd(v) ? fmtData(v) : String(v)) : '—'; }
+function textoResumo(d){
+  var c = d.compromisso || {}, L = [];
+  L.push(c.titulo); L.push((NAT[c.natureza] || '') + ' · ' + (STATUS[c.status] || ''));
+  L.push('Quando: ' + fmtData(c.data) + ' ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? '–' + c.hora_fim : '') : 'horário a definir'));
+  if(c.responsavel_nome) L.push('Responsável: ' + c.responsavel_nome);
+  if(c.cliente) L.push('Cliente: ' + c.cliente);
+  if(c.local) L.push('Local: ' + c.local); if(c.plataforma) L.push('Plataforma: ' + c.plataforma); if(c.link) L.push('Link: ' + c.link);
+  var pn = (d.participantes || []).map(function(p){ return p.nome + (p.funcao ? ' (' + p.funcao + ')' : ''); }); if(pn.length) L.push('Participantes: ' + pn.join(', '));
+  if(c.pauta) L.push('Pauta: ' + c.pauta);
+  var s = d.snapshot; if(s){ L.push('OS ' + (s.os || '') + ' — ' + (s.titulo || '') + (s.cliente_nome ? ' — ' + s.cliente_nome : '')); if(s.local) L.push('Local da OS: ' + s.local); }
+  return L.join('\n');
+}
+
+/* ------------------------------------------------------------------ estado e identidade */
+function doc(){ return typeof document !== 'undefined' ? document : null; }
+function $(id){ var d = doc(); return d ? d.getElementById(id) : null; }
+function setHtml(id, h){ var el = $(id); if(el) el.innerHTML = h; }
+function novoEstado(){
+  var h = hojeBR();
+  return { id: '', indisponivel: false, escopo: 'minha', filtros: { natureza: '', status: '', pessoa: '', texto: '' },
+    semIni: inicioSemana(h), mes: { a: +h.slice(0, 4), m: +h.slice(5, 7) }, diaSel: h,
+    sem: { estado: 'vazio', itens: [], msg: '' }, mesD: { estado: 'vazio', itens: [], msg: '' },
+    ger: { sem: 0, mes: 0, det: 0, eq: 0, av: 0 }, equipe: null, eqEstado: '', nomes: {}, naoLidas: 0, modal: null, form: null, det: null, avisos: null, confAviso: null, tPoll: null, tVigia: null, tBusca: null, tConf: null, ligado: false };
+}
+var S = novoEstado();
+function meuId(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.id) ? String(currentUser.id) : ''; } catch(e){ return ''; } }
+function perfis(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.profiles) ? currentUser.profiles : []; } catch(e){ return []; } }
+function ehGestorUI(){ var p = perfis(); return p.indexOf('socio') >= 0 || p.indexOf('admin') >= 0; }
+function idAtual(){
+  try {
+    var u = meuId(); if(!u) return '';
+    var ep = (typeof _authContextEpoch !== 'undefined') ? _authContextEpoch : 0, ps = $('profileSelect');
+    return u + '|' + ep + '|' + (ps ? ps.value : '');
+  } catch(e){ return ''; }
+}
+function secaoAtiva(){ var s = $('agenda107'); return !!(s && s.classList && s.classList.contains('active')); }
+function reset(){
+  var antes = S; clearInterval(antes.tPoll); clearTimeout(antes.tBusca); clearTimeout(antes.tConf);
+  var n = novoEstado(); n.id = antes.id; n.tVigia = antes.tVigia; n.ligado = antes.ligado;
+  n.ger = { sem: antes.ger.sem + 1, mes: antes.ger.mes + 1, det: antes.ger.det + 1, eq: antes.ger.eq + 1, av: antes.ger.av + 1 };
+  S = n; badge(0); setHtml('ag107Modal', ''); setHtml('ag107Corpo', ''); setHtml('ag107Filtros', '');
+}
+
+/* ------------------------------------------------------------------ RPC (prazo, descarte de identidade, mensagens honestas) */
+function erroTexto(e){
+  var c = String(e && e.code || ''), m = String(e && e.message || '');
+  if(c === '42883' || c === 'PGRST202' || /could not find the function|schema cache/i.test(m)) return 'FUNCAO_AUSENTE';
+  if(c === '42501' || /permission denied|sess[aã]o inv[aá]lida/i.test(m)) return 'Sem permissão ou sessão inválida. Entre novamente.';
+  if(/jwt|expired/i.test(m)) return 'Sessão expirada. Entre novamente.';
+  return 'Não foi possível concluir (' + (c || 'erro') + ').';
+}
+function rpc(nome, args, id0){
+  var c = (typeof supabaseClient !== 'undefined') ? supabaseClient : null;
+  if(!c || typeof c.rpc !== 'function') return Promise.resolve({ ok: false, erro: 'Sem conexão com o servidor. Recarregue a página.' });
+  return new Promise(function(resolve){
+    var fim = false, t = setTimeout(function(){ if(fim) return; fim = true; resolve({ ok: false, timeout: true, erro: 'O servidor não respondeu a tempo.' }); }, RPC_TIMEOUT);
+    function fecha(r){ if(fim) return; fim = true; clearTimeout(t); resolve(r); }
+    var p; try { p = c.rpc(nome, args || {}); } catch(e){ fecha({ ok: false, erro: 'Falha ao chamar o servidor.' }); return; }
+    Promise.resolve(p).then(function(r){
+      if(!r){ fecha({ ok: false, erro: 'Resposta vazia do servidor.' }); return; }
+      if(r.error){ fecha({ ok: false, erro: erroTexto(r.error) }); return; }
+      fecha({ ok: true, data: r.data });
+    }, function(){ fecha({ ok: false, erro: 'Falha de rede.' }); });
+  }).then(function(r){ if(id0 !== undefined && id0 !== idAtual()) r.descartado = true; if(!r.ok && r.erro === 'FUNCAO_AUSENTE') S.indisponivel = true; return r; });
+}
+function msgFalha(r){
+  if(r && r.erro === 'FUNCAO_AUSENTE') return 'A Agenda ainda não está instalada no banco. Avise o responsável pelo sistema.';
+  if(r && r.timeout) return 'O servidor não respondeu. Tente novamente.';
+  return (r && r.erro) || 'Falha inesperada.';
+}
+
+/* ------------------------------------------------------------------ carregamento */
+function resultadoLista(r, ini){
+  if(!r.ok) return { estado: 'erro', itens: [], msg: msgFalha(r), ini: ini };
+  var d = r.data || {};
+  if(d.status === 'ok') return { estado: 'ok', itens: Array.isArray(d.itens) ? d.itens : [], msg: '', ini: ini, parcial: d.parcial === true, total: Number(d.total) || 0, limite: Number(d.limite) || 500 };
+  if(d.status === 'sem_permissao') return { estado: 'erro', itens: [], msg: 'Você não tem permissão para a visão da equipe.', ini: ini };
+  return { estado: 'erro', itens: [], msg: d.mensagem || 'Resposta inesperada do servidor.', ini: ini };
+}
+function carregarSem(){
+  var id0 = idAtual(); if(!id0) return Promise.resolve();
+  var ini = S.semIni, g = ++S.ger.sem; S.sem = { estado: 'carregando', itens: S.sem.itens, msg: '', ini: ini }; pintar();
+  return rpc('agenda_listar', { p_inicio: ini, p_fim: addDias(ini, 6), p_escopo: S.escopo }, id0).then(function(r){ if(r.descartado || g !== S.ger.sem) return; S.sem = resultadoLista(r, ini); pintar(); });
+}
+function carregarMes(){
+  var id0 = idAtual(); if(!id0) return Promise.resolve();
+  var ini = inicioGradeMes(S.mes.a, S.mes.m), g = ++S.ger.mes; S.mesD = { estado: 'carregando', itens: S.mesD.itens, msg: '', ini: ini }; pintar();
+  return rpc('agenda_listar', { p_inicio: ini, p_fim: addDias(ini, 41), p_escopo: S.escopo }, id0).then(function(r){ if(r.descartado || g !== S.ger.mes) return; S.mesD = resultadoLista(r, ini); pintar(); });
+}
+function carregarEquipe(){
+  var id0 = idAtual(); if(!id0 || S.eqEstado === 'carregando') return Promise.resolve();
+  var g = ++S.ger.eq; S.eqEstado = 'carregando';
+  return rpc('agenda_equipe', {}, id0).then(function(r){
+    if(r.descartado || g !== S.ger.eq) return;
+    if(r.ok && r.data && r.data.status === 'ok'){ S.equipe = (r.data.equipe || []).slice().sort(porNome); S.equipe.forEach(function(x){ S.nomes[x.id] = x.nome; }); S.eqEstado = 'ok'; }
+    else S.eqEstado = 'erro';
+    pintarFiltros(); if(S.form) pintarFormPartes();
+  });
+}
+function contarNaoLidas(){
+  var id0 = idAtual(); if(!id0 || S.indisponivel) return Promise.resolve();
+  return rpc('agenda_notificacoes_contar', {}, id0).then(function(r){
+    if(r.descartado || !r.ok || !r.data || r.data.status !== 'ok') return;
+    var n = Number(r.data.nao_lidas) || 0;
+    if(n > S.naoLidas) live('Você tem ' + n + ' aviso(s) novo(s) na Agenda.');
+    S.naoLidas = n; badge(n);
+  });
+}
+function badge(n){
+  var d = doc(); if(!d || !d.querySelectorAll) return;
+  var els = d.querySelectorAll('[data-ag-bdg]');
+  for(var i = 0; i < els.length; i++){ els[i].textContent = n > 99 ? '99+' : String(n); els[i].hidden = !(n > 0); if(els[i].setAttribute) els[i].setAttribute('aria-label', n + ' aviso(s) não lido(s)'); }
+}
+function live(t){ var el = $('ag107Live'); if(el) el.textContent = t; }
+function recarregarTudo(){ return Promise.all([carregarSem(), carregarMes()]); }
+
+/* ------------------------------------------------------------------ desenho: filtros, semana, mês, dia */
+function opt(v, rot, sel){ return '<option value="' + esc(v) + '"' + (sel ? ' selected' : '') + '>' + esc(rot) + '</option>'; }
+function htmlFiltros(){
+  var f = S.filtros, h = '';
+  if(ehGestorUI()) h += '<label>Visão<select data-fl="escopo">' + opt('minha', 'Minha agenda', S.escopo === 'minha') + opt('equipe', 'Equipe (todos)', S.escopo === 'equipe') + '</select></label>';
+  h += '<label>Natureza<select data-fl="natureza">' + opt('', 'Todas', !f.natureza) + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select></label>';
+  h += '<label>Situação<select data-fl="status">' + opt('', 'Todas', !f.status) + ['previsto', 'confirmado', 'concluido', 'cancelado'].map(function(k){ return opt(k, STATUS[k], f.status === k); }).join('') + '</select></label>';
+  h += '<label>Pessoa<select data-fl="pessoa">' + opt('', 'Todas', !f.pessoa) + (S.equipe || []).map(function(x){ return opt(x.id, x.nome, f.pessoa === x.id); }).join('') + '</select></label>';
+  h += '<label>OS / cliente / título<input type="text" data-fl="texto" maxlength="80" value="' + esc(f.texto) + '" placeholder="Buscar"></label>';
+  return h;
+}
+function pintarFiltros(){
+  var el = $('ag107Filtros'); if(!el) return;
+  var foco = (doc() && doc().activeElement && doc().activeElement.getAttribute) ? doc().activeElement.getAttribute('data-fl') : null;
+  if(foco === 'texto') return;   // não recria o campo enquanto a pessoa digita
+  el.innerHTML = htmlFiltros();
+}
+function chip(it){
+  var sub = [];
+  if(it.os) sub.push(it.os + (it.cliente ? ' · ' + it.cliente : '')); else if(it.cliente) sub.push(it.cliente);
+  var onde = it.local || it.plataforma; if(onde) sub.push(onde);
+  var np = (it.participantes || []).filter(interno).length; if(np > 1) sub.push(np + ' pessoas');
+  var tag = (NAT[it.natureza] || '') + (it.status !== 'previsto' ? ' · ' + (STATUS[it.status] || '') : '') + (it.minha_presenca === 'pendente' && it.status !== 'cancelado' ? ' · responder' : '');
+  return '<button type="button" class="ag-ev ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + (it.status === 'cancelado' ? ' ag-cancel' : '') + (it.status === 'concluido' ? ' ag-conc' : '') + '" data-ag="abrir" data-id="' + esc(it.id) + '" title="' + esc(it.titulo) + '">'
+    + '<span class="h">' + esc(quando(it)) + '</span><span class="t">' + esc(it.titulo) + '</span>' + (sub.length ? '<span class="s">' + esc(sub.join(' · ')) + '</span>' : '') + '<span class="b">' + esc(tag) + '</span></button>';
+}
+function htmlEstado(d, vazioMsg){
+  if(d.estado === 'erro') return '<div class="ag-msg erro" role="alert">' + esc(d.msg || 'Falha ao carregar.') + (S.indisponivel ? '' : ' <button type="button" class="btn btn2" data-ag="atualizar">Tentar novamente</button>') + '</div>';
+  if(d.estado === 'carregando' && !(d.itens || []).length) return '<div class="ag-msg">Carregando…</div>';
+  if(d.estado === 'vazio') return '<div class="ag-msg">Carregando…</div>';
+  return '';
+}
+function htmlParcial(d){
+  if(!d || !d.parcial) return '';
+  return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens, marcadores e filtros abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + (S.escopo === 'equipe' ? ' ou volte para "Minha agenda"' : '') + '.</div>';
+}
+function htmlSemana(){
+  var ini = S.semIni, fim = addDias(ini, 6), hoje = hojeBR(), m = porDia(S.sem.itens, S.filtros), h = '';
+  h += '<div class="card ag-bloco"><div class="ag-cab"><h2>' + (ini === inicioSemana(hoje) ? 'Esta semana' : 'Semana') + ' · ' + esc(fmtDataCurta(ini)) + ' a ' + esc(fmtData(fim)) + '</h2><div class="ag-nav"><button type="button" class="btn btn2" data-ag="sem-ant" aria-label="Semana anterior">◀</button><button type="button" class="btn btn2" data-ag="sem-hoje">Esta semana</button><button type="button" class="btn btn2" data-ag="sem-prox" aria-label="Próxima semana">▶</button></div></div>';
+  h += htmlEstado(S.sem) + htmlParcial(S.sem);
+  if(S.sem.estado === 'ok' || S.sem.itens.length){
+    h += '<div class="ag-semana">';
+    for(var i = 0; i < 7; i++){
+      var d = addDias(ini, i), l = m[d] || [];
+      h += '<div class="ag-dia' + (d === hoje ? ' hoje' : '') + '"><h4>' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
+    }
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+function htmlMes(){
+  var a = S.mes.a, mo = S.mes.m, ini = inicioGradeMes(a, mo), hoje = hojeBR(), m = porDia(S.mesD.itens, S.filtros), h = '';
+  h += '<div class="card ag-bloco"><div class="ag-cab"><h2>' + esc(MESES[mo - 1]) + ' de ' + a + '</h2><div class="ag-nav"><button type="button" class="btn btn2" data-ag="mes-ant" aria-label="Mês anterior">◀</button><button type="button" class="btn btn2" data-ag="mes-hoje">Este mês</button><button type="button" class="btn btn2" data-ag="mes-prox" aria-label="Próximo mês">▶</button></div></div>';
+  h += htmlEstado(S.mesD) + htmlParcial(S.mesD);
+  if(S.mesD.estado === 'ok' || S.mesD.itens.length){
+    h += '<div class="ag-mes">' + DOW.map(function(x){ return '<div class="ag-dow">' + x + '</div>'; }).join('');
+    for(var i = 0; i < 42; i++){
+      var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [], nats = [];
+      l.forEach(function(it){ if(nats.indexOf(it.natureza) < 0) nats.push(it.natureza); });
+      h += '<button type="button" class="ag-cel' + (p.m !== mo ? ' fora' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="dia" data-d="' + esc(d) + '" aria-label="' + esc(fmtData(d) + ', ' + l.length + ' compromisso(s)') + '"><b>' + p.d + '</b>'
+        + (l.length ? '<span class="ag-pts">' + nats.slice(0, 4).map(function(n){ return '<span class="ag-pt ag-n-' + esc(NAT[n] ? n : 'outros') + '"></span>'; }).join('') + '<span class="ag-q">' + l.length + '</span></span>' : '') + '</button>';
+    }
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+function itensDoDia(d){
+  var vistos = {}, out = [];
+  S.mesD.itens.concat(S.sem.itens).forEach(function(it){ if(it.data === d && !vistos[it.id] && passa(it, S.filtros)){ vistos[it.id] = 1; out.push(it); } });
+  return out.sort(ordenar);
+}
+function htmlDia(){
+  var l = itensDoDia(S.diaSel);
+  return '<div class="card ag-bloco"><div class="ag-cab"><h2>' + esc(fmtDiaSemana(S.diaSel)) + ', ' + esc(fmtData(S.diaSel)) + '</h2><button type="button" class="btn btn2" data-ag="novo-dia">+ Agendar neste dia</button></div>'
+    + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Nenhum compromisso neste dia.</div>') + ((S.mesD.parcial || S.sem.parcial) ? '<div class="ag-vazio" style="margin-top:6px">A lista deste período está incompleta: pode haver mais compromissos neste dia.</div>' : '') + '</div>';
+}
+function pintar(){
+  pintarFiltros();
+  var el = $('ag107Corpo'); if(el) el.innerHTML = htmlSemana() + htmlMes() + htmlDia();
+}
+
+/* ------------------------------------------------------------------ modal: detalhe */
+function htmlDetalhe(d, conf){
+  var c = d.compromisso || {}, s = d.snapshot, at = d.origem_atual, div = divergencias(s, at), h = '';
+  h += '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="Detalhes do compromisso">';
+  h += '<h2>' + esc(c.titulo) + '</h2><div><span class="badge info">' + esc(NAT[c.natureza] || '') + '</span> <span class="badge ' + (c.status === 'cancelado' ? 'danger' : c.status === 'concluido' ? 'ok' : c.status === 'confirmado' ? 'ok' : 'warn') + '">' + esc(STATUS[c.status] || '') + '</span></div>';
+  if(conf && conf.length) h += '<div class="ag-aviso" role="alert"><b>Atenção — conflito de horário:</b><br>' + conf.map(function(x){ return esc(x.nome) + ' já tem ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'um compromisso (ocupado)') + ' das ' + esc(x.hora_inicio) + ' às ' + esc(x.hora_fim); }).join('<br>') + '<br><small>Salvo mesmo assim; conflito é só um alerta.</small></div>';
+  if(c.status === 'cancelado') h += '<div class="ag-aviso erro">Este compromisso foi cancelado.</div>';
+  h += '<dl class="ag-kv" style="margin-top:12px"><dt>Quando</dt><dd>' + esc(fmtDiaSemana(c.data) + ', ' + fmtData(c.data) + ' — ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? ' às ' + c.hora_fim : '') : 'horário a definir')) + '</dd>'
+    + '<dt>Responsável</dt><dd>' + esc(c.responsavel_nome || '—') + '</dd>' + (c.cliente ? '<dt>Cliente</dt><dd>' + esc(c.cliente) + '</dd>' : '')
+    + (c.local ? '<dt>Local</dt><dd>' + esc(c.local) + '</dd>' : '') + (c.plataforma ? '<dt>Plataforma</dt><dd>' + esc(c.plataforma) + '</dd>' : '')
+    + (c.link ? '<dt>Link</dt><dd>' + (safeUrl(c.link) ? '<a href="' + esc(safeUrl(c.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(c.link) + '</a>' : esc(c.link)) + '</dd>' : '')
+    + '<dt>Lembrete</dt><dd>' + esc((LEMB.filter(function(x){ return x[0] === c.lembrete; })[0] || ['', '—'])[1]) + '</dd></dl>';
+  var ints = (d.participantes || []).filter(interno), exts = (d.participantes || []).filter(function(p){ return !interno(p); });
+  h += '<div class="ag-sec"><h3>Participantes</h3>' + (ints.length ? ints.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + ' · ' + esc(PRES[p.presenca] || '') + '</span>'; }).join('') : '<div class="ag-vazio">Nenhum.</div>');
+  if(exts.length) h += '<div style="margin-top:8px"><b style="font-size:12px">Fornecedores e convidados (sem aviso pelo sistema)</b><br>' + exts.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + (p.funcao ? ' · ' + esc(p.funcao) : '') + ' · ' + (p.tipo === 'fornecedor' ? 'fornecedor' : 'convidado') + '</span>'; }).join('') + '</div>';
+  h += '</div>';
+  if(c.pauta) h += '<div class="ag-sec"><h3>Pauta / observações</h3><div style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px">' + esc(c.pauta) + '</div></div>';
+  if(s){
+    h += '<div class="ag-sec"><div class="ag-os"><div class="rot">Dados da OS (consulta — não editável aqui)</div><dl class="ag-kv"><dt>OS</dt><dd>' + esc(s.os) + ' — ' + esc(s.titulo) + '</dd>' + (s.cliente_nome ? '<dt>Cliente</dt><dd>' + esc(s.cliente_nome) + '</dd>' : '')
+      + (s.local ? '<dt>Local</dt><dd>' + esc(s.local) + '</dd>' : '') + (s.gravacao ? '<dt>Gravação</dt><dd>Dia ' + esc(s.gravacao.dia) + ' — ' + esc(fmtData(s.gravacao.data)) + ' ' + esc(s.gravacao.horario || 'horário a definir') + '</dd>' : '')
+      + (s.responsaveis ? '<dt>Equipe da OS</dt><dd>' + esc(['Atendimento: ' + (s.responsaveis.atendimento || '—'), 'Produção: ' + (s.responsaveis.producao || '—'), 'Edição: ' + (s.responsaveis.edicao || '—')].join(' · ')) + '</dd>' : '')
+      + (s.briefing ? '<dt>Briefing</dt><dd>' + esc(s.briefing) + '</dd>' : '')
+      + (safeUrl(s.roteiro_url) ? '<dt>Roteiro</dt><dd><a href="' + esc(safeUrl(s.roteiro_url)) + '" target="_blank" rel="noopener noreferrer">' + esc(s.roteiro_url) + '</a></dd>' : (s.roteiro_url ? '<dt>Roteiro</dt><dd>' + esc(s.roteiro_url) + '</dd>' : ''))
+      + (safeUrl(s.referencia_url) ? '<dt>Referência</dt><dd><a href="' + esc(safeUrl(s.referencia_url)) + '" target="_blank" rel="noopener noreferrer">' + esc(s.referencia_url) + '</a></dd>' : (s.referencia_url ? '<dt>Referência</dt><dd>' + esc(s.referencia_url) + '</dd>' : ''))
+      + (s.contato_operacional ? '<dt>Contato</dt><dd>' + esc(s.contato_operacional) + '</dd>' : '') + '</dl></div>';
+    if(c.projeto_id && !d.acesso_origem) h += '<div class="ag-aviso">Você não tem acesso à OS de origem: o resumo acima é o que foi salvo neste compromisso.</div>';
+    if(div.length) h += '<div class="ag-aviso" role="alert"><b>A OS mudou desde que este compromisso foi salvo</b> (a Agenda mantém o que foi agendado):<br>' + div.map(function(x){ return esc(x.campo) + ': ' + esc(fmtDiv(x.antes)) + ' → ' + esc(fmtDiv(x.depois)); }).join('<br>') + (d.pode_editar ? '<br><button type="button" class="btn btn2" data-ag="editar-ref" style="margin-top:8px">Revisar e atualizar a referência (só este agendamento)</button>' : '') + '</div>';
+    h += '</div>';
+  } else if(c.projeto_id) h += '<div class="ag-sec"><div class="ag-aviso">A OS de origem está indisponível; este compromisso continua válido.</div></div>';
+  if(d.historico && d.historico.length) h += '<div class="ag-sec"><h3>Histórico</h3>' + d.historico.slice(0, 10).map(function(x){ return '<div style="font-size:12px;color:var(--muted)">' + esc(String(x.em || '').slice(0, 16).replace('T', ' ')) + ' · ' + esc(x.autor || '') + ' · ' + esc(x.acao) + ' (v' + esc(x.versao) + ')</div>'; }).join('') + '</div>';
+  h += '<div class="ag-botoes">';
+  if(d.minha_presenca && c.status !== 'cancelado' && c.status !== 'concluido') h += '<button type="button" class="btn btn2" data-ag="presenca" data-r="recusado">Recusar</button><button type="button" class="btn" data-ag="presenca" data-r="confirmado">' + (d.minha_presenca === 'confirmado' ? 'Presença confirmada ✓' : 'Confirmar presença') + '</button>';
+  h += '<button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button>';
+  if(d.pode_editar) h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">Cancelar compromisso</button><button type="button" class="btn" data-ag="editar">Editar</button>';
+  h += '<button type="button" class="btn btn2" data-ag="fechar">Fechar</button></div></div></div>';
+  return h;
+}
+function abrirDetalhe(id, conf){
+  var id0 = idAtual(), g = ++S.ger.det; if(!id0) return;
+  S.modal = 'detalhe'; S.det = null; S.confAviso = conf || null;
+  setHtml('ag107Modal', '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Carregando…</h2></div></div>');
+  return rpc('agenda_ler', { p_id: id }, id0).then(function(r){
+    if(r.descartado || g !== S.ger.det || S.modal !== 'detalhe') return;
+    if(!r.ok){ setHtml('ag107Modal', htmlMsgModal('Não foi possível abrir', msgFalha(r))); return; }
+    if(!r.data || r.data.status !== 'ok'){ setHtml('ag107Modal', htmlMsgModal('Compromisso indisponível', 'Ele não existe ou você não tem mais acesso a ele.')); return; }
+    S.det = r.data; setHtml('ag107Modal', htmlDetalhe(r.data, S.confAviso)); foco();
+  });
+}
+function htmlMsgModal(tit, msg){ return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + esc(tit) + '</h2><p>' + esc(msg) + '</p><div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>'; }
+function fechar(){ S.modal = null; S.form = null; S.det = null; S.avisos = null; clearTimeout(S.tBusca); clearTimeout(S.tConf); S.ger.det++; setHtml('ag107Modal', ''); }
+function foco(){ try { var b = doc().querySelector('#ag107Modal .ag-box button.btn, #ag107Modal .ag-box input'); if(b && b.focus) b.focus(); } catch(e){} }
+function copiar(){
+  if(!S.det) return; var t = textoResumo(S.det);
+  try { if(G.navigator && G.navigator.clipboard && G.navigator.clipboard.writeText){ G.navigator.clipboard.writeText(t).then(function(){ live('Resumo copiado.'); }, function(){ live('Não foi possível copiar; selecione o texto manualmente.'); }); return; } } catch(e){}
+  live('Selecione o texto na janela para copiar.');
+}
+function responder(r){
+  if(!S.det) return; var id0 = idAtual(), id = S.det.compromisso.id;
+  rpc('agenda_responder', { p_id: id, p_resposta: r }, id0).then(function(x){
+    if(x.descartado) return;
+    if(!x.ok){ live(msgFalha(x)); return; }
+    if(x.data && x.data.status === 'ok'){ live(r === 'confirmado' ? 'Presença confirmada.' : 'Presença recusada.'); abrirDetalhe(id); recarregarTudo(); }
+    else live('Não foi possível registrar a resposta.');
+  });
+}
+
+/* ------------------------------------------------------------------ modal: cancelar compromisso */
+function htmlCancelar(c){
+  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Cancelar compromisso?</h2><p>“' + esc(c.titulo) + '” será marcado como cancelado e os participantes serão avisados. A OS, a gravação e o financeiro não são alterados.</p>'
+    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label><div id="ag107CancMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="cancelar-ok">Cancelar compromisso</button></div></div></div>';
+}
+function cancelarOk(){
+  if(!S.det || S.modalBusy) return; var c = S.det.compromisso, id0 = idAtual(), motivo = ($('ag107Motivo') && $('ag107Motivo').value || '').trim();
+  if(motivo.length > 200){ setHtml('ag107CancMsg', 'Motivo: até 200 caracteres.'); return; }
+  if(!S.cancChave || S.cancHash !== c.id + '|' + c.versao + '|' + motivo){ S.cancChave = novaChave(); S.cancHash = c.id + '|' + c.versao + '|' + motivo; }
+  S.modalBusy = true;
+  rpc('agenda_cancelar', { p_chave: S.cancChave, p_id: c.id, p_versao: c.versao, p_motivo: motivo || null }, id0).then(function(r){
+    S.modalBusy = false; if(r.descartado) return;
+    var d = r.data || {};
+    if(r.ok && (d.status === 'cancelado' || d.status === 'ja_cancelado')){ S.cancChave = null; live('Compromisso cancelado.'); abrirDetalhe(c.id); recarregarTudo(); return; }
+    var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica o cancelamento.' : msgFalha(r)) : d.status === 'versao_mudou' ? 'O compromisso foi alterado por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode cancelar este compromisso.' : d.mensagem || 'Não foi possível cancelar.';
+    setHtml('ag107CancMsg', esc(m));
+  });
+}
+
+/* ------------------------------------------------------------------ modal: formulário */
+function formVazio(dia){
+  return { modo: 'novo', id: null, versao: null, chave: null, ultimoHash: '', natureza: 'reuniao', titulo: '', data: dia || S.diaSel || hojeBR(), aDefinir: false, hi: '09:00', hf: '', status: 'previsto',
+    resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'ambos', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
+    atualizarRef: false, permitirDup: false, enviando: false, erros: {}, msg: '', dup: null, conf: null, gen: 0, snapshot: null, acessoOrigem: true, divs: [] };
+}
+function formDeDetalhe(d, comRef){
+  var c = d.compromisso, f = formVazio(c.data);
+  f.modo = 'editar'; f.id = c.id; f.versao = c.versao; f.natureza = c.natureza; f.titulo = c.titulo; f.data = c.data; f.aDefinir = !c.hora_inicio; f.hi = c.hora_inicio || '09:00'; f.hf = c.hora_fim || '';
+  f.status = c.status; f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'ambos';
+  f.projeto_id = c.projeto_id || null; f.gravacao_id = c.gravacao_id || null; f.snapshot = d.snapshot || null; f.acessoOrigem = !!d.acesso_origem; f.divs = divergencias(d.snapshot, d.origem_atual); f.atualizarRef = !!comRef;
+  (d.participantes || []).forEach(function(p){
+    if(interno(p)){ f.parts.push(p.usuario_id); S.nomes[p.usuario_id] = p.nome; }
+    else f.externos.push({ tipo: p.tipo, nome: p.nome, funcao: p.funcao || '', pfId: p.projeto_fornecedor_id || null });
+  });
+  S.nomes[c.responsavel_id] = c.responsavel_nome;
+  return f;
+}
+function abrirForm(f){
+  S.form = f; S.modal = 'form'; f.gen++; carregarEquipe();
+  setHtml('ag107Modal', htmlForm(f)); foco();
+  if(f.projeto_id && f.acessoOrigem !== false && !f.os) carregarResumoOs(f.projeto_id, true);
+  agendarConflitos();
+}
+function opcoesResp(f){
+  var lista = (S.equipe || []).slice(); if(f.resp && !lista.some(function(x){ return x.id === f.resp; })) lista.unshift({ id: f.resp, nome: S.nomes[f.resp] || 'Responsável atual' });
+  return lista.map(function(x){ return opt(x.id, x.nome + (x.id === meuId() ? ' (eu)' : ''), x.id === f.resp); }).join('');
+}
+function htmlParticipantes(f){
+  if(S.eqEstado === 'carregando' || (!S.equipe && S.eqEstado !== 'erro')) return '<div class="ag-vazio" style="padding:8px">Carregando equipe…</div>';
+  if(S.eqEstado === 'erro' || !S.equipe) return '<div class="ag-vazio" style="padding:8px">Não foi possível carregar a equipe. <button type="button" class="btn btn2" data-ag="recarregar-equipe">Tentar novamente</button></div>';
+  return S.equipe.map(function(x){
+    var marc = f.parts.indexOf(x.id) >= 0 || x.id === f.resp;
+    return '<label data-nome="' + esc(norm(x.nome)) + '"><input type="checkbox" data-fp="' + esc(x.id) + '"' + (marc ? ' checked' : '') + (x.id === f.resp ? ' disabled' : '') + '> ' + esc(x.nome) + (x.id === f.resp ? ' (responsável)' : '') + '</label>';
+  }).join('');
+}
+function htmlExternos(f){
+  var h = (f.externos || []).map(function(x, i){ return '<span class="ag-tag">' + esc(x.nome) + (x.funcao ? ' · ' + esc(x.funcao) : '') + ' · ' + (x.pfId ? 'fornecedor da OS' : (x.tipo === 'fornecedor' ? 'fornecedor' : 'convidado')) + ' <button type="button" data-ag="ext-rem" data-i="' + i + '" aria-label="Remover">×</button></span>'; }).join('');
+  return h || '<div class="ag-vazio">Nenhum fornecedor/convidado externo.</div>';
+}
+function htmlOsBox(f){
+  var h = '<div class="full"><label>Vincular a uma OS (opcional)</label>';
+  if(f.projeto_id){
+    var os = f.os && f.os.resumo, s = os ? os.os : f.snapshot;
+    h += '<div class="ag-os"><div class="rot">Dados da OS (consulta — não editável aqui)</div>';
+    var osErro = !!(f.os && f.os.estado === 'erro');
+    if(f.os && f.os.estado === 'carregando') h += '<div class="ag-vazio">Carregando a OS…</div>';
+    else if(!s && osErro) h += '<div class="ag-err">' + esc(f.os.msg) + '</div>';
+    else if(s){
+      if(osErro) h += '<div class="ag-err">' + esc(f.os.msg) + ' Mostrando o resumo salvo neste agendamento.</div>';
+      h += '<dl class="ag-kv"><dt>OS</dt><dd>' + esc(s.os) + ' — ' + esc(s.titulo) + '</dd>' + (s.cliente_nome ? '<dt>Cliente</dt><dd>' + esc(s.cliente_nome) + '</dd>' : '') + (s.local ? '<dt>Local da OS</dt><dd>' + esc(s.local) + '</dd>' : '')
+        + (s.responsaveis ? '<dt>Equipe da OS</dt><dd>' + esc(['Atend.: ' + (s.responsaveis.atendimento || '—'), 'Prod.: ' + (s.responsaveis.producao || '—'), 'Ed.: ' + (s.responsaveis.edicao || '—')].join(' · ')) + '</dd>' : '')
+        + (s.briefing ? '<dt>Briefing</dt><dd>' + esc(trunc(s.briefing, 400)) + '</dd>' : '') + '</dl>';
+    } else h += '<div class="ag-vazio">OS vinculada (sem acesso para reler os dados agora).</div>';
+    if(os){
+      if(os.pode_gravacoes && (os.gravacoes || []).length){
+        h += '<label style="margin-top:8px">Gravação de referência<select data-f="gravacao_id">' + opt('', '— nenhuma —', !f.gravacao_id) + os.gravacoes.map(function(g){ return opt(g.id, 'Dia ' + g.dia + ' — ' + fmtData(g.data) + ' — ' + (g.horario || 'horário a definir') + (g.agenda_existente && g.agenda_existente.id !== f.id ? ' (já agendada)' : ''), f.gravacao_id === g.id); }).join('') + '</select></label>';
+        var gs = os.gravacoes.filter(function(g){ return g.id === f.gravacao_id; })[0];
+        if(gs && gs.agenda_existente && gs.agenda_existente.id !== f.id) h += '<div class="ag-aviso">Esta gravação já tem o compromisso “' + esc(gs.agenda_existente.titulo) + '”. <button type="button" class="btn btn2" data-ag="abrir" data-id="' + esc(gs.agenda_existente.id) + '">Abrir o existente</button></div>';
+        if(gs) h += '<div style="margin-top:6px"><button type="button" class="btn btn2" data-ag="usar-grav">Usar data/horário/local desta gravação neste agendamento</button></div>';
+      } else if(!os.pode_gravacoes) h += '<div class="ag-vazio" style="margin-top:6px">Seu acesso não inclui as gravações desta OS.</div>';
+      if(os.pode_fornecedores && (os.fornecedores || []).length){
+        h += '<div style="margin-top:8px"><b style="font-size:12px">Fornecedores vinculados à OS que participam DESTE compromisso</b><div class="ag-lista">' + os.fornecedores.map(function(x){
+          var marc = (f.externos || []).some(function(e){ return e.pfId === x.id; });
+          return '<label><input type="checkbox" data-fpf="' + esc(x.id) + '" data-nome="' + esc(x.nome || 'A definir') + '" data-func="' + esc(x.funcao || '') + '"' + (marc ? ' checked' : '') + '> ' + esc(x.nome || 'A definir') + (x.funcao ? ' · ' + esc(x.funcao) : '') + '</label>'; }).join('') + '</div></div>';
+      }
+    }
+    if(f.modo === 'editar' && f.divs && f.divs.length) h += '<div class="ag-aviso">A OS mudou: ' + f.divs.map(function(x){ return esc(x.campo) + ' ' + esc(fmtDiv(x.antes)) + ' → ' + esc(fmtDiv(x.depois)); }).join('; ') + '<label class="ag-chk" style="margin-top:6px"><input type="checkbox" data-f="atualizarRef"' + (f.atualizarRef ? ' checked' : '') + '> Atualizar a referência salva neste agendamento (a OS não é alterada)</label></div>';
+    h += '<div style="margin-top:8px"><button type="button" class="btn btn2" data-ag="os-limpar">Desvincular OS</button></div></div>';
+  } else {
+    h += '<input type="text" data-f="buscaOs" maxlength="80" placeholder="Número da OS, cliente ou título (mín. 2 letras)" value="' + esc(f.buscaOs.termo) + '" autocomplete="off"><div id="ag107OsRes">' + htmlOsRes(f) + '</div>';
+  }
+  return h + '</div>';
+}
+function htmlOsRes(f){
+  var b = f.buscaOs;
+  if(b.estado === 'carregando') return '<div class="ag-vazio" style="margin-top:6px">Buscando…</div>';
+  if(b.estado === 'erro') return '<div class="ag-err">' + esc(b.msg) + '</div>';
+  if(b.estado === 'ok') return b.itens.length ? '<div class="ag-res">' + b.itens.map(function(x){ return '<button type="button" data-ag="os-esc" data-p="' + esc(x.projeto_id) + '">' + esc(x.os) + ' — ' + esc(x.titulo) + (x.cliente_nome ? ' · ' + esc(x.cliente_nome) : '') + '</button>'; }).join('') + '</div>' : '<div class="ag-vazio" style="margin-top:6px">Nenhuma OS sua encontrada.</div>';
+  return '';
+}
+function htmlCliente(f){
+  if(f.projeto_id) return '';   // com OS o cliente é o da OS (consulta); sem OS o campo é próprio da Agenda
+  var er = (f.erros || {}).cliente;
+  return '<label>Cliente (opcional — reunião sem OS)<input type="text" data-f="cliente" maxlength="120" value="' + esc(f.cliente) + '" placeholder="Nome do cliente ou empresa"></label>' + (er ? '<div class="ag-err">' + esc(er) + '</div>' : '');
+}
+function htmlForm(f){
+  var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
+  var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '"><h2>' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '</h2>';
+  h += '<p class="muted" style="margin:0 0 10px">Dados <b>deste agendamento</b> — nada aqui altera a OS, o orçamento, as gravações ou o financeiro.</p><div class="ag-form">';
+  h += '<label>Natureza<select data-f="natureza">' + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select>' + e('natureza') + '</label>';
+  h += '<label>Situação<select data-f="status">' + opt('previsto', 'Previsto', f.status === 'previsto') + opt('confirmado', 'Confirmado', f.status === 'confirmado') + (f.modo === 'editar' ? opt('concluido', 'Concluído', f.status === 'concluido') : '') + '</select>' + e('status') + '</label>';
+  h += '<label class="full">Título<input type="text" data-f="titulo" maxlength="160" value="' + esc(f.titulo) + '">' + e('titulo') + '</label>';
+  h += '<label>Data<input type="date" data-f="data" value="' + esc(f.data) + '">' + e('data') + '</label>';
+  h += '<label class="ag-chk" style="align-self:end;padding-bottom:10px"><input type="checkbox" data-f="aDefinir"' + (f.aDefinir ? ' checked' : '') + '> Horário a definir</label>';
+  h += '<label>Início<input type="time" data-f="hi" value="' + esc(f.hi) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hi') + '</label>';
+  h += '<label>Fim (opcional)<input type="time" data-f="hf" value="' + esc(f.hf) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hf') + '</label>';
+  h += '<label>Responsável pelo compromisso<select data-f="resp">' + opcoesResp(f) + '</select>' + e('responsavel_id') + '</label>';
+  h += '<label>Lembrete<select data-f="lembrete">' + LEMB.map(function(x){ return opt(x[0], x[1], f.lembrete === x[0]); }).join('') + '</select></label>';
+  h += '<div class="full" id="ag107OsBox">' + htmlOsBox(f) + '</div>' + (e('projeto_id') ? '<div class="full">' + e('projeto_id') + '</div>' : '');
+  h += '<div class="full" id="ag107ClienteBox">' + htmlCliente(f) + '</div>';
+  h += '<div class="full"><label>Participantes da equipe (recebem aviso dentro do ZIP OS)</label><input type="text" id="ag107BuscaPart" placeholder="Filtrar pessoas" autocomplete="off" style="margin-bottom:0"><div class="ag-lista" id="ag107Parts">' + htmlParticipantes(f) + '</div>' + e('parts') + '</div>';
+  h += '<div class="full"><label>Fornecedores e convidados externos <span class="muted">(só registro: não recebem aviso, não confirmam disponibilidade/contratação/pagamento)</span></label><div id="ag107Ext" style="margin-top:6px">' + htmlExternos(f) + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><input type="text" id="ag107ExtNome" maxlength="120" placeholder="Nome do convidado" style="flex:2 1 160px;margin:0"><input type="text" id="ag107ExtFunc" maxlength="120" placeholder="Função (opcional)" style="flex:1 1 120px;margin:0"><button type="button" class="btn btn2" data-ag="ext-add">Adicionar</button></div>' + e('externos') + '</div>';
+  h += '<label>Local<input type="text" data-f="local" maxlength="200" value="' + esc(f.local) + '">' + e('local') + '</label>';
+  h += '<label>Plataforma (Meet, Zoom…)<input type="text" data-f="plataforma" maxlength="60" value="' + esc(f.plataforma) + '">' + e('plataforma') + '</label>';
+  h += '<label class="full">Link da reunião (apenas informado; a Agenda não cria sala)<input type="url" data-f="link" maxlength="500" value="' + esc(f.link) + '" placeholder="https://">' + e('link') + '</label>';
+  h += '<label class="full">Pauta / observações<textarea data-f="pauta" maxlength="4000">' + esc(f.pauta) + '</textarea>' + e('pauta') + '</label></div>';
+  h += '<div id="ag107FormMsg">' + htmlFormMsg(f) + '</div><div id="ag107Conf">' + htmlConf(f) + '</div>';
+  h += '<div class="ag-botoes"><button type="button" class="btn btn2" data-ag="fechar">Cancelar</button><button type="button" class="btn" data-ag="salvar" id="ag107Salvar"' + (f.enviando ? ' disabled' : '') + '>' + (f.enviando ? 'Salvando…' : 'Salvar') + '</button></div></div></div>';
+  return h;
+}
+function htmlFormMsg(f){
+  if(f.dup) return '<div class="ag-aviso erro">Já existe o compromisso “' + esc(f.dup.titulo) + '” para esta gravação. <button type="button" class="btn btn2" data-ag="abrir" data-id="' + esc(f.dup.id) + '">Abrir o existente</button> <button type="button" class="btn btn2" data-ag="criar-mesmo">É outra reunião: criar mesmo assim</button></div>';
+  if(f.msg) return '<div class="ag-aviso erro" role="alert">' + esc(f.msg) + '</div>';
+  if(Object.keys(f.erros || {}).length) return '<div class="ag-aviso erro" role="alert">Revise os campos destacados.</div>';
+  return '';
+}
+function htmlConf(f){
+  var c = f.conf; if(!c) return '';
+  if(c.estado === 'nao_verificado') return '<div class="ag-aviso">Conflito de horário não verificado: informe início e fim.</div>';
+  if(!c.itens || !c.itens.length) return '';
+  return '<div class="ag-aviso" role="status"><b>Possível conflito de horário</b> (é só um alerta; você pode salvar):<br>' + c.itens.map(function(x){ return esc(x.nome) + ' — ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'ocupado') + ' ' + esc(x.hora_inicio) + '–' + esc(x.hora_fim); }).join('<br>') + '</div>';
+}
+function pintarFormPartes(){
+  var f = S.form; if(!f) return;
+  setHtml('ag107OsBox', htmlOsBox(f)); setHtml('ag107Ext', htmlExternos(f)); setHtml('ag107FormMsg', htmlFormMsg(f)); setHtml('ag107Conf', htmlConf(f));
+  var el = $('ag107Parts'); if(el) el.innerHTML = htmlParticipantes(f);
+  var cb = $('ag107ClienteBox'); if(cb && (!f.projeto_id) !== !!cb.innerHTML) cb.innerHTML = htmlCliente(f);   // só quando o campo aparece/some (não perde o foco de quem digita)
+  var b = $('ag107Salvar'); if(b){ b.disabled = !!f.enviando; b.textContent = f.enviando ? 'Salvando…' : 'Salvar'; }
+}
+function pintarErros(){ var f = S.form; if(!f) return; var m = $('ag107Modal'); if(m) m.innerHTML = htmlForm(f); }
+function agendarConflitos(){
+  var f = S.form; if(!f) return; clearTimeout(S.tConf);
+  var hi = f.aDefinir ? '' : f.hi, hf = f.aDefinir ? '' : f.hf;
+  if(!parseYmd(f.data)){ f.conf = null; setHtml('ag107Conf', ''); return; }
+  if(!hi || !hf){ f.conf = f.aDefinir || !hi ? null : { estado: 'nao_verificado' }; setHtml('ag107Conf', htmlConf(f)); return; }
+  var g = f.gen; S.tConf = setTimeout(function(){
+    if(S.form !== f || f.gen !== g) return; var id0 = idAtual(); var pes = f.parts.slice(); if(f.resp && pes.indexOf(f.resp) < 0) pes.push(f.resp); if(!pes.length) return;
+    rpc('agenda_conflitos', { p_data: f.data, p_inicio: hi, p_fim: hf, p_pessoas: pes, p_excluir: f.id || null }, id0).then(function(r){
+      if(r.descartado || S.form !== f || f.gen !== g) return;
+      if(r.ok && r.data && r.data.status === 'ok') f.conf = { estado: r.data.verificado ? 'ok' : 'nao_verificado', itens: r.data.itens || [] }; else f.conf = null;
+      setHtml('ag107Conf', htmlConf(f));
+    });
+  }, 600);
+}
+function buscarOs(){
+  var f = S.form; if(!f) return; var t = String(f.buscaOs.termo || '').trim(); clearTimeout(S.tBusca);
+  if(t.length < 2){ f.buscaOs.estado = ''; f.buscaOs.itens = []; atualizarOsBox(); return; }
+  var g = f.gen; S.tBusca = setTimeout(function(){
+    if(S.form !== f || f.gen !== g) return; var id0 = idAtual(); f.buscaOs.estado = 'carregando'; atualizarOsBox(true);
+    rpc('agenda_os_buscar', { p_termo: t }, id0).then(function(r){
+      if(r.descartado || S.form !== f || f.gen !== g || String(f.buscaOs.termo || '').trim() !== t) return;
+      if(!r.ok){ f.buscaOs.estado = 'erro'; f.buscaOs.msg = msgFalha(r); } else { f.buscaOs.estado = 'ok'; f.buscaOs.itens = (r.data && r.data.itens) || []; }
+      atualizarOsBox(true);
+    });
+  }, 350);
+}
+function atualizarOsBox(){
+  var f = S.form; if(!f) return;
+  var c = $('ag107OsRes');   // só a lista de resultados é redesenhada: o campo de busca mantém foco e cursor
+  if(c){ c.innerHTML = htmlOsRes(f); return; }
+  setHtml('ag107OsBox', htmlOsBox(f));
+}
+function carregarResumoOs(pid, preservar){
+  var f = S.form; if(!f) return; var id0 = idAtual(), g = f.gen;
+  f.os = { estado: 'carregando', resumo: null }; if(!preservar){ f.gravacao_id = null; f.externos = f.externos.filter(function(x){ return !x.pfId; }); }
+  pintarFormPartes();
+  rpc('agenda_os_resumo', { p_projeto: pid }, id0).then(function(r){
+    if(r.descartado || S.form !== f || f.gen !== g || f.projeto_id !== pid) return;
+    if(!r.ok) f.os = { estado: 'erro', msg: msgFalha(r) };
+    else if(!r.data || r.data.status !== 'ok'){ f.os = { estado: 'erro', msg: 'OS indisponível para o seu acesso.' }; if(!preservar){ f.projeto_id = null; } }
+    else f.os = { estado: 'ok', resumo: r.data };
+    pintarFormPartes();
+  });
+}
+function usarGravacao(){
+  var f = S.form; if(!f || !f.os || !f.os.resumo) return; var os = f.os.resumo, g = (os.gravacoes || []).filter(function(x){ return x.id === f.gravacao_id; })[0]; if(!g) return;
+  f.natureza = 'gravacao'; f.data = g.data;
+  if(g.horario){ f.aDefinir = false; f.hi = g.horario; f.hf = ''; } else { f.aDefinir = true; }
+  if(!String(f.titulo).trim()) f.titulo = 'Gravação — ' + (os.os.cliente_nome || os.os.titulo || os.os.os);
+  if(!String(f.local).trim() && os.os.local) f.local = os.os.local;
+  setHtml('ag107Modal', htmlForm(f)); if(f.projeto_id && f.os) pintarFormPartes(); agendarConflitos();
+}
+function salvar(){
+  var f = S.form; if(!f || f.enviando) return;
+  var v = validarForm(f); f.erros = v.erros; f.msg = ''; f.dup = null;
+  if(Object.keys(v.erros).length){ pintarErros(); return; }
+  var h = hashPayload(v.payload, f.modo, f.id, f.versao); if(!f.chave || f.ultimoHash !== h){ f.chave = novaChave(); f.ultimoHash = h; }
+  f.enviando = true; pintarFormPartes();
+  var id0 = idAtual(), g = f.gen;
+  var p = f.modo === 'novo' ? rpc('agenda_criar', { p_chave: f.chave, p_dados: v.payload }, id0) : rpc('agenda_editar', { p_chave: f.chave, p_id: f.id, p_versao: f.versao, p_dados: v.payload }, id0);
+  p.then(function(r){
+    if(r.descartado || S.form !== f || f.gen !== g) return;
+    f.enviando = false; var d = r.data || {};
+    if(r.ok && (d.status === 'criado' || d.status === 'editado')){
+      var conf = (d.conflitos && d.conflitos.verificado && d.conflitos.itens && d.conflitos.itens.length) ? d.conflitos.itens : null, id = d.id;
+      S.form = null; recarregarTudo(); abrirDetalhe(id, conf); live('Compromisso salvo.'); return;
+    }
+    if(!r.ok) f.msg = r.timeout ? 'O servidor não respondeu. Seus dados continuam aqui: clique em Salvar de novo (a repetição não duplica o compromisso).' : msgFalha(r);
+    else if(d.status === 'duplicado_origem') f.dup = d.existente;
+    else if(d.status === 'invalido'){ f.erros = {}; var mp = { responsavel_id: 'responsavel_id', participantes: 'parts', projeto_id: 'projeto_id', gravacao_id: 'projeto_id', hora_inicio: 'hi', hora_fim: 'hf', externos: 'externos' }; f.erros[mp[d.campo] || d.campo || 'titulo'] = d.mensagem || 'Valor inválido.'; if(!mp[d.campo] && ['natureza', 'titulo', 'data', 'status', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'cliente'].indexOf(d.campo) < 0) f.msg = d.mensagem || 'Dados inválidos.'; }
+    else if(d.status === 'versao_mudou') f.msg = 'Este compromisso foi alterado por outra pessoa. Feche e abra novamente para ver a versão atual.';
+    else if(d.status === 'sem_permissao') f.msg = 'Você não tem permissão para editar este compromisso.';
+    else if(d.status === 'cancelado') f.msg = 'Este compromisso já foi cancelado.';
+    else if(d.status === 'nao_encontrado') f.msg = 'Este compromisso não está mais disponível para você.';
+    else f.msg = 'Resposta inesperada do servidor.';
+    pintarErros();
+  });
+}
+
+/* ------------------------------------------------------------------ modal: avisos */
+function htmlAvisos(a){
+  var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true" aria-label="Avisos da Agenda"><div class="ag-cab"><h2>🔔 Avisos</h2><button type="button" class="btn btn2" data-ag="av-todos">Marcar todos como lidos</button></div>';
+  if(a.estado === 'carregando') h += '<div class="ag-vazio">Carregando…</div>';
+  else if(a.estado === 'erro') h += '<div class="ag-msg erro">' + esc(a.msg) + '</div>';
+  else if(!(a.itens || []).length) h += '<div class="ag-vazio">Você não tem avisos.</div>';
+  else h += a.itens.map(function(x){
+    var det = x.titulo ? esc(x.titulo) + (x.data ? ' — ' + esc(fmtData(x.data)) + (x.hora_inicio ? ' ' + esc(x.hora_inicio) : '') : '') : (x.tipo === 'remocao' ? '' : 'Compromisso indisponível');
+    return '<button type="button" class="ag-av' + (x.lida_em ? '' : ' nl') + '" data-ag="av-abrir" data-nid="' + esc(x.id) + '" data-id="' + esc(x.compromisso_id || '') + '">' + esc(AVISO[x.tipo] || 'Aviso') + (det ? ' ' + det : '') + '<small>' + esc(String(x.disponivel_em || '').slice(0, 16).replace('T', ' ')) + (x.lida_em ? ' · lido' : ' · não lido') + '</small></button>';
+  }).join('');
+  if(a.estado === 'ok' && a.total > (a.itens || []).length) h += '<div class="ag-vazio" style="margin-top:8px">Mostrando os ' + esc((a.itens || []).length) + ' mais recentes de ' + esc(a.total) + ' avisos.</div>';
+  return h + '<div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>';
+}
+function abrirAvisos(){
+  var id0 = idAtual(); if(!id0) return; var g = ++S.ger.av;
+  S.modal = 'avisos'; S.avisos = { estado: 'carregando', itens: [] }; setHtml('ag107Modal', htmlAvisos(S.avisos));
+  rpc('agenda_notificacoes_listar', { p_limite: 40, p_apenas_nao_lidas: false }, id0).then(function(r){
+    if(r.descartado || g !== S.ger.av || S.modal !== 'avisos') return;
+    if(!r.ok) S.avisos = { estado: 'erro', msg: msgFalha(r), itens: [] };
+    else { var d = r.data || {}; S.avisos = { estado: 'ok', itens: d.itens || [], total: Number(d.total) || 0 }; S.naoLidas = Number(d.nao_lidas) || 0; badge(S.naoLidas); }
+    setHtml('ag107Modal', htmlAvisos(S.avisos));
+  });
+}
+function marcarAvisos(ids, todas){
+  var id0 = idAtual();
+  return rpc('agenda_notificacao_marcar', { p_ids: todas ? null : ids, p_todas: !!todas }, id0).then(function(r){ if(r.descartado) return; contarNaoLidas(); });
+}
+
+/* ------------------------------------------------------------------ eventos (delegação) */
+function acao(a, el){
+  var h = hojeBR();
+  switch(a){
+    case 'hoje': S.semIni = inicioSemana(h); S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; recarregarTudo(); break;
+    case 'atualizar': recarregarTudo(); contarNaoLidas(); break;
+    case 'sem-ant': S.semIni = addDias(S.semIni, -7); carregarSem(); break;
+    case 'sem-prox': S.semIni = addDias(S.semIni, 7); carregarSem(); break;
+    case 'sem-hoje': S.semIni = inicioSemana(h); carregarSem(); break;
+    case 'mes-ant': S.mes = S.mes.m === 1 ? { a: S.mes.a - 1, m: 12 } : { a: S.mes.a, m: S.mes.m - 1 }; carregarMes(); break;
+    case 'mes-prox': S.mes = S.mes.m === 12 ? { a: S.mes.a + 1, m: 1 } : { a: S.mes.a, m: S.mes.m + 1 }; carregarMes(); break;
+    case 'mes-hoje': S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; carregarMes(); break;
+    case 'dia': { var d = el.getAttribute('data-d'); if(parseYmd(d)){ S.diaSel = d; pintar(); } break; }
+    case 'abrir': abrirDetalhe(el.getAttribute('data-id')); break;
+    case 'novo': abrirForm(formVazio(S.diaSel)); break;
+    case 'novo-dia': abrirForm(formVazio(S.diaSel)); break;
+    case 'avisos': abrirAvisos(); break;
+    case 'fechar': fechar(); break;
+    case 'fora': break;
+    case 'copiar': copiar(); break;
+    case 'presenca': responder(el.getAttribute('data-r')); break;
+    case 'editar': if(S.det) abrirForm(formDeDetalhe(S.det, false)); break;
+    case 'editar-ref': if(S.det) abrirForm(formDeDetalhe(S.det, true)); break;
+    case 'cancelar-ev': if(S.det){ S.cancChave = null; setHtml('ag107Modal', htmlCancelar(S.det.compromisso)); foco(); } break;
+    case 'voltar-det': if(S.det) setHtml('ag107Modal', htmlDetalhe(S.det, S.confAviso)); break;
+    case 'cancelar-ok': cancelarOk(); break;
+    case 'salvar': salvar(); break;
+    case 'criar-mesmo': if(S.form){ S.form.permitirDup = true; S.form.dup = null; salvar(); } break;
+    case 'usar-grav': usarGravacao(); break;
+    case 'os-esc': if(S.form){ var p = el.getAttribute('data-p'); if(RE_UUID.test(String(p))){ S.form.projeto_id = p; S.form.cliente = ''; S.form.buscaOs = { termo: '', estado: '', itens: [] }; carregarResumoOs(p, false); } } break;
+    case 'os-limpar': if(S.form){ var f = S.form; f.projeto_id = null; f.gravacao_id = null; f.os = null; f.snapshot = null; f.cliente = ''; f.divs = []; f.atualizarRef = false; f.externos = f.externos.filter(function(x){ return !x.pfId; }); f.buscaOs = { termo: '', estado: '', itens: [] }; pintarFormPartes(); } break;
+    case 'ext-add': if(S.form){ var n = $('ag107ExtNome'), fu = $('ag107ExtFunc'), nm = n ? n.value.trim() : ''; if(!nm){ if(n && n.focus) n.focus(); break; } S.form.externos.push({ tipo: 'convidado', nome: nm, funcao: fu ? fu.value.trim() : '', pfId: null }); if(n) n.value = ''; if(fu) fu.value = ''; setHtml('ag107Ext', htmlExternos(S.form)); } break;
+    case 'ext-rem': if(S.form){ var i = +el.getAttribute('data-i'); S.form.externos.splice(i, 1); setHtml('ag107Ext', htmlExternos(S.form)); pintarFormPartes(); } break;
+    case 'recarregar-equipe': S.eqEstado = ''; carregarEquipe(); break;
+    case 'av-todos': marcarAvisos([], true).then(function(){ if(S.modal === 'avisos') abrirAvisos(); }); break;
+    case 'av-abrir': { var nid = el.getAttribute('data-nid'), cid = el.getAttribute('data-id'); if(RE_UUID.test(String(nid))) marcarAvisos([nid], false); if(RE_UUID.test(String(cid))) abrirDetalhe(cid); break; }
+    default: break;
+  }
+}
+function onClick(ev){
+  var el = ev.target && ev.target.closest ? ev.target.closest('[data-ag]') : null; if(!el) return;
+  var a = el.getAttribute('data-ag');
+  if(a === 'fora'){ if(ev.target === el && S.modal && S.modal !== 'form') fechar(); return; }   // clique no fundo fecha o pop-up (não o formulário, para não perder dados)
+  acao(a, el);
+}
+function onChange(ev){
+  var t = ev.target; if(!t || !t.getAttribute) return;
+  var fl = t.getAttribute('data-fl');
+  if(fl){
+    var v = t.value;
+    if(fl === 'escopo'){ if(v === 'equipe' && !ehGestorUI()) return; S.escopo = v === 'equipe' ? 'equipe' : 'minha'; recarregarTudo(); return; }
+    S.filtros[fl] = v; pintar(); return;
+  }
+  var f = S.form; if(!f) return;
+  var campo = t.getAttribute('data-f');
+  if(t.getAttribute('data-fp')){ var u = t.getAttribute('data-fp'), k = f.parts.indexOf(u); if(t.checked && k < 0) f.parts.push(u); else if(!t.checked && k >= 0) f.parts.splice(k, 1); agendarConflitos(); return; }
+  if(t.getAttribute('data-fpf')){
+    var pid = t.getAttribute('data-fpf');
+    if(t.checked){ if(!f.externos.some(function(x){ return x.pfId === pid; })) f.externos.push({ tipo: 'fornecedor', nome: t.getAttribute('data-nome') || 'A definir', funcao: t.getAttribute('data-func') || '', pfId: pid }); }
+    else f.externos = f.externos.filter(function(x){ return x.pfId !== pid; });
+    setHtml('ag107Ext', htmlExternos(f)); return;
+  }
+  if(!campo) return;
+  if(campo === 'aDefinir' || campo === 'atualizarRef'){ f[campo] = !!t.checked; if(campo === 'aDefinir'){ var a = $('ag107Modal'); try { var ins = a.querySelectorAll('[data-f="hi"],[data-f="hf"]'); for(var i = 0; i < ins.length; i++) ins[i].disabled = f.aDefinir; } catch(e){} agendarConflitos(); } return; }
+  if(campo === 'gravacao_id'){ f.gravacao_id = t.value || null; pintarFormPartes(); return; }
+  f[campo] = t.value;
+  if(campo === 'data' || campo === 'hi' || campo === 'hf' || campo === 'resp'){ if(campo === 'resp'){ var k2 = f.parts.indexOf(f.resp); if(k2 >= 0) f.parts.splice(k2, 1); setHtml('ag107Parts', htmlParticipantes(f)); } agendarConflitos(); }
+}
+function onInput(ev){
+  var t = ev.target; if(!t || !t.getAttribute) return;
+  var fl = t.getAttribute('data-fl');
+  if(fl === 'texto'){ S.filtros.texto = t.value; pintar(); return; }
+  if(t.id === 'ag107BuscaPart'){ var q = norm(t.value), ls = doc().querySelectorAll('#ag107Parts label'); for(var i = 0; i < ls.length; i++){ var n = ls[i].getAttribute('data-nome') || ''; ls[i].style.display = (!q || n.indexOf(q) >= 0) ? '' : 'none'; } return; }
+  var f = S.form; if(!f) return; var campo = t.getAttribute('data-f'); if(!campo) return;
+  if(campo === 'buscaOs'){ f.buscaOs.termo = t.value; buscarOs(); return; }
+  if(campo === 'aDefinir' || campo === 'atualizarRef' || campo === 'gravacao_id') return;
+  f[campo] = t.value;
+  if(campo === 'hi' || campo === 'hf' || campo === 'data') agendarConflitos();
+}
+function onKey(ev){ if(ev.key === 'Escape' && S.modal && S.modal !== 'form') fechar(); }   // Esc não fecha o formulário (evita perder o que foi digitado)
+
+/* ------------------------------------------------------------------ ciclo de vida */
+function ligar(){
+  var raiz = $('agenda107'); if(!raiz || S.ligado) return; S.ligado = true;
+  raiz.addEventListener('click', onClick); raiz.addEventListener('change', onChange); raiz.addEventListener('input', onInput); raiz.addEventListener('keydown', onKey);
+}
+function iniciarPoll(){ clearInterval(S.tPoll); S.tPoll = setInterval(function(){ var d = doc(); if(d && d.hidden) return; contarNaoLidas(); }, POLL_MS); }
+function vigiar(){
+  var id = idAtual();
+  if(id === S.id) return;
+  var tinha = !!S.id; S.id = id;
+  reset(); S.id = id;
+  if(!id) return;
+  iniciarPoll(); contarNaoLidas();
+  if(secaoAtiva()) entrar();
+  void tinha;
+}
+function entrar(){
+  if(!idAtual()) return; ligar(); S.modal = null;
+  if(S.indisponivel){ setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(msgFalha({ erro: 'FUNCAO_AUSENTE' })) + '</div>'); return; }
+  carregarEquipe(); recarregarTudo(); contarNaoLidas(); pintar();
+}
+function sair(){ if(S.modal) fechar(); }
+function aoPerfil(){
+  var d = doc(); if(!d) return;
+  var ps = $('profileSelect'), p = ps ? ps.value : '', oper = p === 'producao' || p === 'edicao', nav = $('ag107NavOper');
+  if(nav){
+    nav.style.display = oper ? 'block' : 'none';
+    var bs = nav.querySelectorAll ? nav.querySelectorAll('button') : [];
+    for(var i = 0; i < bs.length; i++){ if(oper) bs[i].classList.remove('hidden'); }
+    if(oper && bs.length){ var op = $('operacao'), ag = $('agenda107'); bs[0].classList.toggle('active', !!(op && op.classList.contains('active'))); if(bs[1]) bs[1].classList.toggle('active', !!(ag && ag.classList.contains('active'))); }
+  }
+}
+function instalarGanchos(){
+  if(typeof G.show === 'function' && !G.show.__ag107){
+    var s0 = G.show; G.show = function(id){ var r = s0.apply(this, arguments); try { if(id === 'agenda107') entrar(); else sair(); } catch(e){} return r; }; G.show.__ag107 = true;
+  }
+  if(typeof G.applyProfile === 'function' && !G.applyProfile.__ag107){
+    var a0 = G.applyProfile; G.applyProfile = function(){ var r = a0.apply(this, arguments); try { aoPerfil(); vigiar(); } catch(e){} return r; }; G.applyProfile.__ag107 = true;
+  }
+  var d = doc();
+  if(d && d.addEventListener) d.addEventListener('visibilitychange', function(){ if(!d.hidden && S.id) contarNaoLidas(); });
+  clearInterval(S.tVigia); S.tVigia = setInterval(vigiar, VIGIA_MS);
+}
+instalarGanchos();
+
+return {
+  _t: { esc: esc, safeUrl: safeUrl, parseYmd: parseYmd, addDias: addDias, dowSeg: dowSeg, inicioSemana: inicioSemana, inicioGradeMes: inicioGradeMes, hojeBR: hojeBR, fmtData: fmtData, quando: quando,
+    validarForm: validarForm, hashPayload: hashPayload, divergencias: divergencias, passa: passa, porDia: porDia, textoResumo: textoResumo, htmlSemana: htmlSemana, htmlMes: htmlMes, htmlDia: htmlDia, htmlFiltros: htmlFiltros,
+    htmlDetalhe: htmlDetalhe, htmlForm: htmlForm, htmlAvisos: htmlAvisos, htmlOsBox: htmlOsBox, htmlConf: htmlConf, htmlCliente: htmlCliente, htmlParcial: htmlParcial, formVazio: formVazio, formDeDetalhe: formDeDetalhe, rpc: rpc, idAtual: idAtual, vigiar: vigiar, reset: reset, entrar: entrar,
+    carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
+    carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave },
+  entrar: entrar, sair: sair
+};
+}).call(this);
 </script>
 </body>
 </html>

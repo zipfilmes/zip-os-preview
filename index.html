@@ -960,7 +960,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.1.0 · Datas na Agenda</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.2.0 · Faixas no Calendário</div>
 </aside>
 
 <main class="main">
@@ -1081,7 +1081,17 @@ html[data-theme="dark"] #agenda107 .ag-msg.erro{border-color:#7a3a42}
 html[data-theme="dark"] #agenda107 .ag-ov{background:rgba(0,0,0,.6)}
 html[data-theme="dark"] #agenda107 .ag-prev{box-shadow:0 10px 30px rgba(0,0,0,.6)}
 @media(max-width:1100px){#agenda107 .ag-semana{grid-template-columns:1fr}#agenda107 .ag-dia{min-height:0}}
-@media(max-width:700px){#agenda107 .ag-form{grid-template-columns:1fr}#agenda107 .ag-kv{grid-template-columns:1fr}#agenda107 .ag-cel{min-height:48px;padding:3px}#agenda107 .ag-box{padding:14px}#agenda107 .ag-leg{justify-content:flex-start}}</style>
+@media(max-width:700px){#agenda107 .ag-form{grid-template-columns:1fr}#agenda107 .ag-kv{grid-template-columns:1fr}#agenda107 .ag-cel{min-height:48px;padding:3px}#agenda107 .ag-box{padding:14px}#agenda107 .ag-leg{justify-content:flex-start}}
+#agenda107 .ag-mes .ag-cel{min-height:104px;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
+#agenda107 .ag-mes .ag-cel b{flex:0 0 auto;align-self:flex-start}
+#agenda107 .ag-fxs{display:flex;flex-direction:column;gap:2px;margin-top:4px;min-width:0}
+#agenda107 .ag-fx{display:flex;align-items:center;gap:4px;min-width:0;height:16px;padding:0 4px;border-radius:4px;border-left:3px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 24%,var(--panel));color:var(--ink);font-size:11px;line-height:16px;overflow:hidden}
+#agenda107 .ag-fx .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+#agenda107 .ag-fx .h,#agenda107 .ag-fx .k{flex:0 0 auto;color:var(--muted);font-size:10px;white-space:nowrap}
+#agenda107 .ag-mais{display:block;font-size:11px;font-weight:700;color:var(--muted);padding-left:2px}
+@media(max-width:1400px){#agenda107 .ag-fx .h{display:none}}
+@media(max-width:1200px){#agenda107 .ag-fx .k{display:none}}
+@media(max-width:700px){#agenda107 .ag-mes{gap:2px}#agenda107 .ag-mes .ag-cel{min-height:84px;padding:2px}#agenda107 .ag-fx{height:14px;line-height:14px;font-size:9px;padding:0 2px;border-left-width:2px}#agenda107 .ag-fx .h,#agenda107 .ag-fx .k{display:none}#agenda107 .ag-mais{font-size:9px}}</style>
 <section id="agenda107" class="section">
 <div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn btn2" data-ag="atualizar">Atualizar</button><button type="button" class="btn btn2" data-ag="avisos">🔔 Avisos <span class="ag-bdg" id="ag107BdgTopo" data-ag-bdg hidden></span></button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
 <div id="ag107Filtros" class="ag-filtros"></div>
@@ -52029,14 +52039,32 @@ function htmlMes(){
   if(S.mesD.estado === 'ok' || S.mesD.itens.length){
     h += '<div class="ag-mes">' + DOW.map(function(x){ return '<div class="ag-dow">' + x + '</div>'; }).join('');
     for(var i = 0; i < 42; i++){
-      var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [], nats = [];
-      l.forEach(function(it){ if(nats.indexOf(it.natureza) < 0) nats.push(it.natureza); });
+      var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [];
       h += '<button type="button" class="ag-cel' + (p.m !== mo ? ' fora' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="dia" data-d="' + esc(d) + '" data-pv="' + esc(d) + '" aria-label="' + esc(fmtData(d) + ', ' + l.length + ' compromisso(s)') + '"><b>' + p.d + '</b>'
-        + (l.length ? '<span class="ag-pts">' + nats.slice(0, 4).map(function(n){ return '<span class="ag-pt ag-n-' + esc(NAT[n] ? n : 'outros') + '"></span>'; }).join('') + '<span class="ag-q">' + l.length + '</span></span>' : '') + '</button>';
+        + faixasDia(l) + '</button>';
     }
     h += '</div>';
   }
   return h + '</div>';
+}
+var FX_MAX = 3, FX_TIPO = { gravacao: 'Grav.', revisao: 'Rev.', entrega: 'Entrega' };
+// Texto principal da faixa: data de OS => cliente (fallback título, OS); compromisso => título (fallback cliente, OS). Tipo curto só para datas de OS.
+function rotuloFaixa(it){
+  var f = ehFonte(it), t, k = '';
+  if(f){ t = it.cliente || it.titulo || it.os || 'Data da OS'; k = FX_TIPO[it.fonte_tipo] || 'OS'; }
+  else t = it.titulo || it.cliente || it.os || 'Compromisso';
+  return { t: String(t), k: k, h: it.hora_inicio ? String(it.hora_inicio).slice(0, 5) : '' };
+}
+function faixasDia(l){
+  if(!l || !l.length) return '';
+  var h = '<span class="ag-fxs">';
+  l.slice(0, FX_MAX).forEach(function(it){
+    var r = rotuloFaixa(it);
+    h += '<span class="ag-fx ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + (it.status === 'cancelado' ? ' ag-cancel' : '') + '" title="' + esc((r.h ? r.h + ' · ' : '') + r.t + (r.k ? ' · ' + r.k : '')) + '">'
+      + (r.h ? '<span class="h">' + esc(r.h) + '</span>' : '') + '<span class="t">' + esc(r.t) + '</span>' + (r.k ? '<span class="k">' + esc(r.k) + '</span>' : '') + '</span>';
+  });
+  if(l.length > FX_MAX) h += '<span class="ag-mais">+' + (l.length - FX_MAX) + '</span>';
+  return h + '</span>';
 }
 function itensDoDia(d){
   var vistos = {}, out = [];
@@ -52567,7 +52595,7 @@ return {
   _t: { esc: esc, safeUrl: safeUrl, parseYmd: parseYmd, addDias: addDias, dowSeg: dowSeg, inicioSemana: inicioSemana, inicioGradeMes: inicioGradeMes, hojeBR: hojeBR, fmtData: fmtData, quando: quando,
     validarForm: validarForm, hashPayload: hashPayload, divergencias: divergencias, passa: passa, porDia: porDia, textoResumo: textoResumo, htmlSemana: htmlSemana, htmlMes: htmlMes, htmlDia: htmlDia, htmlFiltros: htmlFiltros,
     htmlDetalhe: htmlDetalhe, htmlForm: htmlForm, htmlAvisos: htmlAvisos, htmlOsBox: htmlOsBox, htmlConf: htmlConf, htmlCliente: htmlCliente, htmlParcial: htmlParcial, formVazio: formVazio, formDeDetalhe: formDeDetalhe, rpc: rpc, idAtual: idAtual, vigiar: vigiar, reset: reset, entrar: entrar,
-    carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
+    carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
     abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
     carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave },
   entrar: entrar, sair: sair

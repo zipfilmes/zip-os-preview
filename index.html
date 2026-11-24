@@ -960,7 +960,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.2.0 · Faixas no Calendário</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.0 · Agenda e Recebimentos</div>
 </aside>
 
 <main class="main">
@@ -1008,7 +1008,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-dia h4{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
 #agenda107 .ag-dia h4 b{color:var(--ink);font-size:14px}
 #agenda107 .ag-vazio{font-size:12px;color:var(--muted)}
-#agenda107 .ag-ev{display:block;width:100%;min-width:0;text-align:left;border:1px solid var(--line);border-left:4px solid var(--ag-cor,var(--ag-cin));background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 8px;margin-top:6px;cursor:pointer;font:inherit;font-size:12px;line-height:1.35;overflow:hidden}
+#agenda107 .ag-ev{display:block;width:100%;min-width:0;text-align:left;border:1px solid var(--line);border-left:5px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 13%,var(--panel));color:var(--ink);border-radius:10px;padding:7px 8px;margin-top:6px;cursor:pointer;font:inherit;font-size:12px;line-height:1.35;overflow:hidden}
 #agenda107 .ag-ev:hover,#agenda107 .ag-ev:focus-visible{border-color:var(--accent);outline:none}
 #agenda107 .ag-ev.ag-fonte{border-style:dashed;border-left-style:solid}
 #agenda107 .ag-ev .h{display:block;color:var(--muted);font-weight:700}
@@ -1016,11 +1016,19 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-ev .s,#agenda107 .ag-ev .b{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #agenda107 .ag-cancel .t{text-decoration:line-through;opacity:.7}
 #agenda107 .ag-conc{opacity:.75}
-#agenda107 .ag-n-reuniao{--ag-cor:var(--ag-ver)}
-#agenda107 .ag-n-gravacao{--ag-cor:var(--ag-azul)}
-#agenda107 .ag-n-edicao{--ag-cor:var(--ag-rox)}
-#agenda107 .ag-n-revisao{--ag-cor:var(--ag-mos)}
-#agenda107 .ag-n-outros{--ag-cor:var(--ag-cin)}
+#agenda107 .ag-n-reuniao{--ag-cor:#16a34a}
+#agenda107 .ag-n-gravacao{--ag-cor:#2563eb}
+#agenda107 .ag-n-edicao{--ag-cor:#7c3aed}
+#agenda107 .ag-n-revisao{--ag-cor:#f59e0b}
+#agenda107 .ag-n-outros{--ag-cor:#64748b}
+#agenda107 .ag-r-1{--ag-cor:#e11d48}
+#agenda107 .ag-r-2{--ag-cor:#ea580c}
+#agenda107 .ag-r-3{--ag-cor:#65a30d}
+#agenda107 .ag-r-4{--ag-cor:#0891b2}
+#agenda107 .ag-r-5{--ag-cor:#0f766e}
+#agenda107 .ag-r-6{--ag-cor:#c026d3}
+#agenda107 .ag-r-7{--ag-cor:#ec4899}
+#agenda107 .ag-r-8{--ag-cor:#92400e}
 #agenda107 .ag-nb{display:inline-block;border:1px solid var(--ag-cor,var(--ag-cin));border-left-width:5px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;color:var(--ink)}
 #agenda107 .ag-mes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
 #agenda107 .ag-dow{font-size:11px;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase}
@@ -1035,7 +1043,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-prev{position:fixed;z-index:40;left:0;top:0;width:min(320px,calc(100vw - 16px));max-height:60vh;overflow:hidden;pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 10px 30px rgba(16,24,40,.28);font-size:12px;line-height:1.35}
 #agenda107 .ag-prev[hidden]{display:none}
 #agenda107 .ag-prev .pv-t{font-weight:800;margin-bottom:4px}
-#agenda107 .ag-prev .pv-i{border-left:4px solid var(--ag-cor,var(--ag-cin));padding:2px 0 2px 8px;margin-top:5px;overflow:hidden}
+#agenda107 .ag-prev .pv-i{border-left:5px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 12%,var(--panel));padding:2px 0 2px 8px;margin-top:5px;overflow:hidden}
 #agenda107 .ag-prev .pv-i b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #agenda107 .ag-prev .pv-i span{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #agenda107 .ag-prev .pv-m{margin-top:6px;color:var(--muted)}
@@ -1075,6 +1083,19 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 #agenda107 .ag-err{color:var(--red);font-size:12px;margin-top:3px}
 html[data-theme="dark"] #agenda107{--ag-azul:#8fb8ee;--ag-mos:#f2c14e;--ag-ver:#a6e3be;--ag-rox:#c4b5fd;--ag-cin:#98a2b3}
+html[data-theme="dark"] #agenda107 .ag-n-reuniao{--ag-cor:#4ade80}
+html[data-theme="dark"] #agenda107 .ag-n-gravacao{--ag-cor:#60a5fa}
+html[data-theme="dark"] #agenda107 .ag-n-edicao{--ag-cor:#a78bfa}
+html[data-theme="dark"] #agenda107 .ag-n-revisao{--ag-cor:#fbbf24}
+html[data-theme="dark"] #agenda107 .ag-n-outros{--ag-cor:#94a3b8}
+html[data-theme="dark"] #agenda107 .ag-r-1{--ag-cor:#fb7185}
+html[data-theme="dark"] #agenda107 .ag-r-2{--ag-cor:#fb923c}
+html[data-theme="dark"] #agenda107 .ag-r-3{--ag-cor:#a3e635}
+html[data-theme="dark"] #agenda107 .ag-r-4{--ag-cor:#22d3ee}
+html[data-theme="dark"] #agenda107 .ag-r-5{--ag-cor:#2dd4bf}
+html[data-theme="dark"] #agenda107 .ag-r-6{--ag-cor:#e879f9}
+html[data-theme="dark"] #agenda107 .ag-r-7{--ag-cor:#f472b6}
+html[data-theme="dark"] #agenda107 .ag-r-8{--ag-cor:#c08457}
 html[data-theme="dark"] #agenda107 .ag-os{background:rgba(143,184,238,.08)}
 html[data-theme="dark"] #agenda107 .ag-res button:hover{background:rgba(143,184,238,.12)}
 html[data-theme="dark"] #agenda107 .ag-msg.erro{border-color:#7a3a42}
@@ -1085,13 +1106,17 @@ html[data-theme="dark"] #agenda107 .ag-prev{box-shadow:0 10px 30px rgba(0,0,0,.6
 #agenda107 .ag-mes .ag-cel{min-height:104px;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
 #agenda107 .ag-mes .ag-cel b{flex:0 0 auto;align-self:flex-start}
 #agenda107 .ag-fxs{display:flex;flex-direction:column;gap:2px;margin-top:4px;min-width:0}
-#agenda107 .ag-fx{display:flex;align-items:center;gap:4px;min-width:0;height:16px;padding:0 4px;border-radius:4px;border-left:3px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 24%,var(--panel));color:var(--ink);font-size:11px;line-height:16px;overflow:hidden}
+#agenda107 .ag-fx{display:flex;align-items:center;gap:4px;min-width:0;height:16px;padding:0 4px;border-radius:4px;border-left:3px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 30%,var(--panel));color:var(--ink);font-size:11px;line-height:16px;overflow:hidden}
 #agenda107 .ag-fx .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 #agenda107 .ag-fx .h,#agenda107 .ag-fx .k{flex:0 0 auto;color:var(--muted);font-size:10px;white-space:nowrap}
 #agenda107 .ag-mais{display:block;font-size:11px;font-weight:700;color:var(--muted);padding-left:2px}
 @media(max-width:1400px){#agenda107 .ag-fx .h{display:none}}
 @media(max-width:1200px){#agenda107 .ag-fx .k{display:none}}
-@media(max-width:700px){#agenda107 .ag-mes{gap:2px}#agenda107 .ag-mes .ag-cel{min-height:84px;padding:2px}#agenda107 .ag-fx{height:14px;line-height:14px;font-size:9px;padding:0 2px;border-left-width:2px}#agenda107 .ag-fx .h,#agenda107 .ag-fx .k{display:none}#agenda107 .ag-mais{font-size:9px}}</style>
+@media(max-width:700px){#agenda107 .ag-mes{gap:2px}#agenda107 .ag-mes .ag-cel{min-height:84px;padding:2px}#agenda107 .ag-fx{height:14px;line-height:14px;font-size:9px;padding:0 2px;border-left-width:2px}#agenda107 .ag-fx .h,#agenda107 .ag-fx .k{display:none}#agenda107 .ag-mais{font-size:9px}}
+#agenda107 .ag-rec-mark{font-weight:800}
+#agenda107 .ag-leg .ag-leg-rec{gap:3px}
+#agenda107 .ag-rec-box{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+#agenda107 .ag-sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--ag-cor,var(--ag-cin));vertical-align:-1px;margin-right:6px}</style>
 <section id="agenda107" class="section">
 <div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn btn2" data-ag="atualizar">Atualizar</button><button type="button" class="btn btn2" data-ag="avisos">🔔 Avisos <span class="ag-bdg" id="ag107BdgTopo" data-ag-bdg hidden></span></button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
 <div id="ag107Filtros" class="ag-filtros"></div>
@@ -1496,7 +1521,8 @@ html[data-theme="dark"] #agenda107 .ag-prev{box-shadow:0 10px 30px rgba(0,0,0,.6
   <div style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)">
    <input id="finReceberBusca" type="text" placeholder="🔍 Buscar cliente, OS ou NF..." oninput="renderFinReceber()" style="flex:2;min-width:140px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:14px;box-sizing:border-box">
    <select id="finReceberStatus" onchange="renderFinReceber()" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">
-    <option value="">Status</option>
+    <option value="" selected>⏳ Em aberto</option>
+    <option value="__todos">Todos os status</option>
     <option value="recebido">✅ Recebido</option>
     <option value="parcial">🔵 Parcial</option>
     <option value="pendente">🟡 Pendente</option>
@@ -25459,6 +25485,9 @@ function cxProvider(){
       .order('data', { ascending: true }).order('criado_em', { ascending: true }).order('id', { ascending: true }).range(de, ate); },
     categorias: function(de, ate){ return supabaseClient.from('financeiro_categorias').select(CX_COLUNAS_CAT, { count: 'exact' })
       .order('nome', { ascending: true }).order('id', { ascending: true }).range(de, ate); },
+    // V1.7.3.0: NF vinculada DEPOIS da baixa (tabela própria, só leitura aqui); complementa o lançamento sem alterá-lo. Se a tabela não existir/não for legível, o caixa segue como antes.
+    vinculos: function(de, ate){ return supabaseClient.from('recebimento_nf_vinculos').select('id,evento_id,lancamento_id,projeto_id,nf_id,nf_numero,criado_por,criado_em', { count: 'exact' })
+      .order('criado_em', { ascending: true }).order('id', { ascending: true }).range(de, ate); },
     inserir: function(rows){ return supabaseClient.from('financeiro_lancamentos').insert(rows); },   // uma linha ou várias: UM comando (atômico)
     conferir: function(ids){ return supabaseClient.from('financeiro_lancamentos').select(CX_COLUNAS_CONF).in('id', ids).limit(ids.length + 1); },
     editar: function(a){ return supabaseClient.rpc('financeiro_lancamento_editar', a); },
@@ -25645,18 +25674,29 @@ function cxCarregar(forcar){
     return crPaginar(prov.categorias, ok).then(function(rc){
       if(rc.status === 'descartado' || !ok()) return;
       if(rc.status === 'erro' && crStatusErro(rc.erro) === 'sessao') return cxFalhar(ctx, rc.erro);
-      var catOk = rc.status === 'ok', uc = crUnicos(rc.linhas || []);
-      catOk = catOk && uc.dup === 0;
-      var ul = crUnicos(rl.linhas);
-      var completo = rl.status === 'ok' && ul.dup === 0 && rl.total === ul.linhas.length;   // count obrigatório; SELECTs sequenciais, sem snapshot transacional
-      var c = cxCalcular(ul.linhas, catOk ? uc.linhas : [], catOk);
-      e.itens = c.itens; e.anomalias = c.anomalias; e.completo = completo;
-      e.catalogo = catOk ? uc.linhas : []; e.catStatus = catOk ? 'ok' : 'indisponivel';
-      e.status = completo ? 'ok' : 'incompleto';
-      e.carregadoEm = new Date().toISOString();
-      cxRender();
+      return cxVinculosLer(prov, ok).then(function(){   // V1.7.3.0: NF vinculada depois da baixa (informativo; falha aqui não derruba o caixa)
+        if(!ok()) return;
+        var catOk = rc.status === 'ok', uc = crUnicos(rc.linhas || []);
+        catOk = catOk && uc.dup === 0;
+        var ul = crUnicos(rl.linhas);
+        var completo = rl.status === 'ok' && ul.dup === 0 && rl.total === ul.linhas.length;   // count obrigatório; SELECTs sequenciais, sem snapshot transacional
+        var c = cxCalcular(ul.linhas, catOk ? uc.linhas : [], catOk);
+        e.itens = c.itens; e.anomalias = c.anomalias; e.completo = completo;
+        e.catalogo = catOk ? uc.linhas : []; e.catStatus = catOk ? 'ok' : 'indisponivel';
+        e.status = completo ? 'ok' : 'incompleto';
+        e.carregadoEm = new Date().toISOString();
+        cxRender();
+      });
     });
   });
+}
+// vínculos de NF posteriores à baixa: leitura paginada; sem provider/tabela/permissão = mapa vazio (o caixa continua mostrando o que o lançamento diz)
+function cxVinculosLer(prov, ok){
+  if(!prov || typeof prov.vinculos !== 'function'){ fo110VincDefinir([]); return Promise.resolve(); }
+  return crPaginar(prov.vinculos, ok).then(function(rv){
+    if(rv.status === 'descartado' || !ok()) return;
+    fo110VincDefinir(rv.status === 'ok' ? rv.linhas : []);
+  }, function(){ if(ok()) fo110VincDefinir([]); });
 }
 function cxFalhar(ctx, err){
   if(!cxCtxValido(ctx)) return;
@@ -25672,6 +25712,7 @@ var CX_IDS_CHECK = ['cxDelConfirma', 'cxSerConfirma', 'cxSerPassado', 'cxSerDup'
 function limparCaixaRealPorAuth(){
   var e = estadoCaixaReal;
   e.seq++; e.uid = ''; e.epoch = -1; cxZerar('idle'); envioCaixaReal = null; cxMsgForm = ''; cxLimparPaineis();
+  try { fo110VincDefinir([]); } catch(_e){}   // vínculos de NF não atravessam troca de conta/sessão
   CX_IDS_TEXTO.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = ''; });
   CX_IDS_CAMPO.forEach(function(id){ var el = document.getElementById(id); if(el) el.value = ''; });
   CX_IDS_CHECK.forEach(function(id){ var el = document.getElementById(id); if(el) el.checked = false; });
@@ -37833,9 +37874,11 @@ FO_LIMPEZAS.push(function(){ foAlertasAtuais = []; foCobrancaAtuais = []; });
 // V8.17.0 · Contas a Receber e Histórico financeiro (referência: renderFinReceber / renderFinHistorico). Mesma tabela, filtros, total geral, badges e clique que abre o prontuário.
 // Fonte: estadoContasReceberReais (projetos + recebimentos_cliente, 8.7.1) + notas_fiscais (Nº NF) + nomes (RPC). Valores em centavos; "Valor total" = soma das parcelas aplicáveis (o que há a receber do projeto).
 // Projeto sem parcelas aparece com o selo "Sem parcelas" (cadastro pendente — nunca "quitado" nem zero). Perda/Arquivado só no Histórico.
+// V1.7.3.0: a tela abre em "Em aberto" (tudo que não está quitado nem é "não aplicável": pendente, parcial e sem parcelas). "Todos os status" e cada status explícito continuam no seletor; quitados também estão no Histórico.
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 function foPctPago(l){ return l.prevC > 0 ? Math.round((l.recC / l.prevC) * 100) : 0; }
 function foSelStatusPag(l){ return l.situacao === 'sem_parcelas' ? 'sem_parcelas' : l.situacao === 'recebido' ? 'recebido' : l.situacao === 'parcial' ? 'parcial' : l.situacao === 'pendente' ? 'pendente' : l.situacao; }
+function foEmAberto(l){ return !!l && l.situacao !== 'recebido' && l.situacao !== 'nao_aplicavel'; }   // parcial segue em aberto; falta de parcelas NUNCA é quitação
 function foBadgePag(l){
   var s = l.situacao;
   if(s === 'recebido') return '<span class="badge ok">Recebido</span>';
@@ -37881,11 +37924,13 @@ function foRenderReceber(){
   if(e.status !== 'ok' && e.status !== 'incompleto'){ el.textContent = ''; return; }
   var base = e.linhas.filter(function(l){ return !l.perda && !l.arquivado; });
   foOpcoesAtendimento('finReceberResp', base);
-  var f = { busca: crValor('finReceberBusca'), status: crValor('finReceberStatus'), resp: crValor('finReceberResp') };
+  var st = crValor('finReceberStatus'), emAberto = st === '';   // valor vazio = seleção inicial "Em aberto"; "__todos" = sem filtro de status
+  var f = { busca: crValor('finReceberBusca'), status: st === '__todos' ? '' : st, resp: crValor('finReceberResp') };
   var linhas = foFiltrarLinhas(base, f);
+  if(emAberto) linhas = linhas.filter(foEmAberto);
   linhas.sort(function(a, b){ return (a.venc || '9999') < (b.venc || '9999') ? -1 : (a.venc || '9999') > (b.venc || '9999') ? 1 : a.os < b.os ? -1 : a.os > b.os ? 1 : 0; });
   if(!e.linhas.length){ el.innerHTML = foMsgLinha(CR_MSG.vazio); return; }
-  if(!linhas.length){ el.innerHTML = foMsgLinha('Nenhum projeto com cobrança encontrado.'); return; }
+  if(!linhas.length){ el.innerHTML = foMsgLinha(emAberto ? 'Nenhum projeto com cobrança em aberto. Para ver os quitados use o Histórico ou escolha "Todos os status".' : 'Nenhum projeto com cobrança encontrado.'); return; }
   var totalV = 0, totalP = 0, nSemTotal = 0;
   var rows = linhas.map(function(l){
     var semP = l.situacao === 'sem_parcelas', pct = foPctPago(l);
@@ -40829,6 +40874,83 @@ function fo97UuidOk(s){ return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4
 function fo97NfOk(t){ return typeof t === 'string' && /^[A-Za-z0-9][A-Za-z0-9._\/ -]{0,29}$/.test(t); }
 function fo97Txt(v, max){ if(typeof v !== 'string') return ''; var t = v.replace(/[\u0000-\u001f\u007f]/g, ' ').trim(); return t.length > (max || 200) ? t.slice(0, max || 200) : t; }
 
+// ---------- V1.7.3.0 · NF vinculada DEPOIS da baixa (RPC projeto_recebimento_nf_vincular + tabela append-only recebimento_nf_vinculos) ----------
+// O evento e o lançamento originais NUNCA mudam: o vínculo é uma associação à parte, lida do banco (prontuário: projeto_recebimentos_ler; Fluxo de caixa: leitura da tabela de vínculos).
+var FO110_RPC = 'projeto_recebimento_nf_vincular';
+var FO110_MSG = {
+  vincular: 'Vincular NF', rotulo: 'NF deste projeto',
+  explica: 'Associa uma nota fiscal DESTE projeto a este recebimento já registrado. Valor, data, categoria e saldos do recebimento e da entrada no Fluxo de caixa não mudam; a associação fica registrada à parte e não pode ser desfeita aqui.',
+  semNf: 'Este projeto ainda não tem nota fiscal com número. Registre a NF em "Nota Fiscal" e volte aqui.',
+  nfEscolha: 'Escolha a nota fiscal deste projeto que corresponde ao recebimento (o sistema não escolhe por você).',
+  indisp: 'Este recebimento não aceita vínculo de NF (estornado, sem entrada no caixa ou fora desta tela). A tela foi relida.',
+  jaTem: 'Este recebimento já tem NF. Nada foi alterado.',
+  ja: 'Este recebimento já foi vinculado a uma NF por outra pessoa ou outra aba. A tela foi relida; nada foi sobrescrito.',
+  estornado: 'Este recebimento foi estornado: não é possível vincular NF. A tela foi relida.',
+  semCaixa: 'Este recebimento é anterior à integração com o caixa (sem entrada automática): não há entrada para associar.',
+  nfInvalida: 'A nota fiscal escolhida não pertence a este projeto ou está sem número. Escolha outra.',
+  aplicado: 'NF vinculada ao recebimento. Valor, data e entrada no Fluxo de caixa permanecem como estavam.',
+  repetido: 'Esta vinculação já estava gravada (a repetição não duplica).'
+};
+var fo110Vinc = {};   // evento_id (minúsculo) → { numero, em, por, nfId }: leitura do Fluxo de caixa; trocada a cada leitura e limpa na troca de conta
+function fo110VincDefinir(linhas){
+  var m = {};
+  (Array.isArray(linhas) ? linhas : []).forEach(function(v){
+    if(!v || typeof v !== 'object' || !fo97UuidOk(v.evento_id)) return;
+    var n = fo97Txt(v.nf_numero, 60); if(!n) return;
+    m[String(v.evento_id).toLowerCase()] = { numero: n, em: typeof v.criado_em === 'string' ? v.criado_em : '', por: fo97UuidOk(v.criado_por) ? v.criado_por : '', nfId: fo97UuidOk(v.nf_id) ? v.nf_id : '' };
+  });
+  fo110Vinc = m;
+}
+function fo110DataHora(iso){ try { return iso && typeof _dataHoraBRProntReal === 'function' ? _dataHoraBRProntReal(iso) : ''; } catch(_e){ return ''; } }
+function fo110NfVinculoTexto(e){   // prontuário: NF associada depois da baixa ('' = nenhuma)
+  var n = fo97Txt(e && e.nf_vinculo_numero, 60); if(!n) return '';
+  var em = fo110DataHora(e.nf_vinculo_em);
+  return 'NF ' + n + ' (vinculada depois' + (em ? ' em ' + em : '') + ')';
+}
+function fo110PodeVincular(e, rec){   // projeto Encerrado pode (a baixa já existe); Perda, estornado, sem caixa ou com NF não
+  return !!e && !!rec && e.caixa === true && e.estornado !== true && rec.perda !== true && !(typeof e.nf_numero === 'string' && e.nf_numero) && !fo97Txt(e.nf_vinculo_numero, 60);
+}
+function fo110CaixaVincularHtml(i, id, nfs, trava){
+  var M = FO110_MSG, o = '';
+  if(!nfs.length) return '<div data-pa="fin-rec-nfvinc-box-' + i + '" style="margin:2px 0 8px;padding:10px;border:1px solid var(--line);border-radius:10px"><div class="muted" style="font-size:12px">' + foEsc(M.semNf) + '</div><button class="btn btn2" data-pa="fin-rec-nfvinc-fechar" onclick="fo110ModVincularFechar()" style="margin-top:6px">Fechar</button></div>';
+  if(nfs.length > 1) o += '<option value="">Escolha…</option>';   // várias NFs: o usuário escolhe (nunca se adivinha); uma só vem selecionada e ainda exige o clique de confirmar
+  nfs.forEach(function(n){ var c = voC(n.valor); o += '<option value="' + foEsc(n.id) + '"' + (nfs.length === 1 ? ' selected' : '') + '>' + foEsc('NF ' + n.numero + (isFinite(c) && c > 0 ? ' · ' + crBRL(c) : '')) + '</option>'; });
+  return '<div data-pa="fin-rec-nfvinc-box-' + i + '" style="margin:2px 0 8px;padding:10px;border:1px solid var(--line);border-radius:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end"><div class="muted" style="font-size:12px;flex-basis:100%">' + foEsc(M.explica) + '</div>'
+    + '<label style="font-size:12px;font-weight:700">' + foEsc(M.rotulo) + '<br><select id="finRecNfVinc" data-pa="fin-rec-nfvinc" style="max-width:260px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">' + o + '</select></label>'
+    + '<button class="btn" data-pa="fin-rec-nfvinc-confirmar" ' + (trava ? 'disabled ' : '') + 'onclick="fo110ModVincular(\'' + id + '\')">Vincular esta NF</button><button class="btn btn2" data-pa="fin-rec-nfvinc-cancelar" onclick="fo110ModVincularFechar()">Cancelar</button></div>';
+}
+function fo110ModVincularAbrir(id){ var p = estadoFinPront; if(p.acao || p.status !== 'ok' || !fo97UuidOk(String(id))) return; p.form.rec_nfv_aberto = String(id); delete p.form.rec_est_aberto; p.msg = null; foRenderProntuario(); }
+function fo110ModVincularFechar(){ var p = estadoFinPront; if(p.acao) return; delete p.form.rec_nfv_aberto; foRenderProntuario(); }
+function fo110ModVincular(id){
+  var p = estadoFinPront; if(p.acao || p.status !== 'ok' || !p.d || !p.d.rec) return;
+  var rec = p.d.rec, M = FO110_MSG;
+  function recusar(t){ foPMsg('erro', t); foRenderProntuario(); }
+  var k = String(id), ev = (Array.isArray(rec.eventos) ? rec.eventos : []).filter(function(e){ return !!e && String(e.id) === k; })[0];
+  if(!ev || !fo110PodeVincular(ev, rec)) return recusar(M.indisp);
+  if(!rec.projeto_id || !p.leadId) return recusar(MSG_REC_PRONT_REAL.semLeitura);
+  var esc = fo97EscolherNf(fo97NfsLista(rec), foValorCampo('finRecNfVinc'));   // mesma regra da baixa: uma NF vem escolhida; várias exigem escolha
+  if(esc.erro) return recusar(esc.erro);
+  if(!esc.nfId) return recusar(M.nfEscolha);
+  var args = { p_lead_id: p.leadId, p_chave: cxUuid(), p_projeto_id: String(rec.projeto_id), p_evento_id: k, p_nf_id: esc.nfId };
+  delete p.form.rec_nfv_aberto;
+  // a chave fica nos args (fixos): "Repetir com a mesma chave" reenvia exatamente isto e o banco responde "repetido" sem vincular duas vezes
+  foPAcao({ kind: 'rec_nf_vinculo', reenviar: true, executar: function(){ return supabaseClient.rpc(FO110_RPC, args); },
+    interpretar: function(r){
+      if(r.error) return { ok: false, texto: foErroTexto(r.error) };
+      var d = r.data, st = _objetoProntReal(d) ? d.status : '';
+      var c = fo110Classificar(st, d || {});
+      if(!c) return { incerto: true };
+      return c.tipo === 'ok' ? { ok: true, texto: c.texto } : { ok: false, tipo: 'aviso', texto: c.texto };
+    } });
+}
+function fo110Classificar(st, d){   // null = resposta desconhecida: fica "incerta" (nunca vira "nada alterado")
+  var M = FO110_MSG;
+  if(st === 'aplicado' || st === 'repetido') return { tipo: 'ok', reler: true, texto: (st === 'repetido' ? M.repetido : M.aplicado) + (d && typeof d.nf_numero === 'string' && d.nf_numero ? ' NF ' + fo97Txt(d.nf_numero, 60) + '.' : '') };
+  var mapa = { ja_vinculada: M.ja, nf_ja_registrada: M.jaTem, estornado: M.estornado, evento_invalido: M.indisp, evento_sem_caixa: M.semCaixa, caixa_ausente: M.semCaixa, nf_invalida: M.nfInvalida, nf_necessaria: M.nfEscolha,
+    projeto_perda: MSG_REC_PRONT_REAL.perdaBanco, projeto_diferente: MSG_REC_PRONT_REAL.projetoDiferente };
+  return mapa[st] ? { tipo: 'aviso', texto: mapa[st], reler: true } : null;
+}
+
 // ---------- Contas a Receber: NF opcional ----------
 function fo97NfsLista(dados){   // só NFs íntegras (id UUID + número); qualquer linha malformada é ignorada, nunca vira opção
   var a = dados && Array.isArray(dados.nfs) ? dados.nfs : [], out = [];
@@ -40887,7 +41009,7 @@ function fo97ClassificarRec(st, d){   // null = segue a classificação da base
 // ---------- Contas a Receber: lista de recebimentos + estorno ----------
 function fo97EventoTexto(e){   // texto da linha de um recebimento registrado (mesmo nos dois caminhos); só dados do banco
   var caixa = e.caixa === true, txt = _brlProntReal(e.valor) + ' em ' + _dataBRProntReal(e.data_recebimento) + ' (parcela ' + _textoProntReal(e.parcela) + ') — registrado por ' + (e.registrado_por ? _textoProntReal(e.registrado_por) : '—') + ' em ' + _dataHoraBRProntReal(e.registrado_em);
-  txt += caixa ? ' · ' + (typeof e.nf_numero === 'string' && e.nf_numero ? 'NF ' + e.nf_numero : 'NF pendente') + ' · entrada no Fluxo de caixa' : ' · anterior à integração com o caixa (sem entrada automática)';
+  txt += caixa ? ' · ' + (typeof e.nf_numero === 'string' && e.nf_numero ? 'NF ' + e.nf_numero : (fo110NfVinculoTexto(e) || 'NF pendente')) + ' · entrada no Fluxo de caixa' : ' · anterior à integração com o caixa (sem entrada automática)';
   if(e.estornado === true) txt += ' · ESTORNADO';
   return txt;
 }
@@ -40932,22 +41054,25 @@ function fo97Estornar(id){
   // chave e conteúdo ficam congelados em fin.acao: se a resposta se perder, "Repetir com a mesma chave" reenvia exatamente isto (o banco responde "repetido" sem estornar duas vezes)
   _finIniciarProntReal('rec_estorno', FO97_RPC.estornar, { p_lead_id: s.leadId, p_chave: chave, p_projeto_id: String(rec.dados.projeto_id), p_evento_id: k, p_token_esperado: String(p.token), p_motivo: mot });
 }
-// ---------- Contas a Receber PRINCIPAL (Financeiro do projeto: foRecebimentosHtml / foRegistrarRecebimento / foPAcao): lista de recebimentos + estorno ----------
+// ---------- Contas a Receber PRINCIPAL (Financeiro do projeto: foRecebimentosHtml / foRegistrarRecebimento / foPAcao): lista de recebimentos + estorno + vínculo de NF ----------
 function fo97EventosHtml(d, trava, enc){
   var p = estadoFinPront, rec = d && d.rec;
   if(!rec || !Array.isArray(rec.eventos)) return '';
   var ev = rec.eventos.filter(function(e){ return !!e && typeof e === 'object' && !Array.isArray(e); }).slice(0, 10);
   if(!ev.length) return '';
+  var nfsDoProjeto = fo97NfsLista(rec);
   var h = '<div style="margin:10px 0 4px;font-size:13px;font-weight:700">Recebimentos registrados (mais recentes primeiro)</div>';
   ev.forEach(function(e, i){
-    var id = String(e.id || ''), ok = fo97UuidOk(id), pode = ok && e.caixa === true && e.estornado !== true && rec.perda !== true && !enc;
+    var id = String(e.id || ''), ok = fo97UuidOk(id), pode = ok && e.caixa === true && e.estornado !== true && rec.perda !== true && !enc, podeNf = ok && fo110PodeVincular(e, rec);
     h += '<div data-pa="fin-rec-evento-' + i + '" style="font-size:12px;color:var(--muted);padding:3px 0">' + foEsc(fo97EventoTexto(e))
-      + (pode ? ' <button data-pa="fin-rec-estornar-' + i + '" ' + (trava ? 'disabled ' : '') + 'onclick="fo97ModEstornoAbrir(\'' + id + '\')" style="font-size:11px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer;color:var(--ink)">' + foEsc(MSG97.estornar) + '</button>' : '') + '</div>';
+      + (pode ? ' <button data-pa="fin-rec-estornar-' + i + '" ' + (trava ? 'disabled ' : '') + 'onclick="fo97ModEstornoAbrir(\'' + id + '\')" style="font-size:11px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer;color:var(--ink)">' + foEsc(MSG97.estornar) + '</button>' : '')
+      + (podeNf ? ' <button data-pa="fin-rec-nfvinc-' + i + '" ' + (trava ? 'disabled ' : '') + 'onclick="fo110ModVincularAbrir(\'' + id + '\')" style="font-size:11px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer;color:var(--ink)">' + foEsc(FO110_MSG.vincular) + '</button>' : '') + '</div>';
     if(pode && String(p.form.rec_est_aberto || '') === id){
       h += '<div data-pa="fin-rec-estorno-box-' + i + '" style="margin:2px 0 8px;padding:10px;border:1px solid var(--line);border-radius:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end"><div class="muted" style="font-size:12px;flex-basis:100%">' + foEsc(MSG97.estornoExplica) + '</div>'
         + '<label style="font-size:12px;font-weight:700;flex:1;min-width:200px">' + foEsc(MSG97.estornoRotulo) + '<br><input id="finRecEstMotivo" type="text" maxlength="300" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>'
         + '<button class="btn" data-pa="fin-rec-estorno-confirmar" ' + (trava ? 'disabled ' : '') + 'onclick="fo97ModEstornar(\'' + id + '\')">Confirmar estorno</button><button class="btn btn2" data-pa="fin-rec-estorno-cancelar" onclick="fo97ModEstornoFechar()">Cancelar</button></div>';
     }
+    if(podeNf && String(p.form.rec_nfv_aberto || '') === id) h += fo110CaixaVincularHtml(i, id, nfsDoProjeto, trava);
   });
   return h;
 }
@@ -40999,11 +41124,12 @@ cxCalcular = function(rows, catalogo, catOk){
     var raw = (rows || [])[i] || {}, forn = cxRelacao(raw.fornecedores);
     it.fornecedor = forn && forn.nome ? fo97Txt(String(forn.nome), 120) : ''; it.fornId = raw.fornecedor_id || '';
     it.i97 = fo97Detalhe(raw.detalhe_origem); it.recEvId = raw.recebimento_evento_id || '';
+    it.vinc110 = it.recEvId ? (fo110Vinc[String(it.recEvId).toLowerCase()] || null) : null;   // NF associada depois da baixa (o detalhe_origem do lançamento nunca muda)
     if(it.i97 && it.i97.origem !== 'manual'){   // entrada de recebimento / estorno: somente leitura (mesmo que o projeto tenha sido removido depois); NF manual continua avulsa e editável
       var os = it.os || it.i97.os;
       it.avulso = false;
       it.origem = 'Vinculado (somente leitura): ' + (it.i97.origem === 'recebimento' ? 'Recebimento de cliente' : 'Estorno de recebimento') + (os ? ' · OS ' + os : '')
-        + (it.i97.nfNumero ? ' · NF ' + it.i97.nfNumero : (it.i97.origem === 'recebimento' ? ' · NF pendente' : ''));
+        + (it.i97.nfNumero ? ' · NF ' + it.i97.nfNumero : (it.i97.origem === 'recebimento' ? (it.vinc110 ? ' · NF ' + it.vinc110.numero + ' (vinculada depois)' : ' · NF pendente') : ''));
     }
   });
   return r;
@@ -41022,7 +41148,9 @@ function fo97Linhas(it){   // → [[rótulo, valor]]; faltante = "—"; somente 
   add('Valor', isFinite(it.valorC) ? crBRL(it.valorC) : '');
   add('Categoria', it.catNome);
   if(d && d.origem === 'recebimento'){
-    add('Origem', 'Recebimento de cliente (Contas a Receber)'); add('OS', d.os || it.os); add('Projeto', d.titulo); add('Cliente', d.cliente); add('Parcela', d.parcela || ''); add('NF', d.nfNumero || 'NF pendente (adiantamento)');
+    add('Origem', 'Recebimento de cliente (Contas a Receber)'); add('OS', d.os || it.os); add('Projeto', d.titulo); add('Cliente', d.cliente); add('Parcela', d.parcela || '');
+    add('NF', d.nfNumero || (it.vinc110 ? it.vinc110.numero : 'NF pendente (adiantamento)'));
+    if(!d.nfNumero && it.vinc110) add('NF vinculada depois', (fo110DataHora(it.vinc110.em) || '—') + (it.vinc110.por && typeof foNome === 'function' ? ' · ' + (foNome(it.vinc110.por) || '—') : ''));
   } else if(d && d.origem === 'estorno_recebimento'){
     add('Origem', 'Estorno de recebimento (saída compensatória)'); add('OS', d.os || it.os); add('Parcela', d.parcela || ''); add('NF do recebimento', d.nfNumero); add('Motivo', d.motivo);
   } else if(ent){
@@ -41230,7 +41358,7 @@ cxCalcular = function(rows, catalogo, catOk){
     it.detRaw = raw.detalhe_origem && typeof raw.detalhe_origem === 'object' ? raw.detalhe_origem : null;
     it.i98 = fo98Detalhe(raw.detalhe_origem);
     it.colOs = it.os || (it.i97 && it.i97.os) || (it.i98 && it.i98.ref && it.i98.ref.os) || '';
-    it.colNf = (it.i97 && it.i97.nfNumero) || (it.i98 && it.i98.nf) || '';
+    it.colNf = (it.i97 && it.i97.nfNumero) || (it.vinc110 && it.vinc110.numero) || (it.i98 && it.i98.nf) || '';   // V1.7.3.0: NF vinculada depois da baixa também aparece (o lançamento original segue intacto)
   });
   return r;
 };
@@ -51722,10 +51850,12 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
 })();
 </script>
 <script id="ag107Js">
-/* ZIP OS V1.7.1.0 · Datas na Agenda — front. Fonte única: o construtor injeta este arquivo como <script id="ag107Js"> no HTML da 107 (troca contada sobre agenda107.js).
-   Novo na 108: datas operacionais das OS (gravação, revisão, entrega) vindas de agenda_listar(escopo "*_datas"), somente leitura, sem agenda_ler; cores por natureza; legenda; prévia ao pairar.
+/* ZIP OS V1.7.3.0 · Agenda e Recebimentos — front. Fonte única: o construtor injeta este arquivo como <script id="ag107Js"> no HTML da 107 (troca contada sobre agenda107.js).
+   108: datas operacionais das OS (gravação, revisão, entrega) vindas de agenda_listar(escopo "*_datas"), somente leitura, sem agenda_ler; cores por natureza; legenda; prévia ao pairar.
+   110: cores vivas por natureza; leitura compartilhada (Sócio/Atendimento/Admin veem todos os compromissos e datas das OS; os demais perfis não usam a Agenda, nem por RPC);
+        recorrência semanal (série = 1 compromisso; ocorrências projetadas pelo servidor, identidade = id + data), 8 cores próprias da recorrência, conflitos da série, "Encerrar série" preservando o passado.
    Regras: nenhum callback de Auth (identidade vigiada por timer), respostas tardias/de outra identidade descartadas, todo texto dinâmico escapado,
-   links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto. */
+   links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto, sem canal externo de aviso. */
 var AG107 = (function(){
 'use strict';
 var G = (typeof window !== 'undefined') ? window : this;
@@ -51738,11 +51868,14 @@ var PRES = { pendente: 'Aguardando resposta', confirmado: 'Confirmou', recusado:
 var DOW = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 var MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 var AVISO = { convite: 'Você foi incluído em', alteracao: 'Compromisso alterado:', cancelamento: 'Compromisso cancelado:', remocao: 'Você foi removido de um compromisso', lembrete_1d: 'Lembrete — amanhã:', lembrete_1h: 'Lembrete — em 1 hora:' };
-var CHAVES_PAYLOAD = ['natureza', 'titulo', 'data', 'hora_inicio', 'hora_fim', 'status', 'responsavel_id', 'participantes', 'externos', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'projeto_id', 'gravacao_id', 'permitir_duplicado', 'atualizar_referencia', 'cliente'];
+var CHAVES_PAYLOAD = ['natureza', 'titulo', 'data', 'hora_inicio', 'hora_fim', 'status', 'responsavel_id', 'participantes', 'externos', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'projeto_id', 'gravacao_id', 'permitir_duplicado', 'atualizar_referencia', 'cliente', 'recorrencia'];
 var RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 var FONTE = { gravacao: { curto: 'Gravação', longo: 'Data de gravação da OS' }, revisao: { curto: 'Revisão', longo: 'Data de revisão / apresentação da OS' }, entrega: { curto: 'Prazo de entrega', longo: 'Prazo geral de entrega da OS (não é data de edição, de revisão nem de gravação)' } };
 var FONTE_PAD = { curto: 'Data da OS', longo: 'Data operacional da OS' };
 var PREV_MAX = 8, RECARGA_MS = 20000;
+var REC_N = 8, SEMANAS_CONF = 26;
+var REC_NOMES = ['Rosa-avermelhado', 'Laranja', 'Lima', 'Ciano', 'Verde-petróleo', 'Magenta', 'Rosa', 'Marrom'];   // as 8 cores EXCLUSIVAS da recorrência (CSS .ag-r-1…8), distintas das 5 naturezas
+var MSG_SEM_ACESSO = 'A Agenda está disponível para os perfis Sócio e Atendimento (e Administrador). O seu acesso não inclui a Agenda.';
 
 /* ------------------------------------------------------------------ utilitários puros */
 function esc(v){ return String(v == null ? '' : v).replace(/[&<>"'`]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]; }); }
@@ -51769,6 +51902,19 @@ function fmtDataCurta(s){ var p = parseYmd(s); return p ? pad2(p.d) + '/' + pad2
 function fmtDiaSemana(s){ return DOW[dowSeg(s)] || ''; }
 function quando(it){ return it.hora_inicio ? it.hora_inicio + (it.hora_fim ? '–' + it.hora_fim : '') : (it && it.origem === 'fonte' && it.fonte_tipo !== 'gravacao' ? 'Sem horário' : 'A definir'); }
 function trunc(s, n){ s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+// recorrência: cor (1..8) da série; classe de cor do item (natureza + cor própria da recorrência, que prevalece no CSS); identidade da ocorrência = id da série + data
+function corRec(it){ var n = it && it.recorrente === true ? Number(it.recorrencia_cor) : 0; return n >= 1 && n <= REC_N && n === Math.floor(n) ? n : 0; }
+function clsCor(it){ var r = corRec(it); return 'ag-n-' + (NAT[it && it.natureza] ? it.natureza : 'outros') + (r ? ' ag-rec ag-r-' + r : ''); }
+function chaveItem(it){ return it ? String(it.id) + (it.recorrente === true && parseYmd(it.ocorrencia) ? '@' + it.ocorrencia : '') : ''; }
+function splitChave(k){ var s = String(k == null ? '' : k), i = s.indexOf('@'); return i < 0 ? { id: s, oc: '' } : { id: s.slice(0, i), oc: parseYmd(s.slice(i + 1)) ? s.slice(i + 1) : '' }; }
+function proximaOcorrencia(d, hoje){ var p = parseYmd(d), h = parseYmd(hoje); if(!p || !h || h.t <= p.t) return d; return addDias(d, Math.ceil((h.t - p.t) / 86400000 / 7) * 7); }
+function semanasSerie(d, fim){ var a = parseYmd(d), b = parseYmd(fim); if(!a) return 1; if(!b) return SEMANAS_CONF; if(b.t < a.t) return 0; return Math.min(SEMANAS_CONF, Math.floor((b.t - a.t) / 86400000 / 7) + 1); }
+function textoSerie(r){
+  if(!r) return '';
+  var t = 'Toda semana (' + fmtDiaSemana(r.primeira) + '), a partir de ' + fmtData(r.primeira) + (r.fim ? ' até ' + fmtData(r.fim) + ' (inclusive)' : ', sem data final');
+  if(r.encerrada_em) t += ' · encerrada' + (r.encerrada_por_nome ? ' por ' + r.encerrada_por_nome : '');
+  return t;
+}
 function novaChave(){
   try { if(G.crypto && typeof G.crypto.randomUUID === 'function') return G.crypto.randomUUID(); } catch(e){}
   var h = '0123456789abcdef', r = '';
@@ -51812,6 +51958,15 @@ function validarForm(f){
   });
   if(ext.length > 30) e.externos = 'No máximo 30 convidados/fornecedores.';
   if(f.gravacao_id && !f.projeto_id) e.projeto_id = 'Escolha a OS da gravação.';
+  var rf = '', rc = '';
+  if(f.recorrente){
+    rf = String(f.rfim || '').trim(); rc = String(f.rcor || '').trim();
+    if(rf && !parseYmd(rf)) e.rfim = 'Data final inválida.';
+    else if(rf && parseYmd(f.data) && rf < f.data) e.rfim = 'A data final não pode ser anterior ao primeiro compromisso.';
+    if(rc && !/^[1-8]$/.test(rc)) e.rcor = 'Cor inválida.';
+    if(f.gravacao_id) e.recorrente = 'Compromisso ligado a uma gravação da OS não pode ser recorrente.';
+    if(f.status === 'concluido') e.status = 'Uma série não pode ser concluída: use "Encerrar série".';
+  }
   var p = {
     natureza: f.natureza, titulo: t, data: f.data, hora_inicio: hi || null, hora_fim: hf || null, status: f.status || 'previsto',
     responsavel_id: RE_UUID.test(String(f.resp || '')) ? f.resp : null, participantes: parts, externos: ext,
@@ -51820,6 +51975,7 @@ function validarForm(f){
   };
   if(f.modo === 'novo' && f.permitirDup) p.permitir_duplicado = true;
   if(f.modo === 'editar' && f.atualizarRef) p.atualizar_referencia = true;
+  if(f.recorrente) p.recorrencia = { tipo: 'semanal', fim: rf || null, cor: rc ? Number(rc) : null };
   return { erros: e, payload: p };
 }
 function hashPayload(p, modo, id, ver){ return hashTexto(modo + '|' + (id || '') + '|' + (ver == null ? '' : ver) + '|' + JSON.stringify(p)); }
@@ -51846,7 +52002,7 @@ function porDia(itens, fl){ var m = {}; (itens || []).forEach(function(it){ if(!
 function fmtDiv(v){ return v ? (parseYmd(v) ? fmtData(v) : String(v)) : '—'; }
 function ehFonte(it){ return !!(it && it.origem === 'fonte'); }
 function fonteRot(it){ return (it && FONTE[it.fonte_tipo]) || FONTE_PAD; }
-function procurarItem(id){ var a = ((S.sem && S.sem.itens) || []).concat((S.mesD && S.mesD.itens) || []); for(var i = 0; i < a.length; i++){ if(a[i] && a[i].id === id) return a[i]; } return null; }
+function procurarItem(id){ var a = ((S.sem && S.sem.itens) || []).concat((S.mesD && S.mesD.itens) || []); for(var i = 0; i < a.length; i++){ if(a[i] && chaveItem(a[i]) === id) return a[i]; } return null; }
 function ehIdFonte(id){ return ehFonte(procurarItem(id)); }
 // Pede a lista com as datas das OS (escopo "minha_datas"/"equipe_datas"). Servidor ainda na 107 (escopo desconhecido) => cai UMA vez para o escopo antigo, sem datas, e avisa na legenda.
 function listar(ini, fim, id0){
@@ -51865,9 +52021,10 @@ function textoFonte(it){
   return L.join('\n');
 }
 function textoResumo(d){
-  var c = d.compromisso || {}, L = [];
+  var c = d.compromisso || {}, L = [], dia = (S && S.oc) || c.data;
   L.push(c.titulo); L.push((NAT[c.natureza] || '') + ' · ' + (STATUS[c.status] || ''));
-  L.push('Quando: ' + fmtData(c.data) + ' ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? '–' + c.hora_fim : '') : 'horário a definir'));
+  L.push('Quando: ' + fmtData(dia) + ' ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? '–' + c.hora_fim : '') : 'horário a definir'));
+  if(c.recorrencia) L.push('Recorrência: ' + textoSerie(c.recorrencia));
   if(c.responsavel_nome) L.push('Responsável: ' + c.responsavel_nome);
   if(c.cliente) L.push('Cliente: ' + c.cliente);
   if(c.local) L.push('Local: ' + c.local); if(c.plataforma) L.push('Plataforma: ' + c.plataforma); if(c.link) L.push('Link: ' + c.link);
@@ -51881,17 +52038,19 @@ function textoResumo(d){
 function doc(){ return typeof document !== 'undefined' ? document : null; }
 function $(id){ var d = doc(); return d ? d.getElementById(id) : null; }
 function setHtml(id, h){ var el = $(id); if(el) el.innerHTML = h; }
-function novoEstado(){
-  var h = hojeBR();
-  return { id: '', indisponivel: false, escopo: 'minha', filtros: { natureza: '', status: '', pessoa: '', texto: '' },
-    semIni: inicioSemana(h), mes: { a: +h.slice(0, 4), m: +h.slice(5, 7) }, diaSel: h,
-    sem: { estado: 'vazio', itens: [], msg: '' }, mesD: { estado: 'vazio', itens: [], msg: '' },
-    ger: { sem: 0, mes: 0, det: 0, eq: 0, av: 0 }, equipe: null, eqEstado: '', nomes: {}, naoLidas: 0, modal: null, form: null, det: null, avisos: null, confAviso: null, tPoll: null, tVigia: null, tBusca: null, tConf: null, ligado: false, datas: true, fonte: null, prevDia: '', ultCarga: 0 };
-}
-var S = novoEstado();
 function meuId(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.id) ? String(currentUser.id) : ''; } catch(e){ return ''; } }
 function perfis(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.profiles) ? currentUser.profiles : []; } catch(e){ return []; } }
 function ehGestorUI(){ var p = perfis(); return p.indexOf('socio') >= 0 || p.indexOf('admin') >= 0; }
+// quem usa a Agenda: Sócio ou Atendimento (perfis acumulados valem; Admin sozinho não). O servidor aplica a MESMA regra em todas as RPCs; aqui só se evita mostrar o que ele recusaria.
+function podeAgenda(){ var p = perfis(); return p.indexOf('socio') >= 0 || p.indexOf('atendimento') >= 0; }
+function novoEstado(){
+  var h = hojeBR();
+  return { id: '', indisponivel: false, escopo: 'equipe', filtros: { natureza: '', status: '', pessoa: '', texto: '' },
+    semIni: inicioSemana(h), mes: { a: +h.slice(0, 4), m: +h.slice(5, 7) }, diaSel: h,
+    sem: { estado: 'vazio', itens: [], msg: '' }, mesD: { estado: 'vazio', itens: [], msg: '' },
+    ger: { sem: 0, mes: 0, det: 0, eq: 0, av: 0 }, equipe: null, eqEstado: '', nomes: {}, naoLidas: 0, modal: null, form: null, det: null, oc: '', avisos: null, confAviso: null, tPoll: null, tVigia: null, tBusca: null, tConf: null, ligado: false, datas: true, fonte: null, prevDia: '', ultCarga: 0 };
+}
+var S = novoEstado();
 function idAtual(){
   try {
     var u = meuId(); if(!u) return '';
@@ -51964,7 +52123,7 @@ function carregarEquipe(){
   });
 }
 function contarNaoLidas(){
-  var id0 = idAtual(); if(!id0 || S.indisponivel) return Promise.resolve();
+  var id0 = idAtual(); if(!id0 || S.indisponivel || !podeAgenda()) return Promise.resolve();
   return rpc('agenda_notificacoes_contar', {}, id0).then(function(r){
     if(r.descartado || !r.ok || !r.data || r.data.status !== 'ok') return;
     var n = Number(r.data.nao_lidas) || 0;
@@ -51980,13 +52139,12 @@ function badge(n){
 function live(t){ var el = $('ag107Live'); if(el) el.textContent = t; }
 function recarregarTudo(){ S.ultCarga = Date.now(); return Promise.all([carregarSem(), carregarMes()]); }
 // Voltar à aba/tela depois de iniciar um projeto: se a lista tem mais de 20 s e não há pop-up aberto, relê (a lista é projeção ao vivo, sem cópia).
-function recarregarSeVelha(){ if(secaoAtiva() && !S.modal && Date.now() - S.ultCarga > RECARGA_MS) recarregarTudo(); }
+function recarregarSeVelha(){ if(secaoAtiva() && podeAgenda() && !S.modal && Date.now() - S.ultCarga > RECARGA_MS) recarregarTudo(); }
 
 /* ------------------------------------------------------------------ desenho: filtros, semana, mês, dia */
 function opt(v, rot, sel){ return '<option value="' + esc(v) + '"' + (sel ? ' selected' : '') + '>' + esc(rot) + '</option>'; }
 function htmlFiltros(){
   var f = S.filtros, h = '';
-  if(ehGestorUI()) h += '<label>Visão<select data-fl="escopo">' + opt('minha', 'Minha agenda', S.escopo === 'minha') + opt('equipe', 'Equipe (todos)', S.escopo === 'equipe') + '</select></label>';
   h += '<label>Natureza<select data-fl="natureza">' + opt('', 'Todas', !f.natureza) + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select></label>';
   h += '<label>Situação<select data-fl="status">' + opt('', 'Todas', !f.status) + ['previsto', 'confirmado', 'concluido', 'cancelado'].map(function(k){ return opt(k, STATUS[k], f.status === k); }).join('') + '</select></label>';
   h += '<label>Pessoa<select data-fl="pessoa">' + opt('', 'Todas', !f.pessoa) + (S.equipe || []).map(function(x){ return opt(x.id, x.nome, f.pessoa === x.id); }).join('') + '</select></label>';
@@ -52004,8 +52162,8 @@ function chip(it){
   if(it.os) sub.push(it.os + (it.cliente ? ' · ' + it.cliente : '')); else if(it.cliente) sub.push(it.cliente);
   var onde = it.local || it.plataforma; if(onde) sub.push(onde);
   var np = (it.participantes || []).filter(interno).length; if(np > 1) sub.push(np + ' pessoas');
-  var tag = ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || '') + (it.status !== 'previsto' ? ' · ' + (STATUS[it.status] || '') : '') + (it.minha_presenca === 'pendente' && it.status !== 'cancelado' ? ' · responder' : '');
-  return '<button type="button" class="ag-ev ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + (it.status === 'cancelado' ? ' ag-cancel' : '') + (it.status === 'concluido' ? ' ag-conc' : '') + (ehFonte(it) ? ' ag-fonte" data-ag="abrir-fonte" data-id="' : '" data-ag="abrir" data-id="') + esc(it.id) + '" title="' + esc(it.titulo) + '">'
+  var tag = ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || '') + (corRec(it) ? ' · ↻ semanal' : '') + (it.status !== 'previsto' ? ' · ' + (STATUS[it.status] || '') : '') + (it.minha_presenca === 'pendente' && it.status !== 'cancelado' ? ' · responder' : '');
+  return '<button type="button" class="ag-ev ' + clsCor(it) + (it.status === 'cancelado' ? ' ag-cancel' : '') + (it.status === 'concluido' ? ' ag-conc' : '') + (ehFonte(it) ? ' ag-fonte" data-ag="abrir-fonte" data-id="' : '" data-ag="abrir" data-id="') + esc(chaveItem(it)) + '" title="' + esc(it.titulo) + '">'
     + '<span class="h">' + esc(quando(it)) + '</span><span class="t">' + esc(it.titulo) + '</span>' + (sub.length ? '<span class="s">' + esc(sub.join(' · ')) + '</span>' : '') + '<span class="b">' + esc(tag) + '</span></button>';
 }
 function htmlEstado(d, vazioMsg){
@@ -52016,7 +52174,7 @@ function htmlEstado(d, vazioMsg){
 }
 function htmlParcial(d){
   if(!d || !d.parcial) return '';
-  return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens, marcadores e filtros abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + (S.escopo === 'equipe' ? ' ou volte para "Minha agenda"' : '') + '.</div>';
+  return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens, marcadores e filtros abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + '.</div>';
 }
 function htmlSemana(){
   var ini = S.semIni, fim = addDias(ini, 6), hoje = hojeBR(), m = porDia(S.sem.itens, S.filtros), h = '';
@@ -52060,7 +52218,7 @@ function faixasDia(l){
   var h = '<span class="ag-fxs">';
   l.slice(0, FX_MAX).forEach(function(it){
     var r = rotuloFaixa(it);
-    h += '<span class="ag-fx ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + (it.status === 'cancelado' ? ' ag-cancel' : '') + '" title="' + esc((r.h ? r.h + ' · ' : '') + r.t + (r.k ? ' · ' + r.k : '')) + '">'
+    h += '<span class="ag-fx ' + clsCor(it) + (it.status === 'cancelado' ? ' ag-cancel' : '') + '" title="' + esc((r.h ? r.h + ' · ' : '') + r.t + (r.k ? ' · ' + r.k : '') + (corRec(it) ? ' · ↻ semanal' : '')) + '">'
       + (r.h ? '<span class="h">' + esc(r.h) + '</span>' : '') + '<span class="t">' + esc(r.t) + '</span>' + (r.k ? '<span class="k">' + esc(r.k) + '</span>' : '') + '</span>';
   });
   if(l.length > FX_MAX) h += '<span class="ag-mais">+' + (l.length - FX_MAX) + '</span>';
@@ -52068,7 +52226,7 @@ function faixasDia(l){
 }
 function itensDoDia(d){
   var vistos = {}, out = [];
-  S.mesD.itens.concat(S.sem.itens).forEach(function(it){ if(it.data === d && !vistos[it.id] && passa(it, S.filtros)){ vistos[it.id] = 1; out.push(it); } });
+  S.mesD.itens.concat(S.sem.itens).forEach(function(it){ var k = chaveItem(it); if(it.data === d && !vistos[k] && passa(it, S.filtros)){ vistos[k] = 1; out.push(it); } });
   return out.sort(ordenar);
 }
 function htmlDia(){
@@ -52083,15 +52241,18 @@ function pintar(){
 
 /* ------------------------------------------------------------------ legenda, prévia ao pairar, detalhe de data da OS */
 function htmlLegenda(){
-  var it = [['gravacao', 'Gravação / produção'], ['edicao', 'Edição'], ['revisao', 'Revisão / apresentação'], ['reuniao', 'Reunião / call'], ['outros', 'Outros / entrega']];
-  return '<div class="ag-leg" aria-label="Legenda de cores">' + it.map(function(x){ return '<span class="ag-n-' + x[0] + '"><i class="ag-pt"></i>' + esc(x[1]) + '</span>'; }).join('') + (S.datas ? '' : '<span>Datas das OS indisponíveis neste servidor</span>') + '</div>';
+  var it = [['gravacao', 'Gravação / produção'], ['edicao', 'Edição'], ['revisao', 'Revisão / apresentação'], ['reuniao', 'Reunião / call'], ['outros', 'Outros / entrega']], rec = '';
+  for(var n = 1; n <= REC_N; n++) rec += '<i class="ag-pt ag-r-' + n + '" title="' + esc(REC_NOMES[n - 1]) + '"></i>';
+  return '<div class="ag-leg" aria-label="Legenda de cores">' + it.map(function(x){ return '<span class="ag-n-' + x[0] + '"><i class="ag-pt"></i>' + esc(x[1]) + '</span>'; }).join('')
+    + '<span class="ag-leg-rec" title="Compromissos que se repetem toda semana usam uma destas 8 cores próprias, diferentes das cores das naturezas"><b class="ag-rec-mark">↻</b> Recorrente (cor da série)' + rec + '</span>'
+    + (S.datas ? '' : '<span>Datas das OS indisponíveis neste servidor</span>') + '</div>';
 }
 function htmlPrev(d){
   var l = itensDoDia(d); if(!l.length) return '';
   var h = '<div class="pv-t">' + esc(fmtDiaSemana(d) + ', ' + fmtData(d)) + ' · ' + l.length + (l.length === 1 ? ' item' : ' itens') + '</div>';
   l.slice(0, PREV_MAX).forEach(function(it){
-    var sub = [ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || ''), it.os || ''].filter(function(x){ return x; }).join(' · ');
-    h += '<div class="pv-i ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + '"><b>' + esc(quando(it) + ' · ' + it.titulo) + '</b><span>' + esc(sub) + '</span></div>';
+    var sub = [ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || '') + (corRec(it) ? ' · ↻ semanal' : ''), it.os || ''].filter(function(x){ return x; }).join(' · ');
+    h += '<div class="pv-i ' + clsCor(it) + '"><b>' + esc(quando(it) + ' · ' + it.titulo) + '</b><span>' + esc(sub) + '</span></div>';
   });
   if(l.length > PREV_MAX) h += '<div class="pv-m">+ ' + (l.length - PREV_MAX) + ' a mais — clique no dia para ver todos.</div>';
   return h;
@@ -52135,13 +52296,20 @@ function abrirFonte(id){
 }
 
 /* ------------------------------------------------------------------ modal: detalhe */
-function htmlDetalhe(d, conf){
-  var c = d.compromisso || {}, s = d.snapshot, at = d.origem_atual, div = divergencias(s, at), h = '';
+function linhaConf(x){
+  return esc(x.nome) + ' já tem ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'um compromisso (ocupado)') + (x.data ? ' em ' + esc(fmtDataCurta(x.data)) + (x.recorrente ? ' (série semanal)' : '') : '') + ' das ' + esc(x.hora_inicio) + ' às ' + esc(x.hora_fim);
+}
+function htmlDetalhe(d, conf, oc){
+  var c = d.compromisso || {}, s = d.snapshot, at = d.origem_atual, div = divergencias(s, at), h = '', rec = c.recorrencia || null, dia = parseYmd(oc) ? oc : c.data;
+  var cr = rec && Number(rec.cor) >= 1 && Number(rec.cor) <= REC_N ? Math.floor(Number(rec.cor)) : 0;
   h += '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="Detalhes do compromisso">';
-  h += '<h2>' + esc(c.titulo) + '</h2><div><span class="ag-nb ag-n-' + esc(NAT[c.natureza] ? c.natureza : 'outros') + '">' + esc(NAT[c.natureza] || '') + '</span> <span class="badge ' + (c.status === 'cancelado' ? 'danger' : c.status === 'concluido' ? 'ok' : c.status === 'confirmado' ? 'ok' : 'warn') + '">' + esc(STATUS[c.status] || '') + '</span></div>';
-  if(conf && conf.length) h += '<div class="ag-aviso" role="alert"><b>Atenção — conflito de horário:</b><br>' + conf.map(function(x){ return esc(x.nome) + ' já tem ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'um compromisso (ocupado)') + ' das ' + esc(x.hora_inicio) + ' às ' + esc(x.hora_fim); }).join('<br>') + '<br><small>Salvo mesmo assim; conflito é só um alerta.</small></div>';
-  if(c.status === 'cancelado') h += '<div class="ag-aviso erro">Este compromisso foi cancelado.</div>';
-  h += '<dl class="ag-kv" style="margin-top:12px"><dt>Quando</dt><dd>' + esc(fmtDiaSemana(c.data) + ', ' + fmtData(c.data) + ' — ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? ' às ' + c.hora_fim : '') : 'horário a definir')) + '</dd>'
+  h += '<h2>' + esc(c.titulo) + '</h2><div><span class="ag-nb ag-n-' + esc(NAT[c.natureza] ? c.natureza : 'outros') + '">' + esc(NAT[c.natureza] || '') + '</span> '
+    + (rec ? '<span class="ag-nb ag-rec ag-r-' + cr + '" title="' + esc(REC_NOMES[cr - 1] || '') + '">↻ Semanal</span> ' : '')
+    + '<span class="badge ' + (c.status === 'cancelado' ? 'danger' : c.status === 'concluido' ? 'ok' : c.status === 'confirmado' ? 'ok' : 'warn') + '">' + esc(STATUS[c.status] || '') + '</span></div>';
+  if(conf && conf.length) h += '<div class="ag-aviso" role="alert"><b>Atenção — conflito de horário:</b><br>' + conf.map(linhaConf).join('<br>') + '<br><small>Salvo mesmo assim; conflito é só um alerta.</small></div>';
+  if(c.status === 'cancelado') h += '<div class="ag-aviso erro">Este compromisso foi cancelado' + (rec ? ' (a série inteira)' : '') + '.</div>';
+  h += '<dl class="ag-kv" style="margin-top:12px"><dt>Quando</dt><dd>' + esc(fmtDiaSemana(dia) + ', ' + fmtData(dia) + ' — ' + (c.hora_inicio ? c.hora_inicio + (c.hora_fim ? ' às ' + c.hora_fim : '') : 'horário a definir')) + '</dd>'
+    + (rec ? '<dt>Recorrência</dt><dd>' + esc(textoSerie(rec)) + '</dd>' : '')
     + '<dt>Responsável</dt><dd>' + esc(c.responsavel_nome || '—') + '</dd>' + (c.cliente ? '<dt>Cliente</dt><dd>' + esc(c.cliente) + '</dd>' : '')
     + (c.local ? '<dt>Local</dt><dd>' + esc(c.local) + '</dd>' : '') + (c.plataforma ? '<dt>Plataforma</dt><dd>' + esc(c.plataforma) + '</dd>' : '')
     + (c.link ? '<dt>Link</dt><dd>' + (safeUrl(c.link) ? '<a href="' + esc(safeUrl(c.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(c.link) + '</a>' : esc(c.link)) + '</dd>' : '')
@@ -52167,24 +52335,25 @@ function htmlDetalhe(d, conf){
   h += '<div class="ag-botoes">';
   if(d.minha_presenca && c.status !== 'cancelado' && c.status !== 'concluido') h += '<button type="button" class="btn btn2" data-ag="presenca" data-r="recusado">Recusar</button><button type="button" class="btn" data-ag="presenca" data-r="confirmado">' + (d.minha_presenca === 'confirmado' ? 'Presença confirmada ✓' : 'Confirmar presença') + '</button>';
   h += '<button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button>';
-  if(d.pode_editar) h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">Cancelar compromisso</button><button type="button" class="btn" data-ag="editar">Editar</button>';
+  if(d.pode_encerrar_serie) h += '<button type="button" class="btn btn2" data-ag="encerrar-serie">Encerrar série</button>';
+  if(d.pode_editar) h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">' + (rec ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button><button type="button" class="btn" data-ag="editar">Editar' + (rec ? ' série' : '') + '</button>';
   h += '<button type="button" class="btn btn2" data-ag="fechar">Fechar</button></div></div></div>';
   return h;
 }
-function abrirDetalhe(id, conf){
+function abrirDetalhe(id, conf, oc){
   if(ehIdFonte(id)) return abrirFonte(id);
   var id0 = idAtual(), g = ++S.ger.det; if(!id0) return;
-  S.modal = 'detalhe'; S.det = null; S.fonte = null; S.confAviso = conf || null;
+  S.modal = 'detalhe'; S.det = null; S.fonte = null; S.confAviso = conf || null; S.oc = parseYmd(oc) ? oc : '';
   setHtml('ag107Modal', '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Carregando…</h2></div></div>');
   return rpc('agenda_ler', { p_id: id }, id0).then(function(r){
     if(r.descartado || g !== S.ger.det || S.modal !== 'detalhe') return;
     if(!r.ok){ setHtml('ag107Modal', htmlMsgModal('Não foi possível abrir', msgFalha(r))); return; }
     if(!r.data || r.data.status !== 'ok'){ setHtml('ag107Modal', htmlMsgModal('Compromisso indisponível', 'Ele não existe ou você não tem mais acesso a ele.')); return; }
-    S.det = r.data; setHtml('ag107Modal', htmlDetalhe(r.data, S.confAviso)); foco();
+    S.det = r.data; setHtml('ag107Modal', htmlDetalhe(r.data, S.confAviso, S.oc)); foco();
   });
 }
 function htmlMsgModal(tit, msg){ return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + esc(tit) + '</h2><p>' + esc(msg) + '</p><div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>'; }
-function fechar(){ S.modal = null; S.form = null; S.det = null; S.fonte = null; S.avisos = null; clearTimeout(S.tBusca); clearTimeout(S.tConf); S.ger.det++; setHtml('ag107Modal', ''); }
+function fechar(){ S.modal = null; S.form = null; S.det = null; S.fonte = null; S.oc = ''; S.avisos = null; clearTimeout(S.tBusca); clearTimeout(S.tConf); S.ger.det++; setHtml('ag107Modal', ''); }
 function foco(){ try { var b = doc().querySelector('#ag107Modal .ag-box button.btn, #ag107Modal .ag-box input'); if(b && b.focus) b.focus(); } catch(e){} }
 function copiar(){
   if(!S.det && !S.fonte) return; var t = S.det ? textoResumo(S.det) : textoFonte(S.fonte);
@@ -52192,19 +52361,20 @@ function copiar(){
   live('Selecione o texto na janela para copiar.');
 }
 function responder(r){
-  if(!S.det) return; var id0 = idAtual(), id = S.det.compromisso.id;
+  if(!S.det) return; var id0 = idAtual(), id = S.det.compromisso.id, oc = S.oc;
   rpc('agenda_responder', { p_id: id, p_resposta: r }, id0).then(function(x){
     if(x.descartado) return;
     if(!x.ok){ live(msgFalha(x)); return; }
-    if(x.data && x.data.status === 'ok'){ live(r === 'confirmado' ? 'Presença confirmada.' : 'Presença recusada.'); abrirDetalhe(id); recarregarTudo(); }
+    if(x.data && x.data.status === 'ok'){ live(r === 'confirmado' ? 'Presença confirmada.' : 'Presença recusada.'); abrirDetalhe(id, null, oc); recarregarTudo(); }
     else live('Não foi possível registrar a resposta.');
   });
 }
 
-/* ------------------------------------------------------------------ modal: cancelar compromisso */
+/* ------------------------------------------------------------------ modal: cancelar compromisso / encerrar série */
 function htmlCancelar(c){
-  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Cancelar compromisso?</h2><p>“' + esc(c.titulo) + '” será marcado como cancelado e os participantes serão avisados. A OS, a gravação e o financeiro não são alterados.</p>'
-    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label><div id="ag107CancMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="cancelar-ok">Cancelar compromisso</button></div></div></div>';
+  var serie = !!c.recorrencia;
+  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + (serie ? 'Cancelar a série inteira?' : 'Cancelar compromisso?') + '</h2><p>“' + esc(c.titulo) + '” será marcado como cancelado' + (serie ? ' (TODAS as ocorrências, inclusive as passadas; para parar a série mantendo o histórico, use “Encerrar série”)' : '') + ' e os participantes serão avisados. A OS, a gravação e o financeiro não são alterados.</p>'
+    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label><div id="ag107CancMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="cancelar-ok">' + (serie ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button></div></div></div>';
 }
 function cancelarOk(){
   if(!S.det || S.modalBusy) return; var c = S.det.compromisso, id0 = idAtual(), motivo = ($('ag107Motivo') && $('ag107Motivo').value || '').trim();
@@ -52214,9 +52384,33 @@ function cancelarOk(){
   rpc('agenda_cancelar', { p_chave: S.cancChave, p_id: c.id, p_versao: c.versao, p_motivo: motivo || null }, id0).then(function(r){
     S.modalBusy = false; if(r.descartado) return;
     var d = r.data || {};
-    if(r.ok && (d.status === 'cancelado' || d.status === 'ja_cancelado')){ S.cancChave = null; live('Compromisso cancelado.'); abrirDetalhe(c.id); recarregarTudo(); return; }
+    if(r.ok && (d.status === 'cancelado' || d.status === 'ja_cancelado')){ S.cancChave = null; live('Compromisso cancelado.'); abrirDetalhe(c.id, null, S.oc); recarregarTudo(); return; }
     var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica o cancelamento.' : msgFalha(r)) : d.status === 'versao_mudou' ? 'O compromisso foi alterado por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode cancelar este compromisso.' : d.mensagem || 'Não foi possível cancelar.';
     setHtml('ag107CancMsg', esc(m));
+  });
+}
+function htmlEncerrar(c, r){
+  var h = hojeBR(), ini = (r && r.primeira) || c.data, sug = h < ini ? ini : h;
+  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Encerrar série?</h2><p>“' + esc(c.titulo) + '” deixa de se repetir depois da última ocorrência escolhida (inclusive). O que já passou, o histórico, o responsável, o autor e os participantes ficam como estão; os participantes são avisados dentro do ZIP OS.</p>'
+    + '<label>Última ocorrência (inclusive)<input type="date" id="ag107Ultima" value="' + esc(sug) + '" min="' + esc(sug) + '"></label><div class="ag-vazio" style="margin-top:6px">Se a data não cair no dia da semana da série, vale a última ocorrência até essa data.</div>'
+    + '<div id="ag107EncMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="encerrar-ok">Encerrar série</button></div></div></div>';
+}
+function encerrarOk(){
+  if(!S.det || S.modalBusy) return; var c = S.det.compromisso, id0 = idAtual(), ult = ($('ag107Ultima') && $('ag107Ultima').value || '').trim();
+  var ini = (c.recorrencia && c.recorrencia.primeira) || c.data;
+  if(!parseYmd(ult)){ setHtml('ag107EncMsg', 'Informe uma data válida.'); return; }
+  if(ult < ini){ setHtml('ag107EncMsg', esc('A data não pode ser anterior ao primeiro compromisso (' + fmtData(ini) + ').')); return; }
+  if(ult < hojeBR()){ setHtml('ag107EncMsg', esc('A última ocorrência não pode ser anterior a hoje: o que já passou fica preservado.')); return; }
+  var hh = c.id + '|' + c.versao + '|' + ult; if(!S.encChave || S.encHash !== hh){ S.encChave = novaChave(); S.encHash = hh; }
+  S.modalBusy = true;
+  rpc('agenda_recorrencia_encerrar', { p_chave: S.encChave, p_id: c.id, p_versao: c.versao, p_ultima: ult }, id0).then(function(r){
+    S.modalBusy = false; if(r.descartado) return;
+    var d = r.data || {};
+    if(r.ok && (d.status === 'encerrada' || d.status === 'ja_encerrada')){ S.encChave = null; live('Série encerrada.'); abrirDetalhe(c.id, null, S.oc); recarregarTudo(); return; }
+    var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica o encerramento.' : msgFalha(r))
+      : d.status === 'versao_mudou' ? 'A série foi alterada por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode encerrar esta série.'
+      : d.status === 'fim_inalterado' ? 'A série já termina nessa data ou antes.' : d.status === 'cancelado' ? 'Este compromisso já foi cancelado.' : d.status === 'sem_recorrencia' ? 'Este compromisso não é uma série.' : d.mensagem || 'Não foi possível encerrar a série.';
+    setHtml('ag107EncMsg', esc(m));
   });
 }
 
@@ -52224,6 +52418,7 @@ function cancelarOk(){
 function formVazio(dia){
   return { modo: 'novo', id: null, versao: null, chave: null, ultimoHash: '', natureza: 'reuniao', titulo: '', data: dia || S.diaSel || hojeBR(), aDefinir: false, hi: '09:00', hf: '', status: 'previsto',
     resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'ambos', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
+    recorrente: false, rfim: '', rcor: '', serie: null,
     atualizarRef: false, permitirDup: false, enviando: false, erros: {}, msg: '', dup: null, conf: null, gen: 0, snapshot: null, acessoOrigem: true, divs: [] };
 }
 function formDeDetalhe(d, comRef){
@@ -52231,6 +52426,7 @@ function formDeDetalhe(d, comRef){
   f.modo = 'editar'; f.id = c.id; f.versao = c.versao; f.natureza = c.natureza; f.titulo = c.titulo; f.data = c.data; f.aDefinir = !c.hora_inicio; f.hi = c.hora_inicio || '09:00'; f.hf = c.hora_fim || '';
   f.status = c.status; f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'ambos';
   f.projeto_id = c.projeto_id || null; f.gravacao_id = c.gravacao_id || null; f.snapshot = d.snapshot || null; f.acessoOrigem = !!d.acesso_origem; f.divs = divergencias(d.snapshot, d.origem_atual); f.atualizarRef = !!comRef;
+  if(c.recorrencia){ f.recorrente = true; f.serie = c.recorrencia; f.rfim = c.recorrencia.fim || ''; f.rcor = c.recorrencia.cor ? String(c.recorrencia.cor) : ''; f.data = c.recorrencia.primeira || c.data; }
   (d.participantes || []).forEach(function(p){
     if(interno(p)){ f.parts.push(p.usuario_id); S.nomes[p.usuario_id] = p.nome; }
     else f.externos.push({ tipo: p.tipo, nome: p.nome, funcao: p.funcao || '', pfId: p.projeto_fornecedor_id || null });
@@ -52306,19 +52502,33 @@ function htmlCliente(f){
   var er = (f.erros || {}).cliente;
   return '<label>Cliente (opcional — reunião sem OS)<input type="text" data-f="cliente" maxlength="120" value="' + esc(f.cliente) + '" placeholder="Nome do cliente ou empresa"></label>' + (er ? '<div class="ag-err">' + esc(er) + '</div>' : '');
 }
+// recorrência semanal: mesmo dia da semana e horário; "repetir até" é opcional e INCLUSIVE; 8 cores próprias (automática por padrão)
+function htmlRecorrencia(f){
+  var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
+  var h = '<div class="full ag-rec-box"><label class="ag-chk"><input type="checkbox" data-f="recorrente"' + (f.recorrente ? ' checked' : '') + (f.serie ? ' disabled' : '') + '> ↻ Repetir toda semana (mesmo dia da semana e horário)</label>' + e('recorrente');
+  if(f.recorrente){
+    var cores = ''; for(var n = 1; n <= REC_N; n++) cores += opt(String(n), 'Cor ' + n + ' — ' + REC_NOMES[n - 1], String(f.rcor) === String(n));
+    h += '<div class="ag-form" style="margin-top:8px"><label>Repetir até (opcional, inclusive)<input type="date" data-f="rfim" value="' + esc(f.rfim) + '"' + (f.serie && f.serie.encerrada_em ? ' disabled' : '') + '>' + e('rfim') + '</label>'
+      + '<label>Cor da série<select data-f="rcor">' + opt('', 'Automática', !f.rcor) + cores + '</select>' + e('rcor') + '</label></div>';
+    if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso não muda e a data final só pode ser ampliada. Para parar a série mantendo o histórico, use “Encerrar série” nos detalhes.</div>';
+    else h += '<div class="ag-vazio" style="margin-top:6px">Sem data final a série continua até ser encerrada. Participantes e lembretes valem para todas as ocorrências (avisos só dentro do ZIP OS).</div>';
+  }
+  return h + '</div>';
+}
 function htmlForm(f){
   var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
   var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '"><h2>' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '</h2>';
   h += '<p class="muted" style="margin:0 0 10px">Dados <b>deste agendamento</b> — nada aqui altera a OS, o orçamento, as gravações ou o financeiro.</p><div class="ag-form">';
   h += '<label>Natureza<select data-f="natureza">' + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select>' + e('natureza') + '</label>';
-  h += '<label>Situação<select data-f="status">' + opt('previsto', 'Previsto', f.status === 'previsto') + opt('confirmado', 'Confirmado', f.status === 'confirmado') + (f.modo === 'editar' ? opt('concluido', 'Concluído', f.status === 'concluido') : '') + '</select>' + e('status') + '</label>';
+  h += '<label>Situação<select data-f="status">' + opt('previsto', 'Previsto', f.status === 'previsto') + opt('confirmado', 'Confirmado', f.status === 'confirmado') + (f.modo === 'editar' && !f.serie ? opt('concluido', 'Concluído', f.status === 'concluido') : '') + '</select>' + e('status') + '</label>';
   h += '<label class="full">Título<input type="text" data-f="titulo" maxlength="160" value="' + esc(f.titulo) + '">' + e('titulo') + '</label>';
-  h += '<label>Data<input type="date" data-f="data" value="' + esc(f.data) + '">' + e('data') + '</label>';
+  h += '<label>' + (f.recorrente ? 'Data do 1º compromisso' : 'Data') + '<input type="date" data-f="data" value="' + esc(f.data) + '"' + (f.serie ? ' disabled' : '') + '>' + e('data') + '</label>';
   h += '<label class="ag-chk" style="align-self:end;padding-bottom:10px"><input type="checkbox" data-f="aDefinir"' + (f.aDefinir ? ' checked' : '') + '> Horário a definir</label>';
   h += '<label>Início<input type="time" data-f="hi" value="' + esc(f.hi) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hi') + '</label>';
   h += '<label>Fim (opcional)<input type="time" data-f="hf" value="' + esc(f.hf) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hf') + '</label>';
   h += '<label>Responsável pelo compromisso<select data-f="resp">' + opcoesResp(f) + '</select>' + e('responsavel_id') + '</label>';
   h += '<label>Lembrete<select data-f="lembrete">' + LEMB.map(function(x){ return opt(x[0], x[1], f.lembrete === x[0]); }).join('') + '</select></label>';
+  h += htmlRecorrencia(f);
   h += '<div class="full" id="ag107OsBox">' + htmlOsBox(f) + '</div>' + (e('projeto_id') ? '<div class="full">' + e('projeto_id') + '</div>' : '');
   h += '<div class="full" id="ag107ClienteBox">' + htmlCliente(f) + '</div>';
   h += '<div class="full"><label>Participantes da equipe (recebem aviso dentro do ZIP OS)</label><input type="text" id="ag107BuscaPart" placeholder="Filtrar pessoas" autocomplete="off" style="margin-bottom:0"><div class="ag-lista" id="ag107Parts">' + htmlParticipantes(f) + '</div>' + e('parts') + '</div>';
@@ -52342,7 +52552,7 @@ function htmlConf(f){
   var c = f.conf; if(!c) return '';
   if(c.estado === 'nao_verificado') return '<div class="ag-aviso">Conflito de horário não verificado: informe início e fim.</div>';
   if(!c.itens || !c.itens.length) return '';
-  return '<div class="ag-aviso" role="status"><b>Possível conflito de horário</b> (é só um alerta; você pode salvar):<br>' + c.itens.map(function(x){ return esc(x.nome) + ' — ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'ocupado') + ' ' + esc(x.hora_inicio) + '–' + esc(x.hora_fim); }).join('<br>') + '</div>';
+  return '<div class="ag-aviso" role="status"><b>Possível conflito de horário</b>' + (f.recorrente ? ' (inclui as próximas ocorrências da série)' : '') + ' (é só um alerta; você pode salvar):<br>' + c.itens.map(function(x){ return esc(x.nome) + ' — ' + (x.titulo ? '“' + esc(x.titulo) + '”' : 'ocupado') + (x.data ? ' em ' + esc(fmtDataCurta(x.data)) + (x.recorrente ? ' (série semanal)' : '') : '') + ' ' + esc(x.hora_inicio) + '–' + esc(x.hora_fim); }).join('<br>') + '</div>';
 }
 function pintarFormPartes(){
   var f = S.form; if(!f) return;
@@ -52359,7 +52569,13 @@ function agendarConflitos(){
   if(!hi || !hf){ f.conf = f.aDefinir || !hi ? null : { estado: 'nao_verificado' }; setHtml('ag107Conf', htmlConf(f)); return; }
   var g = f.gen; S.tConf = setTimeout(function(){
     if(S.form !== f || f.gen !== g) return; var id0 = idAtual(); var pes = f.parts.slice(); if(f.resp && pes.indexOf(f.resp) < 0) pes.push(f.resp); if(!pes.length) return;
-    rpc('agenda_conflitos', { p_data: f.data, p_inicio: hi, p_fim: hf, p_pessoas: pes, p_excluir: f.id || null }, id0).then(function(r){
+    var p;
+    if(f.recorrente){   // série: confere as próximas ocorrências (até 26) contra avulsos e contra ocorrências de outras séries (a própria série, em edição, fica de fora)
+      var pd = proximaOcorrencia(f.data, hojeBR()), n = semanasSerie(pd, String(f.rfim || '').trim());
+      if(!n){ f.conf = null; setHtml('ag107Conf', ''); return; }
+      p = rpc('agenda_conflitos_serie', { p_data: pd, p_inicio: hi, p_fim: hf, p_pessoas: pes, p_semanas: n, p_excluir: f.id || null }, id0);
+    } else p = rpc('agenda_conflitos', { p_data: f.data, p_inicio: hi, p_fim: hf, p_pessoas: pes, p_excluir: f.id || null }, id0);
+    p.then(function(r){
       if(r.descartado || S.form !== f || f.gen !== g) return;
       if(r.ok && r.data && r.data.status === 'ok') f.conf = { estado: r.data.verificado ? 'ok' : 'nao_verificado', itens: r.data.itens || [] }; else f.conf = null;
       setHtml('ag107Conf', htmlConf(f));
@@ -52417,11 +52633,11 @@ function salvar(){
     f.enviando = false; var d = r.data || {};
     if(r.ok && (d.status === 'criado' || d.status === 'editado')){
       var conf = (d.conflitos && d.conflitos.verificado && d.conflitos.itens && d.conflitos.itens.length) ? d.conflitos.itens : null, id = d.id;
-      S.form = null; recarregarTudo(); abrirDetalhe(id, conf); live('Compromisso salvo.'); return;
+      S.form = null; recarregarTudo(); abrirDetalhe(id, conf, f.recorrente ? f.data : ''); live('Compromisso salvo.'); return;
     }
     if(!r.ok) f.msg = r.timeout ? 'O servidor não respondeu. Seus dados continuam aqui: clique em Salvar de novo (a repetição não duplica o compromisso).' : msgFalha(r);
     else if(d.status === 'duplicado_origem') f.dup = d.existente;
-    else if(d.status === 'invalido'){ f.erros = {}; var mp = { responsavel_id: 'responsavel_id', participantes: 'parts', projeto_id: 'projeto_id', gravacao_id: 'projeto_id', hora_inicio: 'hi', hora_fim: 'hf', externos: 'externos' }; f.erros[mp[d.campo] || d.campo || 'titulo'] = d.mensagem || 'Valor inválido.'; if(!mp[d.campo] && ['natureza', 'titulo', 'data', 'status', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'cliente'].indexOf(d.campo) < 0) f.msg = d.mensagem || 'Dados inválidos.'; }
+    else if(d.status === 'invalido'){ f.erros = {}; var mp = { responsavel_id: 'responsavel_id', participantes: 'parts', projeto_id: 'projeto_id', gravacao_id: 'projeto_id', hora_inicio: 'hi', hora_fim: 'hf', externos: 'externos', recorrencia: 'recorrente' }; f.erros[mp[d.campo] || d.campo || 'titulo'] = d.mensagem || 'Valor inválido.'; if(!mp[d.campo] && ['natureza', 'titulo', 'data', 'status', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'cliente'].indexOf(d.campo) < 0) f.msg = d.mensagem || 'Dados inválidos.'; }
     else if(d.status === 'versao_mudou') f.msg = 'Este compromisso foi alterado por outra pessoa. Feche e abra novamente para ver a versão atual.';
     else if(d.status === 'sem_permissao') f.msg = 'Você não tem permissão para editar este compromisso.';
     else if(d.status === 'cancelado') f.msg = 'Este compromisso já foi cancelado.';
@@ -52439,7 +52655,7 @@ function htmlAvisos(a){
   else if(!(a.itens || []).length) h += '<div class="ag-vazio">Você não tem avisos.</div>';
   else h += a.itens.map(function(x){
     var det = x.titulo ? esc(x.titulo) + (x.data ? ' — ' + esc(fmtData(x.data)) + (x.hora_inicio ? ' ' + esc(x.hora_inicio) : '') : '') : (x.tipo === 'remocao' ? '' : 'Compromisso indisponível');
-    return '<button type="button" class="ag-av' + (x.lida_em ? '' : ' nl') + '" data-ag="av-abrir" data-nid="' + esc(x.id) + '" data-id="' + esc(x.compromisso_id || '') + '">' + esc(AVISO[x.tipo] || 'Aviso') + (det ? ' ' + det : '') + '<small>' + esc(String(x.disponivel_em || '').slice(0, 16).replace('T', ' ')) + (x.lida_em ? ' · lido' : ' · não lido') + '</small></button>';
+    return '<button type="button" class="ag-av' + (x.lida_em ? '' : ' nl') + '" data-ag="av-abrir" data-nid="' + esc(x.id) + '" data-id="' + esc(x.compromisso_id || '') + '" data-oc="' + esc(x.ocorrencia || '') + '">' + esc(AVISO[x.tipo] || 'Aviso') + (det ? ' ' + det : '') + '<small>' + esc(String(x.disponivel_em || '').slice(0, 16).replace('T', ' ')) + (x.lida_em ? ' · lido' : ' · não lido') + '</small></button>';
   }).join('');
   if(a.estado === 'ok' && a.total > (a.itens || []).length) h += '<div class="ag-vazio" style="margin-top:8px">Mostrando os ' + esc((a.itens || []).length) + ' mais recentes de ' + esc(a.total) + ' avisos.</div>';
   return h + '<div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>';
@@ -52472,7 +52688,7 @@ function acao(a, el){
     case 'mes-prox': S.mes = S.mes.m === 12 ? { a: S.mes.a + 1, m: 1 } : { a: S.mes.a, m: S.mes.m + 1 }; carregarMes(); break;
     case 'mes-hoje': S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; carregarMes(); break;
     case 'dia': { var d = el.getAttribute('data-d'); if(parseYmd(d)){ S.diaSel = d; pintar(); } break; }
-    case 'abrir': abrirDetalhe(el.getAttribute('data-id')); break;
+    case 'abrir': { var k = splitChave(el.getAttribute('data-id')); abrirDetalhe(k.id, null, k.oc); break; }
     case 'abrir-fonte': abrirFonte(el.getAttribute('data-id')); break;
     case 'novo': abrirForm(formVazio(S.diaSel)); break;
     case 'novo-dia': abrirForm(formVazio(S.diaSel)); break;
@@ -52484,8 +52700,10 @@ function acao(a, el){
     case 'editar': if(S.det) abrirForm(formDeDetalhe(S.det, false)); break;
     case 'editar-ref': if(S.det) abrirForm(formDeDetalhe(S.det, true)); break;
     case 'cancelar-ev': if(S.det){ S.cancChave = null; setHtml('ag107Modal', htmlCancelar(S.det.compromisso)); foco(); } break;
-    case 'voltar-det': if(S.det) setHtml('ag107Modal', htmlDetalhe(S.det, S.confAviso)); break;
+    case 'encerrar-serie': if(S.det && S.det.pode_encerrar_serie){ S.encChave = null; setHtml('ag107Modal', htmlEncerrar(S.det.compromisso, S.det.compromisso.recorrencia)); foco(); } break;
+    case 'voltar-det': if(S.det) setHtml('ag107Modal', htmlDetalhe(S.det, S.confAviso, S.oc)); break;
     case 'cancelar-ok': cancelarOk(); break;
+    case 'encerrar-ok': encerrarOk(); break;
     case 'salvar': salvar(); break;
     case 'criar-mesmo': if(S.form){ S.form.permitirDup = true; S.form.dup = null; salvar(); } break;
     case 'usar-grav': usarGravacao(); break;
@@ -52495,7 +52713,7 @@ function acao(a, el){
     case 'ext-rem': if(S.form){ var i = +el.getAttribute('data-i'); S.form.externos.splice(i, 1); setHtml('ag107Ext', htmlExternos(S.form)); pintarFormPartes(); } break;
     case 'recarregar-equipe': S.eqEstado = ''; carregarEquipe(); break;
     case 'av-todos': marcarAvisos([], true).then(function(){ if(S.modal === 'avisos') abrirAvisos(); }); break;
-    case 'av-abrir': { var nid = el.getAttribute('data-nid'), cid = el.getAttribute('data-id'); if(RE_UUID.test(String(nid))) marcarAvisos([nid], false); if(RE_UUID.test(String(cid))) abrirDetalhe(cid); break; }
+    case 'av-abrir': { var nid = el.getAttribute('data-nid'), cid = el.getAttribute('data-id'), aoc = el.getAttribute('data-oc'); if(RE_UUID.test(String(nid))) marcarAvisos([nid], false); if(RE_UUID.test(String(cid))) abrirDetalhe(cid, null, aoc); break; }
     default: break;
   }
 }
@@ -52510,7 +52728,6 @@ function onChange(ev){
   var fl = t.getAttribute('data-fl');
   if(fl){
     var v = t.value;
-    if(fl === 'escopo'){ if(v === 'equipe' && !ehGestorUI()) return; S.escopo = v === 'equipe' ? 'equipe' : 'minha'; recarregarTudo(); return; }
     S.filtros[fl] = v; pintar(); return;
   }
   var f = S.form; if(!f) return;
@@ -52523,10 +52740,11 @@ function onChange(ev){
     setHtml('ag107Ext', htmlExternos(f)); return;
   }
   if(!campo) return;
+  if(campo === 'recorrente'){ if(f.serie){ t.checked = true; return; } f.recorrente = !!t.checked; setHtml('ag107Modal', htmlForm(f)); if(f.projeto_id && f.os) pintarFormPartes(); agendarConflitos(); return; }
   if(campo === 'aDefinir' || campo === 'atualizarRef'){ f[campo] = !!t.checked; if(campo === 'aDefinir'){ var a = $('ag107Modal'); try { var ins = a.querySelectorAll('[data-f="hi"],[data-f="hf"]'); for(var i = 0; i < ins.length; i++) ins[i].disabled = f.aDefinir; } catch(e){} agendarConflitos(); } return; }
   if(campo === 'gravacao_id'){ f.gravacao_id = t.value || null; pintarFormPartes(); return; }
   f[campo] = t.value;
-  if(campo === 'data' || campo === 'hi' || campo === 'hf' || campo === 'resp'){ if(campo === 'resp'){ var k2 = f.parts.indexOf(f.resp); if(k2 >= 0) f.parts.splice(k2, 1); setHtml('ag107Parts', htmlParticipantes(f)); } agendarConflitos(); }
+  if(campo === 'data' || campo === 'hi' || campo === 'hf' || campo === 'resp' || campo === 'rfim'){ if(campo === 'resp'){ var k2 = f.parts.indexOf(f.resp); if(k2 >= 0) f.parts.splice(k2, 1); setHtml('ag107Parts', htmlParticipantes(f)); } agendarConflitos(); }
 }
 function onInput(ev){
   var t = ev.target; if(!t || !t.getAttribute) return;
@@ -52535,9 +52753,9 @@ function onInput(ev){
   if(t.id === 'ag107BuscaPart'){ var q = norm(t.value), ls = doc().querySelectorAll('#ag107Parts label'); for(var i = 0; i < ls.length; i++){ var n = ls[i].getAttribute('data-nome') || ''; ls[i].style.display = (!q || n.indexOf(q) >= 0) ? '' : 'none'; } return; }
   var f = S.form; if(!f) return; var campo = t.getAttribute('data-f'); if(!campo) return;
   if(campo === 'buscaOs'){ f.buscaOs.termo = t.value; buscarOs(); return; }
-  if(campo === 'aDefinir' || campo === 'atualizarRef' || campo === 'gravacao_id') return;
+  if(campo === 'aDefinir' || campo === 'atualizarRef' || campo === 'gravacao_id' || campo === 'recorrente') return;
   f[campo] = t.value;
-  if(campo === 'hi' || campo === 'hf' || campo === 'data') agendarConflitos();
+  if(campo === 'hi' || campo === 'hf' || campo === 'data' || campo === 'rfim') agendarConflitos();
 }
 function onKey(ev){ if(ev.key === 'Escape'){ ocultarPrev(); if(S.modal && S.modal !== 'form') fechar(); } }   // Esc não fecha o formulário (evita perder o que foi digitado)
 
@@ -52554,24 +52772,32 @@ function vigiar(){
   var tinha = !!S.id; S.id = id;
   reset(); S.id = id;
   if(!id) return;
-  iniciarPoll(); contarNaoLidas();
+  if(podeAgenda()){ iniciarPoll(); contarNaoLidas(); }
   if(secaoAtiva()) entrar();
   void tinha;
 }
 function entrar(){
   if(!idAtual()) return; ligar(); S.modal = null;
+  if(!podeAgenda()){ setHtml('ag107Filtros', ''); setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(MSG_SEM_ACESSO) + '</div>'); return; }   // sem chamar o servidor; o servidor também recusa
   if(S.indisponivel){ setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(msgFalha({ erro: 'FUNCAO_AUSENTE' })) + '</div>'); return; }
   carregarEquipe(); recarregarTudo(); contarNaoLidas(); pintar();
 }
 function sair(){ if(S.modal) fechar(); }
 function aoPerfil(){
   var d = doc(); if(!d) return;
-  var ps = $('profileSelect'), p = ps ? ps.value : '', oper = p === 'producao' || p === 'edicao', nav = $('ag107NavOper');
+  var ps = $('profileSelect'), p = ps ? ps.value : '', oper = p === 'producao' || p === 'edicao', nav = $('ag107NavOper'), pode = podeAgenda();
   if(nav){
     nav.style.display = oper ? 'block' : 'none';
     var bs = nav.querySelectorAll ? nav.querySelectorAll('button') : [];
     for(var i = 0; i < bs.length; i++){ if(oper) bs[i].classList.remove('hidden'); }
     if(oper && bs.length){ var op = $('operacao'), ag = $('agenda107'); bs[0].classList.toggle('active', !!(op && op.classList.contains('active'))); if(bs[1]) bs[1].classList.toggle('active', !!(ag && ag.classList.contains('active'))); }
+    if(bs[1] && bs[1].style) bs[1].style.display = pode ? '' : 'none';   // Produção/Edição sem Sócio/Atendimento: o atalho da Agenda some (o servidor recusa de qualquer forma)
+  }
+  if(!pode){   // demais perfis (ex.: Financeiro): esconde o atalho da Agenda no menu principal
+    try {
+      var mb = d.querySelectorAll ? d.querySelectorAll('.nav button') : [];
+      for(var j = 0; j < mb.length; j++){ var oc = mb[j].getAttribute && mb[j].getAttribute('onclick'); if(oc && oc.indexOf("'agenda107'") >= 0 && mb[j].classList) mb[j].classList.add('hidden'); }
+    } catch(e){}
   }
 }
 function instalarGanchos(){
@@ -52597,7 +52823,8 @@ return {
     htmlDetalhe: htmlDetalhe, htmlForm: htmlForm, htmlAvisos: htmlAvisos, htmlOsBox: htmlOsBox, htmlConf: htmlConf, htmlCliente: htmlCliente, htmlParcial: htmlParcial, formVazio: formVazio, formDeDetalhe: formDeDetalhe, rpc: rpc, idAtual: idAtual, vigiar: vigiar, reset: reset, entrar: entrar,
     carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
     abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
-    carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave },
+    carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave,
+    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar },
   entrar: entrar, sair: sair
 };
 }).call(this);

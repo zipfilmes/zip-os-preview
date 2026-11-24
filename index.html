@@ -960,7 +960,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.1 · Agenda e Recebimentos</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.2 · Cores da Agenda</div>
 </aside>
 
 <main class="main">
@@ -1020,13 +1020,8 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-n-gravacao{--ag-cor:#2563eb}
 #agenda107 .ag-n-edicao{--ag-cor:#7c3aed}
 #agenda107 .ag-n-revisao{--ag-cor:#f59e0b}
-#agenda107 .ag-n-outros{--ag-cor:#64748b}
-#agenda107 .ag-r-1{--ag-cor:#e11d48}
+#agenda107 .ag-n-outros{--ag-cor:#000}
 #agenda107 .ag-r-2{--ag-cor:#ea580c}
-#agenda107 .ag-r-3{--ag-cor:#65a30d}
-#agenda107 .ag-r-4{--ag-cor:#0891b2}
-#agenda107 .ag-r-5{--ag-cor:#0f766e}
-#agenda107 .ag-r-6{--ag-cor:#c026d3}
 #agenda107 .ag-r-7{--ag-cor:#ec4899}
 #agenda107 .ag-r-8{--ag-cor:#92400e}
 #agenda107 .ag-nb{display:inline-block;border:1px solid var(--ag-cor,var(--ag-cin));border-left-width:5px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;color:var(--ink)}
@@ -1087,15 +1082,25 @@ html[data-theme="dark"] #agenda107 .ag-n-reuniao{--ag-cor:#4ade80}
 html[data-theme="dark"] #agenda107 .ag-n-gravacao{--ag-cor:#60a5fa}
 html[data-theme="dark"] #agenda107 .ag-n-edicao{--ag-cor:#a78bfa}
 html[data-theme="dark"] #agenda107 .ag-n-revisao{--ag-cor:#fbbf24}
-html[data-theme="dark"] #agenda107 .ag-n-outros{--ag-cor:#94a3b8}
-html[data-theme="dark"] #agenda107 .ag-r-1{--ag-cor:#fb7185}
-html[data-theme="dark"] #agenda107 .ag-r-2{--ag-cor:#fb923c}
-html[data-theme="dark"] #agenda107 .ag-r-3{--ag-cor:#a3e635}
-html[data-theme="dark"] #agenda107 .ag-r-4{--ag-cor:#22d3ee}
-html[data-theme="dark"] #agenda107 .ag-r-5{--ag-cor:#2dd4bf}
-html[data-theme="dark"] #agenda107 .ag-r-6{--ag-cor:#e879f9}
-html[data-theme="dark"] #agenda107 .ag-r-7{--ag-cor:#f472b6}
-html[data-theme="dark"] #agenda107 .ag-r-8{--ag-cor:#c08457}
+html[data-theme="dark"] #agenda107 .ag-n-outros{--ag-cor:#000;--ag-ring:#cbd5e1}
+html[data-theme="dark"] #agenda107 .ag-r-2{--ag-cor:#fb923c;--ag-ring:transparent}
+html[data-theme="dark"] #agenda107 .ag-r-7{--ag-cor:#f472b6;--ag-ring:transparent}
+html[data-theme="dark"] #agenda107 .ag-r-8{--ag-cor:#c08457;--ag-ring:transparent}
+#agenda107 .ag-pt{box-shadow:0 0 0 1.5px var(--ag-ring,transparent)}
+html[data-theme="dark"] #agenda107 .ag-ev,html[data-theme="dark"] #agenda107 .ag-fx,html[data-theme="dark"] #agenda107 .ag-prev .pv-i,html[data-theme="dark"] #agenda107 .ag-nb{box-shadow:0 0 0 1px var(--ag-ring,transparent)}
+/* contraste das faixas (>= 4,5:1): tema claro = texto na cor de tinta; tema escuro = fundo escuro da identidade + texto branco */
+#agenda107 .ag-ev.ag-bd span,#agenda107 .ag-fx.ag-bd span,#agenda107 .ag-prev .pv-i.ag-bd span{color:var(--ink)}
+html[data-theme="dark"] #agenda107 .ag-n-gravacao{--ag-bg:#1d4ed8}
+html[data-theme="dark"] #agenda107 .ag-n-edicao{--ag-bg:#4c1d95}
+html[data-theme="dark"] #agenda107 .ag-n-revisao{--ag-bg:#8a6100}
+html[data-theme="dark"] #agenda107 .ag-n-reuniao{--ag-bg:#166534}
+html[data-theme="dark"] #agenda107 .ag-n-outros{--ag-bg:#000}
+html[data-theme="dark"] #agenda107 .ag-r-2{--ag-bg:#9a3412}
+html[data-theme="dark"] #agenda107 .ag-r-7{--ag-bg:#9d174d}
+html[data-theme="dark"] #agenda107 .ag-r-8{--ag-bg:#92400e}
+html[data-theme="dark"] #agenda107 .ag-ev.ag-bd,html[data-theme="dark"] #agenda107 .ag-fx.ag-bd,html[data-theme="dark"] #agenda107 .ag-prev .pv-i.ag-bd{background:var(--ag-bg);color:#fff}
+html[data-theme="dark"] #agenda107 .ag-ev.ag-bd span,html[data-theme="dark"] #agenda107 .ag-fx.ag-bd span,html[data-theme="dark"] #agenda107 .ag-prev .pv-i.ag-bd span,html[data-theme="dark"] #agenda107 .ag-prev .pv-i.ag-bd b{color:#fff}
+html[data-theme="dark"] #agenda107 .ag-ev.ag-bd.ag-conc,html[data-theme="dark"] #agenda107 .ag-bd.ag-cancel .t{opacity:1}
 html[data-theme="dark"] #agenda107 .ag-os{background:rgba(143,184,238,.08)}
 html[data-theme="dark"] #agenda107 .ag-res button:hover{background:rgba(143,184,238,.12)}
 html[data-theme="dark"] #agenda107 .ag-msg.erro{border-color:#7a3a42}
@@ -1116,7 +1121,22 @@ html[data-theme="dark"] #agenda107 .ag-prev{box-shadow:0 10px 30px rgba(0,0,0,.6
 #agenda107 .ag-rec-mark{font-weight:800}
 #agenda107 .ag-leg .ag-leg-rec{gap:3px}
 #agenda107 .ag-rec-box{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
-#agenda107 .ag-sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--ag-cor,var(--ag-cin));vertical-align:-1px;margin-right:6px}</style>
+#agenda107 .ag-sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--ag-cor,var(--ag-cin));vertical-align:-1px;margin-right:6px}
+#agenda107 .ag-selw{min-width:0}
+#agenda107 .ag-sel{position:relative;margin-top:4px}
+#agenda107 .ag-sel .ag-pt{width:12px;height:12px;flex:0 0 auto}
+#agenda107 .ag-sel-btn{display:flex;width:100%;align-items:center;gap:8px;text-align:left;min-height:40px;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+#agenda107 .ag-sel-t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#agenda107 .ag-sel-s{color:var(--muted);font-size:11px}
+#agenda107 .ag-sel-lista{position:absolute;z-index:5;left:0;right:0;margin:4px 0 0;padding:4px;list-style:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(16,24,40,.28);max-height:240px;overflow:auto}
+#agenda107 .ag-sel-lista[hidden]{display:none}
+#agenda107 .ag-sel-lista li{display:flex;align-items:center;gap:8px;min-height:38px;padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+#agenda107 .ag-sel-lista li:hover{background:rgba(23,92,211,.08)}
+#agenda107 .ag-sel-lista li[aria-selected="true"]{font-weight:700;background:rgba(23,92,211,.12)}
+#agenda107 .ag-sel-btn:focus-visible,#agenda107 .ag-sel-lista li:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+html[data-theme="dark"] #agenda107 .ag-sel-lista{box-shadow:0 10px 30px rgba(0,0,0,.6)}
+html[data-theme="dark"] #agenda107 .ag-sel-lista li:hover{background:rgba(143,184,238,.14)}
+html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{background:rgba(143,184,238,.2)}</style>
 <section id="agenda107" class="section">
 <div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn btn2" data-ag="atualizar">Atualizar</button><button type="button" class="btn btn2" data-ag="avisos">🔔 Avisos <span class="ag-bdg" id="ag107BdgTopo" data-ag-bdg hidden></span></button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
 <div id="ag107Filtros" class="ag-filtros"></div>
@@ -51851,8 +51871,10 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
 <script id="ag107Js">
 /* ZIP OS V1.7.3.0 · Agenda e Recebimentos — front. Fonte única: o construtor injeta este arquivo como <script id="ag107Js"> no HTML da 107 (troca contada sobre agenda107.js).
    108: datas operacionais das OS (gravação, revisão, entrega) vindas de agenda_listar(escopo "*_datas"), somente leitura, sem agenda_ler; cores por natureza; legenda; prévia ao pairar.
-   110: cores vivas por natureza; leitura compartilhada (Sócio/Atendimento/Admin veem todos os compromissos e datas das OS; os demais perfis não usam a Agenda, nem por RPC);
-        recorrência semanal (série = 1 compromisso; ocorrências projetadas pelo servidor, identidade = id + data), 8 cores próprias da recorrência, conflitos da série, "Encerrar série" preservando o passado.
+   110: cores vivas por natureza; leitura compartilhada (Sócio/Atendimento veem todos os compromissos e datas das OS; os demais perfis, inclusive Administrador sozinho, não usam a Agenda, nem por RPC);
+        recorrência semanal (série = 1 compromisso; ocorrências projetadas pelo servidor, identidade = id + data), conflitos da série, "Encerrar série" preservando o passado.
+   111: recorrência com 3 cores (ids 8 Marrom, 2 Laranja, 7 Rosa; ids antigos são exibidos por mapeamento determinístico, sem migração); seletores com bolinha de cor (Natureza e Cor da série); Outros em preto;
+        prazo de Entrega das OS não aparece na Agenda; faixas com contraste mínimo 4,5:1.
    Regras: nenhum callback de Auth (identidade vigiada por timer), respostas tardias/de outra identidade descartadas, todo texto dinâmico escapado,
    links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto, sem canal externo de aviso. */
 var AG107 = (function(){
@@ -51872,9 +51894,9 @@ var RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 var FONTE = { gravacao: { curto: 'Gravação', longo: 'Data de gravação da OS' }, revisao: { curto: 'Revisão', longo: 'Data de revisão / apresentação da OS' }, entrega: { curto: 'Prazo de entrega', longo: 'Prazo geral de entrega da OS (não é data de edição, de revisão nem de gravação)' } };
 var FONTE_PAD = { curto: 'Data da OS', longo: 'Data operacional da OS' };
 var PREV_MAX = 8, RECARGA_MS = 20000;
-var REC_N = 8, SEMANAS_CONF = 26;
-var REC_NOMES = ['Rosa-avermelhado', 'Laranja', 'Lima', 'Ciano', 'Verde-petróleo', 'Magenta', 'Rosa', 'Marrom'];   // as 8 cores EXCLUSIVAS da recorrência (CSS .ag-r-1…8), distintas das 5 naturezas
-var MSG_SEM_ACESSO = 'A Agenda está disponível para os perfis Sócio e Atendimento (e Administrador). O seu acesso não inclui a Agenda.';
+var SEMANAS_CONF = 26;
+var REC_ORD = [8, 2, 7], REC_NOME = { 8: 'Marrom', 2: 'Laranja', 7: 'Rosa' };   // as 3 cores da recorrência, na ordem de exibição (CSS .ag-r-8/.ag-r-2/.ag-r-7); marrom é o padrão
+var MSG_SEM_ACESSO = 'A Agenda está disponível para os perfis Sócio e Atendimento. O seu acesso não inclui a Agenda.';
 
 /* ------------------------------------------------------------------ utilitários puros */
 function esc(v){ return String(v == null ? '' : v).replace(/[&<>"'`]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c]; }); }
@@ -51902,8 +51924,11 @@ function fmtDiaSemana(s){ return DOW[dowSeg(s)] || ''; }
 function quando(it){ return it.hora_inicio ? it.hora_inicio + (it.hora_fim ? '–' + it.hora_fim : '') : (it && it.origem === 'fonte' && it.fonte_tipo !== 'gravacao' ? 'Sem horário' : 'A definir'); }
 function trunc(s, n){ s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 // recorrência: cor (1..8) da série; classe de cor do item (natureza + cor própria da recorrência, que prevalece no CSS); identidade da ocorrência = id da série + data
-function corRec(it){ var n = it && it.recorrente === true ? Number(it.recorrencia_cor) : 0; return n >= 1 && n <= REC_N && n === Math.floor(n) ? n : 0; }
-function clsCor(it){ var r = corRec(it); return 'ag-n-' + (NAT[it && it.natureza] ? it.natureza : 'outros') + (r ? ' ag-rec ag-r-' + r : ''); }
+// cor visual (8, 2 ou 7): ids atuais valem como são; ids antigos removidos (1,3,4,5,6) caem de forma determinística em uma das três; vazio/inválido = marrom. Só exibição: o valor bruto nunca é reescrito aqui.
+function recVis(v){ var n = Number(v); if(REC_NOME[n]) return n; return n >= 1 && n <= 8 && n === Math.floor(n) ? REC_ORD[(n - 1) % 3] : 8; }
+function corRec(it){ return it && it.recorrente === true ? recVis(it.recorrencia_cor) : 0; }
+function clsCor(it){ var r = corRec(it); return 'ag-n-' + (NAT[it && it.natureza] ? it.natureza : 'outros') + (r ? ' ag-rec ag-r-' + r : '') + ' ag-bd'; }
+function ehEntrega(it){ return !!(it && it.origem === 'fonte' && it.fonte_tipo === 'entrega'); }   // prazo de entrega da OS: não é exibido na Agenda
 function chaveItem(it){ return it ? String(it.id) + (it.recorrente === true && parseYmd(it.ocorrencia) ? '@' + it.ocorrencia : '') : ''; }
 function splitChave(k){ var s = String(k == null ? '' : k), i = s.indexOf('@'); return i < 0 ? { id: s, oc: '' } : { id: s.slice(0, i), oc: parseYmd(s.slice(i + 1)) ? s.slice(i + 1) : '' }; }
 function proximaOcorrencia(d, hoje){ var p = parseYmd(d), h = parseYmd(hoje); if(!p || !h || h.t <= p.t) return d; return addDias(d, Math.ceil((h.t - p.t) / 86400000 / 7) * 7); }
@@ -51986,6 +52011,7 @@ function divergencias(snap, atual){
   return out;
 }
 function passa(it, fl){
+  if(ehEntrega(it)) return false;
   if(fl.natureza && it.natureza !== fl.natureza) return false;
   if(fl.status && it.status !== fl.status) return false;
   if(fl.pessoa){ var ok = it.responsavel_id === fl.pessoa || (it.participantes || []).some(function(p){ return p.usuario_id === fl.pessoa; }) || (it.pessoas || []).indexOf(fl.pessoa) >= 0; if(!ok) return false; }
@@ -52097,7 +52123,7 @@ function msgFalha(r){
 function resultadoLista(r, ini){
   if(!r.ok) return { estado: 'erro', itens: [], msg: msgFalha(r), ini: ini };
   var d = r.data || {};
-  if(d.status === 'ok') return { estado: 'ok', itens: Array.isArray(d.itens) ? d.itens : [], msg: '', ini: ini, parcial: d.parcial === true, total: Number(d.total) || 0, limite: Number(d.limite) || 500 };
+  if(d.status === 'ok') return { estado: 'ok', itens: Array.isArray(d.itens) ? d.itens.filter(function(it){ return !ehEntrega(it); }) : [], msg: '', ini: ini, parcial: d.parcial === true, total: Number(d.total) || 0, limite: Number(d.limite) || 500 };
   if(d.status === 'sem_permissao') return { estado: 'erro', itens: [], msg: 'Você não tem permissão para a visão da equipe.', ini: ini };
   return { estado: 'erro', itens: [], msg: d.mensagem || 'Resposta inesperada do servidor.', ini: ini };
 }
@@ -52240,10 +52266,10 @@ function pintar(){
 
 /* ------------------------------------------------------------------ legenda, prévia ao pairar, detalhe de data da OS */
 function htmlLegenda(){
-  var it = [['gravacao', 'Gravação / produção'], ['edicao', 'Edição'], ['revisao', 'Revisão / apresentação'], ['reuniao', 'Reunião / call'], ['outros', 'Outros / entrega']], rec = '';
-  for(var n = 1; n <= REC_N; n++) rec += '<i class="ag-pt ag-r-' + n + '" title="' + esc(REC_NOMES[n - 1]) + '"></i>';
+  var it = [['gravacao', 'Gravação / produção'], ['edicao', 'Edição'], ['revisao', 'Revisão / apresentação'], ['reuniao', 'Reunião / call'], ['outros', 'Outros']], rec = '';
+  REC_ORD.forEach(function(n){ rec += '<i class="ag-pt ag-r-' + n + '" title="' + esc(REC_NOME[n]) + '"></i>'; });
   return '<div class="ag-leg" aria-label="Legenda de cores">' + it.map(function(x){ return '<span class="ag-n-' + x[0] + '"><i class="ag-pt"></i>' + esc(x[1]) + '</span>'; }).join('')
-    + '<span class="ag-leg-rec" title="Compromissos que se repetem toda semana usam uma destas 8 cores próprias, diferentes das cores das naturezas"><b class="ag-rec-mark">↻</b> Recorrente (cor da série)' + rec + '</span>'
+    + '<span class="ag-leg-rec" title="Compromissos que se repetem toda semana usam uma destas 3 cores próprias (Marrom, Laranja, Rosa)"><b class="ag-rec-mark">↻</b> Recorrente (cor da série)' + rec + '</span>'
     + (S.datas ? '' : '<span>Datas das OS indisponíveis neste servidor</span>') + '</div>';
 }
 function htmlPrev(d){
@@ -52300,10 +52326,10 @@ function linhaConf(x){
 }
 function htmlDetalhe(d, conf, oc){
   var c = d.compromisso || {}, s = d.snapshot, at = d.origem_atual, div = divergencias(s, at), h = '', rec = c.recorrencia || null, dia = parseYmd(oc) ? oc : c.data;
-  var cr = rec && Number(rec.cor) >= 1 && Number(rec.cor) <= REC_N ? Math.floor(Number(rec.cor)) : 0;
+  var cr = rec ? recVis(rec.cor) : 0;
   h += '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="Detalhes do compromisso">';
   h += '<h2>' + esc(c.titulo) + '</h2><div><span class="ag-nb ag-n-' + esc(NAT[c.natureza] ? c.natureza : 'outros') + '">' + esc(NAT[c.natureza] || '') + '</span> '
-    + (rec ? '<span class="ag-nb ag-rec ag-r-' + cr + '" title="' + esc(REC_NOMES[cr - 1] || '') + '">↻ Semanal</span> ' : '')
+    + (rec ? '<span class="ag-nb ag-rec ag-r-' + cr + '" title="' + esc(REC_NOME[cr] || '') + '">↻ Semanal</span> ' : '')
     + '<span class="badge ' + (c.status === 'cancelado' ? 'danger' : c.status === 'concluido' ? 'ok' : c.status === 'confirmado' ? 'ok' : 'warn') + '">' + esc(STATUS[c.status] || '') + '</span></div>';
   if(conf && conf.length) h += '<div class="ag-aviso" role="alert"><b>Atenção — conflito de horário:</b><br>' + conf.map(linhaConf).join('<br>') + '<br><small>Salvo mesmo assim; conflito é só um alerta.</small></div>';
   if(c.status === 'cancelado') h += '<div class="ag-aviso erro">Este compromisso foi cancelado' + (rec ? ' (a série inteira)' : '') + '.</div>';
@@ -52417,7 +52443,7 @@ function encerrarOk(){
 function formVazio(dia){
   return { modo: 'novo', id: null, versao: null, chave: null, ultimoHash: '', natureza: 'reuniao', titulo: '', data: dia || S.diaSel || hojeBR(), aDefinir: false, hi: '09:00', hf: '', status: 'previsto',
     resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'ambos', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
-    recorrente: false, rfim: '', rcor: '', serie: null,
+    recorrente: false, rfim: '', rcor: '8', serie: null,
     atualizarRef: false, permitirDup: false, enviando: false, erros: {}, msg: '', dup: null, conf: null, gen: 0, snapshot: null, acessoOrigem: true, divs: [] };
 }
 function formDeDetalhe(d, comRef){
@@ -52501,14 +52527,64 @@ function htmlCliente(f){
   var er = (f.erros || {}).cliente;
   return '<label>Cliente (opcional — reunião sem OS)<input type="text" data-f="cliente" maxlength="120" value="' + esc(f.cliente) + '" placeholder="Nome do cliente ou empresa"></label>' + (er ? '<div class="ag-err">' + esc(er) + '</div>' : '');
 }
-// recorrência semanal: mesmo dia da semana e horário; "repetir até" é opcional e INCLUSIVE; 8 cores próprias (automática por padrão)
+// seletor com bolinha de cor (Natureza e Cor da série): botão + lista (role=listbox). Escolher repassa ao onChange o mesmo (data-f, valor) do antigo <select>, então validação e fluxos delegados não mudam.
+function selCfg(campo, f){
+  if(campo === 'natureza') return { rot: 'Natureza', vis: f.natureza, ops: NAT_ORD.map(function(k){ return { v: k, nome: NAT[k], cls: 'ag-n-' + k }; }) };
+  var vis = recVis(f.rcor);   // o valor bruto (f.rcor) só muda por escolha explícita; ids antigos aparecem com a cor mapeada
+  return { rot: 'Cor da série', vis: String(vis), ops: REC_ORD.map(function(n){ return { v: String(n), nome: REC_NOME[n], cls: 'ag-r-' + n }; }) };
+}
+function htmlSelBox(campo, f){
+  var c = selCfg(campo, f), atual = c.ops.filter(function(o){ return o.v === c.vis; })[0] || c.ops[0], id = 'ag107Sel-' + campo;
+  return '<div class="ag-sel" data-sel="' + campo + '"><button type="button" class="ag-sel-btn" id="' + id + '" data-ag="sel-abrir" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="' + id + 'L ' + id + '"><i class="ag-pt ' + atual.cls + '" aria-hidden="true"></i><span class="ag-sel-t">' + esc(atual.nome) + '</span><span class="ag-sel-s" aria-hidden="true">▾</span></button>'
+    + '<ul class="ag-sel-lista" role="listbox" aria-labelledby="' + id + 'L" hidden>' + c.ops.map(function(o){
+      return '<li role="option" tabindex="-1" data-ag="sel-esc" data-campo="' + campo + '" data-v="' + esc(o.v) + '" aria-selected="' + (o.v === atual.v ? 'true' : 'false') + '"><i class="ag-pt ' + o.cls + '" aria-hidden="true"></i><span>' + esc(o.nome) + '</span></li>'; }).join('') + '</ul></div>';
+}
+function htmlSelCampo(campo, f, erro){
+  return '<div class="ag-selw"><label id="ag107Sel-' + campo + 'L" for="ag107Sel-' + campo + '">' + selCfg(campo, f).rot + '</label>' + htmlSelBox(campo, f) + (erro || '') + '</div>';
+}
+function fecharSel(exceto){
+  var d = doc(); if(!d || !d.querySelectorAll) return;
+  var ls = d.querySelectorAll('#agenda107 .ag-sel');
+  for(var i = 0; i < ls.length; i++){
+    if(ls[i] === exceto) continue;
+    var u = ls[i].querySelector('.ag-sel-lista'), b = ls[i].querySelector('.ag-sel-btn');
+    if(u && !u.hidden){ u.hidden = true; if(b) b.setAttribute('aria-expanded', 'false'); }
+  }
+}
+function abrirSel(box, fim){
+  fecharSel(box); var u = box.querySelector('.ag-sel-lista'), b = box.querySelector('.ag-sel-btn'); if(!u) return;
+  if(!u.hidden){ u.hidden = true; b.setAttribute('aria-expanded', 'false'); return; }
+  u.hidden = false; b.setAttribute('aria-expanded', 'true');
+  var ops = u.querySelectorAll('[role="option"]'), alvo = fim ? ops[ops.length - 1] : (u.querySelector('[aria-selected="true"]') || ops[0]);
+  if(alvo && alvo.focus) alvo.focus();
+}
+function escolherSel(li){
+  var campo = li.getAttribute('data-campo'), v = li.getAttribute('data-v'), f = S.form; if(!f) return;
+  onChange({ target: { getAttribute: function(n){ return n === 'data-f' ? campo : null; }, value: v } });
+  var box = li.closest('.ag-sel'); if(box) box.outerHTML = htmlSelBox(campo, f);
+  var b = $('ag107Sel-' + campo); if(b && b.focus) b.focus();
+}
+function onKeySel(ev){
+  var t = ev.target, box = t && t.closest ? t.closest('.ag-sel') : null; if(!box) return false;
+  var k = ev.key, btn = box.querySelector('.ag-sel-btn'), ops = box.querySelectorAll('[role="option"]');
+  if(t === btn){ if(k === 'ArrowDown' || k === 'ArrowUp'){ ev.preventDefault(); var u = box.querySelector('.ag-sel-lista'); if(u && u.hidden) abrirSel(box, k === 'ArrowUp'); } return true; }
+  var i = -1; for(var j = 0; j < ops.length; j++) if(ops[j] === t) i = j;
+  if(k === 'ArrowDown'){ ev.preventDefault(); ops[Math.min(ops.length - 1, i + 1)].focus(); }
+  else if(k === 'ArrowUp'){ ev.preventDefault(); ops[Math.max(0, i - 1)].focus(); }
+  else if(k === 'Home'){ ev.preventDefault(); ops[0].focus(); }
+  else if(k === 'End'){ ev.preventDefault(); ops[ops.length - 1].focus(); }
+  else if(k === 'Enter' || k === ' '){ ev.preventDefault(); if(i >= 0) escolherSel(t); }
+  else if(k === 'Escape'){ ev.preventDefault(); ev.stopPropagation(); fecharSel(null); btn.focus(); }
+  else if(k === 'Tab'){ fecharSel(null); }
+  return true;
+}
+// recorrência semanal: mesmo dia da semana e horário; "repetir até" é opcional e INCLUSIVE; 3 cores (marrom por padrão)
 function htmlRecorrencia(f){
   var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
   var h = '<div class="full ag-rec-box"><label class="ag-chk"><input type="checkbox" data-f="recorrente"' + (f.recorrente ? ' checked' : '') + (f.serie ? ' disabled' : '') + '> ↻ Repetir toda semana (mesmo dia da semana e horário)</label>' + e('recorrente');
   if(f.recorrente){
-    var cores = ''; for(var n = 1; n <= REC_N; n++) cores += opt(String(n), 'Cor ' + n + ' — ' + REC_NOMES[n - 1], String(f.rcor) === String(n));
     h += '<div class="ag-form" style="margin-top:8px"><label>Repetir até (opcional, inclusive)<input type="date" data-f="rfim" value="' + esc(f.rfim) + '"' + (f.serie && f.serie.encerrada_em ? ' disabled' : '') + '>' + e('rfim') + '</label>'
-      + '<label>Cor da série<select data-f="rcor">' + opt('', 'Automática', !f.rcor) + cores + '</select>' + e('rcor') + '</label></div>';
+      + htmlSelCampo('rcor', f, e('rcor')) + '</div>';
     if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso não muda e a data final só pode ser ampliada. Para parar a série mantendo o histórico, use “Encerrar série” nos detalhes.</div>';
     else h += '<div class="ag-vazio" style="margin-top:6px">Sem data final a série continua até ser encerrada. Participantes e lembretes valem para todas as ocorrências (avisos só dentro do ZIP OS).</div>';
   }
@@ -52518,7 +52594,7 @@ function htmlForm(f){
   var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
   var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '"><h2>' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '</h2>';
   h += '<p class="muted" style="margin:0 0 10px">Dados <b>deste agendamento</b> — nada aqui altera a OS, o orçamento, as gravações ou o financeiro.</p><div class="ag-form">';
-  h += '<label>Natureza<select data-f="natureza">' + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select>' + e('natureza') + '</label>';
+  h += htmlSelCampo('natureza', f, e('natureza'));
   h += '<label>Situação<select data-f="status">' + opt('previsto', 'Previsto', f.status === 'previsto') + opt('confirmado', 'Confirmado', f.status === 'confirmado') + (f.modo === 'editar' && !f.serie ? opt('concluido', 'Concluído', f.status === 'concluido') : '') + '</select>' + e('status') + '</label>';
   h += '<label class="full">Título<input type="text" data-f="titulo" maxlength="160" value="' + esc(f.titulo) + '">' + e('titulo') + '</label>';
   h += '<label>' + (f.recorrente ? 'Data do 1º compromisso' : 'Data') + '<input type="date" data-f="data" value="' + esc(f.data) + '"' + (f.serie ? ' disabled' : '') + '>' + e('data') + '</label>';
@@ -52717,8 +52793,12 @@ function acao(a, el){
   }
 }
 function onClick(ev){
-  var el = ev.target && ev.target.closest ? ev.target.closest('[data-ag]') : null; if(!el) return;
+  var el = ev.target && ev.target.closest ? ev.target.closest('[data-ag]') : null;
+  var sb = ev.target && ev.target.closest ? ev.target.closest('.ag-sel') : null; fecharSel(sb);
+  if(!el) return;
   var a = el.getAttribute('data-ag');
+  if(a === 'sel-abrir'){ abrirSel(el.closest('.ag-sel')); return; }
+  if(a === 'sel-esc'){ escolherSel(el); return; }
   if(a === 'fora'){ if(ev.target === el && S.modal && S.modal !== 'form') fechar(); return; }   // clique no fundo fecha o pop-up (não o formulário, para não perder dados)
   acao(a, el);
 }
@@ -52756,7 +52836,7 @@ function onInput(ev){
   f[campo] = t.value;
   if(campo === 'hi' || campo === 'hf' || campo === 'data' || campo === 'rfim') agendarConflitos();
 }
-function onKey(ev){ if(ev.key === 'Escape'){ ocultarPrev(); if(S.modal && S.modal !== 'form') fechar(); } }   // Esc não fecha o formulário (evita perder o que foi digitado)
+function onKey(ev){ if(onKeySel(ev)) return; if(ev.key === 'Escape'){ ocultarPrev(); if(S.modal && S.modal !== 'form') fechar(); } }   // Esc não fecha o formulário (evita perder o que foi digitado)
 
 /* ------------------------------------------------------------------ ciclo de vida */
 function ligar(){
@@ -52823,7 +52903,7 @@ return {
     carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
     abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
     carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave,
-    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar },
+    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar, recVis: recVis, htmlSelBox: htmlSelBox, htmlSelCampo: htmlSelCampo, escolherSel: escolherSel, onKeySel: onKeySel, ehEntrega: ehEntrega },
   entrar: entrar, sair: sair
 };
 }).call(this);

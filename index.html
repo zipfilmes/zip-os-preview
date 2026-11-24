@@ -936,7 +936,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 <div id="navMenuWrap" style="flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;min-height:auto">
 <div class="nav" style="margin:0">
 <button data-role="socio financeiro atendimento producao edicao admin" class="active" onclick="show('dashboard',this)">🏠 Visão Geral</button>
-<button data-role="socio financeiro atendimento admin" onclick="show('agenda107',this)">📅 Agenda <span class="ag-bdg" data-ag-bdg hidden></span></button>
+<button data-role="socio atendimento" onclick="show('agenda107',this)">📅 Agenda</button>
 <button data-role="socio financeiro atendimento admin" onclick="show('comercial',this)">💼 Comercial</button>
 <button data-role="socio financeiro atendimento admin" onclick="show('clientes',this)">🤝 Clientes</button>
 <button data-role="socio financeiro atendimento admin" onclick="show('fornecedores',this)">👥 Fornecedores</button>
@@ -948,7 +948,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 </div>
 </div>
 
-<div id="ag107NavOper" class="nav" style="display:none;margin:0 0 8px"><button type="button" onclick="show('operacao',this)">🎬 Operação</button><button type="button" onclick="show('agenda107',this)">📅 Agenda <span class="ag-bdg" data-ag-bdg hidden></span></button></div>
+<div id="ag107NavOper" class="nav" style="display:none;margin:0 0 8px"><button type="button" onclick="show('operacao',this)">🎬 Operação</button></div>
 <div id="zosAjustes" role="group" aria-label="Ajustes">
 <div class="zos-aj-tit">Ajustes</div>
 <div class="zos-aj-linha"><span class="zos-aj-lbl" id="zosTemaRotulo">Tema</span><div class="zos-aj-seg" role="group" aria-labelledby="zosTemaRotulo"><button type="button" id="zosTemaClaro" data-tema="light" aria-pressed="true">Claro</button><button type="button" id="zosTemaEscuro" data-tema="dark" aria-pressed="false">Escuro</button></div></div>
@@ -963,7 +963,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.4.0 · Agenda e Financeiro</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.5.0 · Agenda Simplificada</div>
 </aside>
 
 <main class="main">
@@ -991,13 +991,6 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 
 <style id="ag107Css">#agenda107{--ag-azul:#175cd3;--ag-mos:#b7791f;--ag-ver:#15803d;--ag-rox:#7c3aed;--ag-cin:#667085}
 #agenda107 .ag-acoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-#agenda107 .ag-bdg{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:#b42318;color:#fff;font-size:11px;font-weight:800;line-height:16px;text-align:center;margin-left:6px;vertical-align:1px}
-#agenda107 .ag-bdg[hidden],.ag-bdg[hidden]{display:none}
-.nav .ag-bdg{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:#b42318;color:#fff;font-size:11px;font-weight:800;line-height:16px;text-align:center;margin-left:6px}
-.nav .ag-bdg[hidden]{display:none}
-#agenda107 .ag-filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
-#agenda107 .ag-filtros label{flex:1 1 140px;min-width:120px;display:block}
-#agenda107 .ag-filtros input,#agenda107 .ag-filtros select{margin-top:4px;padding:9px}
 #agenda107 .ag-bloco{margin-bottom:14px}
 #agenda107 .ag-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 #agenda107 .ag-cab h2{margin:0}
@@ -1017,7 +1010,8 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-dia h4 b{color:var(--ink);font-size:14px}
 #agenda107 .ag-vazio{font-size:12px;color:var(--muted)}
 #agenda107 .ag-ev{display:block;width:100%;min-width:0;text-align:left;border:1px solid var(--line);border-left:5px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 13%,var(--panel));color:var(--ink);border-radius:10px;padding:7px 8px;margin-top:6px;cursor:pointer;font:inherit;font-size:12px;line-height:1.35;overflow:hidden}
-#agenda107 .ag-ev:hover,#agenda107 .ag-ev:focus-visible{border-color:var(--accent);outline:none}
+#agenda107 .ag-ev:hover,#agenda107 .ag-ev:focus-visible{border-color:var(--accent)}
+#agenda107 .ag-ev:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 #agenda107 .ag-ev.ag-fonte{border-style:dashed;border-left-style:solid}
 #agenda107 .ag-ev .h{display:block;color:var(--muted);font-weight:700}
 #agenda107 .ag-ev .t{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1040,6 +1034,21 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-cel.hoje{border-color:var(--accent)}
 #agenda107 .ag-cel.sel{box-shadow:0 0 0 2px var(--accent) inset}
 #agenda107 .ag-cel b{font-size:13px}
+/* 113: destaque do dia ao pairar/focar (semana e mês), nos dois temas; mantém o fundo de fim de semana nas demais situações, o anel do dia selecionado e a borda do dia atual */
+#agenda107{--ag-hov:#dbe7ff;--ag-hov-bd:#175cd3}
+html[data-theme="dark"] #agenda107{--ag-hov:#2c3e5f;--ag-hov-bd:#8fb8ee}
+#agenda107 .ag-dia,#agenda107 .ag-cel{cursor:pointer}
+#agenda107 .ag-dia:hover,#agenda107 .ag-dia:focus-within,#agenda107 .ag-dia.fds:hover,#agenda107 .ag-dia.fds:focus-within,
+#agenda107 .ag-cel:hover,#agenda107 .ag-cel:focus-within,#agenda107 .ag-cel.fds:hover,#agenda107 .ag-cel.fds:focus-within,#agenda107 .ag-cel.fds.fora:hover,#agenda107 .ag-cel.fds.fora:focus-within{background:var(--ag-hov);border-color:var(--ag-hov-bd)}
+#agenda107 .ag-cel.fora:hover,#agenda107 .ag-cel.fora:focus-within{opacity:.9}
+#agenda107 .ag-dia.hoje:hover,#agenda107 .ag-dia.hoje:focus-within,#agenda107 .ag-cel.hoje:hover,#agenda107 .ag-cel.hoje:focus-within{border-color:var(--accent)}
+/* controles nativos dentro dos quadrados (sem botão dentro de botão): visual de texto, foco bem visível */
+#agenda107 .ag-dia-bt,#agenda107 .ag-cel-num,#agenda107 .ag-mais,#agenda107 .ag-fx{appearance:none;-webkit-appearance:none;margin:0;font-family:inherit;cursor:pointer;text-align:left;box-shadow:none}
+#agenda107 .ag-dia-bt,#agenda107 .ag-cel-num{background:transparent;border:0;border-radius:6px;padding:1px 4px;margin:-1px -4px;color:inherit;font-size:inherit;text-transform:inherit;letter-spacing:inherit;font-weight:inherit}
+#agenda107 .ag-dia-bt:hover,#agenda107 .ag-cel-num:hover{text-decoration:underline}
+#agenda107 .ag-dia-bt:focus-visible,#agenda107 .ag-cel-num:focus-visible,#agenda107 .ag-mais:focus-visible,#agenda107 .ag-fx:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+#agenda107 .ag-fx:hover,#agenda107 .ag-fx:active{outline:2px solid var(--ag-cor,var(--accent));outline-offset:-1px;filter:brightness(.97)}
+html[data-theme="dark"] #agenda107 .ag-fx:hover,html[data-theme="dark"] #agenda107 .ag-fx:active{filter:brightness(1.12)}
 #agenda107 .ag-pts{display:flex;gap:3px;flex-wrap:wrap;align-items:center;margin-top:4px}
 #agenda107 .ag-pt{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ag-cor,var(--ag-cin))}
 #agenda107 .ag-q{font-size:11px;color:var(--muted);font-weight:700}
@@ -1080,9 +1089,6 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-aviso.erro{border-left-color:#ef4444;background:rgba(239,68,68,.10)}
 #agenda107 .ag-aviso.ok{border-left-color:#22a05a;background:rgba(34,160,90,.10)}
 #agenda107 .ag-botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
-#agenda107 .ag-av{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:10px 12px;margin-top:8px;cursor:pointer;font:inherit;font-size:13px;overflow-wrap:anywhere}
-#agenda107 .ag-av.nl{border-left:5px solid var(--accent);font-weight:700}
-#agenda107 .ag-av small{display:block;color:var(--muted);font-weight:400}
 #agenda107 .ag-sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 #agenda107 .ag-err{color:var(--red);font-size:12px;margin-top:3px}
 html[data-theme="dark"] #agenda107{--ag-azul:#8fb8ee;--ag-mos:#f2c14e;--ag-ver:#a6e3be;--ag-rox:#c4b5fd;--ag-cin:#98a2b3}
@@ -1120,11 +1126,12 @@ html[data-theme="dark"] #agenda107 .ag-prev{box-shadow:0 10px 30px rgba(0,0,0,.6
 @media(max-width:700px){#agenda107 .ag-form{grid-template-columns:1fr}#agenda107 .ag-kv{grid-template-columns:1fr}#agenda107 .ag-cel{min-height:48px;padding:3px}#agenda107 .ag-box{padding:14px}#agenda107 .ag-leg{justify-content:flex-start}}
 #agenda107 .ag-mes .ag-cel{min-height:104px;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
 #agenda107 .ag-mes .ag-cel b{flex:0 0 auto;align-self:flex-start}
+#agenda107 .ag-mes .ag-cel-num{flex:0 0 auto;align-self:flex-start}
 #agenda107 .ag-fxs{display:flex;flex-direction:column;gap:2px;margin-top:4px;min-width:0}
-#agenda107 .ag-fx{display:flex;align-items:center;gap:4px;min-width:0;height:16px;padding:0 4px;border-radius:4px;border-left:3px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 30%,var(--panel));color:var(--ink);font-size:11px;line-height:16px;overflow:hidden}
+#agenda107 .ag-fx{display:flex;width:100%;align-items:center;gap:4px;min-width:0;height:16px;padding:0 4px;border-top:0;border-right:0;border-bottom:0;border-radius:4px;border-left:3px solid var(--ag-cor,var(--ag-cin));background:var(--panel);background:color-mix(in srgb,var(--ag-cor,var(--ag-cin)) 30%,var(--panel));color:var(--ink);font-size:11px;line-height:16px;overflow:hidden}
 #agenda107 .ag-fx .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 #agenda107 .ag-fx .h,#agenda107 .ag-fx .k{flex:0 0 auto;color:var(--muted);font-size:10px;white-space:nowrap}
-#agenda107 .ag-mais{display:block;font-size:11px;font-weight:700;color:var(--muted);padding-left:2px}
+#agenda107 .ag-mais{display:block;background:transparent;border:0;border-radius:4px;font-size:11px;font-weight:700;color:var(--muted);padding:0 2px;text-decoration:underline}
 @media(max-width:1400px){#agenda107 .ag-fx .h{display:none}}
 @media(max-width:1200px){#agenda107 .ag-fx .k{display:none}}
 @media(max-width:700px){#agenda107 .ag-mes{gap:2px}#agenda107 .ag-mes .ag-cel{min-height:84px;padding:2px}#agenda107 .ag-fx{height:14px;line-height:14px;font-size:9px;padding:0 2px;border-left-width:2px}#agenda107 .ag-fx .h,#agenda107 .ag-fx .k{display:none}#agenda107 .ag-mais{font-size:9px}}
@@ -1148,8 +1155,7 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista{box-shadow:0 10px 30px rgba(0,0
 html[data-theme="dark"] #agenda107 .ag-sel-lista li:hover{background:rgba(143,184,238,.14)}
 html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{background:rgba(143,184,238,.2)}</style>
 <section id="agenda107" class="section">
-<div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn btn2" data-ag="atualizar">Atualizar</button><button type="button" class="btn btn2" data-ag="avisos">🔔 Avisos <span class="ag-bdg" id="ag107BdgTopo" data-ag-bdg hidden></span></button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
-<div id="ag107Filtros" class="ag-filtros"></div>
+<div class="top"><h1>📅 Agenda</h1><div class="ag-acoes"><button type="button" class="btn btn2" data-ag="hoje">Hoje</button><button type="button" class="btn" data-ag="novo">+ Novo agendamento</button></div></div>
 <div id="ag107Corpo"></div>
 <div id="ag107Modal"></div>
 <div id="ag107Prev" class="ag-prev" role="tooltip" hidden></div>
@@ -51993,6 +51999,9 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
    112: compromissos próprios da Agenda podem ser editados/remarcados em qualquer situação (concluído, cancelado, série encerrada = reabre, sem duplicar) e excluídos (exclusão lógica, com confirmação, chave e versão);
         série: a ação vale para a série inteira (avisado na tela); data vinda da OS (item projetado ou compromisso aderente à gravação) só se reagenda na OS e não tem Excluir; pedido de confirmação de presença e rótulos individuais saíram da tela;
         fins de semana com fundo avermelhado discreto. O servidor decide (pode_editar, pode_excluir, data_controlada_os); a tela só espelha.
+   113: interface simplificada: sem filtros de visualização, sem Atualizar/Avisos (nem leitura de agenda_notificacoes_*), sem Lembrete na tela (novos = "nenhum"; o valor antigo é reenviado em edição),
+        série sem Encerrar/Cancelar (só editar/remarcar/reabrir e excluir a série inteira); popup de data da OS no mesmo layout do detalhe; clique no dia abre o novo agendamento; clique no evento abre o detalhe daquele evento;
+        Agenda só com perfil ATIVO Sócio/Atendimento e presente nos perfis da sessão; atualização automática mantida.
    Regras: nenhum callback de Auth (identidade vigiada por timer), respostas tardias/de outra identidade descartadas, todo texto dinâmico escapado,
    links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto, sem canal externo de aviso. */
 var AG107 = (function(){
@@ -52007,7 +52016,6 @@ var ACAO_HIST = { criado: 'criado', editado: 'editado', concluido: 'concluído',
 var CAMPO_HIST = { natureza: 'Natureza', titulo: 'Título', data: 'Data', hora_inicio: 'Início', hora_fim: 'Fim', status: 'Situação', responsavel_id: 'Responsável', local: 'Local', plataforma: 'Plataforma', link: 'Link', pauta: 'Pauta', cliente: 'Cliente', lembrete: 'Lembrete', projeto_id: 'OS', gravacao_id: 'Gravação', recorrencia_fim: 'Repetir até', recorrencia_cor: 'Cor da série', cancelado_em: 'Cancelado em' };
 var DOW = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 var MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-var AVISO = { convite: 'Você foi incluído em', alteracao: 'Compromisso alterado:', cancelamento: 'Compromisso cancelado:', remocao: 'Você foi removido de um compromisso', lembrete_1d: 'Lembrete — amanhã:', lembrete_1h: 'Lembrete — em 1 hora:' };
 var CHAVES_PAYLOAD = ['natureza', 'titulo', 'data', 'hora_inicio', 'hora_fim', 'status', 'responsavel_id', 'participantes', 'externos', 'local', 'plataforma', 'link', 'pauta', 'lembrete', 'projeto_id', 'gravacao_id', 'permitir_duplicado', 'atualizar_referencia', 'cliente', 'recorrencia'];
 var RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 var FONTE = { gravacao: { curto: 'Gravação', longo: 'Data de gravação da OS' }, revisao: { curto: 'Revisão', longo: 'Data de revisão / apresentação da OS' }, entrega: { curto: 'Prazo de entrega', longo: 'Prazo geral de entrega da OS (não é data de edição, de revisão nem de gravação)' } };
@@ -52110,12 +52118,12 @@ function validarForm(f){
     else if(rf && parseYmd(f.data) && rf < f.data) e.rfim = 'A data final não pode ser anterior ao primeiro compromisso.';
     if(rc && !/^[1-8]$/.test(rc)) e.rcor = 'Cor inválida.';
     if(f.gravacao_id) e.recorrente = 'Compromisso ligado a uma gravação da OS não pode ser recorrente.';
-    if(f.status === 'concluido') e.status = 'Uma série não pode ser concluída: use "Encerrar série".';
+    if(f.status === 'concluido') e.status = 'Uma série não pode ser concluída.';
   }
   var p = {
     natureza: f.natureza, titulo: t, data: f.data, hora_inicio: hi || null, hora_fim: hf || null, status: f.status || 'previsto',
     responsavel_id: RE_UUID.test(String(f.resp || '')) ? f.resp : null, participantes: parts, externos: ext,
-    local: loc || null, plataforma: pla || null, link: lnk || null, pauta: pau || null, cliente: cli || null, lembrete: f.lembrete || 'ambos',
+    local: loc || null, plataforma: pla || null, link: lnk || null, pauta: pau || null, cliente: cli || null, lembrete: f.lembrete || 'nenhum',
     projeto_id: f.projeto_id || null, gravacao_id: f.gravacao_id || null
   };
   if(f.modo === 'novo' && f.permitirDup) p.permitir_duplicado = true;
@@ -52131,20 +52139,13 @@ function divergencias(snap, atual){
   if(snap.gravacao || atual.gravacao){ var ga = snap.gravacao || {}, gb = atual.gravacao || {}; c('Data da gravação', ga.data, gb.data); c('Horário da gravação', ga.horario, gb.horario); }
   return out;
 }
-function passa(it, fl){
-  if(ehEntrega(it)) return false;
-  if(fl.natureza && it.natureza !== fl.natureza) return false;
-  if(fl.status && it.status !== fl.status) return false;
-  if(fl.pessoa){ var ok = it.responsavel_id === fl.pessoa || (it.participantes || []).some(function(p){ return p.usuario_id === fl.pessoa; }) || (it.pessoas || []).indexOf(fl.pessoa) >= 0; if(!ok) return false; }
-  var q = norm(fl.texto); if(q && norm([it.os, it.cliente, it.titulo].join(' ')).indexOf(q) < 0) return false;
-  return true;
-}
+function passa(it){ return !ehEntrega(it); }   // sem filtros de visualização: só o prazo de entrega da OS fica de fora
 function ordenar(a, b){
   if(a.data !== b.data) return a.data < b.data ? -1 : 1;
   var x = a.hora_inicio || '99:99', y = b.hora_inicio || '99:99'; if(x !== y) return x < y ? -1 : 1;
   return String(a.titulo).localeCompare(String(b.titulo), 'pt-BR');
 }
-function porDia(itens, fl){ var m = {}; (itens || []).forEach(function(it){ if(!passa(it, fl)) return; (m[it.data] = m[it.data] || []).push(it); }); Object.keys(m).forEach(function(k){ m[k].sort(ordenar); }); return m; }
+function porDia(itens){ var m = {}; (itens || []).forEach(function(it){ if(!passa(it)) return; (m[it.data] = m[it.data] || []).push(it); }); Object.keys(m).forEach(function(k){ m[k].sort(ordenar); }); return m; }
 function fmtDiv(v){ return v ? (parseYmd(v) ? fmtData(v) : String(v)) : '—'; }
 function ehFonte(it){ return !!(it && it.origem === 'fonte'); }
 function fonteRot(it){ return (it && FONTE[it.fonte_tipo]) || FONTE_PAD; }
@@ -52187,14 +52188,16 @@ function setHtml(id, h){ var el = $(id); if(el) el.innerHTML = h; }
 function meuId(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.id) ? String(currentUser.id) : ''; } catch(e){ return ''; } }
 function perfis(){ try { return (typeof currentUser !== 'undefined' && currentUser && currentUser.profiles) ? currentUser.profiles : []; } catch(e){ return []; } }
 function ehGestorUI(){ var p = perfis(); return p.indexOf('socio') >= 0 || p.indexOf('admin') >= 0; }
-// quem usa a Agenda: Sócio ou Atendimento (perfis acumulados valem; Admin sozinho não). O servidor aplica a MESMA regra em todas as RPCs; aqui só se evita mostrar o que ele recusaria.
-function podeAgenda(){ var p = perfis(); return p.indexOf('socio') >= 0 || p.indexOf('atendimento') >= 0; }
+function perfilAtivo(){ var ps = $('profileSelect'); return ps ? String(ps.value || '') : ''; }
+// quem usa a Agenda: o perfil ATIVO precisa ser Sócio ou Atendimento E constar dos perfis da sessão (perfis acumulados não abrem a Agenda nas visões Financeiro/Admin/Produção/Edição).
+// O servidor aplica a sua própria regra; aqui se evita ver, abrir ou consultar o que não é do perfil ativo.
+function podeAgenda(){ var a = perfilAtivo(); return (a === 'socio' || a === 'atendimento') && perfis().indexOf(a) >= 0; }
 function novoEstado(){
   var h = hojeBR();
-  return { id: '', indisponivel: false, escopo: 'equipe', filtros: { natureza: '', status: '', pessoa: '', texto: '' },
+  return { id: '', indisponivel: false, escopo: 'equipe',
     semIni: inicioSemana(h), mes: { a: +h.slice(0, 4), m: +h.slice(5, 7) }, diaSel: h,
     sem: { estado: 'vazio', itens: [], msg: '' }, mesD: { estado: 'vazio', itens: [], msg: '' },
-    ger: { sem: 0, mes: 0, det: 0, eq: 0, av: 0 }, equipe: null, eqEstado: '', nomes: {}, naoLidas: 0, modal: null, form: null, det: null, oc: '', avisos: null, confAviso: null, tPoll: null, tVigia: null, tBusca: null, tConf: null, ligado: false, datas: true, fonte: null, prevDia: '', ultCarga: 0 };
+    ger: { sem: 0, mes: 0, det: 0, eq: 0 }, equipe: null, eqEstado: '', nomes: {}, modal: null, form: null, det: null, oc: '', confAviso: null, tPoll: null, tVigia: null, tBusca: null, tConf: null, ligado: false, datas: true, fonte: null, prevDia: '', ultCarga: 0 };
 }
 var S = novoEstado();
 function idAtual(){
@@ -52208,8 +52211,8 @@ function secaoAtiva(){ var s = $('agenda107'); return !!(s && s.classList && s.c
 function reset(){
   var antes = S; clearInterval(antes.tPoll); clearTimeout(antes.tBusca); clearTimeout(antes.tConf);
   var n = novoEstado(); n.id = antes.id; n.tVigia = antes.tVigia; n.ligado = antes.ligado;
-  n.ger = { sem: antes.ger.sem + 1, mes: antes.ger.mes + 1, det: antes.ger.det + 1, eq: antes.ger.eq + 1, av: antes.ger.av + 1 };
-  S = n; badge(0); setHtml('ag107Modal', ''); setHtml('ag107Corpo', ''); setHtml('ag107Filtros', ''); ocultarPrev();
+  n.ger = { sem: antes.ger.sem + 1, mes: antes.ger.mes + 1, det: antes.ger.det + 1, eq: antes.ger.eq + 1 };
+  S = n; setHtml('ag107Modal', ''); setHtml('ag107Corpo', ''); ocultarPrev();
 }
 
 /* ------------------------------------------------------------------ RPC (prazo, descarte de identidade, mensagens honestas) */
@@ -52221,6 +52224,8 @@ function erroTexto(e){
   return 'Não foi possível concluir (' + (c || 'erro') + ').';
 }
 function rpc(nome, args, id0){
+  var estado = S;
+  if(!podeAgenda()) return Promise.resolve({ ok: false, descartado: true, erro: MSG_SEM_ACESSO });   // perfil ativo sem Agenda: nenhuma consulta ao servidor
   var c = (typeof supabaseClient !== 'undefined') ? supabaseClient : null;
   if(!c || typeof c.rpc !== 'function') return Promise.resolve({ ok: false, erro: 'Sem conexão com o servidor. Recarregue a página.' });
   return new Promise(function(resolve){
@@ -52232,7 +52237,7 @@ function rpc(nome, args, id0){
       if(r.error){ fecha({ ok: false, erro: erroTexto(r.error) }); return; }
       fecha({ ok: true, data: r.data });
     }, function(){ fecha({ ok: false, erro: 'Falha de rede.' }); });
-  }).then(function(r){ if(id0 !== undefined && id0 !== idAtual()) r.descartado = true; if(!r.ok && r.erro === 'FUNCAO_AUSENTE') S.indisponivel = true; return r; });
+  }).then(function(r){ if(estado !== S || (id0 !== undefined && id0 !== idAtual()) || !podeAgenda()) r.descartado = true; if(!r.descartado && !r.ok && r.erro === 'FUNCAO_AUSENTE') S.indisponivel = true; return r; });
 }
 function msgFalha(r){
   if(r && r.erro === 'FUNCAO_AUSENTE') return 'A Agenda ainda não está instalada no banco. Avise o responsável pelo sistema.';
@@ -52265,44 +52270,16 @@ function carregarEquipe(){
     if(r.descartado || g !== S.ger.eq) return;
     if(r.ok && r.data && r.data.status === 'ok'){ S.equipe = (r.data.equipe || []).slice().sort(porNome); S.equipe.forEach(function(x){ S.nomes[x.id] = x.nome; }); S.eqEstado = 'ok'; }
     else S.eqEstado = 'erro';
-    pintarFiltros(); if(S.form) pintarFormPartes();
+    if(S.form) pintarFormPartes();
   });
-}
-function contarNaoLidas(){
-  var id0 = idAtual(); if(!id0 || S.indisponivel || !podeAgenda()) return Promise.resolve();
-  return rpc('agenda_notificacoes_contar', {}, id0).then(function(r){
-    if(r.descartado || !r.ok || !r.data || r.data.status !== 'ok') return;
-    var n = Number(r.data.nao_lidas) || 0;
-    if(n > S.naoLidas) live('Você tem ' + n + ' aviso(s) novo(s) na Agenda.');
-    S.naoLidas = n; badge(n);
-  });
-}
-function badge(n){
-  var d = doc(); if(!d || !d.querySelectorAll) return;
-  var els = d.querySelectorAll('[data-ag-bdg]');
-  for(var i = 0; i < els.length; i++){ els[i].textContent = n > 99 ? '99+' : String(n); els[i].hidden = !(n > 0); if(els[i].setAttribute) els[i].setAttribute('aria-label', n + ' aviso(s) não lido(s)'); }
 }
 function live(t){ var el = $('ag107Live'); if(el) el.textContent = t; }
 function recarregarTudo(){ S.ultCarga = Date.now(); return Promise.all([carregarSem(), carregarMes()]); }
 // Voltar à aba/tela depois de iniciar um projeto: se a lista tem mais de 20 s e não há pop-up aberto, relê (a lista é projeção ao vivo, sem cópia).
 function recarregarSeVelha(){ if(secaoAtiva() && podeAgenda() && !S.modal && Date.now() - S.ultCarga > RECARGA_MS) recarregarTudo(); }
 
-/* ------------------------------------------------------------------ desenho: filtros, semana, mês, dia */
+/* ------------------------------------------------------------------ desenho: semana, mês, dia */
 function opt(v, rot, sel){ return '<option value="' + esc(v) + '"' + (sel ? ' selected' : '') + '>' + esc(rot) + '</option>'; }
-function htmlFiltros(){
-  var f = S.filtros, h = '';
-  h += '<label>Natureza<select data-fl="natureza">' + opt('', 'Todas', !f.natureza) + NAT_ORD.map(function(k){ return opt(k, NAT[k], f.natureza === k); }).join('') + '</select></label>';
-  h += '<label>Situação<select data-fl="status">' + opt('', 'Todas', !f.status) + ['previsto', 'confirmado', 'concluido', 'cancelado'].map(function(k){ return opt(k, STATUS[k], f.status === k); }).join('') + '</select></label>';
-  h += '<label>Pessoa<select data-fl="pessoa">' + opt('', 'Todas', !f.pessoa) + (S.equipe || []).map(function(x){ return opt(x.id, x.nome, f.pessoa === x.id); }).join('') + '</select></label>';
-  h += '<label>OS / cliente / título<input type="text" data-fl="texto" maxlength="80" value="' + esc(f.texto) + '" placeholder="Buscar"></label>';
-  return h;
-}
-function pintarFiltros(){
-  var el = $('ag107Filtros'); if(!el) return;
-  var foco = (doc() && doc().activeElement && doc().activeElement.getAttribute) ? doc().activeElement.getAttribute('data-fl') : null;
-  if(foco === 'texto') return;   // não recria o campo enquanto a pessoa digita
-  el.innerHTML = htmlFiltros();
-}
 function chip(it){
   var sub = [];
   if(it.os) sub.push(it.os + (it.cliente ? ' · ' + it.cliente : '')); else if(it.cliente) sub.push(it.cliente);
@@ -52320,32 +52297,34 @@ function htmlEstado(d, vazioMsg){
 }
 function htmlParcial(d){
   if(!d || !d.parcial) return '';
-  return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens, marcadores e filtros abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + '.</div>';
+  return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens e marcadores abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + '.</div>';
 }
 function htmlSemana(){
-  var ini = S.semIni, fim = addDias(ini, 6), hoje = hojeBR(), m = porDia(S.sem.itens, S.filtros), h = '';
+  var ini = S.semIni, fim = addDias(ini, 6), hoje = hojeBR(), m = porDia(S.sem.itens), h = '';
   h += '<div class="card ag-bloco"><div class="ag-cab"><h2>' + (ini === inicioSemana(hoje) ? 'Esta semana' : 'Semana') + ' · ' + esc(fmtDataCurta(ini)) + ' a ' + esc(fmtData(fim)) + '</h2><div class="ag-nav"><button type="button" class="btn btn2" data-ag="sem-ant" aria-label="Semana anterior">◀</button><button type="button" class="btn btn2" data-ag="sem-hoje">Esta semana</button><button type="button" class="btn btn2" data-ag="sem-prox" aria-label="Próxima semana">▶</button></div></div>';
   h += htmlEstado(S.sem) + htmlParcial(S.sem);
   if(S.sem.estado === 'ok' || S.sem.itens.length){
     h += '<div class="ag-semana">';
     for(var i = 0; i < 7; i++){
       var d = addDias(ini, i), l = m[d] || [];
-      h += '<div class="ag-dia' + (i >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + '" data-pv="' + esc(d) + '"><h4>' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
+      h += '<div class="ag-dia' + (i >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + '" data-ag="novo-na-data" data-d="' + esc(d) + '" data-pv="' + esc(d) + '"><h4><button type="button" class="ag-dia-bt" data-ag="novo-na-data" data-d="' + esc(d) + '" aria-label="' + esc('Novo agendamento em ' + fmtDiaSemana(d) + ', ' + fmtData(d) + ' (' + l.length + ' compromisso(s) no dia)') + '">' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></button></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
     }
     h += '</div>';
   }
   return h + '</div>';
 }
 function htmlMes(){
-  var a = S.mes.a, mo = S.mes.m, ini = inicioGradeMes(a, mo), hoje = hojeBR(), m = porDia(S.mesD.itens, S.filtros), h = '';
+  var a = S.mes.a, mo = S.mes.m, ini = inicioGradeMes(a, mo), hoje = hojeBR(), m = porDia(S.mesD.itens), h = '';
   h += '<div class="card ag-bloco"><div class="ag-cab"><h2>' + esc(MESES[mo - 1]) + ' de ' + a + '</h2>' + htmlLegenda() + '<div class="ag-nav"><button type="button" class="btn btn2" data-ag="mes-ant" aria-label="Mês anterior">◀</button><button type="button" class="btn btn2" data-ag="mes-hoje">Este mês</button><button type="button" class="btn btn2" data-ag="mes-prox" aria-label="Próximo mês">▶</button></div></div>';
   h += htmlEstado(S.mesD) + htmlParcial(S.mesD);
   if(S.mesD.estado === 'ok' || S.mesD.itens.length){
     h += '<div class="ag-mes">' + DOW.map(function(x){ return '<div class="ag-dow">' + x + '</div>'; }).join('');
     for(var i = 0; i < 42; i++){
       var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [];
-      h += '<button type="button" class="ag-cel' + (p.m !== mo ? ' fora' : '') + (i % 7 >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="dia" data-d="' + esc(d) + '" data-pv="' + esc(d) + '" aria-label="' + esc(fmtData(d) + ', ' + l.length + ' compromisso(s)') + '"><b>' + p.d + '</b>'
-        + faixasDia(l) + '</button>';
+      // a célula é um bloco clicável (espaço livre = novo agendamento nessa data); número, faixas e "+N" são botões nativos separados (sem botão dentro de botão)
+      h += '<div class="ag-cel' + (p.m !== mo ? ' fora' : '') + (i % 7 >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="novo-na-data" data-d="' + esc(d) + '" data-pv="' + esc(d) + '">'
+        + '<button type="button" class="ag-cel-num" data-ag="novo-na-data" data-d="' + esc(d) + '" aria-label="' + esc('Novo agendamento em ' + fmtDiaSemana(d) + ', ' + fmtData(d) + ' (' + l.length + ' compromisso(s) no dia)') + '"><b>' + p.d + '</b></button>'
+        + faixasDia(l, d) + '</div>';
     }
     h += '</div>';
   }
@@ -52359,30 +52338,39 @@ function rotuloFaixa(it){
   else t = it.titulo || it.cliente || it.os || 'Compromisso';
   return { t: String(t), k: k, h: it.hora_inicio ? String(it.hora_inicio).slice(0, 5) : '' };
 }
-function faixasDia(l){
+// cada faixa é um botão do próprio evento (id + data da ocorrência); "+N" abre a lista do dia, não o cadastro
+function faixasDia(l, dia){
   if(!l || !l.length) return '';
-  var h = '<span class="ag-fxs">';
+  var h = '<span class="ag-fxs">', d = dia || l[0].data;
   l.slice(0, FX_MAX).forEach(function(it){
-    var r = rotuloFaixa(it);
-    h += '<span class="ag-fx ' + clsCor(it) + (it.status === 'cancelado' ? ' ag-cancel' : '') + '" title="' + esc((r.h ? r.h + ' · ' : '') + r.t + (r.k ? ' · ' + r.k : '') + (corRec(it) ? ' · ↻ semanal' : '')) + '">'
-      + (r.h ? '<span class="h">' + esc(r.h) + '</span>' : '') + '<span class="t">' + esc(r.t) + '</span>' + (r.k ? '<span class="k">' + esc(r.k) + '</span>' : '') + '</span>';
+    var r = rotuloFaixa(it), tit = (r.h ? r.h + ' · ' : '') + r.t + (r.k ? ' · ' + r.k : '') + (corRec(it) ? ' · ↻ semanal' : '');
+    h += '<button type="button" class="ag-fx ' + clsCor(it) + (it.status === 'cancelado' ? ' ag-cancel' : '') + '" data-ag="' + (ehFonte(it) ? 'abrir-fonte' : 'abrir') + '" data-id="' + esc(chaveItem(it)) + '" title="' + esc(tit) + '" aria-label="' + esc('Abrir detalhes: ' + tit + ', ' + fmtData(it.data)) + '">'
+      + (r.h ? '<span class="h">' + esc(r.h) + '</span>' : '') + '<span class="t">' + esc(r.t) + '</span>' + (r.k ? '<span class="k">' + esc(r.k) + '</span>' : '') + '</button>';
   });
-  if(l.length > FX_MAX) h += '<span class="ag-mais">+' + (l.length - FX_MAX) + '</span>';
+  if(l.length > FX_MAX) h += '<button type="button" class="ag-mais" data-ag="dia" data-d="' + esc(d) + '" aria-label="' + esc('Ver os ' + l.length + ' compromissos de ' + fmtData(d)) + '">+' + (l.length - FX_MAX) + '</button>';
   return h + '</span>';
 }
 function itensDoDia(d){
   var vistos = {}, out = [];
-  S.mesD.itens.concat(S.sem.itens).forEach(function(it){ var k = chaveItem(it); if(it.data === d && !vistos[k] && passa(it, S.filtros)){ vistos[k] = 1; out.push(it); } });
+  S.mesD.itens.concat(S.sem.itens).forEach(function(it){ var k = chaveItem(it); if(it.data === d && !vistos[k] && passa(it)){ vistos[k] = 1; out.push(it); } });
   return out.sort(ordenar);
 }
 function htmlDia(){
   var l = itensDoDia(S.diaSel);
-  return '<div class="card ag-bloco"><div class="ag-cab"><h2>' + esc(fmtDiaSemana(S.diaSel)) + ', ' + esc(fmtData(S.diaSel)) + '</h2><button type="button" class="btn btn2" data-ag="novo-dia">+ Agendar neste dia</button></div>'
+  return '<div class="card ag-bloco" id="ag107DiaLista"><div class="ag-cab"><h2>' + esc(fmtDiaSemana(S.diaSel)) + ', ' + esc(fmtData(S.diaSel)) + '</h2><button type="button" class="btn btn2" data-ag="novo-dia">+ Agendar neste dia</button></div>'
     + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Nenhum compromisso neste dia.</div>') + ((S.mesD.parcial || S.sem.parcial) ? '<div class="ag-vazio" style="margin-top:6px">A lista deste período está incompleta: pode haver mais compromissos neste dia.</div>' : '') + '</div>';
 }
 function pintar(){
-  pintarFiltros();
-  ocultarPrev(); var el = $('ag107Corpo'); if(el) el.innerHTML = htmlSemana() + htmlMes() + htmlDia();
+  ocultarPrev(); var el = $('ag107Corpo'); if(el) el.innerHTML = htmlSemana() + htmlMes() + '<div id="ag107DiaBox">' + htmlDia() + '</div>';
+}
+// troca só o dia selecionado (anel + lista do dia) sem redesenhar a grade: a página não se desloca
+function selecionarDia(d){
+  if(!parseYmd(d)) return;
+  S.diaSel = d; ocultarPrev();
+  var dd = doc(); if(!dd || !dd.querySelectorAll) return;
+  var cs = dd.querySelectorAll('#agenda107 .ag-cel');
+  for(var i = 0; i < cs.length; i++) cs[i].classList.toggle('sel', cs[i].getAttribute('data-d') === d);
+  var box = $('ag107DiaBox'); if(box) box.innerHTML = htmlDia(); else pintar();
 }
 
 /* ------------------------------------------------------------------ legenda, prévia ao pairar, detalhe de data da OS */
@@ -52421,16 +52409,16 @@ function onPvOver(ev){ if(ev && ev.pointerType === 'touch') return; var a = pvAl
 function onPvOut(ev){ var rt = ev && ev.relatedTarget, raiz = $('agenda107'); if(!rt || !raiz || !raiz.contains || !raiz.contains(rt)) ocultarPrev(); }
 function onPvFocus(ev){ var a = pvAlvo(ev); if(a) mostrarPrev(a); else ocultarPrev(); }
 function htmlFonte(it){
+  // mesmo layout do detalhe de compromisso (htmlDetalhe): caixa, título, etiqueta, "Quando", seção da OS e botões; só leitura, sem status nem participantes
   var r = it.responsaveis || {}, rot = fonteRot(it), h = '';
-  h += '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true" aria-label="Data vinda da OS">';
+  var hora = it.hora_inicio ? it.hora_inicio + (it.hora_fim ? ' às ' + it.hora_fim : '') : (it.fonte_tipo === 'gravacao' ? 'horário a definir' : 'sem horário');
+  h += '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="Detalhes da data vinda da OS">';
   h += '<h2>' + esc(it.titulo) + '</h2><div><span class="ag-nb ag-n-' + esc(NAT[it.natureza] ? it.natureza : 'outros') + '">' + esc(rot.curto) + ' (da OS)</span></div>';
-  h += '<div class="ag-sec"><div class="ag-os"><div class="rot">Data vinda da OS (consulta — não editável aqui)</div><dl class="ag-kv">'
-    + '<dt>O que é</dt><dd>' + esc(rot.longo) + '</dd>'
-    + '<dt>Quando</dt><dd>' + esc(fmtDiaSemana(it.data) + ', ' + fmtData(it.data) + (it.fonte_tipo === 'gravacao' ? ' — ' + (it.hora_inicio || 'horário a definir') : '')) + '</dd>'
-    + '<dt>OS</dt><dd>' + esc((it.os || '') + (it.os_titulo ? ' — ' + it.os_titulo : '')) + '</dd>' + (it.cliente ? '<dt>Cliente</dt><dd>' + esc(it.cliente) + '</dd>' : '')
-    + (it.local ? '<dt>Local da OS</dt><dd>' + esc(it.local) + '</dd>' : '')
-    + (it.responsaveis ? '<dt>Equipe da OS</dt><dd>' + esc(['Atendimento: ' + (r.atendimento || '—'), 'Produção: ' + (r.producao || '—'), 'Edição: ' + (r.edicao || '—')].join(' · ')) + '</dd>' : '') + '</dl></div></div>';
-  h += '<div class="ag-aviso">Esta data vem do cadastro da OS e é só leitura aqui: para criar um compromisso (participantes, avisos, lembretes), use <b>+ Novo agendamento</b>. Para reagendar esta data, altere-a na própria OS (a Agenda não muda datas da OS e não oferece Excluir para ela). Nada é alterado na OS.</div>';
+  h += '<dl class="ag-kv" style="margin-top:12px"><dt>Quando</dt><dd>' + esc(fmtDiaSemana(it.data) + ', ' + fmtData(it.data) + ' — ' + hora) + '</dd><dt>Tipo</dt><dd>' + esc(rot.longo) + '</dd></dl>';
+  h += '<div class="ag-sec"><div class="ag-os"><div class="rot">Dados da OS (consulta — não editável aqui)</div><dl class="ag-kv"><dt>OS</dt><dd>' + esc((it.os || '') + (it.os_titulo ? ' — ' + it.os_titulo : '')) + '</dd>'
+    + (it.cliente ? '<dt>Cliente</dt><dd>' + esc(it.cliente) + '</dd>' : '') + (it.local ? '<dt>Local</dt><dd>' + esc(it.local) + '</dd>' : '')
+    + (it.responsaveis ? '<dt>Equipe da OS</dt><dd>' + esc(['Atendimento: ' + (r.atendimento || '—'), 'Produção: ' + (r.producao || '—'), 'Edição: ' + (r.edicao || '—')].join(' · ')) + '</dd>' : '') + '</dl></div>'
+    + '<div class="ag-aviso">Para reagendar esta data, altere-a na própria OS.</div></div>';
   h += '<div class="ag-botoes"><button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>';
   return h;
 }
@@ -52459,10 +52447,10 @@ function htmlDetalhe(d, conf, oc){
     + '<dt>Responsável</dt><dd>' + esc(c.responsavel_nome || '—') + '</dd>' + (c.cliente ? '<dt>Cliente</dt><dd>' + esc(c.cliente) + '</dd>' : '')
     + (c.local ? '<dt>Local</dt><dd>' + esc(c.local) + '</dd>' : '') + (c.plataforma ? '<dt>Plataforma</dt><dd>' + esc(c.plataforma) + '</dd>' : '')
     + (c.link ? '<dt>Link</dt><dd>' + (safeUrl(c.link) ? '<a href="' + esc(safeUrl(c.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(c.link) + '</a>' : esc(c.link)) + '</dd>' : '')
-    + '<dt>Lembrete</dt><dd>' + esc((LEMB.filter(function(x){ return x[0] === c.lembrete; })[0] || ['', '—'])[1]) + '</dd></dl>';
+    + '</dl>';
   var ints = (d.participantes || []).filter(interno), exts = (d.participantes || []).filter(function(p){ return !interno(p); });
   h += '<div class="ag-sec"><h3>Participantes</h3>' + (ints.length ? ints.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + '</span>'; }).join('') : '<div class="ag-vazio">Nenhum.</div>');
-  if(exts.length) h += '<div style="margin-top:8px"><b style="font-size:12px">Fornecedores e convidados (sem aviso pelo sistema)</b><br>' + exts.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + (p.funcao ? ' · ' + esc(p.funcao) : '') + ' · ' + (p.tipo === 'fornecedor' ? 'fornecedor' : 'convidado') + '</span>'; }).join('') + '</div>';
+  if(exts.length) h += '<div style="margin-top:8px"><b style="font-size:12px">Fornecedores e convidados</b><br>' + exts.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + (p.funcao ? ' · ' + esc(p.funcao) : '') + ' · ' + (p.tipo === 'fornecedor' ? 'fornecedor' : 'convidado') + '</span>'; }).join('') + '</div>';
   h += '</div>';
   if(c.pauta) h += '<div class="ag-sec"><h3>Pauta / observações</h3><div style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px">' + esc(c.pauta) + '</div></div>';
   if(s){
@@ -52481,16 +52469,14 @@ function htmlDetalhe(d, conf, oc){
   if(hist.length) h += '<div class="ag-sec"><h3>Histórico</h3>' + hist.slice(0, 10).map(linhaHist).join('') + '</div>';
   var dc = d.data_controlada_os === true, reabre = c.status === 'cancelado' || c.status === 'concluido';
   if(d.pode_editar){
-    if(rec) h += '<div class="ag-aviso"><b>Vale para a série inteira.</b> Editar, remarcar, reabrir' + (d.pode_excluir === true ? ' e excluir' : '') + ' atingem todas as ocorrências (inclusive as passadas), não só ' + esc(fmtData(dia)) + '. O que mudar fica no histórico, com o antes e o depois.</div>';
     if(dc) h += '<div class="ag-aviso"><b>A data' + (d.hora_controlada_os === true ? ' e o horário vêm' : ' vem') + ' da gravação da OS.</b> Para reagendar, altere a gravação na própria OS. Aqui continuam editáveis os demais campos.</div>';
     if(c.gravacao_id && d.pode_excluir !== true) h += '<div class="ag-aviso">Excluir não está disponível: este compromisso está ligado a uma gravação da OS. Se ele não vai mais acontecer, use Cancelar.</div>';
-    if(c.status === 'cancelado') h += '<div class="ag-aviso">Ao editar, este compromisso é <b>reaberto</b> (não cria outro registro) e os participantes são avisados da alteração.</div>';
+    if(c.status === 'cancelado') h += '<div class="ag-aviso">Ao editar, este compromisso é <b>reaberto</b> (não cria outro registro).</div>';
   }
   h += '<div class="ag-botoes">';
   h += '<button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button>';
-  if(d.pode_encerrar_serie) h += '<button type="button" class="btn btn2" data-ag="encerrar-serie">Encerrar série</button>';
   if(d.pode_editar){
-    if(c.status !== 'cancelado') h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">' + (rec ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button>';
+    if(c.status !== 'cancelado' && !rec) h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">Cancelar compromisso</button>';   // série: só editar/remarcar/reabrir e excluir a série inteira
     if(d.pode_excluir === true) h += '<button type="button" class="btn btn2" data-ag="excluir-ev">' + (rec ? 'Excluir série inteira' : 'Excluir') + '</button>';
     h += '<button type="button" class="btn" data-ag="editar">' + (reabre ? 'Reabrir e editar' : dc ? 'Editar' : 'Editar / Remarcar') + (rec ? ' série' : '') + '</button>';
   }
@@ -52529,8 +52515,8 @@ function abrirDetalhe(id, conf, oc){
   });
 }
 function htmlMsgModal(tit, msg){ return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + esc(tit) + '</h2><p>' + esc(msg) + '</p><div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>'; }
-function fechar(){ S.modal = null; S.form = null; S.det = null; S.fonte = null; S.oc = ''; S.avisos = null; clearTimeout(S.tBusca); clearTimeout(S.tConf); S.ger.det++; setHtml('ag107Modal', ''); }
-function foco(){ try { var b = doc().querySelector('#ag107Modal .ag-box button.btn, #ag107Modal .ag-box input'); if(b && b.focus) b.focus(); } catch(e){} }
+function fechar(){ S.modal = null; S.form = null; S.det = null; S.fonte = null; S.oc = ''; clearTimeout(S.tBusca); clearTimeout(S.tConf); S.ger.det++; setHtml('ag107Modal', ''); }
+function foco(){ try { var b = doc().querySelector('#ag107Modal .ag-box button.btn, #ag107Modal .ag-box input'); if(b && b.focus) b.focus({ preventScroll: true }); } catch(e){} }   // preventScroll: abrir o pop-up não desloca a página
 function copiar(){
   if(!S.det && !S.fonte) return; var t = S.det ? textoResumo(S.det) : textoFonte(S.fonte);
   try { if(G.navigator && G.navigator.clipboard && G.navigator.clipboard.writeText){ G.navigator.clipboard.writeText(t).then(function(){ live('Resumo copiado.'); }, function(){ live('Não foi possível copiar; selecione o texto manualmente.'); }); return; } } catch(e){}
@@ -52541,8 +52527,7 @@ function copiar(){
 function htmlExcluir(c){
   var serie = !!c.recorrencia;
   return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + (serie ? 'Excluir a série inteira?' : 'Excluir compromisso?') + '</h2>'
-    + '<p>“' + esc(c.titulo) + '” sai do calendário e dos avisos futuros' + (serie ? ' (TODAS as ocorrências, inclusive as passadas; para só parar a série, use “Encerrar série”)' : '') + '. A exclusão é lógica: o histórico e os dados ficam guardados no sistema. A OS, a gravação e o financeiro não são alterados.</p>'
-    + '<div class="ag-aviso">Os participantes <b>não</b> recebem aviso de exclusão. Para avisá-los, use “Cancelar” antes.</div>'
+    + '<p>“' + esc(c.titulo) + '” sai do calendário' + (serie ? ' (TODAS as ocorrências, inclusive as passadas)' : '') + '. A exclusão é lógica: o histórico e os dados ficam guardados no sistema. A OS, a gravação e o financeiro não são alterados.</p>'
     + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label>'
     + '<label class="ag-chk" style="margin-top:10px"><input type="checkbox" id="ag107ExcConf"> Confirmo que quero excluir ' + (serie ? 'a série inteira' : 'este compromisso') + '.</label>'
     + '<div id="ag107ExcMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="excluir-ok">' + (serie ? 'Excluir série inteira' : 'Excluir') + '</button></div></div></div>';
@@ -52554,9 +52539,9 @@ function excluirOk(){
   if(!S.excChave || S.excHash !== c.id + '|' + c.versao + '|' + motivo){ S.excChave = novaChave(); S.excHash = c.id + '|' + c.versao + '|' + motivo; }
   S.modalBusy = true;
   rpc('agenda_excluir', { p_chave: S.excChave, p_id: c.id, p_versao: c.versao, p_motivo: motivo || null }, id0).then(function(r){
-    S.modalBusy = false; if(r.descartado) return;
+    if(r.descartado) return; S.modalBusy = false;
     var d = r.data || {};
-    if(r.ok && d.status === 'excluido'){ S.excChave = null; fechar(); live('Compromisso excluído.'); recarregarTudo(); contarNaoLidas(); return; }
+    if(r.ok && d.status === 'excluido'){ S.excChave = null; fechar(); live('Compromisso excluído.'); recarregarTudo(); return; }
     if(!r.ok && r.erro === 'FUNCAO_AUSENTE'){ S.indisponivel = false; setHtml('ag107ExcMsg', 'A exclusão ainda não está instalada no banco (pacote 112). Avise o responsável pelo sistema.'); return; }
     var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica a exclusão.' : msgFalha(r))
       : d.status === 'versao_mudou' ? 'O compromisso foi alterado por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode excluir este compromisso.'
@@ -52568,9 +52553,8 @@ function excluirOk(){
 
 /* ------------------------------------------------------------------ modal: cancelar compromisso / encerrar série */
 function htmlCancelar(c){
-  var serie = !!c.recorrencia;
-  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + (serie ? 'Cancelar a série inteira?' : 'Cancelar compromisso?') + '</h2><p>“' + esc(c.titulo) + '” será marcado como cancelado' + (serie ? ' (TODAS as ocorrências, inclusive as passadas; para parar a série mantendo o histórico, use “Encerrar série”)' : '') + ' e os participantes serão avisados. A OS, a gravação e o financeiro não são alterados.</p>'
-    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label><div id="ag107CancMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="cancelar-ok">' + (serie ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button></div></div></div>';
+  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Cancelar compromisso?</h2><p>“' + esc(c.titulo) + '” será marcado como cancelado. A OS, a gravação e o financeiro não são alterados.</p>'
+    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label><div id="ag107CancMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="cancelar-ok">Cancelar compromisso</button></div></div></div>';
 }
 function cancelarOk(){
   if(!S.det || S.modalBusy) return; var c = S.det.compromisso, id0 = idAtual(), motivo = ($('ag107Motivo') && $('ag107Motivo').value || '').trim();
@@ -52578,42 +52562,17 @@ function cancelarOk(){
   if(!S.cancChave || S.cancHash !== c.id + '|' + c.versao + '|' + motivo){ S.cancChave = novaChave(); S.cancHash = c.id + '|' + c.versao + '|' + motivo; }
   S.modalBusy = true;
   rpc('agenda_cancelar', { p_chave: S.cancChave, p_id: c.id, p_versao: c.versao, p_motivo: motivo || null }, id0).then(function(r){
-    S.modalBusy = false; if(r.descartado) return;
+    if(r.descartado) return; S.modalBusy = false;
     var d = r.data || {};
     if(r.ok && (d.status === 'cancelado' || d.status === 'ja_cancelado')){ S.cancChave = null; live('Compromisso cancelado.'); abrirDetalhe(c.id, null, S.oc); recarregarTudo(); return; }
     var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica o cancelamento.' : msgFalha(r)) : d.status === 'versao_mudou' ? 'O compromisso foi alterado por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode cancelar este compromisso.' : d.mensagem || 'Não foi possível cancelar.';
     setHtml('ag107CancMsg', esc(m));
   });
 }
-function htmlEncerrar(c, r){
-  var h = hojeBR(), ini = (r && r.primeira) || c.data, sug = h < ini ? ini : h;
-  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>Encerrar série?</h2><p>“' + esc(c.titulo) + '” deixa de se repetir depois da última ocorrência escolhida (inclusive). O que já passou, o histórico, o responsável, o autor e os participantes ficam como estão; os participantes são avisados dentro do ZIP OS.</p>'
-    + '<label>Última ocorrência (inclusive)<input type="date" id="ag107Ultima" value="' + esc(sug) + '" min="' + esc(sug) + '"></label><div class="ag-vazio" style="margin-top:6px">Se a data não cair no dia da semana da série, vale a última ocorrência até essa data.</div>'
-    + '<div id="ag107EncMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="encerrar-ok">Encerrar série</button></div></div></div>';
-}
-function encerrarOk(){
-  if(!S.det || S.modalBusy) return; var c = S.det.compromisso, id0 = idAtual(), ult = ($('ag107Ultima') && $('ag107Ultima').value || '').trim();
-  var ini = (c.recorrencia && c.recorrencia.primeira) || c.data;
-  if(!parseYmd(ult)){ setHtml('ag107EncMsg', 'Informe uma data válida.'); return; }
-  if(ult < ini){ setHtml('ag107EncMsg', esc('A data não pode ser anterior ao primeiro compromisso (' + fmtData(ini) + ').')); return; }
-  if(ult < hojeBR()){ setHtml('ag107EncMsg', esc('A última ocorrência não pode ser anterior a hoje: o que já passou fica preservado.')); return; }
-  var hh = c.id + '|' + c.versao + '|' + ult; if(!S.encChave || S.encHash !== hh){ S.encChave = novaChave(); S.encHash = hh; }
-  S.modalBusy = true;
-  rpc('agenda_recorrencia_encerrar', { p_chave: S.encChave, p_id: c.id, p_versao: c.versao, p_ultima: ult }, id0).then(function(r){
-    S.modalBusy = false; if(r.descartado) return;
-    var d = r.data || {};
-    if(r.ok && (d.status === 'encerrada' || d.status === 'ja_encerrada')){ S.encChave = null; live('Série encerrada.'); abrirDetalhe(c.id, null, S.oc); recarregarTudo(); return; }
-    var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica o encerramento.' : msgFalha(r))
-      : d.status === 'versao_mudou' ? 'A série foi alterada por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode encerrar esta série.'
-      : d.status === 'fim_inalterado' ? 'A série já termina nessa data ou antes.' : d.status === 'cancelado' ? 'Este compromisso já foi cancelado.' : d.status === 'sem_recorrencia' ? 'Este compromisso não é uma série.' : d.mensagem || 'Não foi possível encerrar a série.';
-    setHtml('ag107EncMsg', esc(m));
-  });
-}
-
 /* ------------------------------------------------------------------ modal: formulário */
 function formVazio(dia){
   return { modo: 'novo', id: null, versao: null, chave: null, ultimoHash: '', natureza: 'reuniao', titulo: '', data: dia || S.diaSel || hojeBR(), aDefinir: false, hi: '09:00', hf: '', status: 'previsto',
-    resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'ambos', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
+    resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'nenhum', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
     recorrente: false, rfim: '', rcor: '8', serie: null, statusOrig: '', reabrir: false, dataOs: false, horaOs: false, gravOrig: null,
     atualizarRef: false, permitirDup: false, enviando: false, erros: {}, msg: '', dup: null, conf: null, gen: 0, snapshot: null, acessoOrigem: true, divs: [] };
 }
@@ -52622,7 +52581,7 @@ function formDeDetalhe(d, comRef){
   f.modo = 'editar'; f.id = c.id; f.versao = c.versao; f.natureza = c.natureza; f.titulo = c.titulo; f.data = c.data; f.aDefinir = !c.hora_inicio; f.hi = c.hora_inicio || '09:00'; f.hf = c.hora_fim || '';
   f.status = c.status; f.statusOrig = c.status; if(c.status === 'cancelado'){ f.status = 'previsto'; f.reabrir = true; }   // salvar um cancelado o reabre (Previsto/Confirmado), no mesmo registro
   f.dataOs = d.data_controlada_os === true; f.horaOs = d.hora_controlada_os === true; f.gravOrig = c.gravacao_id || null;   // data/horário vindos da gravação da OS (decisão do servidor)
-  f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'ambos';
+  f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'nenhum';   // sem campo na tela: o valor salvo é reenviado como está (sem mudança histórica)
   f.projeto_id = c.projeto_id || null; f.gravacao_id = c.gravacao_id || null; f.snapshot = d.snapshot || null; f.acessoOrigem = !!d.acesso_origem; f.divs = divergencias(d.snapshot, d.origem_atual); f.atualizarRef = !!comRef;
   if(c.recorrencia){ f.recorrente = true; f.serie = c.recorrencia; f.rfim = c.recorrencia.fim || ''; f.rcor = c.recorrencia.cor ? String(c.recorrencia.cor) : ''; f.data = c.recorrencia.primeira || c.data; }
   (d.participantes || []).forEach(function(p){
@@ -52758,8 +52717,8 @@ function htmlRecorrencia(f){
   if(f.recorrente){
     h += '<div class="ag-form" style="margin-top:8px"><label>Repetir até (opcional, inclusive)<input type="date" data-f="rfim" value="' + esc(f.rfim) + '"' + (f.serie && f.serie.encerrada_em ? ' disabled' : '') + '>' + e('rfim') + '</label>'
       + htmlSelCampo('rcor', f, e('rcor')) + '</div>';
-    if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso pode ser corrigida (move a série inteira) e a data final só pode ser ampliada. Para parar a série mantendo o histórico, use “Encerrar série” nos detalhes.</div>';
-    else h += '<div class="ag-vazio" style="margin-top:6px">Sem data final a série continua até ser encerrada. Participantes e lembretes valem para todas as ocorrências (avisos só dentro do ZIP OS).</div>';
+    if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso pode ser corrigida (move a série inteira) e a data final só pode ser ampliada.</div>';
+    else h += '<div class="ag-vazio" style="margin-top:6px">Sem data final a série continua repetindo toda semana. Os participantes valem para todas as ocorrências.</div>';
   }
   return h + '</div>';
 }
@@ -52777,7 +52736,7 @@ function htmlAvisosForm(f){
     if(s.encerrada_em) h += '<br>A série está encerrada e continua encerrada; mudam só a data, o horário e os demais campos.';
     h += '</div>';
   }
-  if(f.reabrir) h += '<div class="ag-aviso">Este compromisso está cancelado. Ao salvar ele é <b>reaberto</b> como Previsto ou Confirmado, no mesmo registro (sem duplicar), e os participantes são avisados da alteração.</div>';
+  if(f.reabrir) h += '<div class="ag-aviso">Este compromisso está cancelado. Ao salvar ele é <b>reaberto</b> como Previsto ou Confirmado, no mesmo registro (sem duplicar).</div>';
   else if(f.statusOrig === 'concluido') h += '<div class="ag-aviso">Compromisso concluído: para reabri-lo escolha Previsto ou Confirmado em Situação.</div>';
   if(f.dataOs && travaOs(f)) h += '<div class="ag-aviso"><b>A data' + (f.horaOs ? ' e o horário de início vêm' : ' vem') + ' da gravação da OS.</b> Para reagendar, altere a gravação na própria OS. Só desvincular a gravação libera a data aqui.</div>';
   return h;
@@ -52796,12 +52755,11 @@ function htmlForm(f){
   h += '<label>Início<input type="time" data-f="hi" value="' + esc(f.hi) + '"' + (f.aDefinir || lockH ? ' disabled' : '') + '>' + e('hi') + '</label>';
   h += '<label>Fim (opcional)<input type="time" data-f="hf" value="' + esc(f.hf) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hf') + '</label>';
   h += '<label>Responsável pelo compromisso<select data-f="resp">' + opcoesResp(f) + '</select>' + e('responsavel_id') + '</label>';
-  h += '<label>Lembrete<select data-f="lembrete">' + LEMB.map(function(x){ return opt(x[0], x[1], f.lembrete === x[0]); }).join('') + '</select></label>';
   h += htmlRecorrencia(f);
   h += '<div class="full" id="ag107OsBox">' + htmlOsBox(f) + '</div>' + (e('projeto_id') ? '<div class="full">' + e('projeto_id') + '</div>' : '');
   h += '<div class="full" id="ag107ClienteBox">' + htmlCliente(f) + '</div>';
-  h += '<div class="full"><label>Participantes da equipe (recebem aviso dentro do ZIP OS)</label><input type="text" id="ag107BuscaPart" placeholder="Filtrar pessoas" autocomplete="off" style="margin-bottom:0"><div class="ag-lista" id="ag107Parts">' + htmlParticipantes(f) + '</div>' + e('parts') + '</div>';
-  h += '<div class="full"><label>Fornecedores e convidados externos <span class="muted">(só registro: não recebem aviso, não confirmam disponibilidade/contratação/pagamento)</span></label><div id="ag107Ext" style="margin-top:6px">' + htmlExternos(f) + '</div>'
+  h += '<div class="full"><label>Participantes da equipe</label><input type="text" id="ag107BuscaPart" placeholder="Filtrar pessoas" autocomplete="off" style="margin-bottom:0"><div class="ag-lista" id="ag107Parts">' + htmlParticipantes(f) + '</div>' + e('parts') + '</div>';
+  h += '<div class="full"><label>Fornecedores e convidados externos <span class="muted">(só registro: não confirmam disponibilidade/contratação/pagamento)</span></label><div id="ag107Ext" style="margin-top:6px">' + htmlExternos(f) + '</div>'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><input type="text" id="ag107ExtNome" maxlength="120" placeholder="Nome do convidado" style="flex:2 1 160px;margin:0"><input type="text" id="ag107ExtFunc" maxlength="120" placeholder="Função (opcional)" style="flex:1 1 120px;margin:0"><button type="button" class="btn btn2" data-ag="ext-add">Adicionar</button></div>' + e('externos') + '</div>';
   h += '<label>Local<input type="text" data-f="local" maxlength="200" value="' + esc(f.local) + '">' + e('local') + '</label>';
   h += '<label>Plataforma (Meet, Zoom…)<input type="text" data-f="plataforma" maxlength="60" value="' + esc(f.plataforma) + '">' + e('plataforma') + '</label>';
@@ -52916,64 +52874,34 @@ function salvar(){
   });
 }
 
-/* ------------------------------------------------------------------ modal: avisos */
-function htmlAvisos(a){
-  var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true" aria-label="Avisos da Agenda"><div class="ag-cab"><h2>🔔 Avisos</h2><button type="button" class="btn btn2" data-ag="av-todos">Marcar todos como lidos</button></div>';
-  if(a.estado === 'carregando') h += '<div class="ag-vazio">Carregando…</div>';
-  else if(a.estado === 'erro') h += '<div class="ag-msg erro">' + esc(a.msg) + '</div>';
-  else if(!(a.itens || []).length) h += '<div class="ag-vazio">Você não tem avisos.</div>';
-  else h += a.itens.map(function(x){
-    var det = x.titulo ? esc(x.titulo) + (x.data ? ' — ' + esc(fmtData(x.data)) + (x.hora_inicio ? ' ' + esc(x.hora_inicio) : '') : '') : (x.tipo === 'remocao' ? '' : 'Compromisso indisponível');
-    return '<button type="button" class="ag-av' + (x.lida_em ? '' : ' nl') + '" data-ag="av-abrir" data-nid="' + esc(x.id) + '" data-id="' + esc(x.compromisso_id || '') + '" data-oc="' + esc(x.ocorrencia || '') + '">' + esc(AVISO[x.tipo] || 'Aviso') + (det ? ' ' + det : '') + '<small>' + esc(String(x.disponivel_em || '').slice(0, 16).replace('T', ' ')) + (x.lida_em ? ' · lido' : ' · não lido') + '</small></button>';
-  }).join('');
-  if(a.estado === 'ok' && a.total > (a.itens || []).length) h += '<div class="ag-vazio" style="margin-top:8px">Mostrando os ' + esc((a.itens || []).length) + ' mais recentes de ' + esc(a.total) + ' avisos.</div>';
-  return h + '<div class="ag-botoes"><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>';
-}
-function abrirAvisos(){
-  var id0 = idAtual(); if(!id0) return; var g = ++S.ger.av;
-  S.modal = 'avisos'; S.avisos = { estado: 'carregando', itens: [] }; setHtml('ag107Modal', htmlAvisos(S.avisos));
-  rpc('agenda_notificacoes_listar', { p_limite: 40, p_apenas_nao_lidas: false }, id0).then(function(r){
-    if(r.descartado || g !== S.ger.av || S.modal !== 'avisos') return;
-    if(!r.ok) S.avisos = { estado: 'erro', msg: msgFalha(r), itens: [] };
-    else { var d = r.data || {}; S.avisos = { estado: 'ok', itens: d.itens || [], total: Number(d.total) || 0 }; S.naoLidas = Number(d.nao_lidas) || 0; badge(S.naoLidas); }
-    setHtml('ag107Modal', htmlAvisos(S.avisos));
-  });
-}
-function marcarAvisos(ids, todas){
-  var id0 = idAtual();
-  return rpc('agenda_notificacao_marcar', { p_ids: todas ? null : ids, p_todas: !!todas }, id0).then(function(r){ if(r.descartado) return; contarNaoLidas(); });
-}
-
 /* ------------------------------------------------------------------ eventos (delegação) */
 function acao(a, el){
   var h = hojeBR(); ocultarPrev();
   switch(a){
     case 'hoje': S.semIni = inicioSemana(h); S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; recarregarTudo(); break;
-    case 'atualizar': recarregarTudo(); contarNaoLidas(); break;
+    case 'atualizar': recarregarTudo(); break;   // só o "Tentar novamente" da mensagem de erro
     case 'sem-ant': S.semIni = addDias(S.semIni, -7); carregarSem(); break;
     case 'sem-prox': S.semIni = addDias(S.semIni, 7); carregarSem(); break;
     case 'sem-hoje': S.semIni = inicioSemana(h); carregarSem(); break;
     case 'mes-ant': S.mes = S.mes.m === 1 ? { a: S.mes.a - 1, m: 12 } : { a: S.mes.a, m: S.mes.m - 1 }; carregarMes(); break;
     case 'mes-prox': S.mes = S.mes.m === 12 ? { a: S.mes.a + 1, m: 1 } : { a: S.mes.a, m: S.mes.m + 1 }; carregarMes(); break;
     case 'mes-hoje': S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; carregarMes(); break;
-    case 'dia': { var d = el.getAttribute('data-d'); if(parseYmd(d)){ S.diaSel = d; pintar(); } break; }
+    case 'dia': { var d = el.getAttribute('data-d'); if(parseYmd(d)){ selecionarDia(d); var lb = $('ag107DiaLista'); try { if(lb && lb.scrollIntoView) lb.scrollIntoView({ block: 'nearest' }); } catch(e){} } break; }   // "+N": lista do dia, não o cadastro
+    case 'novo-na-data': { var dn = el.getAttribute('data-d'); if(parseYmd(dn)){ selecionarDia(dn); abrirForm(formVazio(dn)); } break; }   // clique/toque no quadrado do dia (inclusive espaço livre)
     case 'abrir': { var k = splitChave(el.getAttribute('data-id')); abrirDetalhe(k.id, null, k.oc); break; }
     case 'abrir-fonte': abrirFonte(el.getAttribute('data-id')); break;
     case 'novo': abrirForm(formVazio(S.diaSel)); break;
     case 'novo-dia': abrirForm(formVazio(S.diaSel)); break;
-    case 'avisos': abrirAvisos(); break;
     case 'fechar': fechar(); break;
     case 'fora': break;
     case 'copiar': copiar(); break;
     case 'editar': if(S.det) abrirForm(formDeDetalhe(S.det, false)); break;
     case 'editar-ref': if(S.det) abrirForm(formDeDetalhe(S.det, true)); break;
-    case 'cancelar-ev': if(S.det){ S.cancChave = null; setHtml('ag107Modal', htmlCancelar(S.det.compromisso)); foco(); } break;
+    case 'cancelar-ev': if(S.det && !S.det.compromisso.recorrencia){ S.cancChave = null; setHtml('ag107Modal', htmlCancelar(S.det.compromisso)); foco(); } break;
     case 'excluir-ev': if(S.det && S.det.pode_excluir === true){ S.excChave = null; setHtml('ag107Modal', htmlExcluir(S.det.compromisso)); foco(); } break;
     case 'excluir-ok': excluirOk(); break;
-    case 'encerrar-serie': if(S.det && S.det.pode_encerrar_serie){ S.encChave = null; setHtml('ag107Modal', htmlEncerrar(S.det.compromisso, S.det.compromisso.recorrencia)); foco(); } break;
     case 'voltar-det': if(S.det) setHtml('ag107Modal', htmlDetalhe(S.det, S.confAviso, S.oc)); break;
     case 'cancelar-ok': cancelarOk(); break;
-    case 'encerrar-ok': encerrarOk(); break;
     case 'salvar': salvar(); break;
     case 'criar-mesmo': if(S.form){ S.form.permitirDup = true; S.form.dup = null; salvar(); } break;
     case 'usar-grav': usarGravacao(); break;
@@ -52982,8 +52910,6 @@ function acao(a, el){
     case 'ext-add': if(S.form){ var n = $('ag107ExtNome'), fu = $('ag107ExtFunc'), nm = n ? n.value.trim() : ''; if(!nm){ if(n && n.focus) n.focus(); break; } S.form.externos.push({ tipo: 'convidado', nome: nm, funcao: fu ? fu.value.trim() : '', pfId: null }); if(n) n.value = ''; if(fu) fu.value = ''; setHtml('ag107Ext', htmlExternos(S.form)); } break;
     case 'ext-rem': if(S.form){ var i = +el.getAttribute('data-i'); S.form.externos.splice(i, 1); setHtml('ag107Ext', htmlExternos(S.form)); pintarFormPartes(); } break;
     case 'recarregar-equipe': S.eqEstado = ''; carregarEquipe(); break;
-    case 'av-todos': marcarAvisos([], true).then(function(){ if(S.modal === 'avisos') abrirAvisos(); }); break;
-    case 'av-abrir': { var nid = el.getAttribute('data-nid'), cid = el.getAttribute('data-id'), aoc = el.getAttribute('data-oc'); if(RE_UUID.test(String(nid))) marcarAvisos([nid], false); if(RE_UUID.test(String(cid))) abrirDetalhe(cid, null, aoc); break; }
     default: break;
   }
 }
@@ -52999,11 +52925,6 @@ function onClick(ev){
 }
 function onChange(ev){
   var t = ev.target; if(!t || !t.getAttribute) return;
-  var fl = t.getAttribute('data-fl');
-  if(fl){
-    var v = t.value;
-    S.filtros[fl] = v; pintar(); return;
-  }
   var f = S.form; if(!f) return;
   var campo = t.getAttribute('data-f');
   if(t.getAttribute('data-fp')){ var u = t.getAttribute('data-fp'), k = f.parts.indexOf(u); if(t.checked && k < 0) f.parts.push(u); else if(!t.checked && k >= 0) f.parts.splice(k, 1); agendarConflitos(); return; }
@@ -53023,8 +52944,6 @@ function onChange(ev){
 }
 function onInput(ev){
   var t = ev.target; if(!t || !t.getAttribute) return;
-  var fl = t.getAttribute('data-fl');
-  if(fl === 'texto'){ S.filtros.texto = t.value; pintar(); return; }
   if(t.id === 'ag107BuscaPart'){ var q = norm(t.value), ls = doc().querySelectorAll('#ag107Parts label'); for(var i = 0; i < ls.length; i++){ var n = ls[i].getAttribute('data-nome') || ''; ls[i].style.display = (!q || n.indexOf(q) >= 0) ? '' : 'none'; } return; }
   var f = S.form; if(!f) return; var campo = t.getAttribute('data-f'); if(!campo) return;
   if(campo === 'buscaOs'){ f.buscaOs.termo = t.value; buscarOs(); return; }
@@ -53041,22 +52960,34 @@ function ligar(){
   raiz.addEventListener('click', onClick); raiz.addEventListener('change', onChange); raiz.addEventListener('input', onInput); raiz.addEventListener('keydown', onKey);
   raiz.addEventListener('pointerover', onPvOver); raiz.addEventListener('pointerout', onPvOut); raiz.addEventListener('focusin', onPvFocus); raiz.addEventListener('focusout', ocultarPrev);
 }
-function iniciarPoll(){ clearInterval(S.tPoll); S.tPoll = setInterval(function(){ var d = doc(); if(d && d.hidden) return; contarNaoLidas(); recarregarSeVelha(); }, POLL_MS); }
+// atualização automática: só com a Agenda aberta, aba visível e perfil ativo autorizado (recarregarSeVelha confere a seção, o perfil e se há pop-up aberto)
+function iniciarPoll(){ clearInterval(S.tPoll); S.tPoll = setInterval(function(){ if(!podeAgenda()){ clearInterval(S.tPoll); return; } var d = doc(); if(d && d.hidden) return; recarregarSeVelha(); }, POLL_MS); }
+// perfil ativo sem Agenda: a seção deixa de ser exibida (o servidor não é consultado) e a tela volta ao destino do perfil ativo
+function sairDaAgenda(){
+  var d = doc(); if(!d || !d.querySelectorAll || !secaoAtiva()) return;
+  var p = perfilAtivo(), alvo = (p === 'producao' || p === 'edicao') ? 'operacao' : (p === 'financeiro' ? 'financeiro' : 'comercial');
+  var botao = d.querySelector('.nav button[onclick*="\x27' + alvo + '\x27"]:not(.hidden)');
+  if(botao && typeof G.show === 'function'){ G.show(alvo, botao); return; }
+  var agenda = $('agenda107'), destino = $(alvo);
+  if(agenda) agenda.classList.remove('active');
+  if(destino) destino.classList.add('active');
+  if(S.modal) fechar();
+}
 function vigiar(){
   var id = idAtual();
   if(id === S.id) return;
-  var tinha = !!S.id; S.id = id;
+  S.id = id;
   reset(); S.id = id;
   if(!id) return;
-  if(podeAgenda()){ iniciarPoll(); contarNaoLidas(); }
+  if(!podeAgenda()){ sairDaAgenda(); return; }
+  iniciarPoll();
   if(secaoAtiva()) entrar();
-  void tinha;
 }
 function entrar(){
   if(!idAtual()) return; ligar(); S.modal = null;
-  if(!podeAgenda()){ setHtml('ag107Filtros', ''); setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(MSG_SEM_ACESSO) + '</div>'); return; }   // sem chamar o servidor; o servidor também recusa
+  if(!podeAgenda()){ setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(MSG_SEM_ACESSO) + '</div>'); return; }   // sem chamar o servidor; o servidor também recusa
   if(S.indisponivel){ setHtml('ag107Corpo', '<div class="ag-msg erro" role="alert">' + esc(msgFalha({ erro: 'FUNCAO_AUSENTE' })) + '</div>'); return; }
-  carregarEquipe(); recarregarTudo(); contarNaoLidas(); pintar();
+  carregarEquipe(); recarregarTudo(); pintar();
 }
 function sair(){ if(S.modal) fechar(); }
 function aoPerfil(){
@@ -53064,28 +52995,28 @@ function aoPerfil(){
   var ps = $('profileSelect'), p = ps ? ps.value : '', oper = p === 'producao' || p === 'edicao', nav = $('ag107NavOper'), pode = podeAgenda();
   if(nav){
     nav.style.display = oper ? 'block' : 'none';
-    var bs = nav.querySelectorAll ? nav.querySelectorAll('button') : [];
-    for(var i = 0; i < bs.length; i++){ if(oper) bs[i].classList.remove('hidden'); }
-    if(oper && bs.length){ var op = $('operacao'), ag = $('agenda107'); bs[0].classList.toggle('active', !!(op && op.classList.contains('active'))); if(bs[1]) bs[1].classList.toggle('active', !!(ag && ag.classList.contains('active'))); }
-    if(bs[1] && bs[1].style) bs[1].style.display = pode ? '' : 'none';   // Produção/Edição sem Sócio/Atendimento: o atalho da Agenda some (o servidor recusa de qualquer forma)
+    var botaoOper = nav.querySelector('button'), op = $('operacao');
+    if(oper && botaoOper){
+      botaoOper.classList.remove('hidden');
+      botaoOper.classList.toggle('active', !!(op && op.classList.contains('active')));
+    }
   }
-  if(!pode){   // demais perfis (ex.: Financeiro): esconde o atalho da Agenda no menu principal
-    try {
-      var mb = d.querySelectorAll ? d.querySelectorAll('.nav button') : [];
-      for(var j = 0; j < mb.length; j++){ var oc = mb[j].getAttribute && mb[j].getAttribute('onclick'); if(oc && oc.indexOf("'agenda107'") >= 0 && mb[j].classList) mb[j].classList.add('hidden'); }
-    } catch(e){}
-  }
+  try {   // atalho da Agenda no menu principal: só no perfil ativo Sócio/Atendimento (Financeiro/Admin/Produção/Edição não o veem, mesmo com perfis acumulados)
+    var mb = d.querySelectorAll ? d.querySelectorAll('.nav button') : [];
+    for(var j = 0; j < mb.length; j++){ var oc = mb[j].getAttribute && mb[j].getAttribute('onclick'); if(oc && oc.indexOf("'agenda107'") >= 0 && mb[j].classList) mb[j].classList.toggle('hidden', !pode); }
+  } catch(e){}
+  if(!pode) sairDaAgenda();
 }
 function instalarGanchos(){
   if(typeof G.show === 'function' && !G.show.__ag107){
-    var s0 = G.show; G.show = function(id){ var r = s0.apply(this, arguments); try { if(id === 'agenda107') entrar(); else sair(); } catch(e){} return r; }; G.show.__ag107 = true;
+    var s0 = G.show; G.show = function(id){ if(id === 'agenda107' && !podeAgenda()) return; var r = s0.apply(this, arguments); try { if(id === 'agenda107') entrar(); else sair(); } catch(e){} return r; }; G.show.__ag107 = true;
   }
   if(typeof G.applyProfile === 'function' && !G.applyProfile.__ag107){
     var a0 = G.applyProfile; G.applyProfile = function(){ var r = a0.apply(this, arguments); try { aoPerfil(); vigiar(); } catch(e){} return r; }; G.applyProfile.__ag107 = true;
   }
   var d = doc();
   if(d && d.addEventListener){
-    d.addEventListener('visibilitychange', function(){ if(d.hidden){ ocultarPrev(); return; } if(S.id){ contarNaoLidas(); recarregarSeVelha(); } });
+    d.addEventListener('visibilitychange', function(){ if(d.hidden){ ocultarPrev(); return; } if(S.id) recarregarSeVelha(); });
     d.addEventListener('keydown', function(ev){ if(ev && ev.key === 'Escape') ocultarPrev(); });
   }
   if(typeof G.addEventListener === 'function'){ G.addEventListener('scroll', ocultarPrev, true); G.addEventListener('blur', ocultarPrev); G.addEventListener('resize', ocultarPrev); }
@@ -53095,12 +53026,12 @@ instalarGanchos();
 
 return {
   _t: { esc: esc, safeUrl: safeUrl, parseYmd: parseYmd, addDias: addDias, dowSeg: dowSeg, inicioSemana: inicioSemana, inicioGradeMes: inicioGradeMes, hojeBR: hojeBR, fmtData: fmtData, quando: quando,
-    validarForm: validarForm, hashPayload: hashPayload, divergencias: divergencias, passa: passa, porDia: porDia, textoResumo: textoResumo, htmlSemana: htmlSemana, htmlMes: htmlMes, htmlDia: htmlDia, htmlFiltros: htmlFiltros,
-    htmlDetalhe: htmlDetalhe, htmlForm: htmlForm, htmlAvisos: htmlAvisos, htmlOsBox: htmlOsBox, htmlConf: htmlConf, htmlCliente: htmlCliente, htmlParcial: htmlParcial, formVazio: formVazio, formDeDetalhe: formDeDetalhe, rpc: rpc, idAtual: idAtual, vigiar: vigiar, reset: reset, entrar: entrar,
-    carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
-    abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
+    validarForm: validarForm, hashPayload: hashPayload, divergencias: divergencias, passa: passa, porDia: porDia, textoResumo: textoResumo, htmlSemana: htmlSemana, htmlMes: htmlMes, htmlDia: htmlDia,
+    htmlDetalhe: htmlDetalhe, htmlForm: htmlForm, htmlOsBox: htmlOsBox, htmlConf: htmlConf, htmlCliente: htmlCliente, htmlParcial: htmlParcial, formVazio: formVazio, formDeDetalhe: formDeDetalhe, rpc: rpc, idAtual: idAtual, vigiar: vigiar, reset: reset, entrar: entrar,
+    carregarSem: carregarSem, carregarMes: carregarMes, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
+    abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
     carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave,
-    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar, recVis: recVis, htmlSelBox: htmlSelBox, htmlSelCampo: htmlSelCampo, escolherSel: escolherSel, onKeySel: onKeySel, ehEntrega: ehEntrega,
+    podeAgenda: podeAgenda, selecionarDia: selecionarDia, sairDaAgenda: sairDaAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar, recVis: recVis, htmlSelBox: htmlSelBox, htmlSelCampo: htmlSelCampo, escolherSel: escolherSel, onKeySel: onKeySel, ehEntrega: ehEntrega,
     htmlExcluir: htmlExcluir, excluirOk: excluirOk, linhaHist: linhaHist, htmlAvisosForm: htmlAvisosForm, difDias: difDias, travaOs: travaOs },
   entrar: entrar, sair: sair
 };

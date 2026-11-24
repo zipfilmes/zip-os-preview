@@ -963,7 +963,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.5.0 · Agenda Simplificada</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.5.1 · Clique na Agenda</div>
 </aside>
 
 <main class="main">
@@ -1049,6 +1049,14 @@ html[data-theme="dark"] #agenda107{--ag-hov:#2c3e5f;--ag-hov-bd:#8fb8ee}
 #agenda107 .ag-dia-bt:focus-visible,#agenda107 .ag-cel-num:focus-visible,#agenda107 .ag-mais:focus-visible,#agenda107 .ag-fx:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 #agenda107 .ag-fx:hover,#agenda107 .ag-fx:active{outline:2px solid var(--ag-cor,var(--accent));outline-offset:-1px;filter:brightness(.97)}
 html[data-theme="dark"] #agenda107 .ag-fx:hover,html[data-theme="dark"] #agenda107 .ag-fx:active{filter:brightness(1.12)}
+/* 114: dia selecionado na semana (igual ao mês) e botão explícito "+ Novo agendamento" dentro da célula, legível/tocável, nos dois temas */
+#agenda107 .ag-dia.sel{box-shadow:0 0 0 2px var(--accent) inset}
+#agenda107 .ag-novo-bt{appearance:none;-webkit-appearance:none;display:block;box-sizing:border-box;width:100%;min-height:44px;margin:4px 0 2px;padding:6px 4px;font-family:inherit;font-size:12px;font-weight:700;line-height:1.2;text-align:center;white-space:normal;text-transform:none;letter-spacing:normal;color:inherit;background:transparent;border:2px solid var(--accent);border-radius:8px;cursor:pointer}
+#agenda107 .ag-dia .ag-novo-bt{width:auto;max-width:100%;padding-inline:10px}
+@media(max-width:560px){#agenda107 .ag-cel .ag-novo-texto{display:none}}
+#agenda107 .ag-novo-bt[hidden]{display:none}
+#agenda107 .ag-novo-bt:hover,#agenda107 .ag-novo-bt:active{background:var(--ag-hov)}
+#agenda107 .ag-novo-bt:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 #agenda107 .ag-pts{display:flex;gap:3px;flex-wrap:wrap;align-items:center;margin-top:4px}
 #agenda107 .ag-pt{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ag-cor,var(--ag-cin))}
 #agenda107 .ag-q{font-size:11px;color:var(--muted);font-weight:700}
@@ -52299,6 +52307,14 @@ function htmlParcial(d){
   if(!d || !d.parcial) return '';
   return '<div class="ag-aviso erro" role="alert"><b>Lista incompleta:</b> este período tem ' + esc(d.total) + ' compromissos e o servidor devolveu só os primeiros ' + esc(d.limite) + '. Contagens e marcadores abaixo valem apenas para esses. Para ver o restante, use a navegação por semana (período menor)' + '.</div>';
 }
+// data (seleciona o dia; aria-pressed) e "+ Novo agendamento" (único atalho de criação das grades; visível só na grade e dia selecionados)
+function btData(d, g, n, cls, inner){
+  return '<button type="button" class="' + cls + '" data-ag="sel-dia" data-g="' + g + '" data-d="' + esc(d) + '" aria-pressed="' + (d === S.diaSel ? 'true' : 'false') + '" aria-label="' + esc('Selecionar ' + fmtDiaSemana(d) + ', ' + fmtData(d) + ' (' + n + ' compromisso(s) no dia)') + '">' + inner + '</button>';
+}
+function btNovo(d, g){
+  var v = !!S.selGrade && S.selGrade.g === g && S.selGrade.d === d && d === S.diaSel;
+  return '<button type="button" class="ag-novo-bt" data-ag="novo-na-data" data-g="' + g + '" data-d="' + esc(d) + '"' + (v ? '' : ' hidden') + ' aria-label="' + esc('Novo agendamento em ' + fmtDiaSemana(d) + ', ' + fmtData(d)) + '">+ <span class="ag-novo-texto">' + (g === 'mes' ? 'Agendar' : 'Novo agendamento') + '</span></button>';
+}
 function htmlSemana(){
   var ini = S.semIni, fim = addDias(ini, 6), hoje = hojeBR(), m = porDia(S.sem.itens), h = '';
   h += '<div class="card ag-bloco"><div class="ag-cab"><h2>' + (ini === inicioSemana(hoje) ? 'Esta semana' : 'Semana') + ' · ' + esc(fmtDataCurta(ini)) + ' a ' + esc(fmtData(fim)) + '</h2><div class="ag-nav"><button type="button" class="btn btn2" data-ag="sem-ant" aria-label="Semana anterior">◀</button><button type="button" class="btn btn2" data-ag="sem-hoje">Esta semana</button><button type="button" class="btn btn2" data-ag="sem-prox" aria-label="Próxima semana">▶</button></div></div>';
@@ -52307,7 +52323,7 @@ function htmlSemana(){
     h += '<div class="ag-semana">';
     for(var i = 0; i < 7; i++){
       var d = addDias(ini, i), l = m[d] || [];
-      h += '<div class="ag-dia' + (i >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + '" data-ag="novo-na-data" data-d="' + esc(d) + '" data-pv="' + esc(d) + '"><h4><button type="button" class="ag-dia-bt" data-ag="novo-na-data" data-d="' + esc(d) + '" aria-label="' + esc('Novo agendamento em ' + fmtDiaSemana(d) + ', ' + fmtData(d) + ' (' + l.length + ' compromisso(s) no dia)') + '">' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></button></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
+      h += '<div class="ag-dia' + (i >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="sel-dia" data-g="sem" data-d="' + esc(d) + '" data-pv="' + esc(d) + '"><h4>' + btData(d, 'sem', l.length, 'ag-dia-bt', esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b>') + '</h4>' + btNovo(d, 'sem') + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
     }
     h += '</div>';
   }
@@ -52321,9 +52337,9 @@ function htmlMes(){
     h += '<div class="ag-mes">' + DOW.map(function(x){ return '<div class="ag-dow">' + x + '</div>'; }).join('');
     for(var i = 0; i < 42; i++){
       var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [];
-      // a célula é um bloco clicável (espaço livre = novo agendamento nessa data); número, faixas e "+N" são botões nativos separados (sem botão dentro de botão)
-      h += '<div class="ag-cel' + (p.m !== mo ? ' fora' : '') + (i % 7 >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="novo-na-data" data-d="' + esc(d) + '" data-pv="' + esc(d) + '">'
-        + '<button type="button" class="ag-cel-num" data-ag="novo-na-data" data-d="' + esc(d) + '" aria-label="' + esc('Novo agendamento em ' + fmtDiaSemana(d) + ', ' + fmtData(d) + ' (' + l.length + ' compromisso(s) no dia)') + '"><b>' + p.d + '</b></button>'
+      // a célula é um bloco clicável (espaço livre = só seleciona o dia); número, "+ Novo agendamento", faixas e "+N" são botões nativos separados (sem botão dentro de botão)
+      h += '<div class="ag-cel' + (p.m !== mo ? ' fora' : '') + (i % 7 >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="sel-dia" data-g="mes" data-d="' + esc(d) + '" data-pv="' + esc(d) + '">'
+        + btData(d, 'mes', l.length, 'ag-cel-num', '<b>' + p.d + '</b>') + btNovo(d, 'mes')
         + faixasDia(l, d) + '</div>';
     }
     h += '</div>';
@@ -52364,12 +52380,18 @@ function pintar(){
   ocultarPrev(); var el = $('ag107Corpo'); if(el) el.innerHTML = htmlSemana() + htmlMes() + '<div id="ag107DiaBox">' + htmlDia() + '</div>';
 }
 // troca só o dia selecionado (anel + lista do dia) sem redesenhar a grade: a página não se desloca
-function selecionarDia(d){
+// g ('sem'|'mes') = grade onde o usuário clicou: só nela aparece "+ Novo agendamento"; sem g (Hoje, "+N", navegação) nenhum atalho fica visível. Não remonta grades nem move foco.
+function selecionarDia(d, g){
   if(!parseYmd(d)) return;
-  S.diaSel = d; ocultarPrev();
+  S.diaSel = d; S.selGrade = g ? { g: g, d: d } : null; ocultarPrev();
   var dd = doc(); if(!dd || !dd.querySelectorAll) return;
-  var cs = dd.querySelectorAll('#agenda107 .ag-cel');
-  for(var i = 0; i < cs.length; i++) cs[i].classList.toggle('sel', cs[i].getAttribute('data-d') === d);
+  var cs = dd.querySelectorAll('#agenda107 .ag-cel, #agenda107 .ag-semana .ag-dia');
+  for(var i = 0; i < cs.length; i++){
+    var c = cs[i], on = c.getAttribute('data-d') === d, bt = c.querySelector('.ag-cel-num, .ag-dia-bt'), nv = c.querySelector('.ag-novo-bt');
+    c.classList.toggle('sel', on);
+    if(bt) bt.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if(nv) nv.hidden = !(on && g && c.getAttribute('data-g') === g);
+  }
   var box = $('ag107DiaBox'); if(box) box.innerHTML = htmlDia(); else pintar();
 }
 
@@ -52878,16 +52900,17 @@ function salvar(){
 function acao(a, el){
   var h = hojeBR(); ocultarPrev();
   switch(a){
-    case 'hoje': S.semIni = inicioSemana(h); S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; recarregarTudo(); break;
+    case 'hoje': S.semIni = inicioSemana(h); S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; S.selGrade = null; recarregarTudo(); break;
     case 'atualizar': recarregarTudo(); break;   // só o "Tentar novamente" da mensagem de erro
     case 'sem-ant': S.semIni = addDias(S.semIni, -7); carregarSem(); break;
     case 'sem-prox': S.semIni = addDias(S.semIni, 7); carregarSem(); break;
     case 'sem-hoje': S.semIni = inicioSemana(h); carregarSem(); break;
     case 'mes-ant': S.mes = S.mes.m === 1 ? { a: S.mes.a - 1, m: 12 } : { a: S.mes.a, m: S.mes.m - 1 }; carregarMes(); break;
     case 'mes-prox': S.mes = S.mes.m === 12 ? { a: S.mes.a + 1, m: 1 } : { a: S.mes.a, m: S.mes.m + 1 }; carregarMes(); break;
-    case 'mes-hoje': S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; carregarMes(); break;
+    case 'mes-hoje': S.mes = { a: +h.slice(0, 4), m: +h.slice(5, 7) }; S.diaSel = h; S.selGrade = null; carregarMes(); break;
     case 'dia': { var d = el.getAttribute('data-d'); if(parseYmd(d)){ selecionarDia(d); var lb = $('ag107DiaLista'); try { if(lb && lb.scrollIntoView) lb.scrollIntoView({ block: 'nearest' }); } catch(e){} } break; }   // "+N": lista do dia, não o cadastro
-    case 'novo-na-data': { var dn = el.getAttribute('data-d'); if(parseYmd(dn)){ selecionarDia(dn); abrirForm(formVazio(dn)); } break; }   // clique/toque no quadrado do dia (inclusive espaço livre)
+    case 'sel-dia': { var ds = el.getAttribute('data-d'); if(parseYmd(ds)) selecionarDia(ds, el.getAttribute('data-g')); break; }   // data ou espaço livre do quadrado: só seleciona (sem formulário, sem scroll)
+    case 'novo-na-data': { var dn = el.getAttribute('data-d'); if(parseYmd(dn)){ selecionarDia(dn, el.getAttribute('data-g')); abrirForm(formVazio(dn)); } break; }   // único atalho das grades que abre o formulário
     case 'abrir': { var k = splitChave(el.getAttribute('data-id')); abrirDetalhe(k.id, null, k.oc); break; }
     case 'abrir-fonte': abrirFonte(el.getAttribute('data-id')); break;
     case 'novo': abrirForm(formVazio(S.diaSel)); break;

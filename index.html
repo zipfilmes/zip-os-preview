@@ -169,6 +169,9 @@ html:not([data-co91-modelos="visivel"]) [data-co91-modelo]{display:none!importan
 .dash-alert-item{font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}
 .dash-alert-clickable{cursor:pointer;border-radius:8px;padding:8px 8px;transition:transform .15s,box-shadow .15s,background .15s}
 .dash-alert-clickable:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,24,40,.08);background:#f9fafb}
+button.dash-alert-item{display:block;width:100%;margin:0;border:0;background:none;font:inherit;color:inherit;text-align:left}
+button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-offset:2px;background:#f9fafb}
+#dashSocioAlertas .dash-alert-clickable:hover,#dashSocioAlertas button.dash-alert-clickable:focus-visible{background:color-mix(in srgb,currentColor 8%,transparent);color:inherit}
 .dash-alert-cta{font-size:11px;color:var(--muted);margin-top:3px}
 /* ═══════════ V7.15.0 — Cronograma e Shot List (somente Produção) ═══════════ */
 .cg-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#fef3c7;color:#b54708;white-space:nowrap}
@@ -960,7 +963,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.2 · Cores da Agenda</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.4.0 · Agenda e Financeiro</div>
 </aside>
 
 <main class="main">
@@ -1005,6 +1008,11 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-semana{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
 #agenda107 .ag-dia{border:1px solid var(--line);border-radius:14px;padding:10px;min-height:120px;min-width:0;overflow:hidden;background:var(--panel)}
 #agenda107 .ag-dia.hoje{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+/* 112: sábado e domingo (classe .fds nas células da semana e do mês, inclusive dias de fora do mês): fundo levemente avermelhado; dia atual/selecionado (borda e anel) e hover da prévia não mudam */
+#agenda107{--ag-fds:#fdf2f1;--ag-fds2:#fbe8e6}
+@supports (background:color-mix(in srgb,red 5%,white)){#agenda107{--ag-fds:color-mix(in srgb,#d92d20 6%,var(--panel));--ag-fds2:color-mix(in srgb,#d92d20 11%,var(--panel))}}
+#agenda107 .ag-dia.fds,#agenda107 .ag-cel.fds{background:var(--ag-fds)}
+#agenda107 .ag-cel.fds.fora{background:var(--ag-fds2)}
 #agenda107 .ag-dia h4{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
 #agenda107 .ag-dia h4 b{color:var(--ink);font-size:14px}
 #agenda107 .ag-vazio{font-size:12px;color:var(--muted)}
@@ -1078,6 +1086,8 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
 #agenda107 .ag-sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 #agenda107 .ag-err{color:var(--red);font-size:12px;margin-top:3px}
 html[data-theme="dark"] #agenda107{--ag-azul:#8fb8ee;--ag-mos:#f2c14e;--ag-ver:#a6e3be;--ag-rox:#c4b5fd;--ag-cin:#98a2b3}
+html[data-theme="dark"] #agenda107{--ag-fds:#2a1b1d;--ag-fds2:#34201f}
+@supports (background:color-mix(in srgb,red 5%,white)){html[data-theme="dark"] #agenda107{--ag-fds:color-mix(in srgb,#f97066 9%,var(--panel));--ag-fds2:color-mix(in srgb,#f97066 15%,var(--panel))}}
 html[data-theme="dark"] #agenda107 .ag-n-reuniao{--ag-cor:#4ade80}
 html[data-theme="dark"] #agenda107 .ag-n-gravacao{--ag-cor:#60a5fa}
 html[data-theme="dark"] #agenda107 .ag-n-edicao{--ag-cor:#a78bfa}
@@ -1608,7 +1618,6 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
     <button id="cxAberturaBtn" type="button" data-pa="caixa-abertura-abrir" onclick="cxAberturaAbrir()" style="display:none;padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">💰 Definir saldo inicial</button>
     <!-- 103: botão "Lançamento recorrente" removido do topo; função e janela internas preservadas (Novo lançamento → Repetir todo mês) -->
     <button id="cx99PdfBtn" type="button" data-pa="caixa-relatorio-pdf" onclick="fo99RelatorioAbrir()" style="padding:9px 14px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:white;color:#344054;cursor:pointer;white-space:nowrap">📄 Gerar relatório PDF</button>
-    <button id="cxNovoAbrirBtn" type="button" data-pa="caixa-novo-abrir" onclick="foCaixaAbrir('novo')" style="padding:9px 14px;border:none;border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:var(--green);color:white;cursor:pointer;white-space:nowrap">+ Novo lançamento</button>
    </div>
   </div>
   <div id="cxAbertura" style="padding:8px 16px 0 16px"></div>
@@ -1633,7 +1642,14 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
    <button id="cxReenviarBtn" class="btn btn2" type="button" style="display:none" data-pa="caixa-reenviar" onclick="cxReenviar()">↻ Enviar novamente (mesmo ID)</button>
    <button id="cxDescartarBtn" class="btn btn2" type="button" style="display:none" data-pa="caixa-descartar" onclick="cxDescartarEnvio()">Descartar</button>
   </div>
-  <div id="cxTabela" style="overflow-x:auto"></div>
+  <div id="cxRodapeWrap">
+   <div id="cxTabela" style="overflow-x:auto"></div>
+   <!-- linha abaixo de #cxTabela: nota "Resultado do período" à esquerda (mount vazio, preenchido por cxRender via fo102NotaHtml) e o botão "+ Novo lançamento" estático à direita, na mesma linha; quebra em tela estreita; existe também com a tabela vazia -->
+   <div id="cxNovoWrap" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:0 16px 14px 0">
+    <div id="cxNotaMount" style="flex:1 1 260px;min-width:0"></div>
+    <button id="cxNovoAbrirBtn" type="button" data-pa="caixa-novo-abrir" onclick="foCaixaAbrir('novo')" style="padding:9px 14px;border:none;border-radius:10px;font-family:Arial;font-size:13px;font-weight:600;background:var(--green);color:white;cursor:pointer;white-space:nowrap">+ Novo lançamento</button>
+   </div>
+  </div>
  </div>
 
  <div class="card" style="margin-top:16px">
@@ -37327,8 +37343,8 @@ function voAlertasGestao(g, hoje, e){
     g.ativos.forEach(function(p){
       if(p.entregue || !p.prazo) return;
       var a = vgAlerta(p, hoje), nome = '<b>' + voEsc(p.os) + '</b> ' + voEsc(p.cliente || p.titulo);
-      if(a.tipo === 'atrasado') urg.push({ titulo: '&#128308; ' + nome + ' — prazo vencido h&#225; ' + a.dias + 'd', os: p.os, dest: '' });
-      else if((a.tipo === 'hoje' || (a.tipo === 'prox7' && a.dias <= 2)) && p.status !== 'Financeiro') urg.push({ titulo: '&#128308; ' + nome + (a.dias === 0 ? ' — entrega hoje' : ' — entrega em ' + a.dias + 'd'), os: p.os, dest: '' });
+      if(a.tipo === 'atrasado') urg.push({ titulo: '&#128308; ' + nome + ' — prazo vencido h&#225; ' + a.dias + 'd', os: p.os, chave: p.id, dest: 'projeto' });
+      else if((a.tipo === 'hoje' || (a.tipo === 'prox7' && a.dias <= 2)) && p.status !== 'Financeiro') urg.push({ titulo: '&#128308; ' + nome + (a.dias === 0 ? ' — entrega hoje' : ' — entrega em ' + a.dias + 'd'), os: p.os, chave: p.id, dest: 'projeto' });
     });
   } else falhas.push('projetos');
   if(estadoVisaoOriginal.fontes.check){
@@ -37351,10 +37367,14 @@ function voAlertasGestao(g, hoje, e){
   var porOs = function(a, b){ return a.os < b.os ? -1 : a.os > b.os ? 1 : 0; };
   return { urg: urg.sort(porOs), ate: ate.sort(porOs), inf: inf.sort(porOs), falhas: falhas };
 }
+function voDestinoAcessivel(dest){
+  var secao = dest === 'comercial' ? 'comercial' : dest === 'receber' ? 'financeiro' : dest === 'projeto' ? 'projetos' : '';
+  if(!secao || typeof vgBotaoNav !== 'function' || !vgBotaoNav(secao)) return false;
+  return dest !== 'projeto' || (typeof vgPodeVer === 'function' && vgPodeVer() && typeof openProjeto === 'function');
+}
 function voItemAlerta(a, idx){
-  if(!a.dest) return '<div class="dash-alert-item">' + a.titulo + '</div>';
-  var cta = a.dest === 'comercial' ? 'Clique para abrir o atendimento' : 'Clique para abrir Contas a Receber';
-  return '<div class="dash-alert-item dash-alert-clickable" role="button" tabindex="0" onclick="voAbrirAlerta(' + idx + ')">' + a.titulo + '<div class="dash-alert-cta">' + cta + '</div></div>';
+  if(!voDestinoAcessivel(a.dest)) return '<div class="dash-alert-item">' + a.titulo + '</div>';
+  return '<button type="button" class="dash-alert-item dash-alert-clickable" onclick="voAbrirAlerta(' + idx + ')">' + a.titulo + '</button>';
 }
 function voRenderAlertas(g, hoje, e){
   var r = voAlertasGestao(g, hoje, e), box = voDom('dashSocioAlertas'); if(!box) return;
@@ -37586,20 +37606,57 @@ function voRenderTudo(){ try { voRenderDashboard(); } catch(_e){} try { voRender
 
 // ---------------- navegação (somente registros reais) ----------------
 function voIrSecao(secao){ var b = typeof vgBotaoNav === 'function' ? vgBotaoNav(secao) : null; if(b && typeof show === 'function'){ show(secao, b); return true; } return false; }
-function voAbrirLead(os){
-  var seq = ++voNavSeq, uid = crSessao() ? String(currentUser.id) : '', tentativas = 0;
-  if(!voIrSecao('comercial')) return;
+// aguarda com segurança: sequência, usuário, geração crEpoch() e seção ativa são revalidados a cada tentativa; fn() retorna true para encerrar
+function voAguardar(seq, uid, secao, ep, max, fn){
+  var tentativas = 0;
   (function tenta(){
-    if(seq !== voNavSeq || !crSessao() || String(currentUser.id) !== uid) return;
-    var st = estadoComercialLeadsReais, raw = st && st.rawByOs && typeof st.rawByOs.get === 'function' ? st.rawByOs.get(String(os)) : null;
-    if(raw){ try { abrirDetalheLeadRealSomenteLeitura(String(os)); } catch(_e){} return; }
-    if(++tentativas < 60) setTimeout(tenta, 150);
+    if(seq !== voNavSeq || !crSessao() || String(currentUser.id) !== uid || crEpoch() !== ep) return;
+    var el = document.getElementById(secao);
+    if(!el || !el.classList.contains('active')) return;
+    if(fn() === true) return;
+    if(++tentativas < max) setTimeout(tenta, 150);
   })();
+}
+function voAbrirLead(os){
+  var seq = ++voNavSeq, uid = crSessao() ? String(currentUser.id) : '';
+  if(!voIrSecao('comercial')) return;
+  voAguardar(seq, uid, 'comercial', crEpoch(), 60, function(){
+    var st = estadoComercialLeadsReais, raw = st && st.rawByOs && typeof st.rawByOs.get === 'function' ? st.rawByOs.get(String(os)) : null;
+    if(!raw) return false;
+    try { abrirDetalheLeadRealSomenteLeitura(String(os)); } catch(_e){}
+    return true;
+  });
+}
+// abre a OS em Contas a Receber só depois que a lista terminar de carregar; sessão, seção e navegação mais nova invalidam respostas tardias
+function voAbrirReceber(os){
+  var seq = ++voNavSeq, uid = crSessao() ? String(currentUser.id) : '';
+  if(!voIrSecao('financeiro')) return;
+  try { pfIrContasReceber(); } catch(_e){ return; }
+  voAguardar(seq, uid, 'financeiro', crEpoch(), 100, function(){
+    if(estadoFinOriginal.abaAtual !== 'finReceber') return true;
+    var s = estadoContasReceberReais.status;
+    if(s === 'sem_sessao' || s === 'sem_permissao' || s === 'erro') return true;
+    if(s === 'ok' || s === 'incompleto'){ try { abrirProntuarioFin(os); } catch(_e){} return true; }
+    return false;   // 'carregando' (ou leitura ainda não iniciada)
+  });
+}
+// show('projetos') já dispara pjCarregar(); só abre o projeto quando estadoPJ.status for 'ok', sem iniciar segundo carregamento
+function voAbrirProjeto(chave){
+  var seq = ++voNavSeq, uid = crSessao() ? String(currentUser.id) : '';
+  if(!crSessao() || !vgPodeVer() || !voIrSecao('projetos')) return;
+  voAguardar(seq, uid, 'projetos', crEpoch(), 100, function(){
+    var s = estadoPJ.status;
+    if(s === 'erro' || s === 'sem_sessao' || s === 'sem_permissao') return true;
+    if(s !== 'ok') return false;
+    try { var r = openProjeto(chave); if(r && typeof r.catch === 'function') r.catch(function(){}); } catch(_e){}
+    return true;
+  });
 }
 function voAbrirAlerta(i){
   var a = voAlertasAtuais[i]; if(!a || !a.dest) return;
   if(a.dest === 'comercial') voAbrirLead(a.os);
-  else if(a.dest === 'receber'){ voNavSeq++; if(voIrSecao('financeiro')){ try { pfIrContasReceber(); } catch(_e){} } }
+  else if(a.dest === 'receber') voAbrirReceber(a.os);
+  else if(a.dest === 'projeto') voAbrirProjeto(a.chave || a.os);
 }
 
 // ---------------- ligações com o resto do arquivo ----------------
@@ -38203,7 +38260,7 @@ function foEtapasFeitas(d, l){
 }
 // ---------------- desenho ----------------
 function foMsgPront(){
-  var m = estadoFinPront.msg; if(!m) return (typeof foAcaoIncertaHtml === 'function' ? foAcaoIncertaHtml() : '');
+  var m = estadoFinPront.msg; if(!m || m.notaRegistrada) return (typeof foAcaoIncertaHtml === 'function' ? foAcaoIncertaHtml() : '');
   return '<div class="notice' + (m.tipo === 'erro' ? ' red' : m.tipo === 'ok' ? '' : ' yellow') + '" style="font-size:13px;padding:8px 10px;margin-bottom:12px" data-pa="fin-pront-msg">' + foEsc(m.texto) + (m.link ? ' <a href="' + foEsc(m.link) + '" target="_blank" rel="noopener" data-pa="fin-pdf-link">Abrir PDF</a>' : '') + '</div>' + (typeof foAcaoIncertaHtml === 'function' ? foAcaoIncertaHtml() : '');
 }
 function foTrilhoHtml(feitos, enc){
@@ -38292,7 +38349,7 @@ function foStatusFinHtml(d, l){
       + '<span style="font-size:13px;' + (ok ? 'text-decoration:line-through;color:var(--muted)' : '') + '">' + foEsc(it.titulo === 'Recebimento confirmado' ? 'Recebimento do cliente' : it.titulo) + '</span><span class="muted" style="font-size:12px;margin-left:auto">' + foEsc(it.situacao) + '</span></div>' + extra + '</div>';
   }).join('') || '<p class="muted" style="font-size:13px">Checklist financeiro ' + (d.chk.st === 'ok' ? 'inexistente para este projeto.' : 'indisponível.') + '</p>';
   var forn = foFornecedoresHtml(d);
-  var acoes = '<button class="btn" data-pa="fin-encerrar" style="width:100%;margin-top:12px;padding:10px;font-size:14px;' + (podeEncerrar && !trava ? 'background:var(--green);color:white" onclick="foEncerrar()"' : 'background:#9ca3af;color:white;cursor:not-allowed" disabled') + '>🏁 Encerrar projeto</button>'
+  var acoes = '<button class="btn" data-pa="fin-encerrar" style="width:100%;margin-top:12px;padding:10px;font-size:14px;' + (podeEncerrar && !trava ? 'background:var(--green);color:white" onclick="foEncerrar()"' : 'background:#9ca3af;color:white;cursor:not-allowed" disabled') + '>' + (enc ? '🏁 Projeto encerrado' : '🏁 Encerrar projeto') + '</button>'
     + '<div style="display:flex;align-items:center;gap:10px;margin-top:8px"><button id="finBtnPerda" class="btn" data-pa="fin-perda" style="flex:1;padding:10px;font-size:13px;background:#9ca3af;color:white;cursor:not-allowed" disabled onclick="foRegistrarPerda()">💀 Registrar como perda (calote)</button>'
     + '<label style="flex:1;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" onchange="foTogglePerda(this.checked)" ' + (trava || enc ? 'disabled' : '') + ' style="width:16px;height:16px;cursor:pointer">Habilitar botão de perda (calote)</label></div>';
   return '<div class="card" style="margin:0"><h3 style="margin-bottom:12px">💳 Status financeiro</h3>' + html + forn + acoes + '</div>';
@@ -38388,10 +38445,13 @@ function foNotasHtml(d){
   }
   return '<h3 style="margin-bottom:12px">📄 Nota Fiscal</h3><div id="listaNotasFiscais">' + itens + '</div>' + '<div><button data-pa="fin-nf-orfaos" ' + (trava ? 'disabled ' : '') + 'onclick="foNfOrfaosLer()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:12px;padding:2px 0;margin-bottom:6px">🔎 Conferir PDFs soltos</button></div>' + orfHtml
     + '<label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Número da NF <span style="color:var(--red)">*</span></label>'
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="finNfNumero" type="text" maxlength="40" placeholder="Ex: 5443" style="flex:1;min-width:140px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input id="finNfNumero" type="text" maxlength="40" placeholder="Ex: 5443" style="flex:1;min-width:140px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">'
     + '<input id="finNfValor" type="text" inputmode="decimal" placeholder="Valor (opcional)" style="width:130px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:Arial;font-size:13px">'
+    + '<input id="finNfPdfNovo" type="file" accept="application/pdf" ' + (trava || enc ? 'disabled ' : '') + 'style="flex:1 1 100%;font-size:12px">'
     + '<button class="btn" data-pa="fin-nf-salvar" style="font-size:13px;padding:9px 16px" ' + (trava || enc || d.notas.st !== 'ok' ? 'disabled ' : '') + 'onclick="foAdicionarNF()">📤 Registrar nota fiscal</button></div>'
-    + '<p class="muted" style="font-size:11px;margin-top:6px">PDF da nota: anexe depois de registrar o número (até 10 MB, somente PDF).</p>';
+    + (trava && p.acao.kind === 'nf' && p.acao.fase === 'enviando' ? '<p class="muted" style="font-size:12px;margin-top:6px;font-weight:700">⏳ Enviando o PDF e registrando a nota… aguarde.</p>' : '')
+    + (p.msg && p.msg.notaRegistrada ? '<p id="finNfRegistrada" role="status" style="background:#166534;color:white;border-radius:8px;padding:6px 10px;font-size:12px;margin-top:8px">✓ ' + foEsc(p.msg.texto) + '</p>' : '')
+    + '<p class="muted" style="font-size:11px;margin-top:6px">Informe o número e selecione o PDF da nota (obrigatório, até 10 MB, somente PDF). O número e o PDF são registrados juntos.</p>';
 }
 function foObsHistHtml(d){
   var trava = !!estadoFinPront.acao, f = d.fin, nomeAutor = function(id){ return id ? (foNome(id) || '—') : 'sistema'; };
@@ -38464,6 +38524,16 @@ function foPAcao(def){
     h.then(function(histOk){
       if(!foPVivo(ctx)) return;
       p.acao = null; foPMsg(res.ok ? (res.tipo || 'ok') : (res.tipo || 'erro'), res.texto + (res.ok && res.historico && !semHist && !histOk ? FO_MSG.histFalhou : ''));
+      if(res.ok && def.confirmacaoTemporaria){
+        var mensagem = p.msg;
+        mensagem.notaRegistrada = true;
+        setTimeout(function(){
+          if(p.msg !== mensagem) return;
+          p.msg = null;
+          var aviso = foDom('finNfRegistrada');
+          if(aviso) aviso.remove();
+        }, 6000);
+      }
       if(res.reler !== false) foAbrirProntuario(os, { manter: true }); else foRenderProntuario();
       if(res.ok || res.reler !== false){ try { crCarregar(); } catch(_e){} }
     });
@@ -38646,10 +38716,53 @@ function foAdicionarNF(){
   if(numero.length > 40 || /[<>]/.test(numero)) return recusar('Número da NF inválido (até 40 caracteres, sem < ou >).');
   if(p.d.notas.linhas.some(function(n){ return String(n.numero || '').trim().toLowerCase() === numero.toLowerCase(); })) return recusar('Já existe a NF-' + numero + ' neste projeto.');
   var valor = null; if(vtxt){ var pv = cxParseValor(vtxt); if(pv.erro) return recusar(pv.erro); valor = Number((pv.centavos / 100).toFixed(2)); }
-  var id = cxUuid(), row = { id: id, projeto_id: p.projId, numero: numero, valor: valor, emitida_em: foHojeSP() };
-  foPAcao({ kind: 'nf', executar: function(){ return supabaseClient.from('notas_fiscais').insert(row); },
-    interpretar: function(r){ return r.error ? { ok: false, texto: foErroTexto(r.error) } : { ok: true, texto: 'Nota fiscal registrada: NF-' + numero + '.', historico: '📄 Nota fiscal adicionada: NF-' + numero }; },
-    conferir: function(){ return foConsulta(function(){ return true; }, supabaseClient.from('notas_fiscais').select('id').eq('id', id)).then(function(r){ return r && r.st === 'ok' && Array.isArray(r.data) ? (r.data.length === 1 ? 'aplicado' : 'nao_aplicado') : 'indefinido'; }); }, sucesso: 'Nota fiscal confirmada no banco.' });
+  var el = foDom('finNfPdfNovo'), f = el && el.files && el.files[0];
+  if(!f) return recusar('Selecione o PDF da nota fiscal.');
+  var erroPdf = foNfValidarPdf(f); if(erroPdf) return recusar(erroPdf);
+  // id, caminho e nome FIXOS por tentativa: "Repetir" reenvia exatamente os mesmos valores (upload duplicado é tolerado; a RPC é idempotente por p_id)
+  var id = cxUuid(), caminho = p.projId + '/' + cxUuid() + '.pdf', nome = String(f.name).slice(0, 200), pid = p.projId;
+  foPAcao({ kind: 'nf', reenviar: true, confirmacaoTemporaria: true,
+    executar: function(){
+      return supabaseClient.storage.from('notas-fiscais').upload(caminho, f, { contentType: 'application/pdf', upsert: false }).then(function(u){
+        var k = u && u.error ? foNfUploadErro(u.error) : 'ok';
+        if(k === 'ok' || k === 'duplicado') return supabaseClient.rpc('nota_fiscal_registrar', { p_id: id, p_projeto_id: pid, p_numero: numero, p_valor: valor, p_caminho: caminho, p_nome_arquivo: nome });
+        return { data: null, error: { code: k === 'incerto' ? 'NFINC' : '22NF1', message: (u.error && (u.error.message || u.error.error)) || '', statusCode: u.error.statusCode, upload: k } };
+      });
+    },
+    interpretar: function(r){
+      if(r.error){
+        if(r.error.upload){
+          if(r.error.upload === 'ausente') return { ok: false, tipo: 'aviso', texto: FO_NF_MSG_PACOTE };
+          var sc = String(r.error.statusCode || '');
+          if(sc === '401' || sc === '403' || /row-level|permission|unauthorized/i.test(r.error.message)) return { ok: false, texto: FO_MSG.semPermissao };
+          return { ok: false, texto: 'O armazenamento recusou o arquivo. A nota não foi registrada; corrija e envie de novo.' };
+        }
+        if(foNfPacoteAusente(r.error)) return { ok: false, tipo: 'aviso', texto: FO_NF_MSG_PACOTE };
+        return { ok: false, texto: foErroTexto(r.error) + ' A nota não foi registrada; o PDF enviado pode ser reaproveitado em "Conferir PDFs soltos".' };
+      }
+      var d = r.data;
+      if(d && typeof d === 'object' && d.status === 'aplicado') return { ok: true, texto: 'NF-' + numero + ' registrada com o PDF.' };   // sem historico: a RPC já o gravou na mesma transação
+      if(d && typeof d === 'object' && d.status === 'arquivo_inexistente') return { incerto: true };   // upload incerto: o objeto pode não ter subido; segue para Conferir/Repetir com o mesmo id e caminho
+      if(d && typeof d === 'object' && foNfRegStatusConhecido(d.status)) return { ok: false, tipo: 'aviso', texto: foNfRegStatusTexto(d.status) };
+      return { incerto: true };
+    },
+    conferir: function(){ return foConsulta(function(){ return true; }, supabaseClient.from('notas_fiscais').select('id,arquivo_path').eq('id', id)).then(function(r){ if(!r || r.st !== 'ok' || !Array.isArray(r.data)) return 'indefinido'; if(r.data.length === 0) return 'nao_aplicado'; return r.data.length === 1 && r.data[0].arquivo_path === caminho ? 'aplicado' : 'indefinido'; }); },
+    msgNaoAplicado: 'A nota NÃO foi registrada. Se o PDF chegou a subir, ele continua guardado e aparece em "Conferir PDFs soltos". Nada mais foi alterado. Envie novamente se necessário.',
+    sucesso: 'Nota fiscal e PDF confirmados no banco.' });
+}
+var FO_NF_REG_STATUS = ['entrada_invalida', 'numero_invalido', 'valor_invalido', 'nome_invalido', 'caminho_invalido', 'projeto_inexistente', 'projeto_encerrado', 'id_em_uso', 'numero_duplicado', 'arquivo_em_uso', 'arquivo_inexistente', 'arquivo_invalido'];
+function foNfRegStatusConhecido(s){ return typeof s === 'string' && FO_NF_REG_STATUS.indexOf(s) >= 0; }   // status desconhecido fica incerto
+function foNfRegStatusTexto(s){
+  var sufixo = ' A nota não foi registrada; o PDF enviado continua guardado (veja "Conferir PDFs soltos").';
+  return ({ entrada_invalida: 'Dados inválidos.', numero_invalido: 'Número da NF inválido.', valor_invalido: 'Valor inválido.', nome_invalido: 'Nome de arquivo inválido (use um arquivo .pdf).', caminho_invalido: 'Caminho do arquivo inválido.',
+    projeto_inexistente: 'O projeto não foi encontrado.', projeto_encerrado: 'Projeto encerrado: não é possível registrar nota fiscal.', id_em_uso: 'Este envio conflita com outro registro. Descarte e tente de novo.',
+    numero_duplicado: 'Já existe uma nota com este número neste projeto.', arquivo_em_uso: 'Esse arquivo já está associado a outra nota fiscal.', arquivo_inexistente: 'O arquivo enviado não foi encontrado no armazenamento. Use Repetir com a mesma chave.',
+    arquivo_invalido: 'O arquivo enviado está vazio ou não é um PDF.' })[s] + (s === 'arquivo_inexistente' ? '' : sufixo);
+}
+function foNfValidarPdf(f){   // → texto do erro ou ''
+  if(!/\.pdf$/i.test(String(f.name || '')) || (f.type && f.type !== 'application/pdf')) return 'Selecione um arquivo PDF.';
+  if(!(f.size > 0) || f.size > FO_NF_PDF_MAX) return 'O PDF deve ter até 10 MB.';
+  return '';
 }
 // ---- PDF da NF (pacote NFPDF-1: bucket privado 'notas-fiscais' + RPCs nota_fiscal_anexar/excluir/pdf_orfaos). Sem o pacote a tela diz isso; nada é simulado. ----
 // Fluxo: (1) upload do objeto em '<projeto>/<uuid>.pdf' (caminho FIXO por tentativa); (2) RPC anexar (o banco confere que o objeto existe, é do projeto da NF e não serve a outra NF).
@@ -38675,8 +38788,7 @@ function foAnexarPDF(i){
   function recusar(t){ foPMsg('erro', t); foRenderProntuario(); }
   if(!nf || !f) return;
   if(nf.arquivo_path) return recusar('Esta nota já tem um PDF.');
-  if(!/\.pdf$/i.test(String(f.name || '')) || (f.type && f.type !== 'application/pdf')) return recusar('Selecione um arquivo PDF.');
-  if(!(f.size > 0) || f.size > FO_NF_PDF_MAX) return recusar('O PDF deve ter até 10 MB.');
+  var erroPdf = foNfValidarPdf(f); if(erroPdf) return recusar(erroPdf);
   var caminho = p.projId + '/' + cxUuid() + '.pdf', nome = String(f.name).slice(0, 200);
   foPAcao({ kind: 'nf', reenviar: true,
     executar: function(){
@@ -38699,11 +38811,12 @@ function foAnexarPDF(i){
       }
       var d = r.data;
       if(d && typeof d === 'object' && d.status === 'aplicado') return { ok: true, texto: 'PDF anexado à NF-' + nf.numero + '.' };
+      if(d && typeof d === 'object' && d.status === 'arquivo_inexistente') return { incerto: true };   // upload incerto: segue para Conferir/Repetir com o mesmo caminho
       if(d && typeof d === 'object' && foNfStatusConhecido(d.status)) return { ok: false, tipo: 'aviso', texto: foNfStatusTexto(d.status) };
       return { incerto: true };
     },
     conferir: function(){ return foConsulta(function(){ return true; }, supabaseClient.from('notas_fiscais').select('id,arquivo_path').eq('id', nf.id)).then(function(r){ if(!r || r.st !== 'ok' || !Array.isArray(r.data) || r.data.length !== 1) return 'indefinido'; var v = r.data[0].arquivo_path || null; return v === caminho ? 'aplicado' : v === null ? 'nao_aplicado' : 'indefinido'; }); },
-    msgNaoAplicado: 'O PDF NÃO foi associado à nota. Se o arquivo chegou a subir, ele aparece em "Conferir PDFs soltos" para anexar ou remover. Nada mais foi alterado.',
+    msgNaoAplicado: 'O PDF NÃO foi associado à nota. Se o arquivo chegou a subir, ele aparece em "Conferir PDFs soltos" para anexar ou remover. Nada mais foi alterado. Envie novamente se necessário.',
     sucesso: 'PDF confirmado no banco.' });
 }
 function foAbrirPDF(i){
@@ -38931,7 +39044,8 @@ cxRender = function(){
     e.seq++; cxZerar(semPerm ? 'sem_permissao' : 'idle'); envioCaixaReal = null; cxMsgForm = ''; cxLimparPaineis(); foCaixa.novoAberto = false; foCaixa.serieAberto = false;
   }
   var st = foDom('cxStatus'), tot = foDom('finCaixaTotais');
-  [st, tab].forEach(function(x){ if(x) x.textContent = ''; }); if(tot) tot.textContent = '';
+  var notaMount = foDom('cxNotaMount');
+  [st, tab, notaMount].forEach(function(x){ if(x) x.textContent = ''; }); if(tot) tot.textContent = '';
   var aviso = function(t, cor){ if(st) st.appendChild(crEl('div', 'padding:8px 16px;font-size:13px;color:' + cor, t)); };
   cxFormEstado();
   if(e.status !== 'ok' && e.status !== 'incompleto'){
@@ -38952,6 +39066,7 @@ cxRender = function(){
   var catFiltro = !!f.cat, tt = totalOk && periodoOk ? fo102Totais(f, e.itens, filtrados, cfgAb, anteriorC) : null;   // pacote 102: resumo vai para o rodapé da tabela
   if(tot && totalOk && periodoOk) tot.textContent = '';   // pacote 102: o resumo Entradas/Saídas/Resultado/Saldo anterior não se repete no topo
   else if(tot) tot.textContent = totalOk ? '' : 'Totais indisponíveis: leitura incompleta ou dados incoerentes.';
+  if(notaMount && tt) notaMount.innerHTML = fo102NotaHtml(tt);   // nota fora de #cxTabela, ao lado do botão "+ Novo lançamento"
   try { renderResumoEquipe(); } catch(_e){}
   if(!e.itens.length && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(e.status === 'ok' ? CX_MSG.vazio : 'Nenhum lançamento lido.') + fo102TabelaVazia(tt); return; }
   if(!filtrados.length && !(f.de && totalOk) && !cxAbMostraSozinha(cfgAb, f)){ tab.innerHTML = foMsgLinha(CX_MSG.semResultado) + fo102TabelaVazia(tt); return; }
@@ -38977,7 +39092,7 @@ cxRender = function(){
       + foCelula(ent ? crBRL(ent) : '—', 'color:#065f46;font-weight:700', 'money') + foCelula(sai ? crBRL(sai) : '—', 'color:#dc2626;font-weight:700', 'money')
       + foCelula(saldo !== null ? crBRL(saldo) : '—', 'font-weight:700;color:' + (saldo === null ? 'var(--muted)' : saldo >= 0 ? '#1e3a5f' : '#dc2626'), 'money') + '<td style="white-space:nowrap">' + acoes + (i.anom.length ? ' <span title="' + foEsc(i.anom.join('; ')) + '" style="color:#b45309;font-weight:700">⚠</span>' : '') + '</td></tr>';
   });
-  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Ok</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>' + (tt ? fo102NotaHtml(tt) : '')
+  tab.innerHTML = '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Ok</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>' + linhas + (tt ? fo102RodapeHtml(tt) : '') + '</table>'
     + (ord.length > vis.length ? '<p class="muted" style="padding:8px 16px;font-size:12px">Mostrando ' + vis.length + ' de ' + ord.length + ' lançamentos do filtro. Total de ' + ord.length + ' lançamentos do filtro. <a href="#" onclick="foCaixaMais();return false" style="color:var(--accent)">Mostrar mais</a></p>' : '');
 };
 function foGOrigem(i){   // equipe consolidada / recorrente (editáveis): rótulo legível, como a referência (👥 + 🔁 recorrente)
@@ -39015,7 +39130,7 @@ function fo102NotaHtml(tt){
 function fo102TabelaVazia(tt){   // sem linhas a mostrar, mas leitura completa: o rodapé continua honesto (zeros e saldo aplicável)
   if(!tt) return '';
   return '<table class="table" style="width:100%"><tr><th>Data</th><th class="cx103-th" title="Marcação manual">Ok</th><th>Descrição</th><th>Categoria</th><th>OS / NF-e</th><th class="money">Entrada</th><th class="money">Saída</th><th class="money">Saldo acum.</th><th></th></tr>'
-    + fo102RodapeHtml(tt) + '</table>' + fo102NotaHtml(tt);
+    + fo102RodapeHtml(tt) + '</table>';
 }
 // <<102:FIM>>
 // <<103:INICIO>>
@@ -51875,6 +51990,9 @@ const ZIPOS_UPLOAD_RETOMAVEL_GCS = true;
         recorrência semanal (série = 1 compromisso; ocorrências projetadas pelo servidor, identidade = id + data), conflitos da série, "Encerrar série" preservando o passado.
    111: recorrência com 3 cores (ids 8 Marrom, 2 Laranja, 7 Rosa; ids antigos são exibidos por mapeamento determinístico, sem migração); seletores com bolinha de cor (Natureza e Cor da série); Outros em preto;
         prazo de Entrega das OS não aparece na Agenda; faixas com contraste mínimo 4,5:1.
+   112: compromissos próprios da Agenda podem ser editados/remarcados em qualquer situação (concluído, cancelado, série encerrada = reabre, sem duplicar) e excluídos (exclusão lógica, com confirmação, chave e versão);
+        série: a ação vale para a série inteira (avisado na tela); data vinda da OS (item projetado ou compromisso aderente à gravação) só se reagenda na OS e não tem Excluir; pedido de confirmação de presença e rótulos individuais saíram da tela;
+        fins de semana com fundo avermelhado discreto. O servidor decide (pode_editar, pode_excluir, data_controlada_os); a tela só espelha.
    Regras: nenhum callback de Auth (identidade vigiada por timer), respostas tardias/de outra identidade descartadas, todo texto dinâmico escapado,
    links só http/https, RPCs somente agenda_*, nenhuma escrita fora da Agenda, sem demonstração no produto, sem canal externo de aviso. */
 var AG107 = (function(){
@@ -51885,7 +52003,8 @@ var NAT = { reuniao: 'Reunião / call', gravacao: 'Gravação', edicao: 'Ediçã
 var NAT_ORD = ['reuniao', 'gravacao', 'edicao', 'revisao', 'outros'];
 var STATUS = { previsto: 'Previsto', confirmado: 'Confirmado', concluido: 'Concluído', cancelado: 'Cancelado' };
 var LEMB = [['ambos', '1 dia e 1 hora antes'], ['1d', '1 dia antes'], ['1h', '1 hora antes'], ['nenhum', 'Sem lembrete']];
-var PRES = { pendente: 'Aguardando resposta', confirmado: 'Confirmou', recusado: 'Recusou' };
+var ACAO_HIST = { criado: 'criado', editado: 'editado', concluido: 'concluído', cancelado: 'cancelado', reaberto: 'reaberto', excluido: 'excluído' };   // 'presenca' (confirmações antigas) fica guardado no servidor e não é mostrado
+var CAMPO_HIST = { natureza: 'Natureza', titulo: 'Título', data: 'Data', hora_inicio: 'Início', hora_fim: 'Fim', status: 'Situação', responsavel_id: 'Responsável', local: 'Local', plataforma: 'Plataforma', link: 'Link', pauta: 'Pauta', cliente: 'Cliente', lembrete: 'Lembrete', projeto_id: 'OS', gravacao_id: 'Gravação', recorrencia_fim: 'Repetir até', recorrencia_cor: 'Cor da série', cancelado_em: 'Cancelado em' };
 var DOW = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 var MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 var AVISO = { convite: 'Você foi incluído em', alteracao: 'Compromisso alterado:', cancelamento: 'Compromisso cancelado:', remocao: 'Você foi removido de um compromisso', lembrete_1d: 'Lembrete — amanhã:', lembrete_1h: 'Lembrete — em 1 hora:' };
@@ -51912,6 +52031,7 @@ function parseYmd(s){
 function ymd(t){ var d = new Date(t); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
 function addDias(s, n){ var p = parseYmd(s); return p ? ymd(p.t + n * 86400000) : ''; }
 function dowSeg(s){ var p = parseYmd(s); return p ? (new Date(p.t).getUTCDay() + 6) % 7 : 0; }
+function difDias(a, b){ var x = parseYmd(a), y = parseYmd(b); return x && y ? Math.round((y.t - x.t) / 86400000) : 0; }
 function inicioSemana(s){ return addDias(s, -dowSeg(s)); }
 function inicioGradeMes(a, m){ return inicioSemana(a + '-' + pad2(m) + '-01'); }
 function hojeBR(){
@@ -51985,6 +52105,7 @@ function validarForm(f){
   var rf = '', rc = '';
   if(f.recorrente){
     rf = String(f.rfim || '').trim(); rc = String(f.rcor || '').trim();
+    if(f.serie && f.serie.fim && rf === f.serie.fim && parseYmd(f.data) && f.data !== f.serie.primeira) rf = addDias(f.serie.fim, difDias(f.serie.primeira, f.data));   // data da série corrigida e "repetir até" intocado: a data final acompanha
     if(rf && !parseYmd(rf)) e.rfim = 'Data final inválida.';
     else if(rf && parseYmd(f.data) && rf < f.data) e.rfim = 'A data final não pode ser anterior ao primeiro compromisso.';
     if(rc && !/^[1-8]$/.test(rc)) e.rcor = 'Cor inválida.';
@@ -52187,7 +52308,7 @@ function chip(it){
   if(it.os) sub.push(it.os + (it.cliente ? ' · ' + it.cliente : '')); else if(it.cliente) sub.push(it.cliente);
   var onde = it.local || it.plataforma; if(onde) sub.push(onde);
   var np = (it.participantes || []).filter(interno).length; if(np > 1) sub.push(np + ' pessoas');
-  var tag = ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || '') + (corRec(it) ? ' · ↻ semanal' : '') + (it.status !== 'previsto' ? ' · ' + (STATUS[it.status] || '') : '') + (it.minha_presenca === 'pendente' && it.status !== 'cancelado' ? ' · responder' : '');
+  var tag = ehFonte(it) ? fonteRot(it).curto + ' (OS)' : (NAT[it.natureza] || '') + (corRec(it) ? ' · ↻ semanal' : '') + (it.status !== 'previsto' ? ' · ' + (STATUS[it.status] || '') : '');
   return '<button type="button" class="ag-ev ' + clsCor(it) + (it.status === 'cancelado' ? ' ag-cancel' : '') + (it.status === 'concluido' ? ' ag-conc' : '') + (ehFonte(it) ? ' ag-fonte" data-ag="abrir-fonte" data-id="' : '" data-ag="abrir" data-id="') + esc(chaveItem(it)) + '" title="' + esc(it.titulo) + '">'
     + '<span class="h">' + esc(quando(it)) + '</span><span class="t">' + esc(it.titulo) + '</span>' + (sub.length ? '<span class="s">' + esc(sub.join(' · ')) + '</span>' : '') + '<span class="b">' + esc(tag) + '</span></button>';
 }
@@ -52209,7 +52330,7 @@ function htmlSemana(){
     h += '<div class="ag-semana">';
     for(var i = 0; i < 7; i++){
       var d = addDias(ini, i), l = m[d] || [];
-      h += '<div class="ag-dia' + (d === hoje ? ' hoje' : '') + '" data-pv="' + esc(d) + '"><h4>' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
+      h += '<div class="ag-dia' + (i >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + '" data-pv="' + esc(d) + '"><h4>' + esc(DOW[i]) + ' <b>' + esc(fmtDataCurta(d)) + '</b></h4>' + (l.length ? l.map(chip).join('') : '<div class="ag-vazio">Sem compromissos</div>') + '</div>';
     }
     h += '</div>';
   }
@@ -52223,7 +52344,7 @@ function htmlMes(){
     h += '<div class="ag-mes">' + DOW.map(function(x){ return '<div class="ag-dow">' + x + '</div>'; }).join('');
     for(var i = 0; i < 42; i++){
       var d = addDias(ini, i), p = parseYmd(d), l = m[d] || [];
-      h += '<button type="button" class="ag-cel' + (p.m !== mo ? ' fora' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="dia" data-d="' + esc(d) + '" data-pv="' + esc(d) + '" aria-label="' + esc(fmtData(d) + ', ' + l.length + ' compromisso(s)') + '"><b>' + p.d + '</b>'
+      h += '<button type="button" class="ag-cel' + (p.m !== mo ? ' fora' : '') + (i % 7 >= 5 ? ' fds' : '') + (d === hoje ? ' hoje' : '') + (d === S.diaSel ? ' sel' : '') + '" data-ag="dia" data-d="' + esc(d) + '" data-pv="' + esc(d) + '" aria-label="' + esc(fmtData(d) + ', ' + l.length + ' compromisso(s)') + '"><b>' + p.d + '</b>'
         + faixasDia(l) + '</button>';
     }
     h += '</div>';
@@ -52309,7 +52430,7 @@ function htmlFonte(it){
     + '<dt>OS</dt><dd>' + esc((it.os || '') + (it.os_titulo ? ' — ' + it.os_titulo : '')) + '</dd>' + (it.cliente ? '<dt>Cliente</dt><dd>' + esc(it.cliente) + '</dd>' : '')
     + (it.local ? '<dt>Local da OS</dt><dd>' + esc(it.local) + '</dd>' : '')
     + (it.responsaveis ? '<dt>Equipe da OS</dt><dd>' + esc(['Atendimento: ' + (r.atendimento || '—'), 'Produção: ' + (r.producao || '—'), 'Edição: ' + (r.edicao || '—')].join(' · ')) + '</dd>' : '') + '</dl></div></div>';
-  h += '<div class="ag-aviso">Esta data vem do cadastro da OS e é só leitura aqui: para criar um compromisso (participantes, avisos, lembretes), use <b>+ Novo agendamento</b>. Nada é alterado na OS.</div>';
+  h += '<div class="ag-aviso">Esta data vem do cadastro da OS e é só leitura aqui: para criar um compromisso (participantes, avisos, lembretes), use <b>+ Novo agendamento</b>. Para reagendar esta data, altere-a na própria OS (a Agenda não muda datas da OS e não oferece Excluir para ela). Nada é alterado na OS.</div>';
   h += '<div class="ag-botoes"><button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button><button type="button" class="btn" data-ag="fechar">Fechar</button></div></div></div>';
   return h;
 }
@@ -52340,7 +52461,7 @@ function htmlDetalhe(d, conf, oc){
     + (c.link ? '<dt>Link</dt><dd>' + (safeUrl(c.link) ? '<a href="' + esc(safeUrl(c.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(c.link) + '</a>' : esc(c.link)) + '</dd>' : '')
     + '<dt>Lembrete</dt><dd>' + esc((LEMB.filter(function(x){ return x[0] === c.lembrete; })[0] || ['', '—'])[1]) + '</dd></dl>';
   var ints = (d.participantes || []).filter(interno), exts = (d.participantes || []).filter(function(p){ return !interno(p); });
-  h += '<div class="ag-sec"><h3>Participantes</h3>' + (ints.length ? ints.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + ' · ' + esc(PRES[p.presenca] || '') + '</span>'; }).join('') : '<div class="ag-vazio">Nenhum.</div>');
+  h += '<div class="ag-sec"><h3>Participantes</h3>' + (ints.length ? ints.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + '</span>'; }).join('') : '<div class="ag-vazio">Nenhum.</div>');
   if(exts.length) h += '<div style="margin-top:8px"><b style="font-size:12px">Fornecedores e convidados (sem aviso pelo sistema)</b><br>' + exts.map(function(p){ return '<span class="ag-tag">' + esc(p.nome) + (p.funcao ? ' · ' + esc(p.funcao) : '') + ' · ' + (p.tipo === 'fornecedor' ? 'fornecedor' : 'convidado') + '</span>'; }).join('') + '</div>';
   h += '</div>';
   if(c.pauta) h += '<div class="ag-sec"><h3>Pauta / observações</h3><div style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px">' + esc(c.pauta) + '</div></div>';
@@ -52356,14 +52477,44 @@ function htmlDetalhe(d, conf, oc){
     if(div.length) h += '<div class="ag-aviso" role="alert"><b>A OS mudou desde que este compromisso foi salvo</b> (a Agenda mantém o que foi agendado):<br>' + div.map(function(x){ return esc(x.campo) + ': ' + esc(fmtDiv(x.antes)) + ' → ' + esc(fmtDiv(x.depois)); }).join('<br>') + (d.pode_editar ? '<br><button type="button" class="btn btn2" data-ag="editar-ref" style="margin-top:8px">Revisar e atualizar a referência (só este agendamento)</button>' : '') + '</div>';
     h += '</div>';
   } else if(c.projeto_id) h += '<div class="ag-sec"><div class="ag-aviso">A OS de origem está indisponível; este compromisso continua válido.</div></div>';
-  if(d.historico && d.historico.length) h += '<div class="ag-sec"><h3>Histórico</h3>' + d.historico.slice(0, 10).map(function(x){ return '<div style="font-size:12px;color:var(--muted)">' + esc(String(x.em || '').slice(0, 16).replace('T', ' ')) + ' · ' + esc(x.autor || '') + ' · ' + esc(x.acao) + ' (v' + esc(x.versao) + ')</div>'; }).join('') + '</div>';
+  var hist = (d.historico || []).filter(function(x){ return x && ACAO_HIST[x.acao]; });
+  if(hist.length) h += '<div class="ag-sec"><h3>Histórico</h3>' + hist.slice(0, 10).map(linhaHist).join('') + '</div>';
+  var dc = d.data_controlada_os === true, reabre = c.status === 'cancelado' || c.status === 'concluido';
+  if(d.pode_editar){
+    if(rec) h += '<div class="ag-aviso"><b>Vale para a série inteira.</b> Editar, remarcar, reabrir' + (d.pode_excluir === true ? ' e excluir' : '') + ' atingem todas as ocorrências (inclusive as passadas), não só ' + esc(fmtData(dia)) + '. O que mudar fica no histórico, com o antes e o depois.</div>';
+    if(dc) h += '<div class="ag-aviso"><b>A data' + (d.hora_controlada_os === true ? ' e o horário vêm' : ' vem') + ' da gravação da OS.</b> Para reagendar, altere a gravação na própria OS. Aqui continuam editáveis os demais campos.</div>';
+    if(c.gravacao_id && d.pode_excluir !== true) h += '<div class="ag-aviso">Excluir não está disponível: este compromisso está ligado a uma gravação da OS. Se ele não vai mais acontecer, use Cancelar.</div>';
+    if(c.status === 'cancelado') h += '<div class="ag-aviso">Ao editar, este compromisso é <b>reaberto</b> (não cria outro registro) e os participantes são avisados da alteração.</div>';
+  }
   h += '<div class="ag-botoes">';
-  if(d.minha_presenca && c.status !== 'cancelado' && c.status !== 'concluido') h += '<button type="button" class="btn btn2" data-ag="presenca" data-r="recusado">Recusar</button><button type="button" class="btn" data-ag="presenca" data-r="confirmado">' + (d.minha_presenca === 'confirmado' ? 'Presença confirmada ✓' : 'Confirmar presença') + '</button>';
   h += '<button type="button" class="btn btn2" data-ag="copiar">Copiar resumo</button>';
   if(d.pode_encerrar_serie) h += '<button type="button" class="btn btn2" data-ag="encerrar-serie">Encerrar série</button>';
-  if(d.pode_editar) h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">' + (rec ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button><button type="button" class="btn" data-ag="editar">Editar' + (rec ? ' série' : '') + '</button>';
+  if(d.pode_editar){
+    if(c.status !== 'cancelado') h += '<button type="button" class="btn btn2" data-ag="cancelar-ev">' + (rec ? 'Cancelar série inteira' : 'Cancelar compromisso') + '</button>';
+    if(d.pode_excluir === true) h += '<button type="button" class="btn btn2" data-ag="excluir-ev">' + (rec ? 'Excluir série inteira' : 'Excluir') + '</button>';
+    h += '<button type="button" class="btn" data-ag="editar">' + (reabre ? 'Reabrir e editar' : dc ? 'Editar' : 'Editar / Remarcar') + (rec ? ' série' : '') + '</button>';
+  }
   h += '<button type="button" class="btn btn2" data-ag="fechar">Fechar</button></div></div></div>';
   return h;
+}
+function fmtHistVal(k, v){
+  if(v == null || v === '') return '—';
+  if(k === 'data' || k === 'recorrencia_fim') return fmtData(v);
+  if(k === 'cancelado_em') return fmtData(String(v).slice(0, 10));
+  if(k === 'status') return STATUS[v] || String(v);
+  if(k === 'natureza') return NAT[v] || String(v);
+  if(k === 'lembrete'){ var l = LEMB.filter(function(x){ return x[0] === v; })[0]; return l ? l[1] : String(v); }
+  if(k === 'responsavel_id') return S.nomes[v] || 'outra pessoa';
+  if(k === 'projeto_id' || k === 'gravacao_id') return 'referência';
+  if(k === 'recorrencia_cor') return REC_NOME[recVis(v)] || String(v);
+  return trunc(String(v), 60);
+}
+// histórico: "quando · quem · ação" + antes → depois dos campos que mudaram (só leitura do que o servidor guardou)
+function linhaHist(x){
+  var dt = x.detalhes || {}, a = dt.antes, d = dt.depois, ks = (a && d && typeof a === 'object') ? Object.keys(a).filter(function(k){ return CAMPO_HIST[k]; }) : [], extra = '';
+  if(ks.length) extra = '<br>' + ks.slice(0, 6).map(function(k){ return esc(CAMPO_HIST[k] + ': ' + fmtHistVal(k, a[k]) + ' → ' + fmtHistVal(k, d[k])); }).join('; ') + (ks.length > 6 ? '; …' : '');
+  if(dt.motivo) extra += '<br>Motivo: ' + esc(trunc(dt.motivo, 120));
+  return '<div style="font-size:12px;color:var(--muted)">' + esc(String(x.em || '').slice(0, 16).replace('T', ' ')) + ' · ' + esc(x.autor || '') + ' · ' + esc(ACAO_HIST[x.acao] || x.acao) + (dt.escopo === 'serie' ? ' (série inteira)' : '') + ' (v' + esc(x.versao) + ')' + extra + '</div>';
 }
 function abrirDetalhe(id, conf, oc){
   if(ehIdFonte(id)) return abrirFonte(id);
@@ -52385,13 +52536,33 @@ function copiar(){
   try { if(G.navigator && G.navigator.clipboard && G.navigator.clipboard.writeText){ G.navigator.clipboard.writeText(t).then(function(){ live('Resumo copiado.'); }, function(){ live('Não foi possível copiar; selecione o texto manualmente.'); }); return; } } catch(e){}
   live('Selecione o texto na janela para copiar.');
 }
-function responder(r){
-  if(!S.det) return; var id0 = idAtual(), id = S.det.compromisso.id, oc = S.oc;
-  rpc('agenda_responder', { p_id: id, p_resposta: r }, id0).then(function(x){
-    if(x.descartado) return;
-    if(!x.ok){ live(msgFalha(x)); return; }
-    if(x.data && x.data.status === 'ok'){ live(r === 'confirmado' ? 'Presença confirmada.' : 'Presença recusada.'); abrirDetalhe(id, null, oc); recarregarTudo(); }
-    else live('Não foi possível registrar a resposta.');
+
+/* ------------------------------------------------------------------ modal: excluir compromisso (exclusão lógica; confirmação explícita) */
+function htmlExcluir(c){
+  var serie = !!c.recorrencia;
+  return '<div class="ag-ov" data-ag="fora"><div class="ag-box peq" role="dialog" aria-modal="true"><h2>' + (serie ? 'Excluir a série inteira?' : 'Excluir compromisso?') + '</h2>'
+    + '<p>“' + esc(c.titulo) + '” sai do calendário e dos avisos futuros' + (serie ? ' (TODAS as ocorrências, inclusive as passadas; para só parar a série, use “Encerrar série”)' : '') + '. A exclusão é lógica: o histórico e os dados ficam guardados no sistema. A OS, a gravação e o financeiro não são alterados.</p>'
+    + '<div class="ag-aviso">Os participantes <b>não</b> recebem aviso de exclusão. Para avisá-los, use “Cancelar” antes.</div>'
+    + '<label>Motivo (opcional)<input type="text" id="ag107Motivo" maxlength="200"></label>'
+    + '<label class="ag-chk" style="margin-top:10px"><input type="checkbox" id="ag107ExcConf"> Confirmo que quero excluir ' + (serie ? 'a série inteira' : 'este compromisso') + '.</label>'
+    + '<div id="ag107ExcMsg" class="ag-err"></div><div class="ag-botoes"><button type="button" class="btn btn2" data-ag="voltar-det">Voltar</button><button type="button" class="btn" data-ag="excluir-ok">' + (serie ? 'Excluir série inteira' : 'Excluir') + '</button></div></div></div>';
+}
+function excluirOk(){
+  if(!S.det || S.modalBusy || S.det.pode_excluir !== true) return; var c = S.det.compromisso, id0 = idAtual(), motivo = ($('ag107Motivo') && $('ag107Motivo').value || '').trim(), ok = $('ag107ExcConf');
+  if(!ok || !ok.checked){ setHtml('ag107ExcMsg', 'Marque a confirmação para excluir.'); return; }
+  if(motivo.length > 200 || CTRL1.test(motivo)){ setHtml('ag107ExcMsg', 'Motivo: até 200 caracteres.'); return; }
+  if(!S.excChave || S.excHash !== c.id + '|' + c.versao + '|' + motivo){ S.excChave = novaChave(); S.excHash = c.id + '|' + c.versao + '|' + motivo; }
+  S.modalBusy = true;
+  rpc('agenda_excluir', { p_chave: S.excChave, p_id: c.id, p_versao: c.versao, p_motivo: motivo || null }, id0).then(function(r){
+    S.modalBusy = false; if(r.descartado) return;
+    var d = r.data || {};
+    if(r.ok && d.status === 'excluido'){ S.excChave = null; fechar(); live('Compromisso excluído.'); recarregarTudo(); contarNaoLidas(); return; }
+    if(!r.ok && r.erro === 'FUNCAO_AUSENTE'){ S.indisponivel = false; setHtml('ag107ExcMsg', 'A exclusão ainda não está instalada no banco (pacote 112). Avise o responsável pelo sistema.'); return; }
+    var m = !r.ok ? (r.timeout ? 'Sem resposta do servidor. Clique de novo: a repetição não duplica a exclusão.' : msgFalha(r))
+      : d.status === 'versao_mudou' ? 'O compromisso foi alterado por outra pessoa. Volte e abra de novo.' : d.status === 'sem_permissao' ? 'Você não pode excluir este compromisso.'
+      : d.status === 'origem_controla_data' ? 'Este compromisso está ligado a uma gravação da OS e não pode ser excluído aqui. Use Cancelar.'
+      : d.status === 'nao_encontrado' ? 'Este compromisso não está mais disponível.' : d.mensagem || 'Não foi possível excluir.';
+    setHtml('ag107ExcMsg', esc(m));
   });
 }
 
@@ -52443,13 +52614,15 @@ function encerrarOk(){
 function formVazio(dia){
   return { modo: 'novo', id: null, versao: null, chave: null, ultimoHash: '', natureza: 'reuniao', titulo: '', data: dia || S.diaSel || hojeBR(), aDefinir: false, hi: '09:00', hf: '', status: 'previsto',
     resp: meuId(), parts: [], externos: [], local: '', plataforma: '', link: '', pauta: '', cliente: '', lembrete: 'ambos', projeto_id: null, gravacao_id: null, os: null, buscaOs: { termo: '', estado: '', itens: [] },
-    recorrente: false, rfim: '', rcor: '8', serie: null,
+    recorrente: false, rfim: '', rcor: '8', serie: null, statusOrig: '', reabrir: false, dataOs: false, horaOs: false, gravOrig: null,
     atualizarRef: false, permitirDup: false, enviando: false, erros: {}, msg: '', dup: null, conf: null, gen: 0, snapshot: null, acessoOrigem: true, divs: [] };
 }
 function formDeDetalhe(d, comRef){
   var c = d.compromisso, f = formVazio(c.data);
   f.modo = 'editar'; f.id = c.id; f.versao = c.versao; f.natureza = c.natureza; f.titulo = c.titulo; f.data = c.data; f.aDefinir = !c.hora_inicio; f.hi = c.hora_inicio || '09:00'; f.hf = c.hora_fim || '';
-  f.status = c.status; f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'ambos';
+  f.status = c.status; f.statusOrig = c.status; if(c.status === 'cancelado'){ f.status = 'previsto'; f.reabrir = true; }   // salvar um cancelado o reabre (Previsto/Confirmado), no mesmo registro
+  f.dataOs = d.data_controlada_os === true; f.horaOs = d.hora_controlada_os === true; f.gravOrig = c.gravacao_id || null;   // data/horário vindos da gravação da OS (decisão do servidor)
+  f.resp = c.responsavel_id; f.local = c.local || ''; f.plataforma = c.plataforma || ''; f.link = c.link || ''; f.pauta = c.pauta || ''; f.cliente = c.cliente || ''; f.lembrete = c.lembrete || 'ambos';
   f.projeto_id = c.projeto_id || null; f.gravacao_id = c.gravacao_id || null; f.snapshot = d.snapshot || null; f.acessoOrigem = !!d.acesso_origem; f.divs = divergencias(d.snapshot, d.origem_atual); f.atualizarRef = !!comRef;
   if(c.recorrencia){ f.recorrente = true; f.serie = c.recorrencia; f.rfim = c.recorrencia.fim || ''; f.rcor = c.recorrencia.cor ? String(c.recorrencia.cor) : ''; f.data = c.recorrencia.primeira || c.data; }
   (d.participantes || []).forEach(function(p){
@@ -52585,21 +52758,42 @@ function htmlRecorrencia(f){
   if(f.recorrente){
     h += '<div class="ag-form" style="margin-top:8px"><label>Repetir até (opcional, inclusive)<input type="date" data-f="rfim" value="' + esc(f.rfim) + '"' + (f.serie && f.serie.encerrada_em ? ' disabled' : '') + '>' + e('rfim') + '</label>'
       + htmlSelCampo('rcor', f, e('rcor')) + '</div>';
-    if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso não muda e a data final só pode ser ampliada. Para parar a série mantendo o histórico, use “Encerrar série” nos detalhes.</div>';
+    if(f.serie) h += '<div class="ag-vazio" style="margin-top:6px">Série já criada: a data do primeiro compromisso pode ser corrigida (move a série inteira) e a data final só pode ser ampliada. Para parar a série mantendo o histórico, use “Encerrar série” nos detalhes.</div>';
     else h += '<div class="ag-vazio" style="margin-top:6px">Sem data final a série continua até ser encerrada. Participantes e lembretes valem para todas as ocorrências (avisos só dentro do ZIP OS).</div>';
   }
   return h + '</div>';
 }
+// data/horário de início vindos da gravação da OS ficam travados enquanto a gravação de referência for a mesma (o servidor também recusa); desvincular a gravação libera
+function travaOs(f){ return f.modo === 'editar' && f.gravacao_id === f.gravOrig; }
+function htmlAvisosForm(f){
+  if(f.modo !== 'editar') return '';
+  var h = '', s = f.serie;
+  if(s){
+    h += '<div class="ag-aviso"><b>Esta alteração vale para a série inteira</b> (todas as ocorrências, inclusive as passadas). O antes e o depois ficam no histórico.';
+    if(parseYmd(f.data) && s.primeira && f.data !== s.primeira){
+      h += '<br>Mudar a data move toda a série: de <b>' + esc(fmtDiaSemana(s.primeira) + ' ' + fmtData(s.primeira)) + '</b> para <b>' + esc(fmtDiaSemana(f.data) + ' ' + fmtData(f.data)) + '</b>; as ocorrências passam a cair em ' + esc(fmtDiaSemana(f.data)) + '.';
+      if(s.fim && String(f.rfim || '').trim() === s.fim) h += ' A data final acompanha: ' + esc(fmtData(s.fim)) + ' → ' + esc(fmtData(addDias(s.fim, difDias(s.primeira, f.data)))) + '.';
+    }
+    if(s.encerrada_em) h += '<br>A série está encerrada e continua encerrada; mudam só a data, o horário e os demais campos.';
+    h += '</div>';
+  }
+  if(f.reabrir) h += '<div class="ag-aviso">Este compromisso está cancelado. Ao salvar ele é <b>reaberto</b> como Previsto ou Confirmado, no mesmo registro (sem duplicar), e os participantes são avisados da alteração.</div>';
+  else if(f.statusOrig === 'concluido') h += '<div class="ag-aviso">Compromisso concluído: para reabri-lo escolha Previsto ou Confirmado em Situação.</div>';
+  if(f.dataOs && travaOs(f)) h += '<div class="ag-aviso"><b>A data' + (f.horaOs ? ' e o horário de início vêm' : ' vem') + ' da gravação da OS.</b> Para reagendar, altere a gravação na própria OS. Só desvincular a gravação libera a data aqui.</div>';
+  return h;
+}
+function atualizarAvisosForm(){ var f = S.form; if(f) setHtml('ag107FormAv', htmlAvisosForm(f)); }
 function htmlForm(f){
   var er = f.erros || {}; function e(k){ return er[k] ? '<div class="ag-err">' + esc(er[k]) + '</div>' : ''; }
-  var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '"><h2>' + (f.modo === 'novo' ? 'Novo agendamento' : 'Editar compromisso') + '</h2>';
-  h += '<p class="muted" style="margin:0 0 10px">Dados <b>deste agendamento</b> — nada aqui altera a OS, o orçamento, as gravações ou o financeiro.</p><div class="ag-form">';
+  var tit = f.modo === 'novo' ? 'Novo agendamento' : (f.reabrir ? 'Reabrir e editar compromisso' : 'Editar / Remarcar compromisso'), lockD = f.dataOs && travaOs(f), lockH = f.horaOs && travaOs(f);
+  var h = '<div class="ag-ov" data-ag="fora"><div class="ag-box" role="dialog" aria-modal="true" aria-label="' + esc(tit) + '"><h2>' + esc(tit) + '</h2>';
+  h += '<p class="muted" style="margin:0 0 10px">Dados <b>deste agendamento</b> — nada aqui altera a OS, o orçamento, as gravações ou o financeiro.</p><div id="ag107FormAv">' + htmlAvisosForm(f) + '</div><div class="ag-form">';
   h += htmlSelCampo('natureza', f, e('natureza'));
   h += '<label>Situação<select data-f="status">' + opt('previsto', 'Previsto', f.status === 'previsto') + opt('confirmado', 'Confirmado', f.status === 'confirmado') + (f.modo === 'editar' && !f.serie ? opt('concluido', 'Concluído', f.status === 'concluido') : '') + '</select>' + e('status') + '</label>';
   h += '<label class="full">Título<input type="text" data-f="titulo" maxlength="160" value="' + esc(f.titulo) + '">' + e('titulo') + '</label>';
-  h += '<label>' + (f.recorrente ? 'Data do 1º compromisso' : 'Data') + '<input type="date" data-f="data" value="' + esc(f.data) + '"' + (f.serie ? ' disabled' : '') + '>' + e('data') + '</label>';
-  h += '<label class="ag-chk" style="align-self:end;padding-bottom:10px"><input type="checkbox" data-f="aDefinir"' + (f.aDefinir ? ' checked' : '') + '> Horário a definir</label>';
-  h += '<label>Início<input type="time" data-f="hi" value="' + esc(f.hi) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hi') + '</label>';
+  h += '<label>' + (f.recorrente ? 'Data do 1º compromisso' : 'Data') + '<input type="date" data-f="data" value="' + esc(f.data) + '"' + (lockD ? ' disabled' : '') + '>' + e('data') + '</label>';
+  h += '<label class="ag-chk" style="align-self:end;padding-bottom:10px"><input type="checkbox" data-f="aDefinir"' + (f.aDefinir ? ' checked' : '') + (lockH ? ' disabled' : '') + '> Horário a definir</label>';
+  h += '<label>Início<input type="time" data-f="hi" value="' + esc(f.hi) + '"' + (f.aDefinir || lockH ? ' disabled' : '') + '>' + e('hi') + '</label>';
   h += '<label>Fim (opcional)<input type="time" data-f="hf" value="' + esc(f.hf) + '"' + (f.aDefinir ? ' disabled' : '') + '>' + e('hf') + '</label>';
   h += '<label>Responsável pelo compromisso<select data-f="resp">' + opcoesResp(f) + '</select>' + e('responsavel_id') + '</label>';
   h += '<label>Lembrete<select data-f="lembrete">' + LEMB.map(function(x){ return opt(x[0], x[1], f.lembrete === x[0]); }).join('') + '</select></label>';
@@ -52771,10 +52965,11 @@ function acao(a, el){
     case 'fechar': fechar(); break;
     case 'fora': break;
     case 'copiar': copiar(); break;
-    case 'presenca': responder(el.getAttribute('data-r')); break;
     case 'editar': if(S.det) abrirForm(formDeDetalhe(S.det, false)); break;
     case 'editar-ref': if(S.det) abrirForm(formDeDetalhe(S.det, true)); break;
     case 'cancelar-ev': if(S.det){ S.cancChave = null; setHtml('ag107Modal', htmlCancelar(S.det.compromisso)); foco(); } break;
+    case 'excluir-ev': if(S.det && S.det.pode_excluir === true){ S.excChave = null; setHtml('ag107Modal', htmlExcluir(S.det.compromisso)); foco(); } break;
+    case 'excluir-ok': excluirOk(); break;
     case 'encerrar-serie': if(S.det && S.det.pode_encerrar_serie){ S.encChave = null; setHtml('ag107Modal', htmlEncerrar(S.det.compromisso, S.det.compromisso.recorrencia)); foco(); } break;
     case 'voltar-det': if(S.det) setHtml('ag107Modal', htmlDetalhe(S.det, S.confAviso, S.oc)); break;
     case 'cancelar-ok': cancelarOk(); break;
@@ -52821,8 +53016,9 @@ function onChange(ev){
   if(!campo) return;
   if(campo === 'recorrente'){ if(f.serie){ t.checked = true; return; } f.recorrente = !!t.checked; setHtml('ag107Modal', htmlForm(f)); if(f.projeto_id && f.os) pintarFormPartes(); agendarConflitos(); return; }
   if(campo === 'aDefinir' || campo === 'atualizarRef'){ f[campo] = !!t.checked; if(campo === 'aDefinir'){ var a = $('ag107Modal'); try { var ins = a.querySelectorAll('[data-f="hi"],[data-f="hf"]'); for(var i = 0; i < ins.length; i++) ins[i].disabled = f.aDefinir; } catch(e){} agendarConflitos(); } return; }
-  if(campo === 'gravacao_id'){ f.gravacao_id = t.value || null; pintarFormPartes(); return; }
+  if(campo === 'gravacao_id'){ f.gravacao_id = t.value || null; if(f.dataOs){ setHtml('ag107Modal', htmlForm(f)); } pintarFormPartes(); return; }   // vincular/desvincular a gravação trava/libera data e horário
   f[campo] = t.value;
+  if(campo === 'data' || campo === 'rfim') atualizarAvisosForm();
   if(campo === 'data' || campo === 'hi' || campo === 'hf' || campo === 'resp' || campo === 'rfim'){ if(campo === 'resp'){ var k2 = f.parts.indexOf(f.resp); if(k2 >= 0) f.parts.splice(k2, 1); setHtml('ag107Parts', htmlParticipantes(f)); } agendarConflitos(); }
 }
 function onInput(ev){
@@ -52834,6 +53030,7 @@ function onInput(ev){
   if(campo === 'buscaOs'){ f.buscaOs.termo = t.value; buscarOs(); return; }
   if(campo === 'aDefinir' || campo === 'atualizarRef' || campo === 'gravacao_id' || campo === 'recorrente') return;
   f[campo] = t.value;
+  if(campo === 'data' || campo === 'rfim') atualizarAvisosForm();
   if(campo === 'hi' || campo === 'hf' || campo === 'data' || campo === 'rfim') agendarConflitos();
 }
 function onKey(ev){ if(onKeySel(ev)) return; if(ev.key === 'Escape'){ ocultarPrev(); if(S.modal && S.modal !== 'form') fechar(); } }   // Esc não fecha o formulário (evita perder o que foi digitado)
@@ -52903,7 +53100,8 @@ return {
     carregarSem: carregarSem, carregarMes: carregarMes, contarNaoLidas: contarNaoLidas, listar: listar, ehFonte: ehFonte, textoFonte: textoFonte, itensDoDia: itensDoDia, faixasDia: faixasDia, rotuloFaixa: rotuloFaixa, chip: chip, htmlLegenda: htmlLegenda, htmlPrev: htmlPrev, htmlFonte: htmlFonte,
     abrirFonte: abrirFonte, mostrarPrev: mostrarPrev, ocultarPrev: ocultarPrev, onPvOver: onPvOver, onPvOut: onPvOut, onPvFocus: onPvFocus, recarregarSeVelha: recarregarSeVelha, recarregarTudo: recarregarTudo, abrirDetalhe: abrirDetalhe, abrirAvisos: abrirAvisos, abrirForm: abrirForm, salvar: salvar, cancelarOk: cancelarOk, buscarOs: buscarOs,
     carregarResumoOs: carregarResumoOs, agendarConflitos: agendarConflitos, onClick: onClick, onChange: onChange, onInput: onInput, acao: acao, pintar: pintar, aoPerfil: aoPerfil, ligar: ligar, novoEstado: novoEstado, getS: function(){ return S; }, setS: function(x){ S = x; }, erroTexto: erroTexto, msgFalha: msgFalha, novaChave: novaChave,
-    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar, recVis: recVis, htmlSelBox: htmlSelBox, htmlSelCampo: htmlSelCampo, escolherSel: escolherSel, onKeySel: onKeySel, ehEntrega: ehEntrega },
+    podeAgenda: podeAgenda, chaveItem: chaveItem, splitChave: splitChave, clsCor: clsCor, corRec: corRec, proximaOcorrencia: proximaOcorrencia, semanasSerie: semanasSerie, textoSerie: textoSerie, htmlEncerrar: htmlEncerrar, encerrarOk: encerrarOk, htmlRecorrencia: htmlRecorrencia, htmlCancelar: htmlCancelar, recVis: recVis, htmlSelBox: htmlSelBox, htmlSelCampo: htmlSelCampo, escolherSel: escolherSel, onKeySel: onKeySel, ehEntrega: ehEntrega,
+    htmlExcluir: htmlExcluir, excluirOk: excluirOk, linhaHist: linhaHist, htmlAvisosForm: htmlAvisosForm, difDias: difDias, travaOs: travaOs },
   entrar: entrar, sair: sair
 };
 }).call(this);

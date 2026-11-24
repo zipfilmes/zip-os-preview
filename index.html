@@ -960,7 +960,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.0 · Agenda e Recebimentos</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.3.1 · Agenda e Recebimentos</div>
 </aside>
 
 <main class="main">
@@ -37976,14 +37976,13 @@ function foRenderHistorico(){
   el.innerHTML = '<table class="table" style="width:100%"><tr style="position:sticky;top:0;z-index:1"><th>OS</th><th>Cliente</th><th>Nº NF</th><th>Atendimento</th><th>Status</th><th class="money">Valor</th><th>Recebido</th><th>Data</th></tr>'
     + rows.map(function(l){
       var semP = l.situacao === 'sem_parcelas', pct = foPctPago(l);
-      return '<tr data-os="' + foEsc(l.os) + '" style="cursor:pointer" onclick="foCliqueHistorico(this)"><td style="font-size:11px;color:var(--muted)"><b>' + foEsc(l.os) + '</b></td><td style="font-weight:700">' + foEsc(l.cliente || '(cliente não legível)') + '</td>'
+      return '<tr data-os="' + foEsc(l.os) + '" style="cursor:pointer" onclick="foCliqueLinha(this)"><td style="font-size:11px;color:var(--muted)"><b>' + foEsc(l.os) + '</b></td><td style="font-weight:700">' + foEsc(l.cliente || '(cliente não legível)') + '</td>'
         + '<td style="font-size:12px;color:var(--muted)">' + foEsc(foNumerosNF(l.id)) + '</td><td>' + foEsc(foNomeAtendimento(l)) + '</td>'
         + '<td><span class="badge ' + (stCls[l.statusProjeto] || '') + '">' + (l.statusProjeto === 'Perda' ? '💀 Perda' : foEsc(l.statusProjeto)) + '</span></td>'
         + '<td class="money">' + (semP ? '—' : foBRLc(l.prevC)) + '</td><td style="font-weight:700;color:' + (pct >= 100 ? 'var(--green)' : pct > 0 ? '#0891b2' : '#d97706') + '">' + (semP ? '—' : pct + '%') + '</td>'
         + '<td style="font-size:12px;color:var(--muted)">' + (l.criadoSP ? crDataBR(l.criadoSP) : 'sem data') + '</td></tr>'; }).join('') + '</table>';
 }
 function foCliqueLinha(tr){ var os = tr && tr.getAttribute ? tr.getAttribute('data-os') : ''; if(os) abrirProntuarioFin(os); }
-function foCliqueHistorico(tr){ var os = tr && tr.getAttribute ? tr.getAttribute('data-os') : ''; if(os) foIrReceber(os); }
 renderContasReceberReais = function(){ foRenderReceber(); };
 renderHistoricoFinanceiroReal = function(){ foRenderHistorico(); };
 FO_REPINTORES.push(foRenderReceber, foRenderHistorico);

@@ -197,7 +197,6 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 .cg-table tr:last-child td{border-bottom:0}
 .cg-table tbody tr{cursor:pointer}
 .cg-table tbody tr.cg-sel{background:#eff6ff;box-shadow:inset 3px 0 0 #1e3a5f}
-.cg-ord{width:34px;text-align:center;font-weight:800;color:var(--muted);font-size:12px}
 .cg-inp{width:100%;margin-top:0;padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:#fff}
 .cg-inp:focus{outline:2px solid #bfdbfe;border-color:#93c5fd}
 .cg-ta{min-height:0;height:62px;resize:vertical;line-height:1.4}
@@ -207,6 +206,26 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 .cg-status-sel.cg-adiado{border-color:#93c5fd}
 .cg-empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px}
 .cg-hint{font-size:12px;color:var(--muted);margin:10px 0 0}
+#modalCronogramaFull{padding:8px!important;box-sizing:border-box}
+#modalCronogramaFull .modalbox{width:calc(100vw - 16px)!important;max-width:none!important;min-width:0;box-sizing:border-box;margin:0 auto;max-height:calc(100vh - 16px)!important;max-height:calc(100dvh - 16px)!important;overflow-y:auto;overflow-x:hidden}
+.cg-tablewrap{max-width:100%;max-height:max(220px,calc(100vh - 300px));max-height:max(220px,calc(100dvh - 300px))}
+.cg-table{min-width:1060px}
+.cg-alca-th{width:38px}
+.cg-th-cena{min-width:64px}
+.cg-th-tempo{min-width:76px}
+.cg-alca-td{width:38px;padding:6px 3px!important;text-align:center;vertical-align:middle!important}
+.cg-alca{touch-action:none;cursor:grab;background:none;border:1px solid transparent;border-radius:8px;color:var(--muted);font-size:18px;line-height:1;width:32px;height:32px;padding:0;user-select:none;-webkit-user-select:none}
+.cg-alca:hover{background:#eff6ff;color:#1e3a5f;border-color:var(--line)}
+.cg-alca:focus-visible{outline:2px solid #3b82f6;outline-offset:1px}
+.cg-alca:active{cursor:grabbing}
+.cg-alca:disabled{opacity:.45;cursor:not-allowed;background:none}
+.cg-ordenando,.cg-ordenando *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+.cg-table tbody tr.cg-arrastando{opacity:.55;background:#dbeafe}
+.cg-table tbody tr.cg-ins-antes td{box-shadow:inset 0 3px 0 #3b82f6}
+.cg-table tbody tr.cg-ins-depois td{box-shadow:inset 0 -3px 0 #3b82f6}
+.cg-cena{text-align:center;font-weight:800}
+.cg-tempo{min-width:0}
+@media(max-width:600px){#modalCronogramaFull{padding:4px!important}#modalCronogramaFull .modalbox{width:calc(100vw - 8px)!important;max-height:calc(100vh - 8px)!important;max-height:calc(100dvh - 8px)!important;padding:12px}#modalCronogramaFull .cg-toolbar input{min-width:0!important;flex:1 1 100%!important}.cg-tablewrap{max-height:max(220px,calc(100dvh - 380px))}}
 @media(max-width:900px){.cg-resumo{grid-template-columns:1fr 1fr}}
 
 /* ═══════════ V7.15.1 — Cronograma (esq.) + Direitos de imagem (dir.), meia tela cada ═══════════ */
@@ -221,6 +240,18 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 
 /* ===== V8.3.0 CLIENTES PARTE 5.3 — prontuario real. Classes com prefixo zpc-,
    escopadas ao modulo Clientes. Nenhuma regra global alterada. ===== */
+.zcg-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.zcg-form .zcg-full{grid-column:1 / -1}
+.zcg-form input{width:100%;box-sizing:border-box;min-width:0}
+.zcg-busca{width:100%;box-sizing:border-box;margin-bottom:8px}
+.zcg-lista{max-height:280px;overflow-y:auto;border-top:1px solid var(--line)}
+.zcg-item{padding:8px 4px;border-bottom:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+.zcg-item .zcg-nome{font-weight:600}
+.zcg-item .zcg-tel{display:block}
+.zcg-item .zcg-desc{display:block;color:var(--muted);font-size:12px}
+.zcg-msg{font-size:12px;min-height:16px;margin:4px 0 0}
+.zcg-mais{margin:8px auto 4px;display:block}
+@media (max-width:640px){.zcg-form{grid-template-columns:1fr}}
 .zpc-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .zpc-titulo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .zpc-acoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -963,7 +994,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.6.1 · Templates Personalizados</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.0 · Cronograma de Gravação</div>
 </aside>
 
 <main class="main">
@@ -3408,10 +3439,8 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
 <div class="cg-toolbar">
  <button type="button" class="btn" style="background:#1e3a5f;font-size:13px" onclick="adicionarItemCronograma()">＋ Adicionar item</button>
  <button type="button" class="btn btn2" style="font-size:13px" onclick="duplicarLinhaCronograma()">⧉ Duplicar linha</button>
- <button type="button" class="btn btn2" style="font-size:13px" onclick="moverLinhaCronograma(-1)">Mover ↑</button>
- <button type="button" class="btn btn2" style="font-size:13px" onclick="moverLinhaCronograma(1)">Mover ↓</button>
  <button type="button" class="btn btn2" style="font-size:13px;color:var(--red)" onclick="excluirLinhaCronograma()">🗑️ Excluir linha</button>
- <input id="cgBusca" type="text" placeholder="Buscar cena, local, pessoa..." style="flex:1;min-width:220px" oninput="renderTabelaCronograma()">
+ <input id="cgBusca" type="text" placeholder="Buscar cena, tempo, local, pessoa..." style="flex:1;min-width:220px" oninput="renderTabelaCronograma()">
  <select id="cgFiltroStatus" onchange="renderTabelaCronograma()">
   <option value="">Todos os status</option>
   <option value="Pendente">Pendente</option>
@@ -3424,20 +3453,22 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
  <table class="cg-table">
   <thead>
    <tr>
-    <th class="cg-ord">#</th>
-    <th style="min-width:150px">Dia</th>
-    <th style="min-width:145px">Horário</th>
-    <th style="min-width:180px">Local / endereço</th>
-    <th style="min-width:300px">Cena / descrição</th>
-    <th style="min-width:160px">Elenco</th>
-    <th style="min-width:125px">Status</th>
-    <th style="min-width:180px">Obs.</th>
+    <th class="cg-alca-th" aria-label="Reordenar"></th>
+    <th class="cg-th-cena">Cena</th>
+    <th class="cg-th-tempo">Tempo</th>
+    <th style="min-width:112px">Dia</th>
+    <th style="min-width:113px">Horário</th>
+    <th style="min-width:137px">Local / endereço</th>
+    <th style="min-width:215px">Descrição</th>
+    <th style="min-width:112px">Elenco</th>
+    <th style="min-width:100px">Status</th>
+    <th style="min-width:137px">Obs.</th>
    </tr>
   </thead>
   <tbody id="cgTbody"></tbody>
  </table>
 </div>
-<p class="cg-hint">Clique em uma linha para selecioná-la antes de duplicar, mover ou excluir. O horário é formatado automaticamente ao sair do campo (ex.: <b>0900 0930</b> vira <b>09:00 – 09:30</b>).</p>
+<p class="cg-hint">Clique em uma linha para selecioná-la antes de duplicar ou excluir. Para reordenar, arraste a alça <b>⠿</b> (mouse ou toque) ou, com a alça em foco, use as setas ↑ ↓ do teclado; a ordem só vale depois de <b>Salvar cronograma</b>. O horário é formatado automaticamente ao sair do campo (ex.: <b>0900 0930</b> vira <b>09:00 – 09:30</b>).</p>
 
 <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
  <button class="btn btn2" onclick="fecharCronogramaSeguro()">Cancelar</button>
@@ -22748,6 +22779,10 @@ function _construirProntuarioClienteReal(cli){
   _zpcLinha(cEnd._corpo, 'CEP', _soDigitosCli(cli.cep).length === 8 ? _formatarCepCli(cli.cep) : '—');
   g.appendChild(cEnd);
 
+  // C4. Contatos da gravação (117) — ao lado de Endereço; ausente para perfis sem leitura de Clientes.
+  var cGrav = _zpcCardContatosGravacao();
+  if(cGrav) g.appendChild(cGrav);
+
   // 1.5.0.2: card "Dados bancários" removido do detalhe do CLIENTE (colunas preservadas no banco).
 
   root.appendChild(g);
@@ -22778,6 +22813,213 @@ function _construirProntuarioClienteReal(cli){
 }
 
 // ---- Abertura do prontuário real -------------------------------------------
+// ===== Contatos da gravação (117) ==========================================
+var _ZCG_PAGINA = 30;
+var _ZCG_TEL_RE = /^[0-9+()./#*,;xX -]{3,30}$/;
+var _zcgEst = { no:null, tok:null, id:'', uid:'', busca:'', offset:0, fim:true, seq:0,
+                carregando:false, salvando:false, chave:'', assin:'', timer:null, ui:null };
+
+function _zcgUid(){
+  return (typeof currentUser !== 'undefined' && currentUser && currentUser.id) ? String(currentUser.id) : '';
+}
+
+// Único ponto de acesso ao cliente Supabase deste módulo.
+function _zcgRpc(nome, args){
+  return supabaseClient.rpc(nome,args).then(function(r){
+    if(r.error) throw new Error('rpc');
+    if(!Array.isArray(r.data)) throw new Error('resposta');
+    return r.data;
+  });
+}
+
+function _zcgCtx(){
+  return { seq:_zcgEst.seq, tok:_zcgEst.tok, id:_zcgEst.id, no:_zcgEst.no, uid:_zcgEst.uid };
+}
+
+// Resposta tardia só vale para o mesmo cliente, nó, conta, token e consulta.
+function _zcgCtxValido(c, consulta){
+  if(!c || !c.no || !c.id) return false;
+  if((consulta && c.seq !== _zcgEst.seq) || c.no !== _zcgEst.no || !c.no.isConnected) return false;
+  if(_zcgUid() === '' || _zcgUid() !== c.uid) return false;
+  if(!_zpcDetalheValido(c.tok, c.id)) return false;
+  return perfilAtualPodeLerClientesReal();
+}
+
+function _zcgMsg(texto, erro){
+  if(!_zcgEst.ui) return;
+  _zcgEst.ui.msg.textContent = texto || '';
+  _zcgEst.ui.msg.style.color = erro ? 'var(--red)' : 'var(--muted)';
+}
+
+function _zcgLinha(r){
+  var d = document.createElement('div');
+  d.className = 'zcg-item';
+  var n = document.createElement('span');
+  n.className = 'zcg-nome';
+  n.textContent = String(r.nome == null ? '' : r.nome);
+  d.appendChild(n);
+  var t = document.createElement('span');
+  t.className = 'zcg-tel';
+  t.textContent = String(r.telefone == null ? '' : r.telefone);
+  d.appendChild(t);
+  if(r.descricao){
+    var s = document.createElement('span');
+    s.className = 'zcg-desc';
+    s.textContent = String(r.descricao);
+    d.appendChild(s);
+  }
+  return d;
+}
+
+function _zcgCarregar(reset){
+  var e = _zcgEst;
+  if(!e.no || !e.id || !e.ui) return;
+  if(reset){
+    e.seq++; e.offset = 0; e.fim = false; e.carregando = false;
+    e.ui.lista.textContent = '';
+  } else if(e.carregando || e.fim) return;
+  var ctx = _zcgCtx();
+  var busca = e.busca;
+  var off = e.offset;
+  e.carregando = true;
+  e.ui.mais.style.display = 'none';
+  e.ui.mais.textContent = 'Carregar mais';
+  _zcgMsg(off === 0 ? 'Carregando…' : '', false);
+  _zcgRpc('cliente_contatos_gravacao_listar', { p_cliente_id: ctx.id, p_busca: busca, p_offset: off })
+    .then(function(rows){
+      if(!_zcgCtxValido(ctx,true)) return;
+      rows = Array.isArray(rows) ? rows : [];
+      var mostrar = rows.slice(0, _ZCG_PAGINA);
+      for(var i = 0; i < mostrar.length; i++) e.ui.lista.appendChild(_zcgLinha(mostrar[i]));
+      e.offset = off + mostrar.length;
+      e.fim = rows.length <= _ZCG_PAGINA;
+      e.carregando = false;
+      e.ui.mais.style.display = e.fim ? 'none' : '';
+      if(e.offset === 0) _zcgMsg(busca ? 'Nenhum contato encontrado.' : 'Nenhum contato cadastrado.', false);
+      else _zcgMsg('', false);
+    })
+    .catch(function(){
+      if(!_zcgCtxValido(ctx,true)) return;
+      e.carregando = false;
+      e.ui.mais.textContent = 'Tentar novamente';
+      e.ui.mais.style.display = '';
+      _zcgMsg('Não foi possível carregar os contatos.', true);
+    });
+}
+
+function _zcgSalvar(){
+  var e = _zcgEst;
+  if(e.salvando || !e.no || !e.id || !e.ui) return;
+  if(!perfilAtualPodeEscreverClientesReal()) return;
+  var nome = e.ui.nome.value.trim();
+  var tel = e.ui.tel.value.trim();
+  var desc = e.ui.desc.value.trim();
+  if(!nome || nome.length > 120){ _zcgMsg('Informe o nome (até 120 caracteres).', true); return; }
+  if(!_ZCG_TEL_RE.test(tel) || !/[0-9]/.test(tel)){ _zcgMsg('Informe um telefone válido (até 30 caracteres).', true); return; }
+  if(desc.length > 160){ _zcgMsg('Descrição com no máximo 160 caracteres.', true); return; }
+  var assin = [e.id, nome, tel, desc].join('\u0001');
+  if(assin !== e.assin){ e.assin = assin; e.chave = _novoUuidAtendimentoReal(); }   // mesma chave ao repetir o mesmo pedido
+  if(!e.chave){ e.assin = ''; _zcgMsg('Não foi possível iniciar o cadastro.',true); return; }
+  var ctx = _zcgCtx();
+  var chave = e.chave;
+  e.salvando = true;
+  [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = true;});
+  _zcgMsg('Salvando…', false);
+  _zcgRpc('cliente_contato_gravacao_adicionar',
+          { p_cliente_id: ctx.id, p_chave: chave, p_nome: nome, p_telefone: tel, p_descricao: desc })
+    .then(function(){
+      if(!_zcgCtxValido(ctx)) return;
+      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = false;});
+      e.chave = ''; e.assin = '';
+      e.ui.nome.value = ''; e.ui.tel.value = ''; e.ui.desc.value = '';
+      _zcgCarregar(true);
+      _zcgMsg('Contato adicionado.', false);
+    })
+    .catch(function(){
+      if(!_zcgCtxValido(ctx)) return;
+      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = false;});
+      _zcgMsg('Não foi possível salvar. Tente novamente.', true);
+    });
+}
+
+function _zpcCardContatosGravacao(){
+  if(!perfilAtualPodeLerClientesReal()) return null;
+  var e = _zcgEst;
+  if(e.timer){ clearTimeout(e.timer); e.timer = null; }
+  var card = _zpcCard('📞', 'Contatos da gravação');
+  var corpo = card._corpo;
+  var ui = {};
+  e.seq++;                                  // invalida respostas do card anterior
+  e.no = card; e.tok = null; e.id = ''; e.uid = '';
+  e.busca = ''; e.offset = 0; e.fim = true; e.carregando = false; e.salvando = false;
+  e.chave = ''; e.assin = ''; e.ui = ui;
+
+  if(perfilAtualPodeEscreverClientesReal()){
+    var f = document.createElement('form');
+    f.className = 'zcg-form';
+    ui.nome = document.createElement('input');
+    ui.nome.type = 'text'; ui.nome.maxLength = 120; ui.nome.placeholder = 'Nome';
+    ui.nome.setAttribute('aria-label', 'Nome do contato'); ui.nome.autocomplete = 'off';
+    ui.tel = document.createElement('input');
+    ui.tel.type = 'tel'; ui.tel.maxLength = 30; ui.tel.placeholder = 'Telefone';
+    ui.tel.setAttribute('aria-label', 'Telefone do contato'); ui.tel.autocomplete = 'off';
+    ui.desc = document.createElement('input');
+    ui.desc.type = 'text'; ui.desc.maxLength = 160; ui.desc.placeholder = 'Descrição curta';
+    ui.desc.className = 'zcg-full';
+    ui.desc.setAttribute('aria-label', 'Descrição do contato'); ui.desc.autocomplete = 'off';
+    ui.btn = document.createElement('button');
+    ui.btn.type = 'submit'; ui.btn.className = 'btn zcg-full'; ui.btn.textContent = 'Adicionar contato';
+    f.addEventListener('submit', function(ev){ev.preventDefault(); _zcgSalvar();});
+    f.appendChild(ui.nome); f.appendChild(ui.tel); f.appendChild(ui.desc); f.appendChild(ui.btn);
+    corpo.appendChild(f);
+  }
+
+  ui.busca = document.createElement('input');
+  ui.busca.type = 'search'; ui.busca.className = 'zcg-busca'; ui.busca.maxLength = 100;
+  ui.busca.placeholder = 'Buscar por nome ou descrição';
+  ui.busca.setAttribute('aria-label', 'Buscar contatos da gravação'); ui.busca.autocomplete = 'off';
+  ui.busca.addEventListener('input', function(){
+    if(e.no !== card) return;
+    if(e.timer) clearTimeout(e.timer);
+    e.timer = setTimeout(function(){
+      e.timer = null;
+      if(e.no !== card || !card.isConnected) return;
+      e.busca = ui.busca.value.trim();
+      _zcgCarregar(true);
+    }, 300);
+  });
+  corpo.appendChild(ui.busca);
+
+  ui.msg = document.createElement('p');
+  ui.msg.className = 'zcg-msg muted';
+  ui.msg.setAttribute('role', 'status');
+  corpo.appendChild(ui.msg);
+
+  ui.lista = document.createElement('div');
+  ui.lista.className = 'zcg-lista';
+  ui.lista.addEventListener('scroll', function(){
+    if(e.no === card && card.isConnected && ui.lista.scrollTop + ui.lista.clientHeight >= ui.lista.scrollHeight - 24) _zcgCarregar(false);
+  });
+  corpo.appendChild(ui.lista);
+
+  ui.mais = document.createElement('button');
+  ui.mais.type = 'button'; ui.mais.className = 'btn zcg-mais'; ui.mais.textContent = 'Carregar mais';
+  ui.mais.style.display = 'none';
+  ui.mais.addEventListener('click', function(){ _zcgCarregar(false); });
+  corpo.appendChild(ui.mais);
+  return card;
+}
+
+// Chamado por abrirDetalheClienteReal após criar o token do detalhe.
+function _iniciarContatosGravacao(id, tok){
+  var e = _zcgEst;
+  if(!e.no || !e.ui || !e.no.isConnected) return;
+  if(!perfilAtualPodeLerClientesReal()) return;
+  e.id = String(id); e.tok = tok; e.uid = _zcgUid();
+  if(!e.uid) return;
+  _zcgCarregar(true);
+}
+
 function abrirDetalheClienteReal(id){
   if(estadoClientesReais.sourceMode !== 'real') return;      // só no modo real
   var box = document.getElementById('detalheClienteRealSomenteLeitura');
@@ -22800,6 +23042,7 @@ function abrirDetalheClienteReal(id){
   try { _carregarContatosClienteReal(cli.id, _tok); } catch(_e){}
   try { _carregarHistoricoClienteReal(cli.id, _tok); } catch(_e){}
   try { _carregarIndicador12mClienteReal(cli.id, _tok); } catch(_e){}
+  try { _iniciarContatosGravacao(cli.id, _tok); } catch(_e){}
 }
 // FIM DA PARTE 4 — CLIENTES
 // ============================================================
@@ -29097,7 +29340,9 @@ function novoIdCronogramaItem(){
 function novoItemCronograma(){
  // V7.15.2 — campos internos: 'cena' passa a concentrar cena + descrição.
  // 'pessoa' mantém o nome interno original (rótulo de exibição virou "Elenco").
- return {id:novoIdCronogramaItem(),dia:'',horario:'',local:'',cena:'',
+ // V1.7.x — numeroCena (banco: numero_cena) e tempo (banco: tempo) são colunas novas;
+ // 'cena' continua guardando a descrição completa (rótulo "Descrição").
+ return {id:novoIdCronogramaItem(),numeroCena:'',tempo:'',dia:'',horario:'',local:'',cena:'',
          pessoa:'',status:'Pendente',obs:''};
 }
 function normalizarItemCronograma(it){
@@ -29155,7 +29400,7 @@ function renderListaCronograma(os){
  var html=vis.map(function(it,i){
   var ok=it.status==='Gravado';
   var titulo=[cgDataBR(it.dia),it.horario].filter(Boolean).join(' • ')||('Item '+(i+1));
-  var sub=it.cena||it.local||'—';
+  var sub=(it.numeroCena?('Cena '+it.numeroCena+' · '):'')+(it.cena||it.local||'—');
   return '<div class="cg-mini-row">'
    +'<div class="cg-check'+(ok?' on':'')+'" title="Marcar como gravado" onclick="toggleCronogramaGravado(\''+pjJsArg(os)+'\',\''+pjJsArg(it.id)+'\')">'+(ok?'✓':'')+'</div>'
    +'<div style="min-width:0">'
@@ -29249,7 +29494,7 @@ function cgIndicePorId(id){
 function cgLinhaVisivel(it,busca,fstatus){
  if(fstatus&&it.status!==fstatus)return false;
  if(!busca)return true;
- var campos=[cgDataBR(it.dia),it.dia,it.horario,it.local,it.cena,it.pessoa,it.status,it.obs];
+ var campos=[it.numeroCena,it.tempo,cgDataBR(it.dia),it.dia,it.horario,it.local,it.cena,it.pessoa,it.status,it.obs];
  return campos.some(function(c){return String(c||'').toLowerCase().indexOf(busca)>=0;});
 }
 function cgSelectHTML(campo,valor,opcoes,classeExtra){
@@ -29264,6 +29509,7 @@ function cgInputHTML(campo,valor,tipo,placeholder){
 function renderTabelaCronograma(){
  var tb=document.getElementById('cgTbody');
  if(!tb)return;
+ if(cgDrag)cgArrasteAbortar();   // redesenhar no meio do gesto destruiria as linhas medidas
  var buscaEl=document.getElementById('cgBusca');
  var filtroEl=document.getElementById('cgFiltroStatus');
  var busca=buscaEl?(buscaEl.value||'').toLowerCase().trim():'';
@@ -29274,11 +29520,13 @@ function renderTabelaCronograma(){
   if(!cgLinhaVisivel(it,busca,fstatus))return;
   var sel=(cronogramaEditorSelecionado===it.id);
   linhas+='<tr data-id="'+pjIdAttr(it.id)+'"'+(sel?' class="cg-sel"':'')+'>'
-   +'<td class="cg-ord">'+(idx+1)+'</td>'
+   +'<td class="cg-alca-td"><button type="button" class="cg-alca" data-alca="1" aria-label="Reordenar a linha '+(idx+1)+' (arraste, ou use as setas do teclado)" title="Arraste para reordenar (ou use as setas ↑ ↓)">⠿</button></td>'
+   +'<td><input type="text" class="cg-inp cg-cena" data-campo="numeroCena" value="'+cgEsc(it.numeroCena)+'" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="01" aria-label="Cena"></td>'
+   +'<td><input type="text" class="cg-inp cg-tempo" data-campo="tempo" value="'+cgEsc(it.tempo)+'" maxlength="60" autocomplete="off" placeholder="0:00" aria-label="Tempo"></td>'
    +'<td>'+cgInputHTML('dia',it.dia,'date','')+'</td>'
    +'<td>'+cgInputHTML('horario',it.horario,'text','09:00 – 09:30')+'</td>'
    +'<td>'+cgInputHTML('local',it.local,'text','Fachada / Rua X, 120')+'</td>'
-   +'<td><textarea class="cg-inp cg-ta" data-campo="cena" placeholder="Bloco e o que precisa ser gravado...">'+cgEsc(it.cena)+'</textarea></td>'
+   +'<td><textarea class="cg-inp cg-ta" data-campo="cena" placeholder="Descrição: bloco e o que precisa ser gravado...">'+cgEsc(it.cena)+'</textarea></td>'
    +'<td>'+cgInputHTML('pessoa',it.pessoa,'text','Quem aparece')+'</td>'
    +'<td>'+cgSelectHTML('status',it.status,CRONOGRAMA_STATUS,'cg-status-sel cg-'+cgStatusClass(it.status))+'</td>'
    +'<td>'+cgInputHTML('obs',it.obs,'text','Observações')+'</td>'
@@ -29289,7 +29537,7 @@ function renderTabelaCronograma(){
   var vazio=cronogramaEditorItens.length
    ?'Nenhum item corresponde à busca ou ao filtro de status.'
    :'Nenhum item ainda. Clique em “＋ Adicionar item” para criar a primeira linha da shot list.';
-  linhas='<tr><td colspan="8" class="cg-empty">'+vazio+'</td></tr>';
+  linhas='<tr><td colspan="10" class="cg-empty">'+vazio+'</td></tr>';
  }
  tb.innerHTML=linhas;
 
@@ -29306,6 +29554,18 @@ function renderTabelaCronograma(){
   var tr=el.closest('tr');
   if(tr)cgBindCampoCronograma(el,tr.getAttribute('data-id'));
  });
+ // Alça de reordenação (ponteiro, toque e teclado), sempre pelo id real da linha
+ Array.prototype.forEach.call(tb.querySelectorAll('.cg-alca'),function(b){
+  var tr=b.closest('tr'),id=tr?tr.getAttribute('data-id'):null;
+  if(!id)return;
+  b.disabled=!!cgReordenacaoBloqueada();
+  b.addEventListener('pointerdown',function(ev){cgAlcaDown(ev,id,b);});
+  b.addEventListener('pointermove',cgAlcaMove);
+  b.addEventListener('pointerup',cgAlcaSoltar);
+  b.addEventListener('pointercancel',cgAlcaCancelar);
+  b.addEventListener('lostpointercapture',cgAlcaCancelar);
+  b.addEventListener('keydown',function(ev){cgAlcaTecla(ev,id);});
+ });
 
  atualizarResumoCronograma();
 }
@@ -29315,6 +29575,11 @@ function cgBindCampoCronograma(el,itemId){
  if(!it)return;
  var evento=(el.tagName==='SELECT')?'change':'input';
  el.addEventListener(evento,function(){
+  if(campo==='numeroCena'){
+   // Cena é texto de até 2 dígitos ASCII ("01" preserva o zero); vazio é permitido.
+   var san=cgSanearCena(el.value);
+   if(san!==el.value)el.value=san;
+  }
   it[campo]=el.value;
   cronogramaEditorSujo=true;
   if(campo==='status'){
@@ -29360,17 +29625,178 @@ function duplicarLinhaCronograma(){
  cronogramaEditorSujo=true;
  renderTabelaCronograma();
 }
-function moverLinhaCronograma(dir){
- if(!cgExigirSelecao())return;
- var idx=cgIndicePorId(cronogramaEditorSelecionado);
- var alvo=idx+dir;
- if(alvo<0||alvo>=cronogramaEditorItens.length)return;
- var tmp=cronogramaEditorItens[idx];
- cronogramaEditorItens[idx]=cronogramaEditorItens[alvo];
- cronogramaEditorItens[alvo]=tmp;
+// ---- Reordenação por alça (ponteiro/toque/teclado) ----
+// Tudo opera por ID real: com busca/filtro ativos a linha vai para a posição real da linha visível vizinha.
+// A ordem só é gravada em "Salvar cronograma". Reaproveita os helpers puros do Orçamento quando existem.
+var cgDrag=null;
+var CG_LIMIAR=5;   // px de movimento antes de o gesto virar arraste (abaixo disso é só clique)
+// persistencia.js sobrescreve: somente leitura ou gravação em andamento bloqueiam a reordenação.
+function cgReordenacaoBloqueada(){return false;}
+function cgSanearCena(v){return String(v==null?'':v).replace(/[^0-9]/g,'').slice(0,2);}
+function cgMoverArray(arr,de,para){
+ if(typeof coOrdMoverArray==='function')return coOrdMoverArray(arr,de,para);
+ if(!Array.isArray(arr)||Object.isFrozen(arr)||de===para||de<0||para<0||de>=arr.length||para>=arr.length)return false;
+ arr.splice(para,0,arr.splice(de,1)[0]);
+ return true;
+}
+function cgIdsVisiveis(){
+ var tb=document.getElementById('cgTbody');
+ return tb?Array.prototype.map.call(tb.querySelectorAll('tr[data-id]'),function(tr){return tr.getAttribute('data-id');}):[];
+}
+// Índice final do item "idDe" ao inseri-lo antes do t-ésimo visível (sem contá-lo) ou, se t = nº de outros, depois do último visível.
+function cgDestinoReal(ids,idDe,visiveis,t){
+ var outros=visiveis.filter(function(x){return x!==idDe;});
+ if(!outros.length)return -1;
+ var resto=ids.filter(function(x){return x!==idDe;});
+ return t<outros.length?resto.indexOf(outros[t]):(resto.indexOf(outros[outros.length-1])<0?-1:resto.indexOf(outros[outros.length-1])+1);
+}
+function cgMoverParaVisivel(id,t,visiveis){
+ if(cgReordenacaoBloqueada()||!cronogramaEditorOS)return false;
+ var de=cgIndicePorId(id);
+ if(de<0)return false;
+ var para=cgDestinoReal(cronogramaEditorItens.map(function(i){return i.id;}),id,visiveis,t);
+ if(t===visiveis.indexOf(id)||para<0||para===de)return false;
+ if(!cgMoverArray(cronogramaEditorItens,de,para))return false;
+ cronogramaEditorSelecionado=id;
  cronogramaEditorSujo=true;
  renderTabelaCronograma();
+ return true;
 }
+function cgFocarAlca(id){
+ var tb=document.getElementById('cgTbody');
+ if(!tb)return;
+ var bs=tb.querySelectorAll('.cg-alca');
+ for(var i=0;i<bs.length;i++){
+  var tr=bs[i].closest('tr');
+  if(tr&&tr.getAttribute('data-id')===id){if(!bs[i].disabled)bs[i].focus();return;}
+ }
+}
+// dir = -1 (sobe) ou +1 (desce) em relação ao vizinho VISÍVEL.
+function cgMoverUm(id,dir){
+ var vis=cgIdsVisiveis(),vi=vis.indexOf(id);
+ if(vi<0||vi+dir<0||vi+dir>=vis.length)return false;
+ return cgMoverParaVisivel(id,vi+dir,vis);
+}
+function moverLinhaCronograma(dir){   // mantida por compatibilidade; a toolbar não tem mais botões Mover
+ if(!cgExigirSelecao())return;
+ var id=cronogramaEditorSelecionado;
+ if(cgMoverUm(id,dir<0?-1:1))cgFocarAlca(id);
+}
+function cgAlcaTecla(ev,id){
+ if(cgDrag||(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown'))return;
+ ev.preventDefault();
+ if(cgReordenacaoBloqueada())return;
+ if(cgMoverUm(id,ev.key==='ArrowUp'?-1:1))cgFocarAlca(id);
+}
+function cgLinhasArraste(){
+ var tb=document.getElementById('cgTbody');
+ return tb?Array.prototype.slice.call(tb.querySelectorAll('tr[data-id]')):[];
+}
+function cgAlvoPorCentro(geo,de,centro){
+ if(typeof coOrdAlvoPorCentro==='function')return coOrdAlvoPorCentro(geo,de,centro);
+ var t=0;
+ for(var k=0;k<geo.length;k++){if(k===de)continue;if(geo[k].top+geo[k].h/2<centro)t++;}
+ return t;
+}
+function cgArrasteLimparVisual(){
+ var tb=document.getElementById('cgTbody');
+ if(tb)Array.prototype.forEach.call(tb.querySelectorAll('tr'),function(r){r.classList.remove('cg-arrastando','cg-ins-antes','cg-ins-depois');});
+ var w=document.querySelector('#modalCronogramaFull .cg-tablewrap');
+ if(w)w.classList.remove('cg-ordenando');
+}
+function cgArrasteParar(d){
+ if(d&&d.raf&&typeof cancelAnimationFrame==='function'){try{cancelAnimationFrame(d.raf);}catch(_e){}}
+ if(d)d.raf=0;
+}
+function cgArrasteAbortar(){
+ var d=cgDrag;cgDrag=null;
+ cgArrasteParar(d);cgArrasteLimparVisual();
+ if(d&&d.btn){try{d.btn.releasePointerCapture(d.pid);}catch(_e){}}
+}
+// O gesto só vale para a MESMA janela/OS, o MESMO item e a MESMA lista de itens, e sem bloqueio de leitura/gravação.
+function cgArrasteOk(d){
+ var m=document.getElementById('modalCronogramaFull');
+ if(!d||!m||!m.classList.contains('open')||cronogramaEditorOS!==d.os)return false;
+ if(cgReordenacaoBloqueada()||cronogramaEditorItens.length!==d.n||cgItemPorId(d.id)!==d.item)return false;
+ return !!(d.btn&&document.body.contains(d.btn));
+}
+function cgAlcaDown(ev,id,btn){
+ if(cgReordenacaoBloqueada()||!cronogramaEditorOS||(typeof ev.button==='number'&&ev.button>0))return;
+ if(cgDrag)cgArrasteAbortar();
+ cgDrag={fase:'espera',id:id,pid:ev.pointerId,x0:ev.clientX,y0:ev.clientY,y:ev.clientY,btn:btn,os:cronogramaEditorOS,
+         n:cronogramaEditorItens.length,item:cgItemPorId(id),t:0,vis:[],raf:0};
+ try{btn.setPointerCapture(ev.pointerId);}catch(_e){}
+ if(ev.cancelable)ev.preventDefault();
+}
+// Destino a partir do ponteiro e marcação visual (linha acima/abaixo onde o item vai cair).
+function cgArrasteAtualizar(d){
+ var rows=cgLinhasArraste();
+ var de=-1;
+ var geo=rows.map(function(r,i){
+  if(r.getAttribute('data-id')===d.id)de=i;
+  var b=r.getBoundingClientRect();
+  return {top:b.top,h:b.height};
+ });
+ if(de<0)return;
+ d.vis=rows.map(function(r){return r.getAttribute('data-id');});
+ d.t=cgAlvoPorCentro(geo,de,d.y);
+ rows.forEach(function(r){r.classList.remove('cg-ins-antes','cg-ins-depois');});
+ var outros=rows.filter(function(r,i){return i!==de;});
+ if(!outros.length)return;
+ if(d.t<outros.length)outros[d.t].classList.add('cg-ins-antes');
+ else outros[outros.length-1].classList.add('cg-ins-depois');
+}
+// Rolagem automática da tabela perto das bordas enquanto a linha é arrastada.
+function cgArrasteAuto(d){
+ if(cgDrag!==d||d.fase!=='arrastando')return;
+ var w=document.querySelector('#modalCronogramaFull .cg-tablewrap');
+ if(w){
+  var r=w.getBoundingClientRect(),z=44,v=0;
+  if(d.y<r.top+z)v=-Math.ceil((r.top+z-d.y)/z*14);
+  else if(d.y>r.bottom-z)v=Math.ceil((d.y-(r.bottom-z))/z*14);
+  if(v){var antes=w.scrollTop;w.scrollTop=antes+v;if(w.scrollTop!==antes)cgArrasteAtualizar(d);}
+ }
+ if(typeof requestAnimationFrame==='function')d.raf=requestAnimationFrame(function(){cgArrasteAuto(d);});
+}
+function cgAlcaMove(ev){
+ var d=cgDrag;
+ if(!d||ev.pointerId!==d.pid)return;
+ if(!cgArrasteOk(d)){cgArrasteAbortar();return;}
+ d.y=ev.clientY;
+ if(d.fase==='espera'){
+  var dx=ev.clientX-d.x0,dy=ev.clientY-d.y0;
+  if(dx*dx+dy*dy<CG_LIMIAR*CG_LIMIAR)return;   // ainda é um clique
+  var tr=d.btn.closest('tr'),w=document.querySelector('#modalCronogramaFull .cg-tablewrap');
+  if(!tr){cgArrasteAbortar();return;}
+  d.fase='arrastando';
+  tr.classList.add('cg-arrastando');
+  if(w)w.classList.add('cg-ordenando');
+  if(typeof requestAnimationFrame==='function')d.raf=requestAnimationFrame(function(){cgArrasteAuto(d);});
+ }
+ cgArrasteAtualizar(d);
+ if(ev.cancelable)ev.preventDefault();
+}
+function cgAlcaSoltar(ev){
+ var d=cgDrag;
+ if(!d||ev.pointerId!==d.pid)return;
+ if(d.fase==='espera'){cgArrasteAbortar();return;}   // clique sem movimento: nada é reordenado
+ if(!cgArrasteOk(d)){cgArrasteAbortar();return;}
+ if(typeof ev.clientY==='number'){d.y=ev.clientY;cgArrasteAtualizar(d);}
+ var id=d.id,t=d.t,vis=d.vis.slice();
+ cgArrasteAbortar();   // limpa o visual e solta a captura antes de redesenhar
+ if(cgMoverParaVisivel(id,t,vis))cgFocarAlca(id);
+}
+function cgAlcaCancelar(ev){   // outro ponteiro não cancela este
+ var d=cgDrag;
+ if(!d)return;
+ if(ev&&typeof ev.pointerId==='number'&&ev.pointerId!==d.pid)return;
+ cgArrasteAbortar();
+}
+if(typeof document!=='undefined'&&typeof document.addEventListener==='function'){
+ // Escape cancela só o arraste (sem fechar a janela por trás); perder o foco da janela também cancela
+ document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&cgDrag){ev.preventDefault();ev.stopPropagation();cgArrasteAbortar();}},true);
+}
+if(typeof window!=='undefined'&&typeof window.addEventListener==='function'){window.addEventListener('blur',function(){if(cgDrag)cgArrasteAbortar();});}
 function excluirLinhaCronograma(){
  if(!cgExigirSelecao())return;
  var idx=cgIndicePorId(cronogramaEditorSelecionado);
@@ -29383,104 +29809,141 @@ function excluirLinhaCronograma(){
  renderTabelaCronograma();
 }
 
-// ---- V7.15.4 — Impressão / PDF do Cronograma ----
-// Identidade visual replicada do modelo de referência:
-//   faixa do título #101828 · cabeçalho da tabela #176b72 (teal)
-//   zebra #fbfcfe · bordas #d9dee7 · A4 paisagem, margens 14mm
-// Colunas: Check (célula em branco, para marcar à caneta), Dia, Horário,
-// Local / Endereço, Cena e descrição, Elenco, Observações.
-// Status, prioridade e controles do editor NÃO aparecem no impresso.
-// Layout usa <table> (não CSS grid) para renderizar igual em qualquer motor de impressão.
-function imprimirCronogramaPDF(os){
- var lista=getCronogramaOS(os);
- if(!lista.length){alert('Não há itens no cronograma desta OS para imprimir.');return;}
- var p=projects.find(function(x){return x[0]===os;});
+// ---- Impressão / PDF do Cronograma ----
+// UM único gerador, chamado pela função original (abaixo) e pelo caminho efetivo (pdf-fabrica.js),
+// sempre com o "projects" do escopo de quem chama. Cabeçalho/folhas = exatamente os do contrato
+// (coDocContratoCabs + coDocCssBase), só com o título trocado para "Cronograma de gravação".
+// A4 paisagem; cab1 na primeira folha, cabN nas seguintes; cabeçalho de colunas repetido em TODAS as folhas.
+// Colunas: Check (em branco, para marcar à caneta), Cena, Tempo, Dia, Horário, Local / Endereço,
+// Descrição, Elenco, Observações. Status e controles do editor NÃO aparecem no impresso.
+// Todo dado do usuário passa por cgEsc; o script embutido é texto fixo (sem dados interpolados).
+function cgPrepararPdfCronograma(){
+ var tabela=document.querySelector('.cgp-tab');
+ var corpo=tabela.tBodies[0];
+ var limite=210*96/25.4-tabela.tHead.getBoundingClientRect().height-tabela.tFoot.getBoundingClientRect().height-35;
+ var longos=[6,7,8,9];
+ for(var linha=corpo.rows[0];linha;linha=linha.nextElementSibling){
+  if(linha.getBoundingClientRect().height<=limite)continue;
+  var restos=longos.map(function(k){return Array.from(linha.cells[k].textContent);});
+  var maior=Math.max.apply(null,restos.map(function(t){return t.length;}));
+  if(maior<2)continue;
+  function aplicar(qtd){
+   return restos.map(function(t,i){
+    var corte=Math.ceil(t.length*qtd/maior);
+    var pos=corte;
+    while(pos>Math.max(0,corte-24)&&pos<t.length&&!/\\s/.test(t[pos-1]))pos--;
+    if(pos>Math.max(0,corte-24))corte=pos;
+    linha.cells[longos[i]].textContent=t.slice(0,corte).join('');
+    return corte;
+   });
+  }
+  var lo=1,hi=maior-1;
+  while(lo<hi){
+   var meio=Math.ceil((lo+hi)/2);
+   aplicar(meio);
+   if(linha.getBoundingClientRect().height<=limite)lo=meio;
+   else hi=meio-1;
+  }
+  var cortes=aplicar(lo);
+  var seguinte=linha.cloneNode(true);
+  Array.prototype.forEach.call(seguinte.cells,function(c){c.textContent='';});
+  restos.forEach(function(t,i){seguinte.cells[longos[i]].textContent=t.slice(cortes[i]).join('');});
+  linha.after(seguinte);
+ }
+ var folhaOriginal=tabela.closest('.cgp-sheet');
+ var estrutura=tabela.cloneNode(false);
+ Array.prototype.forEach.call(tabela.children,function(c){
+  if(c!==corpo)estrutura.appendChild(c.cloneNode(true));
+ });
+ var alturas=Array.prototype.map.call(corpo.rows,function(r){return {row:r,altura:r.getBoundingClientRect().height};});
+ var destino,usado=0;
+ alturas.forEach(function(item){
+  if(!destino||usado+item.altura>limite){
+   var folha=folhaOriginal.cloneNode(false);
+   var nova=estrutura.cloneNode(true);
+   destino=nova.createTBody();
+   nova.appendChild(nova.tFoot);
+   folha.appendChild(nova);
+   folhaOriginal.before(folha);
+   usado=0;
+  }
+  destino.appendChild(item.row);
+  usado+=item.altura;
+ });
+ folhaOriginal.remove();
+ window.print();
+}
+function cgGerarHtmlPdfCronograma(os,lista,projectsArg,lay){
+ if(typeof coDocContratoCabs!=='function'||typeof coDocCssBase!=='function')return '';
+ var p=(projectsArg||[]).find(function(x){return x[0]===os;});
  var cliente=p?(p[1]||'—'):'—';
  var agencia=p?(p[2]||'—'):'—';
  var projeto=p?(p[3]||'—'):'—';
  var respProd=p?(p[8]||'—'):'—';
 
- var css=[
-  '*{box-sizing:border-box}',
-  'html,body{margin:0;padding:0}',
-  'body{font-family:Arial,Helvetica,sans-serif;color:#17202a;background:#e5e7eb;',
-   '-webkit-print-color-adjust:exact;print-color-adjust:exact}',
-  '.cgp-sheet{background:#fff;padding:11mm 14mm 12mm}',
-  /* Faixa do título */
-  '.cgp-faixa{background:#101828;color:#fff;padding:4.1mm 5mm;font-size:12pt;font-weight:bold;',
-   'letter-spacing:.6px;text-transform:uppercase;line-height:1.15}',
-  /* Linha única de informações da OS — 5 blocos lado a lado, sem divisórias internas */
-  '.cgp-info{width:100%;border-collapse:collapse;border:1px solid #d9dee7;background:#f4f6f8;',
-   'margin:1.6mm 0 1.9mm}',
-  '.cgp-info td{border:0;padding:1.7mm 4mm;vertical-align:top}',
-  '.cgp-rot{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;color:#667085;',
-   'line-height:1.1}',
-  '.cgp-val{font-size:8.6pt;font-weight:bold;color:#17202a;margin-top:1.1mm;line-height:1.15;word-wrap:break-word}',
-  /* Tabela */
-  '.cgp-tab{width:100%;border-collapse:collapse;table-layout:fixed}',
-  '.cgp-tab thead{display:table-header-group}',
-  '.cgp-tab tr{page-break-inside:avoid}',
-  '.cgp-tab th{background:#176b72;color:#fff;font-size:6.2pt;font-weight:bold;text-transform:uppercase;',
-   'letter-spacing:.5px;padding:2mm 1.7mm;text-align:left;border:1px solid #176b72}',
-  '.cgp-tab td{font-size:7.4pt;line-height:1.32;padding:2.1mm 1.7mm;border:1px solid #d9dee7;',
-   'vertical-align:top;word-wrap:break-word}',
-  '.cgp-tab tbody tr:nth-child(even) td{background:#fbfcfe}',
-  '.cgp-th-check{text-align:center}',
-  '.cgp-check{text-align:center;vertical-align:middle}',
-  '.cgp-dia,.cgp-hora{font-weight:bold;white-space:nowrap}',
+ var titulo='Cronograma de gravação';
+ var cab=coDocContratoCabs(os,lay||null).cab1.replace('Contrato de prestação de serviços',titulo);
+ var css=coDocCssBase()+[
   '@page{size:A4 landscape;margin:0}',
-  '@media screen{.cgp-sheet{width:297mm;min-height:210mm;margin:16px auto;box-shadow:0 2px 14px rgba(0,0,0,.18)}}',
-  '@media print{body{background:#fff}.cgp-sheet{width:auto;margin:0;box-shadow:none}}'
+  'html,body{margin:0;padding:0}',
+  '@media screen{.cgp-sheet{width:296.9mm;min-height:209.6mm;margin:16px auto;background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.18)}}',
+  '@media print{.cgp-sheet{width:296.9mm;margin:0;background:#fff;break-after:page}.cgp-sheet:last-child{break-after:auto}}',
+  '.cgp-tab{width:100%;border-collapse:collapse;table-layout:fixed}',
+  '.cgp-tab thead{display:table-row-group}',
+  '.cgp-tab tfoot{display:table-row-group}',
+  '.cgp-info{width:100%;border-collapse:collapse;border:1px solid #d9dee7;background:#f4f6f8;margin:2mm 0}',
+  '.cgp-info td{padding:1.7mm 4mm;vertical-align:top}',
+  '.cgp-rot{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;color:#667085}',
+  '.cgp-val{font-size:8.6pt;font-weight:bold;color:#17202a;margin-top:1mm;overflow-wrap:anywhere}',
+  '.cgp-colunas th{background:#176b72;color:#fff;font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;padding:2mm 1.4mm;text-align:left;border:1px solid #176b72}',
+  '.cgp-colunas .cgp-gutter,.cgp-gutter{background:#fff;border:none;padding:0}',
+  '.cgp-linha{break-inside:avoid;page-break-inside:avoid}',
+  '.cgp-linha td:not(.cgp-gutter){font-size:8pt;line-height:1.3;padding:2.1mm 1.7mm;border:1px solid #d9dee7;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}',
+  '.cgp-linha:nth-child(even) td:not(.cgp-gutter){background:#fbfcfe}',
+  '.cgp-cena,.cgp-check{text-align:center}',
+  '.cgp-dia,.cgp-hora{font-weight:bold}',
+  '.cgp-rodape{height:8mm}'
  ].join('');
-
- var infoCel=function(rot,val,largura){
-  return '<td style="width:'+largura+'%"><div class="cgp-rot">'+cgEsc(rot)+'</div>'
-   +'<div class="cgp-val">'+cgEsc(val)+'</div></td>';
- };
-
+ var info=[
+   ['OS',os],['Cliente',cliente],['Agência',agencia],['Projeto',projeto],['Responsável produção',respProd]
+ ].map(function(i){
+   return '<td><div class="cgp-rot">'+cgEsc(i[0])+'</div><div class="cgp-val">'+cgEsc(i[1])+'</div></td>';
+ }).join('');
+ var colunas=['Check','Cena','Tempo','Dia','Horário','Local / Endereço','Descrição','Elenco','Observações'];
+ var larguras=['14mm','4%','4%','6%','9%','10%','12%','25%','10%','10%','14mm'];
+ var cols=larguras.map(function(w){return '<col style="width:'+w+'">';}).join('');
+ var margem='<td class="cgp-gutter"></td>';
  var linhas=lista.map(function(it){
-  return '<tr>'
+  return '<tr class="cgp-linha">'+margem
    +'<td class="cgp-check"></td>'
+   +'<td class="cgp-cena">'+cgEsc(it.numeroCena)+'</td>'
+   +'<td>'+cgEsc(it.tempo)+'</td>'
    +'<td class="cgp-dia">'+cgEsc(cgDataBR(it.dia))+'</td>'
    +'<td class="cgp-hora">'+cgEsc(it.horario)+'</td>'
    +'<td>'+cgEsc(it.local)+'</td>'
    +'<td>'+cgEsc(it.cena)+'</td>'
    +'<td>'+cgEsc(it.pessoa)+'</td>'
-   +'<td>'+cgEsc(it.obs)+'</td>'
-   +'</tr>';
+   +'<td>'+cgEsc(it.obs)+'</td>'+margem+'</tr>';
  }).join('');
-
- var corpo=''
-  +'<div class="cgp-sheet">'
-  +'<div class="cgp-faixa">ZIP FILMES — Cronograma de gravação</div>'
-  +'<table class="cgp-info"><tr>'
-  +infoCel('OS',os,16)
-  +infoCel('Cliente',cliente,21)
-  +infoCel('Agência',agencia,17)
-  +infoCel('Projeto',projeto,24)
-  +infoCel('Responsável produção',respProd,22)
-  +'</tr></table>'
-  +'<table class="cgp-tab">'
-  +'<colgroup>'
-  +'<col style="width:4.5%"><col style="width:8.6%"><col style="width:9.9%"><col style="width:18.0%">'
-  +'<col style="width:27.1%"><col style="width:12.8%"><col style="width:19.1%">'
-  +'</colgroup>'
-  +'<thead><tr>'
-  +'<th class="cgp-th-check">Check</th><th>Dia</th><th>Horário</th><th>Local / Endereço</th>'
-  +'<th>Cena e descrição</th><th>Elenco</th><th>Observações</th>'
-  +'</tr></thead>'
-  +'<tbody>'+linhas+'</tbody>'
-  +'</table>'
-  +'</div>';
-
- var titulo='Cronograma de gravação — '+os;
- var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>'+cgEsc(titulo)+'</title>'
+ var corpo='<div class="cgp-sheet"><table class="cgp-tab"><colgroup>'+cols+'</colgroup><thead>'
+  +'<tr><td colspan="11">'+cab+'</td></tr>'
+  +'<tr>'+margem+'<td colspan="9"><table class="cgp-info"><tbody><tr>'+info+'</tr></tbody></table></td>'+margem+'</tr>'
+  +'<tr class="cgp-colunas"><th class="cgp-gutter"></th>'
+  +colunas.map(function(c){return '<th scope="col">'+c+'</th>';}).join('')
+  +'<th class="cgp-gutter"></th></tr></thead>'
+  +'<tfoot><tr><td class="cgp-rodape" colspan="11"></td></tr></tfoot>'
+  +'<tbody>'+linhas+'</tbody></table></div>';
+ return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>'+cgEsc(titulo+' — '+os)+'</title>'
   +'<style>'+css+'</style></head><body>'+corpo
-  +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print()},500)};</scr'+'ipt>'
-  +'</body></html>';
-
+  +'<scr'+'ipt>window.addEventListener("load",'+String(cgPrepararPdfCronograma)+');</scr'+'ipt></body></html>';
+}
+function imprimirCronogramaPDF(os){
+ var lista=getCronogramaOS(os);
+ if(!lista.length){alert('Não há itens no cronograma desta OS para imprimir.');return;}
+ var html=cgGerarHtmlPdfCronograma(os,lista,projects);
+ if(!html){alert('Cabeçalho do documento indisponível. Recarregue a página e tente de novo.');return;}
  var w=window.open('','_blank');
- if(!w){alert('Popup bloqueado. Permita popups para este site.');return;}
+ if(!w){alert('Popup bloqueado. Permita popups para este site.');return;}try{w.opener=null;}catch(_e){}
  w.document.open();w.document.write(html);w.document.close();
 }
 function imprimirCronogramaDoEditor(){
@@ -44361,91 +44824,9 @@ function opCriarEditores(projects){
   function imprimirCronogramaPDF(os){
    var lista=getCronogramaOS(os);
    if(!lista.length){alert('Não há itens no cronograma desta OS para imprimir.');return;}
-   var p=projects.find(function(x){return x[0]===os;});
-   var cliente=p?(p[1]||'—'):'—';
-   var agencia=p?(p[2]||'—'):'—';
-   var projeto=p?(p[3]||'—'):'—';
-   var respProd=p?(p[8]||'—'):'—';
-  
-   var css=[
-    '*{box-sizing:border-box}',
-    'html,body{margin:0;padding:0}',
-    'body{font-family:Arial,Helvetica,sans-serif;color:#17202a;background:#e5e7eb;',
-     '-webkit-print-color-adjust:exact;print-color-adjust:exact}',
-    '.cgp-sheet{background:#fff;padding:11mm 14mm 12mm}',
-    /* Faixa do título */
-    '.cgp-faixa{background:#101828;color:#fff;padding:4.1mm 5mm;font-size:12pt;font-weight:bold;',
-     'letter-spacing:.6px;text-transform:uppercase;line-height:1.15}',
-    /* Linha única de informações da OS — 5 blocos lado a lado, sem divisórias internas */
-    '.cgp-info{width:100%;border-collapse:collapse;border:1px solid #d9dee7;background:#f4f6f8;',
-     'margin:1.6mm 0 1.9mm}',
-    '.cgp-info td{border:0;padding:1.7mm 4mm;vertical-align:top}',
-    '.cgp-rot{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;color:#667085;',
-     'line-height:1.1}',
-    '.cgp-val{font-size:8.6pt;font-weight:bold;color:#17202a;margin-top:1.1mm;line-height:1.15;word-wrap:break-word}',
-    /* Tabela */
-    '.cgp-tab{width:100%;border-collapse:collapse;table-layout:fixed}',
-    '.cgp-tab thead{display:table-header-group}',
-    '.cgp-tab tr{page-break-inside:avoid}',
-    '.cgp-tab th{background:#176b72;color:#fff;font-size:6.2pt;font-weight:bold;text-transform:uppercase;',
-     'letter-spacing:.5px;padding:2mm 1.7mm;text-align:left;border:1px solid #176b72}',
-    '.cgp-tab td{font-size:7.4pt;line-height:1.32;padding:2.1mm 1.7mm;border:1px solid #d9dee7;',
-     'vertical-align:top;word-wrap:break-word}',
-    '.cgp-tab tbody tr:nth-child(even) td{background:#fbfcfe}',
-    '.cgp-th-check{text-align:center}',
-    '.cgp-check{text-align:center;vertical-align:middle}',
-    '.cgp-dia,.cgp-hora{font-weight:bold;white-space:nowrap}',
-    '@page{size:A4 landscape;margin:0}',
-    '@media screen{.cgp-sheet{width:297mm;min-height:210mm;margin:16px auto;box-shadow:0 2px 14px rgba(0,0,0,.18)}}',
-    '@media print{body{background:#fff}.cgp-sheet{width:auto;margin:0;box-shadow:none}}'
-   ].join('');
-  
-   var infoCel=function(rot,val,largura){
-    return '<td style="width:'+largura+'%"><div class="cgp-rot">'+cgEsc(rot)+'</div>'
-     +'<div class="cgp-val">'+cgEsc(val)+'</div></td>';
-   };
-  
-   var linhas=lista.map(function(it){
-    return '<tr>'
-     +'<td class="cgp-check"></td>'
-     +'<td class="cgp-dia">'+cgEsc(cgDataBR(it.dia))+'</td>'
-     +'<td class="cgp-hora">'+cgEsc(it.horario)+'</td>'
-     +'<td>'+cgEsc(it.local)+'</td>'
-     +'<td>'+cgEsc(it.cena)+'</td>'
-     +'<td>'+cgEsc(it.pessoa)+'</td>'
-     +'<td>'+cgEsc(it.obs)+'</td>'
-     +'</tr>';
-   }).join('');
-  
-   var corpo=''
-    +'<div class="cgp-sheet">'
-    +'<div class="cgp-faixa">ZIP FILMES — Cronograma de gravação</div>'
-    +'<table class="cgp-info"><tr>'
-    +infoCel('OS',os,16)
-    +infoCel('Cliente',cliente,21)
-    +infoCel('Agência',agencia,17)
-    +infoCel('Projeto',projeto,24)
-    +infoCel('Responsável produção',respProd,22)
-    +'</tr></table>'
-    +'<table class="cgp-tab">'
-    +'<colgroup>'
-    +'<col style="width:4.5%"><col style="width:8.6%"><col style="width:9.9%"><col style="width:18.0%">'
-    +'<col style="width:27.1%"><col style="width:12.8%"><col style="width:19.1%">'
-    +'</colgroup>'
-    +'<thead><tr>'
-    +'<th class="cgp-th-check">Check</th><th>Dia</th><th>Horário</th><th>Local / Endereço</th>'
-    +'<th>Cena e descrição</th><th>Elenco</th><th>Observações</th>'
-    +'</tr></thead>'
-    +'<tbody>'+linhas+'</tbody>'
-    +'</table>'
-    +'</div>';
-  
-   var titulo='Cronograma de gravação — '+os;
-   var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>'+cgEsc(titulo)+'</title>'
-    +'<style>'+css+'</style></head><body>'+corpo
-    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print()},500)};</scr'+'ipt>'
-    +'</body></html>';
-  
+   var html=cgGerarHtmlPdfCronograma(os,lista,projects);
+   if(!html){alert('Cabeçalho do documento indisponível. Recarregue a página e tente de novo.');return;}
+
    var w=window.open('','_blank');
    if(!w){alert('Popup bloqueado. Permita popups para este site.');return;}try{w.opener=null;}catch(_e){}
    w.document.open();w.document.write(html);w.document.close();
@@ -44606,11 +44987,13 @@ function opxLerCp(l, ok){
 function opxCgLinha(r){
   if(!r || !pjUuid(r.id) || !opxIso(r.atualizado_em) || !opxDataOk(r.data) || OPX_STATUS_CG.indexOf(r.status) < 0) return null;
   var h = opxTxt(r.horario), lo = opxTxt(r.local), ce = opxTxt(r.cena), el = opxTxt(r.elenco), ob = opxTxt(r.observacoes);
-  if(h === null || lo === null || ce === null || el === null || ob === null) return null;
-  return { id: r.id, dia: r.data || '', horario: h, local: lo, cena: ce, pessoa: el, status: r.status, obs: ob, v: r.atualizado_em };
+  var nc = opxTxt(r.numero_cena), tp = opxTxt(r.tempo);   // numero_cena: texto de 1–2 dígitos ASCII (preserva "01"); tempo: texto livre até 60; cena segue sendo a descrição
+  if(h === null || lo === null || ce === null || el === null || ob === null || nc === null || tp === null) return null;
+  if((nc !== '' && !/^[0-9]{1,2}$/.test(nc)) || tp.length > 60) return null;
+  return { id: r.id, numeroCena: nc, tempo: tp, dia: r.data || '', horario: h, local: lo, cena: ce, pessoa: el, status: r.status, obs: ob, v: r.atualizado_em };
 }
 function opxLerCg(l, ok){
-  return opxLerLista(ok, supabaseClient.from('cronograma_itens').select('id,ordem,data,horario,local,cena,elenco,status,observacoes,atualizado_em').eq('projeto_id', l.id).order('ordem', { ascending: true }).order('id', { ascending: true }).limit(OPX_LIM.cg + 1), OPX_LIM.cg, opxCgLinha);
+  return opxLerLista(ok, supabaseClient.from('cronograma_itens').select('id,ordem,data,horario,local,cena,numero_cena,tempo,elenco,status,observacoes,atualizado_em').eq('projeto_id', l.id).order('ordem', { ascending: true }).order('id', { ascending: true }).limit(OPX_LIM.cg + 1), OPX_LIM.cg, opxCgLinha);
 }
 // layout do termo: só valores conhecidos; o cabeçalho só entra se for imagem PNG/JPG/WebP em data URL (nunca texto solto dentro de src="")
 function opxLayout(s){
@@ -45059,14 +45442,16 @@ toggleCronogramaGravado = function(os, itemId){
 // ---- janela de edição ----
 function opxCgTravar(travar){   // enquanto grava a tabela não aceita digitação; ao liberar, respeita o modo somente leitura
   var m = pjDom('modalCronogramaFull'), ed = opx().cgEd; if(!m) return; var lib = !travar && !(ed && ed.leitura);
-  m.querySelectorAll('.cg-inp').forEach(function(el){ el.disabled = !lib; });
-  m.querySelectorAll('button').forEach(function(b){ var t = String(b.textContent || ''); if(t.indexOf('Adicionar item') >= 0 || t.indexOf('Duplicar linha') >= 0 || t.indexOf('Mover') >= 0 || t.indexOf('Excluir linha') >= 0){ b.disabled = !lib; b.style.opacity = lib ? '' : '0.5'; } });
+  m.querySelectorAll('.cg-inp, .cg-alca').forEach(function(el){ el.disabled = !lib; });
+  m.querySelectorAll('button').forEach(function(b){ var t = String(b.textContent || ''); if(t.indexOf('Adicionar item') >= 0 || t.indexOf('Duplicar linha') >= 0 || t.indexOf('Excluir linha') >= 0){ b.disabled = !lib; b.style.opacity = lib ? '' : '0.5'; } });
 }
+// reordenação (alça, setas do teclado, arraste): bloqueada em somente leitura e enquanto a gravação está em andamento
+cgReordenacaoBloqueada = function(){ var ed = opx().cgEd; return !!(ed && ed.leitura) || opxEditorOcupado('cg-salvar'); };
 function opxCgBloquear(leitura){
   var m = pjDom('modalCronogramaFull'); if(!m) return;
   m.querySelectorAll('button').forEach(function(b){
     var t = String(b.textContent || '');
-    if(t.indexOf('Adicionar item') >= 0 || t.indexOf('Duplicar linha') >= 0 || t.indexOf('Mover') >= 0 || t.indexOf('Excluir linha') >= 0 || t.indexOf('Salvar cronograma') >= 0){
+    if(t.indexOf('Adicionar item') >= 0 || t.indexOf('Duplicar linha') >= 0 || t.indexOf('Excluir linha') >= 0 || t.indexOf('Salvar cronograma') >= 0){
       b.disabled = !!leitura; b.style.opacity = leitura ? '0.5' : ''; b.title = leitura ? 'Somente leitura' : '';
     }
   });
@@ -45074,7 +45459,7 @@ function opxCgBloquear(leitura){
 var _opxRenderTabCg0 = renderTabelaCronograma;
 renderTabelaCronograma = function(){
   var r = _opxRenderTabCg0.apply(this, arguments), ed = opx().cgEd, m = pjDom('modalCronogramaFull');
-  if(ed && ed.leitura && m) m.querySelectorAll('.cg-inp').forEach(function(el){ el.disabled = true; });
+  if(ed && ed.leitura && m) m.querySelectorAll('.cg-inp, .cg-alca').forEach(function(el){ el.disabled = true; });
   return r;
 };
 abrirCronogramaEditor = function(os){
@@ -45103,7 +45488,7 @@ excluirLinhaCronograma = function(){
   });
 };
 function opxCgPayload(itens){
-  return itens.map(function(i){ return { id: i.id, data: i.dia || null, horario: i.horario, local: i.local, cena: i.cena, elenco: i.pessoa, status: i.status, observacoes: i.obs }; });
+  return itens.map(function(i){ return { id: i.id, numero_cena: i.numeroCena, tempo: i.tempo, data: i.dia || null, horario: i.horario, local: i.local, cena: i.cena, elenco: i.pessoa, status: i.status, observacoes: i.obs }; });
 }
 function opxCgValida(itens){
   if(itens.length > OPX_LIM.cg) return 'O cronograma aceita até ' + OPX_LIM.cg + ' itens.';
@@ -45113,6 +45498,8 @@ function opxCgValida(itens){
     if(i.dia && !opxDataOk(i.dia)) return n + 'data inválida.';
     if(OPX_STATUS_CG.indexOf(i.status) < 0) return n + 'status inválido.';
     if(i.horario.length > 60) return n + 'o horário aceita até 60 caracteres.';
+    if(i.numeroCena !== '' && !/^[0-9]{1,2}$/.test(i.numeroCena)) return n + 'a cena aceita até 2 dígitos (0–9).';
+    if(i.tempo.length > 60) return n + 'o tempo aceita até 60 caracteres.';
     if(i.local.length > 300 || i.pessoa.length > 300) return n + 'local e elenco aceitam até 300 caracteres.';
     if(i.cena.length > 4000 || i.obs.length > 2000) return n + 'cena (4.000) ou observações (2.000) acima do limite.';
   }
@@ -45139,7 +45526,7 @@ salvarCronograma = function(){
       var o = estadoPJ.op, ctx = opxCtx();
       return opxLerCg(g.l, function(){ return opxCtxOk(ctx, o); }).then(function(r){
         if(r === null || r.st !== 'ok') return 'indefinido';
-        var igual = r.itens.length === payload.length && r.itens.every(function(i, k){ var q = payload[k]; return i.id === q.id && i.dia === (q.data || '') && i.horario === q.horario && i.local === q.local && i.cena === q.cena && i.pessoa === q.elenco && i.status === q.status && i.obs === q.observacoes; });
+        var igual = r.itens.length === payload.length && r.itens.every(function(i, k){ var q = payload[k]; return i.id === q.id && i.numeroCena === q.numero_cena && i.tempo === q.tempo && i.dia === (q.data || '') && i.horario === q.horario && i.local === q.local && i.cena === q.cena && i.pessoa === q.elenco && i.status === q.status && i.obs === q.observacoes; });
         if(igual) return 'aplicado';
         var intacto = r.itens.length === base.length && r.itens.every(function(i, k){ return i.id === base[k].id && i.v === base[k].v; });
         return intacto ? 'nao_aplicado' : 'indefinido';

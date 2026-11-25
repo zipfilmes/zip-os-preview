@@ -994,7 +994,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.2 · Contatos da Gravação</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.3 · Contatos da Gravação</div>
 </aside>
 
 <main class="main">
@@ -22971,6 +22971,53 @@ function _zpcCardContatosGravacao(){
     ui.tel = document.createElement('input');
     ui.tel.type = 'tel'; ui.tel.maxLength = 30; ui.tel.placeholder = 'Telefone';
     ui.tel.setAttribute('aria-label', 'Telefone do contato'); ui.tel.autocomplete = 'off';
+    var telefoneAnterior = '';
+    ui.tel.addEventListener('input', function(ev){
+      var el = ui.tel;
+      var v = el.value;
+      // Preserva ramais e outros formatos já aceitos pelo cadastro.
+      if(/[xX/#*,;]/.test(v)){ telefoneAnterior = v; return; }
+      var pos = (el.selectionStart == null) ? v.length : el.selectionStart;
+      var tipo = ev.inputType;
+      var mesmosDigitos = _soDigitosCli(v) === _soDigitosCli(telefoneAnterior);
+      var i;
+      // Ao apagar um separador, remove o dígito no sentido da tecla.
+      if(tipo === 'deleteContentBackward' && v.length < telefoneAnterior.length && mesmosDigitos && v.includes('+') === telefoneAnterior.includes('+')){
+        for(i = pos - 1; i >= 0; i--){ if(/\d/.test(v.charAt(i))) break; }
+        if(i >= 0){ v = v.slice(0, i) + v.slice(i + 1); pos = i; }
+      } else if(tipo === 'deleteContentForward' && v.length < telefoneAnterior.length && mesmosDigitos && v.includes('+') === telefoneAnterior.includes('+')){
+        for(i = pos; i < v.length; i++){ if(/\d/.test(v.charAt(i))) break; }
+        if(i < v.length){ v = v.slice(0, i) + v.slice(i + 1); }
+      }
+      var digitosAntesDoCursor = _soDigitosCli(v.slice(0, pos)).length;
+      var intl = /^\s*\+/.test(v);
+      var d = _soDigitosCli(v);
+      // +55 completo (DDD + 8 ou 9 digitos) vira padrão nacional
+      if(intl && d.slice(0, 2) === '55' && (d.length === 12 || d.length === 13)){
+        d = d.slice(2);
+        digitosAntesDoCursor = Math.max(0, digitosAntesDoCursor - 2);
+        intl = false;
+      }
+      if(intl || d.length > 11){ telefoneAnterior = v; return; }
+      var saida = _formatarTelefoneCli(d).replace(/^(\(\d{2}\)) /, '$1');
+      telefoneAnterior = saida;
+      if(el.value === saida) return;
+      el.value = saida;
+      if(document.activeElement === el){
+        var p = 0;
+        var c = 0;
+        if(digitosAntesDoCursor === 0){
+          p = saida.charAt(0) === '(' ? 1 : 0;
+        } else {
+          for(p = 0; p < saida.length; p++){
+            if(!/\d/.test(saida.charAt(p))) continue;
+            c++;
+            if(c === digitosAntesDoCursor){ p++; break; }
+          }
+        }
+        el.setSelectionRange(p, p);
+      }
+    });
     ui.desc = document.createElement('input');
     ui.desc.type = 'text'; ui.desc.maxLength = 160; ui.desc.placeholder = 'Descrição curta';
     ui.desc.setAttribute('aria-label', 'Descrição do contato'); ui.desc.autocomplete = 'off';

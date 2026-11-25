@@ -963,7 +963,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.6.0 · Agenda e Celular</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.6.1 · Templates Personalizados</div>
 </aside>
 
 <main class="main">
@@ -2403,7 +2403,7 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
  <h2 style="margin:0">📑 Templates de orçamento</h2>
  <button class="btn btn2" type="button" style="padding:8px 14px" onclick="coTplFechar()">✕ Fechar</button>
 </div>
-<p class="muted" style="font-size:13px;margin:0 0 10px">O template guarda só os itens do catálogo, as quantidades e a ordem. Os preços vêm do catálogo atual na hora de aplicar.</p>
+<p class="muted" style="font-size:13px;margin:0 0 10px">O template guarda os itens do catálogo (só descrição, quantidade e ordem; o preço vem do catálogo atual ao aplicar) e os itens personalizados, com o valor unitário, o custo e a exibição que você definiu.</p>
 <div id="coTplAviso" role="status" style="display:none;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;margin-bottom:8px"></div>
 <div id="coTplLista" style="max-height:280px;overflow-y:auto"></div>
 <div id="coTplConfirma"></div>
@@ -35601,7 +35601,7 @@ quickAddItem = function(desc, val, eCusto){
 };
 addItemOrcManual = function(){
   if(!coOrc.aberta || coS().acao) return;
-  var linha = ['', '1', '0', false, false, null]; linha[6] = '';
+  var linha = ['', '1', '0', false, false, null]; linha[6] = ''; linha[7] = true;   // índice 7: linha manual (personalizada)
   orcItens.push(linha);
   renderOrcItens(); calcOrc();
   var el = coEl('itemPicker'); if(el) el.style.display = 'none';
@@ -46018,10 +46018,12 @@ if(typeof renderOrcItens === 'function'){ var _renderOrcItensOrd = renderOrcIten
 if(typeof coOrcFecharJanela === 'function'){ var _coOrcFecharJanelaOrd = coOrcFecharJanela; coOrcFecharJanela = function(){ coOrdAbortar(true); return _coOrcFecharJanelaOrd.apply(this, arguments); }; }
 if(typeof _limparEstadoProntReal === 'function'){ var _limparEstadoOrd = _limparEstadoProntReal; _limparEstadoProntReal = function(){ var r = _limparEstadoOrd.apply(this, arguments); coOrdAbortar(true); return r; }; }
 // END 1.2.0.1 ORDEM DOS ITENS
-// BEGIN 1.2.0.0 TEMPLATES (item 4): modelo = descrição do item do CATÁLOGO + quantidade + ordem. Sem cliente, preço, fornecedor, desconto, taxa, comissão ou autoridade.
-// Ao aplicar, os preços e a condição de custo vêm do catálogo ATUAL (relido e validado agora); item ausente/duplicado no catálogo bloqueia TUDO (nada é aplicado pela metade).
+// BEGIN 1.2.0.0 TEMPLATES (item 4): modelo = itens do CATÁLOGO (descrição + quantidade + ordem) e itens PERSONALIZADOS (+ valor unitário, custo, exibir valor). Sem cliente, fornecedor, desconto, taxa, comissão ou autoridade.
+// Ao aplicar, item do catálogo usa preço e condição de custo do catálogo ATUAL (relido e validado agora); catálogo ausente/duplicado bloqueia TUDO (nada é aplicado pela metade).
+// Linha de orçamento: [desc, qtd, valor, exibir, custo, fornecedor, '', manual]; índice 7 === true marca a linha manual/personalizada.
 var CO_RPC_TPL_LISTAR = 'orcamento_template_listar', CO_RPC_TPL_SALVAR = 'orcamento_template_salvar', CO_RPC_TPL_EXCLUIR = 'orcamento_template_excluir';
 var CO_TPL_QTD_MAX = 100000;   // = LIMITES_ORC_PRONT_REAL.quantidade: o que o orçamento aceita, o template aceita
+var CO_TPL_VALOR_MAX = 1000000000, CO_TPL_DESC_MAX = 300;   // valor unitário personalizado: 0 a 1 bilhão, 2 casas
 var CO_TPL_MAX_ITENS = 200, CO_TPL_NOME_MAX = 80, CO_TPL_LIMITE_MS = 20000;
 var coTpl = { status: 'idle', lista: [], ocupado: false, confirma: null, pend: null, ctx: null, seq: 0 };
 
@@ -46037,7 +46039,13 @@ function coTplQtdValida(q){
   var n = Number(s);
   return n > 0 && n <= CO_TPL_QTD_MAX ? n : null;
 }
-// linhas do orçamento ([desc, qtd, ...]) + catálogo ([desc, valor, custo]) → itens do modelo; qualquer item fora do catálogo (ou duplicado nele) bloqueia
+// valor unitário: 0 a 1 bilhão, até 2 casas (vírgula aceita); vazio = 0 só se aceitaVazio; devolve número ou null
+function coTplValorValido(v, aceitaVazio){
+  var n = _numCampoProntReal(v, aceitaVazio ? 0 : NaN);
+  return Number.isFinite(n) && n >= 0 && n <= CO_TPL_VALOR_MAX && Math.round(n * 100) / 100 === n ? n : null;
+}
+// linhas do orçamento ([desc, qtd, valor, exibir, custo, forn, '', manual]) + catálogo ([desc, valor, custo]) → itens do modelo.
+// Linha manual (índice 7) ou fora do catálogo = personalizada (guarda valor, custo e exibir); as demais exigem o catálogo sem duplicidade.
 function coTplItensDoOrcamento(linhas, catalogo){
   var vistos = new Map(), erros = [], itens = [];
   (catalogo || []).forEach(function(c){ var k = String(c[0]).trim(); vistos.set(k, (vistos.get(k) || 0) + 1); });
@@ -46046,9 +46054,15 @@ function coTplItensDoOrcamento(linhas, catalogo){
   linhas.forEach(function(l, i){
     var d = String(l[0] === null || l[0] === undefined ? '' : l[0]).trim(), q = coTplQtdValida(l[1]);
     if(!d) { erros.push('Item ' + (i + 1) + ': sem descrição.'); return; }
-    if(!vistos.has(d)) { erros.push('“' + d + '” não está no catálogo atual (item personalizado não entra em template).'); return; }
-    if(vistos.get(d) > 1) { erros.push('“' + d + '” aparece mais de uma vez no catálogo: corrija o catálogo antes.'); return; }
+    if(d.length > CO_TPL_DESC_MAX || /[\u0000-\u001f\u007f]/.test(d)) { erros.push('Item ' + (i + 1) + ': descrição inválida (máximo ' + CO_TPL_DESC_MAX + ' caracteres, sem caracteres de controle).'); return; }
     if(q === null) { erros.push('“' + d + '”: quantidade inválida.'); return; }
+    if(l[7] === true || !vistos.has(d)) {
+      var v = coTplValorValido(l[2], true);
+      if(v === null) { erros.push('“' + d + '”: valor unitário inválido (de 0 a R$ 1.000.000.000,00, até 2 casas).'); return; }
+      itens.push({ descricao: d, quantidade: q, ordem: i, tipo: 'personalizado', valor_unitario: v, eh_custo: l[4] === true, exibir_valor: l[3] === true });
+      return;
+    }
+    if(vistos.get(d) > 1) { erros.push('“' + d + '” aparece mais de uma vez no catálogo: corrija o catálogo antes.'); return; }
     itens.push({ descricao: d, quantidade: q, ordem: i });
   });
   return { ok: erros.length === 0, itens: itens, erros: erros };
@@ -46060,7 +46074,16 @@ function coTplResolver(modelo, catalogo){
   var itens = (modelo && Array.isArray(modelo.itens) ? modelo.itens : []).slice().sort(function(a, b){ return (Number(a.ordem) - Number(b.ordem)) || 0; });
   itens.forEach(function(m){
     var d = String(m.descricao).trim(), c = porDesc.get(d), q = coTplQtdValida(m.quantidade);
-    if(!c) faltando.push(d);
+    var tipo = m.tipo === undefined ? null : m.tipo, legado = tipo === null;   // sem tipo = template legado (só catálogo)
+    if(tipo === 'personalizado'){
+      var pv = coTplValorValido(m.valor_unitario, false);
+      if(q === null) faltando.push(d + ' (quantidade inválida no template)');
+      else if(pv === null || typeof m.eh_custo !== 'boolean' || typeof m.exibir_valor !== 'boolean') faltando.push(d + ' (item personalizado inválido no template)');
+      else linhas.push([d, String(q), String(pv), m.exibir_valor, m.eh_custo, null, '', true]);
+      return;
+    }
+    if(!legado && tipo !== 'catalogo') faltando.push(d + ' (tipo de item desconhecido no template)');
+    else if(!c) faltando.push(d);
     else if(c.length > 1) duplicados.push(d);
     else if(q === null) faltando.push(d + ' (quantidade inválida no template)');
     else {
@@ -46153,7 +46176,7 @@ function coTplSalvar(){
     coTplRpc(CO_RPC_TPL_SALVAR, { p_chave: coTpl.pend.chave, p_nome: nome, p_itens: m.itens }, function(tipo, r){
       coTpl.ocupado = false;
       var d = (tipo === 'resposta' && r && !r.error) ? r.data : null;
-      if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_aplicado')){ coTpl.pend = null; if(inp) inp.value = ''; coTplAviso('Template “' + nome + '” salvo (' + m.itens.length + ' itens, sem preços).', 'ok'); coTplCarregar(); return; }
+      if(_objetoProntReal(d) && (d.status === 'ok' || d.status === 'ja_aplicado')){ coTpl.pend = null; if(inp) inp.value = ''; coTplAviso('Template “' + nome + '” salvo (' + m.itens.length + ' itens).', 'ok'); coTplCarregar(); return; }
       if(_objetoProntReal(d) && d.status === 'nome_duplicado'){ coTpl.pend = null; coTplAviso('Já existe um template com este nome. Escolha outro nome.', 'erro'); coTplRender(); return; }
       if(tipo === 'resposta' && r && r.error){ coTpl.pend = null; coTplAviso(coTplErroTexto(r), 'erro'); coTplRender(); return; }
       coTplAviso('Não consegui confirmar se o template foi salvo. Use “Atualizar lista”; se ele aparecer, foi salvo. Se não, clique em Salvar de novo (o envio é repetido com segurança).', 'erro'); coTplRender();
@@ -46180,7 +46203,7 @@ function coTplEfetivar(nome, linhas){
   fornBuscaAberta = -1; coTpl.confirma = null;
   var m = coEl('modalTemplatesOrc'); if(m) m.classList.remove('open');
   renderOrcItens(); calcOrc();
-  var av = coEl('coOrcAviso'); if(av){ av.textContent = 'Template “' + nome + '” aplicado: ' + linhas.length + ' item(ns) com os preços do catálogo atual. Revise e salve o orçamento.'; av.style.background = '#f0fdf4'; av.style.color = '#166534'; av.style.display = 'block'; }
+  var av = coEl('coOrcAviso'); if(av){ var npers = linhas.filter(function(l){ return l[7] === true; }).length; av.textContent = 'Template “' + nome + '” aplicado: ' + linhas.length + ' item(ns)' + (npers ? ', ' + npers + ' personalizado(s) com o valor do template e o restante com os preços do catálogo atual' : ' com os preços do catálogo atual') + '. Revise e salve o orçamento.'; av.style.background = '#f0fdf4'; av.style.color = '#166534'; av.style.display = 'block'; }
 }
 function coTplConfirmarSubstituir(){
   var c = coTpl.confirma; if(!c || c.tipo !== 'substituir' || coTpl.ocupado) return;

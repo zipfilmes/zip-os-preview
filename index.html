@@ -994,7 +994,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.1 · Cronograma de Gravação</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.2 · Contatos da Gravação</div>
 </aside>
 
 <main class="main">
@@ -22862,6 +22862,12 @@ function _zcgLinha(r){
   t.className = 'zcg-tel';
   t.textContent = String(r.telefone == null ? '' : r.telefone);
   d.appendChild(t);
+  if(r.funcao){
+    var fn = document.createElement('span');
+    fn.className = 'zcg-desc zcg-func';
+    fn.textContent = String(r.funcao);
+    d.appendChild(fn);
+  }
   if(r.descricao){
     var s = document.createElement('span');
     s.className = 'zcg-desc';
@@ -22885,7 +22891,7 @@ function _zcgCarregar(reset){
   e.ui.mais.style.display = 'none';
   e.ui.mais.textContent = 'Carregar mais';
   _zcgMsg(off === 0 ? 'Carregando…' : '', false);
-  _zcgRpc('cliente_contatos_gravacao_listar', { p_cliente_id: ctx.id, p_busca: busca, p_offset: off })
+  _zcgRpc('cliente_contatos_gravacao_listar_v2', { p_cliente_id: ctx.id, p_busca: busca, p_offset: off })
     .then(function(rows){
       if(!_zcgCtxValido(ctx,true)) return;
       rows = Array.isArray(rows) ? rows : [];
@@ -22914,30 +22920,32 @@ function _zcgSalvar(){
   var nome = e.ui.nome.value.trim();
   var tel = e.ui.tel.value.trim();
   var desc = e.ui.desc.value.trim();
+  var func = e.ui.func.value.trim();
   if(!nome || nome.length > 120){ _zcgMsg('Informe o nome (até 120 caracteres).', true); return; }
   if(!_ZCG_TEL_RE.test(tel) || !/[0-9]/.test(tel)){ _zcgMsg('Informe um telefone válido (até 30 caracteres).', true); return; }
   if(desc.length > 160){ _zcgMsg('Descrição com no máximo 160 caracteres.', true); return; }
-  var assin = [e.id, nome, tel, desc].join('\u0001');
+  if(func.length > 120){ _zcgMsg('Função com no máximo 120 caracteres.', true); return; }
+  var assin = [e.id, nome, tel, desc, func].join('\u0001');
   if(assin !== e.assin){ e.assin = assin; e.chave = _novoUuidAtendimentoReal(); }   // mesma chave ao repetir o mesmo pedido
   if(!e.chave){ e.assin = ''; _zcgMsg('Não foi possível iniciar o cadastro.',true); return; }
   var ctx = _zcgCtx();
   var chave = e.chave;
   e.salvando = true;
-  [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = true;});
+  [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc,e.ui.func].forEach(function(el){el.disabled = true;});
   _zcgMsg('Salvando…', false);
-  _zcgRpc('cliente_contato_gravacao_adicionar',
-          { p_cliente_id: ctx.id, p_chave: chave, p_nome: nome, p_telefone: tel, p_descricao: desc })
+  _zcgRpc('cliente_contato_gravacao_adicionar_v2',
+          { p_cliente_id: ctx.id, p_chave: chave, p_nome: nome, p_telefone: tel, p_descricao: desc, p_funcao: func })
     .then(function(){
       if(!_zcgCtxValido(ctx)) return;
-      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = false;});
+      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc,e.ui.func].forEach(function(el){el.disabled = false;});
       e.chave = ''; e.assin = '';
-      e.ui.nome.value = ''; e.ui.tel.value = ''; e.ui.desc.value = '';
+      e.ui.nome.value = ''; e.ui.tel.value = ''; e.ui.desc.value = ''; e.ui.func.value = '';
       _zcgCarregar(true);
       _zcgMsg('Contato adicionado.', false);
     })
     .catch(function(){
       if(!_zcgCtxValido(ctx)) return;
-      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc].forEach(function(el){el.disabled = false;});
+      e.salvando = false; [e.ui.btn,e.ui.nome,e.ui.tel,e.ui.desc,e.ui.func].forEach(function(el){el.disabled = false;});
       _zcgMsg('Não foi possível salvar. Tente novamente.', true);
     });
 }
@@ -22965,18 +22973,20 @@ function _zpcCardContatosGravacao(){
     ui.tel.setAttribute('aria-label', 'Telefone do contato'); ui.tel.autocomplete = 'off';
     ui.desc = document.createElement('input');
     ui.desc.type = 'text'; ui.desc.maxLength = 160; ui.desc.placeholder = 'Descrição curta';
-    ui.desc.className = 'zcg-full';
     ui.desc.setAttribute('aria-label', 'Descrição do contato'); ui.desc.autocomplete = 'off';
+    ui.func = document.createElement('input');
+    ui.func.type = 'text'; ui.func.maxLength = 120; ui.func.placeholder = 'Função (opcional)';
+    ui.func.setAttribute('aria-label', 'Função do contato'); ui.func.autocomplete = 'off';
     ui.btn = document.createElement('button');
     ui.btn.type = 'submit'; ui.btn.className = 'btn zcg-full'; ui.btn.textContent = 'Adicionar contato';
     f.addEventListener('submit', function(ev){ev.preventDefault(); _zcgSalvar();});
-    f.appendChild(ui.nome); f.appendChild(ui.tel); f.appendChild(ui.desc); f.appendChild(ui.btn);
+    f.appendChild(ui.nome); f.appendChild(ui.tel); f.appendChild(ui.desc); f.appendChild(ui.func); f.appendChild(ui.btn);
     corpo.appendChild(f);
   }
 
   ui.busca = document.createElement('input');
   ui.busca.type = 'search'; ui.busca.className = 'zcg-busca'; ui.busca.maxLength = 100;
-  ui.busca.placeholder = 'Buscar por nome ou descrição';
+  ui.busca.placeholder = 'Buscar por nome, função ou descrição';
   ui.busca.setAttribute('aria-label', 'Buscar contatos da gravação'); ui.busca.autocomplete = 'off';
   ui.busca.addEventListener('input', function(){
     if(e.no !== card) return;

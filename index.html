@@ -213,7 +213,11 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 .cg-inp:focus{outline:2px solid #bfdbfe;border-color:#93c5fd}
 .cg-inp.cg-ok-chk{width:17px;height:17px;margin:8px 0 0;padding:0;cursor:pointer;vertical-align:top;accent-color:#15803d}
 .cg-inp.cg-ok-chk:disabled{cursor:default}
-.cg-ta{min-height:0;height:62px;resize:vertical;line-height:1.4}
+.cg-grow{position:relative}
+.cg-ta,.cg-grow::after{box-sizing:border-box;margin:0;padding:7px 8px;border-width:1px;border-style:solid;font-family:Arial;font-size:13px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+.cg-grow::after{content:attr(data-replica) " ";display:block;min-height:31px;border-color:transparent;visibility:hidden;pointer-events:none}
+.cg-grow-desc::after{min-height:62px}
+.cg-grow>.cg-ta{position:absolute;inset:0;width:100%;height:100%;min-height:0;resize:none;overflow:hidden}
 .cg-empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px}
 .cg-hint{font-size:12px;color:var(--muted);margin:10px 0 0}
 #modalCronogramaFull{padding:8px!important;box-sizing:border-box}
@@ -1002,7 +1006,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.7 · OK no PDF</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.8 · Texto no Cronograma</div>
 </aside>
 
 <main class="main">
@@ -29778,6 +29782,13 @@ function cgInputHTML(campo,valor,tipo,placeholder){
  return '<input type="'+tipo+'" class="cg-inp" data-campo="'+campo+'" value="'+cgEsc(valor)+'"'
   +(placeholder?' placeholder="'+cgEsc(placeholder)+'"':'')+'>';
 }
+function cgTextareaHTML(campo,valor,rotulo,placeholder){
+ var v=String(valor==null?'':valor).replace(/\r\n?/g,'\n');
+ // O primeiro \n após <textarea> é descartado pelo HTML: serve de sentinela para preservar um \n inicial real.
+ return '<div class="cg-grow'+(campo==='cena'?' cg-grow-desc':'')+'" data-replica="'+cgEsc(v)+'">'
+  +'<textarea class="cg-inp cg-ta" data-campo="'+campo+'" aria-label="'+cgEsc(rotulo)+'"'
+  +(placeholder?' placeholder="'+cgEsc(placeholder)+'"':'')+'>\n'+cgEsc(v)+'</textarea></div>';
+}
 function renderTabelaCronograma(){
  var tb=document.getElementById('cgTbody');
  if(!tb)return;
@@ -29802,10 +29813,10 @@ function renderTabelaCronograma(){
    +'<td><input type="text" class="cg-inp cg-tempo" data-campo="tempo" value="'+cgEsc(it.tempo)+'" maxlength="60" autocomplete="off" placeholder="0:00" aria-label="Tempo"></td>'
    +'<td>'+cgInputHTML('dia',it.dia,'date','')+'</td>'
    +'<td>'+cgInputHTML('horario',it.horario,'text','09:00 – 09:30')+'</td>'
-   +'<td>'+cgInputHTML('local',it.local,'text','Fachada / Rua X, 120')+'</td>'
-   +'<td><textarea class="cg-inp cg-ta" data-campo="cena" placeholder="Descrição: bloco e o que precisa ser gravado...">'+cgEsc(it.cena)+'</textarea></td>'
-   +'<td>'+cgInputHTML('pessoa',it.pessoa,'text','Quem aparece')+'</td>'
-   +'<td>'+cgInputHTML('obs',it.obs,'text','Observações')+'</td>'
+   +'<td>'+cgTextareaHTML('local',it.local,'Local / endereço','Fachada / Rua X, 120')+'</td>'
+   +'<td>'+cgTextareaHTML('cena',it.cena,'Descrição','Descrição: bloco e o que precisa ser gravado...')+'</td>'
+   +'<td>'+cgTextareaHTML('pessoa',it.pessoa,'Elenco','Quem aparece')+'</td>'
+   +'<td>'+cgTextareaHTML('obs',it.obs,'Observações','Observações')+'</td>'
    +'</tr>';
  });
 
@@ -29816,6 +29827,11 @@ function renderTabelaCronograma(){
   linhas='<tr><td colspan="10" class="cg-empty">'+vazio+'</td></tr>';
  }
  tb.innerHTML=linhas;
+
+ // Textareas de crescimento automático acompanham o bloqueio durante o save
+ Array.prototype.forEach.call(tb.querySelectorAll('.cg-grow>textarea'),function(t){
+  t.disabled=bloqueado;
+ });
 
  // Seleção de linha
  Array.prototype.forEach.call(tb.querySelectorAll('tr[data-id]'),function(tr){
@@ -29866,6 +29882,7 @@ function cgBindCampoCronograma(el,itemId){
    if(san!==el.value)el.value=san;
   }
   it[campo]=el.value;
+  if(el.classList.contains('cg-ta'))el.parentElement.dataset.replica=el.value;
   cronogramaEditorSujo=true;
   if(campo==='dia'){
    atualizarResumoCronograma();
@@ -30106,30 +30123,42 @@ function cgPrepararPdfCronograma(){
  var longos=[6,7,8,9];
  for(var linha=corpo.rows[0];linha;linha=linha.nextElementSibling){
   if(linha.getBoundingClientRect().height<=limite)continue;
-  var restos=longos.map(function(k){return Array.from(linha.cells[k].textContent);});
-  var maior=Math.max.apply(null,restos.map(function(t){return t.length;}));
-  if(maior<2)continue;
-  function aplicar(qtd){
-   return restos.map(function(t,i){
-    var corte=Math.ceil(t.length*qtd/maior);
-    var pos=corte;
-    while(pos>Math.max(0,corte-24)&&pos<t.length&&!/\\s/.test(t[pos-1]))pos--;
-    if(pos>Math.max(0,corte-24))corte=pos;
-    linha.cells[longos[i]].textContent=t.slice(0,corte).join('');
-    return corte;
-   });
+  var textos=longos.map(function(k){return Array.from(linha.cells[k].textContent);});
+  var cortes=textos.map(function(){return 0;});
+  longos.forEach(function(k){linha.cells[k].textContent='';});
+  textos.forEach(function(t,i){
+   var cel=linha.cells[longos[i]];
+   cel.textContent=t.join('');
+   if(linha.getBoundingClientRect().height<=limite){
+    cortes[i]=t.length;
+    return;
+   }
+   var lo=0,hi=t.length-1;
+   while(lo<hi){
+    var meio=Math.ceil((lo+hi)/2);
+    cel.textContent=t.slice(0,meio).join('');
+    if(linha.getBoundingClientRect().height<=limite)lo=meio;
+    else hi=meio-1;
+   }
+   var corte=lo;
+   if(corte>0&&corte<t.length&&!/\s/.test(t[corte-1])&&!/\s/.test(t[corte])){
+    for(var pos=corte;pos>0&&pos>=corte-24;pos--){
+     if(/\s/.test(t[pos-1])){corte=pos;break;}
+    }
+   }
+   cortes[i]=corte;
+   cel.textContent=t.slice(0,corte).join('');
+  });
+  var consumido=cortes.reduce(function(a,b){return a+b;},0);
+  var sobra=textos.some(function(t,i){return cortes[i]<t.length;});
+  if(!sobra)continue;
+  if(consumido===0){
+   textos.forEach(function(t,i){linha.cells[longos[i]].textContent=t.join('');});
+   continue;
   }
-  var lo=1,hi=maior-1;
-  while(lo<hi){
-   var meio=Math.ceil((lo+hi)/2);
-   aplicar(meio);
-   if(linha.getBoundingClientRect().height<=limite)lo=meio;
-   else hi=meio-1;
-  }
-  var cortes=aplicar(lo);
   var seguinte=linha.cloneNode(true);
   Array.prototype.forEach.call(seguinte.cells,function(c){c.textContent='';});
-  restos.forEach(function(t,i){seguinte.cells[longos[i]].textContent=t.slice(cortes[i]).join('');});
+  textos.forEach(function(t,i){seguinte.cells[longos[i]].textContent=t.slice(cortes[i]).join('');});
   linha.after(seguinte);
  }
  var folhaOriginal=tabela.closest('.cgp-sheet');

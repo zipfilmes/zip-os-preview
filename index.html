@@ -211,7 +211,7 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 .cg-table tbody tr.cg-sel{background:#eff6ff;box-shadow:inset 3px 0 0 #1e3a5f}
 .cg-inp{box-sizing:border-box;width:100%;margin-top:0;padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:#fff}
 .cg-inp:focus{outline:2px solid #bfdbfe;border-color:#93c5fd}
-.cg-inp.cg-ok-chk{width:17px;height:17px;margin:8px 0 0;padding:0;cursor:pointer;vertical-align:top}
+.cg-inp.cg-ok-chk{width:17px;height:17px;margin:8px 0 0;padding:0;cursor:pointer;vertical-align:top;accent-color:#15803d}
 .cg-inp.cg-ok-chk:disabled{cursor:default}
 .cg-ta{min-height:0;height:62px;resize:vertical;line-height:1.4}
 .cg-empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px}
@@ -1002,7 +1002,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.6 · OK no Cronograma</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.7 · OK no PDF</div>
 </aside>
 
 <main class="main">
@@ -30178,12 +30178,14 @@ function cgGerarHtmlPdfCronograma(os,lista,projectsArg,lay){
   '.cgp-rot{font-size:6pt;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;color:#667085}',
   '.cgp-val{font-size:8.6pt;font-weight:bold;color:#17202a;margin-top:1mm;overflow-wrap:anywhere}',
   '.cgp-colunas th{background:#176b72;color:#fff;font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;padding:2mm 1.4mm;text-align:left;border:1px solid #176b72}',
-  '.cgp-colunas th:nth-child(2){font-size:6.4pt;padding-left:.8mm;padding-right:.8mm}',
+  '.cgp-colunas th:nth-child(2){font-size:6.4pt;padding-left:.4mm;padding-right:.4mm;text-align:center}',
   '.cgp-colunas .cgp-gutter,.cgp-gutter{background:#fff;border:none;padding:0}',
   '.cgp-linha{break-inside:avoid;page-break-inside:avoid}',
   '.cgp-linha td:not(.cgp-gutter){font-size:8pt;line-height:1.3;padding:2.1mm 1.7mm;border:1px solid #d9dee7;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}',
   '.cgp-linha:nth-child(even) td:not(.cgp-gutter){background:#fbfcfe}',
   '.cgp-cena,.cgp-check{text-align:center}',
+  '.cgp-linha td.cgp-check{padding-left:.4mm;padding-right:.4mm}',
+  '.cgp-ok{display:block;box-sizing:border-box;width:3mm;height:3mm;margin:0 auto;border:.2mm solid #222;background:#fff}',
   '.cgp-dia,.cgp-hora{font-weight:bold}',
   '.cgp-rodape{height:8mm}'
  ].join('');
@@ -30192,13 +30194,13 @@ function cgGerarHtmlPdfCronograma(os,lista,projectsArg,lay){
  ].map(function(i){
    return '<td><div class="cgp-rot">'+cgEsc(i[0])+'</div><div class="cgp-val">'+cgEsc(i[1])+'</div></td>';
  }).join('');
- var colunas=['Check','Cena','Tempo','Dia','Horário','Local / Endereço','Descrição','Elenco','Observações'];
- var larguras=['14mm','3.2%','3.5%','4.5%','6.5%','8%','13%','28.8%','10%','12.5%','14mm'];
+ var colunas=['OK','Cena','Tempo','Dia','Horário','Local / Endereço','Descrição','Elenco','Observações'];
+ var larguras=['14mm','2.1%','3.5%','4.5%','6.5%','8%','13%','28.8%','11.1%','12.5%','14mm'];
  var cols=larguras.map(function(w){return '<col style="width:'+w+'">';}).join('');
  var margem='<td class="cgp-gutter"></td>';
  var linhas=lista.map(function(it){
   return '<tr class="cgp-linha">'+margem
-   +'<td class="cgp-check"></td>'
+   +'<td class="cgp-check"><span class="cgp-ok"></span></td>'
    +'<td class="cgp-cena">'+cgEsc(it.numeroCena)+'</td>'
    +'<td>'+cgEsc(it.tempo)+'</td>'
    +'<td class="cgp-dia">'+cgEsc(cgDataBR(it.dia))+'</td>'

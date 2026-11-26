@@ -193,28 +193,27 @@ button.dash-alert-clickable:focus-visible{outline:2px solid var(--blue);outline-
 .cg-tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;max-height:52vh}
 .cg-table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:1090px}
 .cg-col-alca{width:38px}
+.cg-col-ok{width:38px}
 .cg-col-cena{width:50px}
 .cg-col-tempo{width:60px}
 .cg-col-dia{width:126px}
 .cg-col-horario{width:115px}
 .cg-col-local{width:clamp(145px,calc(22vw - 110px),300px)}
-.cg-col-elenco{width:120px}
-.cg-col-status{width:105px}
+.cg-col-elenco{width:187px}
 .cg-col-obs{width:142px}
 .cg-table th,.cg-table td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;font-size:13px;vertical-align:top}
-.cg-table th:nth-child(5),.cg-table td:nth-child(5){padding-left:4px;padding-right:4px}
-.cg-table td:nth-child(5) .cg-inp{padding-left:4px;padding-right:4px}
+.cg-table th.cg-th-ok,.cg-table td.cg-ok-td{text-align:center;padding-left:0;padding-right:0}
+.cg-table th:nth-child(6),.cg-table td:nth-child(6){padding-left:4px;padding-right:4px}
+.cg-table td:nth-child(6) .cg-inp{padding-left:4px;padding-right:4px}
 .cg-table th{background:#f9fafb;font-size:11px;text-transform:uppercase;color:#667085;letter-spacing:.4px;position:sticky;top:0;z-index:2}
 .cg-table tr:last-child td{border-bottom:0}
 .cg-table tbody tr{cursor:pointer}
 .cg-table tbody tr.cg-sel{background:#eff6ff;box-shadow:inset 3px 0 0 #1e3a5f}
 .cg-inp{box-sizing:border-box;width:100%;margin-top:0;padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-family:Arial;font-size:13px;background:#fff}
 .cg-inp:focus{outline:2px solid #bfdbfe;border-color:#93c5fd}
+.cg-inp.cg-ok-chk{width:17px;height:17px;margin:8px 0 0;padding:0;cursor:pointer;vertical-align:top}
+.cg-inp.cg-ok-chk:disabled{cursor:default}
 .cg-ta{min-height:0;height:62px;resize:vertical;line-height:1.4}
-.cg-status-sel{font-weight:800}
-.cg-status-sel.cg-pendente{border-color:#fcd34d}
-.cg-status-sel.cg-gravado{border-color:#86efac}
-.cg-status-sel.cg-adiado{border-color:#93c5fd}
 .cg-empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px}
 .cg-hint{font-size:12px;color:var(--muted);margin:10px 0 0}
 #modalCronogramaFull{padding:8px!important;box-sizing:border-box}
@@ -500,9 +499,6 @@ html[data-theme="dark"] .cg-inp:focus{outline-color:#8fb8ee;border-color:#8fb8ee
 html[data-theme="dark"] .cg-badge,html[data-theme="dark"] .cg-pendente{background:#3d3422;color:#f4d58b}
 html[data-theme="dark"] .cg-gravado{background:#233529;color:#a6e3be}
 html[data-theme="dark"] .cg-adiado{background:#26364d;color:#b8d5ff}
-html[data-theme="dark"] .cg-status-sel.cg-pendente{border-color:#7a6630}
-html[data-theme="dark"] .cg-status-sel.cg-gravado{border-color:#3f7a56}
-html[data-theme="dark"] .cg-status-sel.cg-adiado{border-color:#3d5a85}
 html[data-theme="dark"] .zpc-obs{background:#3d3422;border-color:#7a6630}
 /* --- Login e recuperação --- */
 html[data-theme="dark"] #loginScreen,html[data-theme="dark"] #recuperacaoSenhaScreen{background:#1d2027}
@@ -1006,7 +1002,7 @@ html[data-theme="dark"] .hvDemSt.hvDemOk{color:#ffe9a0}
  <span id="screenSwitcherLabel" style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:none;margin-bottom:2px">Selecione a tela</span>
  <div id="screenSwitcherButtons" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
-<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.5 · Colunas do Cronograma</div>
+<div id="zosVersaoSidebar" class="zos-sb-versao">V1.7.7.6 · OK no Cronograma</div>
 </aside>
 
 <main class="main">
@@ -3465,6 +3461,7 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
  <table class="cg-table">
   <colgroup>
    <col class="cg-col-alca">
+   <col class="cg-col-ok">
    <col class="cg-col-cena">
    <col class="cg-col-tempo">
    <col class="cg-col-dia">
@@ -3472,12 +3469,12 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
    <col class="cg-col-local">
    <col>
    <col class="cg-col-elenco">
-   <col class="cg-col-status">
    <col class="cg-col-obs">
   </colgroup>
   <thead>
    <tr>
     <th aria-label="Reordenar"></th>
+    <th class="cg-th-ok">OK</th>
     <th>Cena</th>
     <th>Tempo</th>
     <th>Dia</th>
@@ -3485,7 +3482,6 @@ html[data-theme="dark"] #agenda107 .ag-sel-lista li[aria-selected="true"]{backgr
     <th>Local / endereço</th>
     <th>Descrição</th>
     <th>Elenco</th>
-    <th>Status</th>
     <th>Obs.</th>
    </tr>
   </thead>
@@ -29700,7 +29696,7 @@ function atualizarCardCronograma(os){
  var el=document.getElementById('cgCard-'+os);
  if(el)el.innerHTML=renderCardCronograma(os);
 }
-// Checkbox do card: marcado = Gravado, desmarcado = Pendente. "Adiado" só na tabela cheia.
+// Checkbox do card: marcado = Gravado, desmarcado = Pendente.
 function toggleCronogramaGravado(os,itemId){
  var lista=getCronogramaOS(os);
  var it=lista.find(function(x){return x.id===itemId;});
@@ -29778,11 +29774,6 @@ function cgLinhaVisivel(it,busca,fstatus){
  var campos=[it.numeroCena,it.tempo,cgDataBR(it.dia),it.dia,it.horario,it.local,it.cena,it.pessoa,it.status,it.obs];
  return campos.some(function(c){return String(c||'').toLowerCase().indexOf(busca)>=0;});
 }
-function cgSelectHTML(campo,valor,opcoes,classeExtra){
- var h='<select class="cg-inp '+classeExtra+'" data-campo="'+campo+'">';
- opcoes.forEach(function(o){h+='<option value="'+cgEsc(o)+'"'+(o===valor?' selected':'')+'>'+cgEsc(o)+'</option>';});
- return h+'</select>';
-}
 function cgInputHTML(campo,valor,tipo,placeholder){
  return '<input type="'+tipo+'" class="cg-inp" data-campo="'+campo+'" value="'+cgEsc(valor)+'"'
   +(placeholder?' placeholder="'+cgEsc(placeholder)+'"':'')+'>';
@@ -29795,6 +29786,7 @@ function renderTabelaCronograma(){
  var filtroEl=document.getElementById('cgFiltroStatus');
  var busca=buscaEl?(buscaEl.value||'').toLowerCase().trim():'';
  var fstatus=filtroEl?(filtroEl.value||''):'';
+ var bloqueado=!!cgReordenacaoBloqueada();
 
  var linhas='';
  cronogramaEditorItens.forEach(function(it,idx){
@@ -29802,6 +29794,10 @@ function renderTabelaCronograma(){
   var sel=(cronogramaEditorSelecionado===it.id);
   linhas+='<tr data-id="'+pjIdAttr(it.id)+'"'+(sel?' class="cg-sel"':'')+'>'
    +'<td class="cg-alca-td"><button type="button" class="cg-alca" data-alca="1" aria-label="Reordenar a linha '+(idx+1)+' (arraste, ou use as setas do teclado)" title="Arraste para reordenar (ou use as setas ↑ ↓)">⠿</button></td>'
+   +'<td class="cg-ok-td"><input type="checkbox" class="cg-inp cg-ok-chk" data-campo="status" aria-label="OK da linha '+(idx+1)+'"'
+    +(it.status==='Gravado'?' checked':'')
+    +(bloqueado?' disabled':'')
+    +(it.status==='Adiado'?' title="Adiado"':'')+'></td>'
    +'<td><input type="text" class="cg-inp cg-cena" data-campo="numeroCena" value="'+cgEsc(it.numeroCena)+'" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="01" aria-label="Cena"></td>'
    +'<td><input type="text" class="cg-inp cg-tempo" data-campo="tempo" value="'+cgEsc(it.tempo)+'" maxlength="60" autocomplete="off" placeholder="0:00" aria-label="Tempo"></td>'
    +'<td>'+cgInputHTML('dia',it.dia,'date','')+'</td>'
@@ -29809,7 +29805,6 @@ function renderTabelaCronograma(){
    +'<td>'+cgInputHTML('local',it.local,'text','Fachada / Rua X, 120')+'</td>'
    +'<td><textarea class="cg-inp cg-ta" data-campo="cena" placeholder="Descrição: bloco e o que precisa ser gravado...">'+cgEsc(it.cena)+'</textarea></td>'
    +'<td>'+cgInputHTML('pessoa',it.pessoa,'text','Quem aparece')+'</td>'
-   +'<td>'+cgSelectHTML('status',it.status,CRONOGRAMA_STATUS,'cg-status-sel cg-'+cgStatusClass(it.status))+'</td>'
    +'<td>'+cgInputHTML('obs',it.obs,'text','Observações')+'</td>'
    +'</tr>';
  });
@@ -29839,7 +29834,7 @@ function renderTabelaCronograma(){
  Array.prototype.forEach.call(tb.querySelectorAll('.cg-alca'),function(b){
   var tr=b.closest('tr'),id=tr?tr.getAttribute('data-id'):null;
   if(!id)return;
-  b.disabled=!!cgReordenacaoBloqueada();
+  b.disabled=bloqueado;
   b.addEventListener('pointerdown',function(ev){cgAlcaDown(ev,id,b);});
   b.addEventListener('pointermove',cgAlcaMove);
   b.addEventListener('pointerup',cgAlcaSoltar);
@@ -29854,8 +29849,17 @@ function cgBindCampoCronograma(el,itemId){
  var campo=el.getAttribute('data-campo');
  var it=cgItemPorId(itemId);
  if(!it)return;
- var evento=(el.tagName==='SELECT')?'change':'input';
- el.addEventListener(evento,function(){
+ if(campo==='status'&&el.type==='checkbox'){
+  // OK: marcado = Gravado, desmarcado = Pendente. Só muda ao clicar (Adiado legado não é migrado).
+  el.addEventListener('change',function(){
+   it.status=el.checked?'Gravado':'Pendente';
+   el.removeAttribute('title');
+   cronogramaEditorSujo=true;
+   atualizarResumoCronograma();
+  });
+  return;
+ }
+ el.addEventListener('input',function(){
   if(campo==='numeroCena'){
    // Cena é texto de até 2 dígitos ASCII ("01" preserva o zero); vazio é permitido.
    var san=cgSanearCena(el.value);
@@ -29863,10 +29867,7 @@ function cgBindCampoCronograma(el,itemId){
   }
   it[campo]=el.value;
   cronogramaEditorSujo=true;
-  if(campo==='status'){
-   el.className='cg-inp cg-status-sel cg-'+cgStatusClass(el.value);
-   atualizarResumoCronograma();
-  } else if(campo==='dia'){
+  if(campo==='dia'){
    atualizarResumoCronograma();
   }
  });
